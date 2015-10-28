@@ -10,9 +10,6 @@ class Sections_controller extends Common_api_functions {
 	/* public variables */
 	public $_params;
 
-	/* protected variables */
-	protected $valid_keys;
-
 	/* object holders */
 	protected $Database;		// Database object
 	protected $Response;		// Response handler
@@ -28,7 +25,6 @@ class Sections_controller extends Common_api_functions {
 	 * @param class $Database
 	 * @param class $Tools
 	 * @param mixed $params		// post/get values
-	 * @return void
 	 */
 	public function __construct($Database, $Tools, $params, $Response) {
 		$this->Database = $Database;
