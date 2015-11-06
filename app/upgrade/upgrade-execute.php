@@ -24,6 +24,8 @@ if($Install->upgrade_database()) {	$Result->show("success", _("Database upgraded
 # migrate settings
 $User->migrate_domain_settings ();
 
+$User->migrate_ldap_settings ();
+
 # check for possible errors
 if(sizeof($errors = $Tools->verify_database())>0) {
 	$esize = sizeof($errors['tableError']) + sizeof($errors['fieldError']);
