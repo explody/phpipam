@@ -579,6 +579,7 @@ VALUES
 	(3, 'Reserved', 1, '#9ac0cd', '#ffffff', 'No', 'Yes'),
 	(4, 'DHCP', 1, '#c9c9c9', '#ffffff', 'Yes', 'Yes');
 
+
 # Dump of table firewallZones
 # ------------------------------------------------------------
 DROP TABLE IF EXISTS `firewallZones`;
@@ -591,13 +592,11 @@ CREATE TABLE `firewallZones` (
   `zone` varchar(31) COLLATE utf8_unicode_ci NOT NULL,
   `indicator` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
   `description` text COLLATE utf8_unicode_ci,
-  `subnetId` int(11) unsigned DEFAULT NULL,
-  `stacked` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `vlanId` int(11) unsigned DEFAULT NULL,
   `permissions` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
   `editDate` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 
 # Dump of table firewallZoneMapping
 # ------------------------------------------------------------
@@ -606,16 +605,38 @@ DROP TABLE IF EXISTS `firewallZoneMapping`;
 CREATE TABLE `firewallZoneMapping` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `zoneId` int(11) unsigned NOT NULL,
-  `alias` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `deviceId` int(11) unsigned DEFAULT NULL,
-  `interface` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `interface` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `editDate` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `devId_idx` (`deviceId`),
+  CONSTRAINT `devId` FOREIGN KEY (`deviceId`) REFERENCES `devices` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
+# Dump of table firewallZoneMapping
+# ------------------------------------------------------------
+DROP TABLE IF EXISTS `firewallZoneSubnet`;
 
-# Dump of table usersAuthMethod
+CREATE TABLE `firewallZoneSubnet` (
+  `zoneId` INT NOT NULL COMMENT '',
+  `subnetId` INT(11) NOT NULL COMMENT '',
+  INDEX `fk_zoneId_idx` (`zoneId` ASC)  COMMENT '',
+  INDEX `fk_subnetId_idx` (`subnetId` ASC)  COMMENT '',
+  CONSTRAINT `fk_zoneId`
+    FOREIGN KEY (`zoneId`)
+    REFERENCES `firewallZones` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_subnetId`
+    FOREIGN KEY (`subnetId`)
+    REFERENCES `subnets` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION);
+
+
+# Dump of table scanAgents
 # ------------------------------------------------------------
 DROP TABLE IF EXISTS `scanAgents`;
 
@@ -635,46 +656,10 @@ VALUES
 	(1, 'localhost', 'Scanning from local machine', 'direct');
 
 
-# Dump of table firewallZones
-# ------------------------------------------------------------
-DROP TABLE IF EXISTS `firewallZones`;
-
-CREATE TABLE `firewallZones` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `generator` tinyint(1) NOT NULL,
-  `length` int(2) DEFAULT NULL,
-  `padding` tinyint(1) DEFAULT NULL,
-  `zone` varchar(31) COLLATE utf8_unicode_ci NOT NULL,
-  `indicator` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
-  `description` text COLLATE utf8_unicode_ci,
-  `subnetId` int(11) unsigned DEFAULT NULL,
-  `stacked` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `vlanId` int(11) unsigned DEFAULT NULL,
-  `permissions` varchar(1024) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `editDate` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-# Dump of table firewallZones
-# ------------------------------------------------------------
-DROP TABLE IF EXISTS `firewallZoneMapping`;
-
-CREATE TABLE `firewallZoneMapping` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `zoneId` int(11) unsigned NOT NULL,
-  `alias` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `deviceId` int(11) unsigned DEFAULT NULL,
-  `interface` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `editDate` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 # Dump of table -- for autofix comment, leave as it is
 # ------------------------------------------------------------
 
 
 # update version
 # ------------------------------------------------------------
-UPDATE `settings` set `version` = '1.19';
+UPDATE `settings` set `version` = '1.2';

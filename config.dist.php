@@ -38,4 +38,14 @@ $debugging = false;
  */
 $phpsessname = "phpipam";
 
+/**
+ *	BASE definition if phpipam
+ * 	is not in root directory (e.g. /phpipam/)
+ *
+ *  Also change
+ *	RewriteBase / in .htaccess
+ ******************************/
+if(!defined('BASE'))
+define('BASE', "/");
+
 ?>

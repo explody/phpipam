@@ -39,18 +39,21 @@ if(sizeof($errors = $Tools->verify_database())>0) {
 		foreach ($errors['tableError'] as $table) {
 			print '<li>'.$table.'</li>'. "\n";
 		}
-		print '</ul>'. "\n";
-	}
 
-	# print field errors
-	if (isset($errors['fieldError'])) {
-		print '<strong>'._('Missing fields').':</strong>'. "\n";
-		print '<ul class="fix-field">'. "\n";
-		foreach ($errors['fieldError'] as $table=>$field) {
-			print '<li>Table `'. $table .'`: missing field `'. $field .'`;</li>'. "\n";
+		# print field errors
+		if (isset($errors['fieldError'])) {
+			print '<strong>'._('Missing fields').':</strong>'. "\n";
+			print '<ul class="fix-field">'. "\n";
+			foreach ($errors['fieldError'] as $table=>$field) {
+				print '<li>Table `'. $table .'`: missing field `'. $field .'`;</li>'. "\n";
+			}
+			print '</ul>'. "\n";
 		}
-		print '</ul>'. "\n";
+		print "</div>";
 	}
-	print "</div>";
+}
+else {
+	# print failure
+	$Result->show("danger", _("Failed to upgrade database! <a class='btn btn-sm btn-default' href='".create_link('administration', "verify-database")."'>Go to administration and fix</a>"), false);
 }
 ?>
