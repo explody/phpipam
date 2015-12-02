@@ -1,0 +1,14 @@
+---
+applications:
+- name: ipam
+  memory: 256M
+  instances: 1
+  host: ipam
+  domain: iops.pivotal.io
+  path: .
+  buildpack: https://github.com/cloudfoundry/php-buildpack.git
+  env:
+    BP_DEBUG: "True"
+    CF_TRACE: "True"
+    LDAPCONF: /home/vcap/app/.bp-config/ldap.conf
+    LDAPTLS_CACERT: /home/vcap/app/.bp-config/pivotal-combined.pem

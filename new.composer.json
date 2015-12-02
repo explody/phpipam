@@ -1,0 +1,23 @@
+{
+    "name": "pivotal/phpipam",
+    "require": {
+        "gettext/gettext": "~3.4",
+        "pear/pear-core-minimal": "~1.9",
+        "ext-PDO": "1.0.4dev",
+        "ext-pdo_mysql": "^1.0",
+        "ext-ldap": "^0.0.0",
+        "ext-bz2": "^0.0.0",
+        "ext-zlib": "^2.0",
+        "ext-curl": "^0.0.0",
+        "ext-mcrypt": "^0.0.0",
+        "ext-gmp": "^0.0.0",
+        "ext-mysqli": "^0.1.0",
+        "ext-gettext": "^0.0.0"
+    },
+    "authors": [
+        {
+            "name": "Pivotal IOPS",
+            "email": "iops@pivotal.io"
+        }
+    ]
+}

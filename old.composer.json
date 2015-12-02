@@ -1,0 +1,13 @@
+{
+    "name": "mculbertson/phpipam",
+    "require": {
+        "gettext/gettext": "~3.4",
+        "pear/pear-core-minimal": "~1.9"
+    },
+    "authors": [
+        {
+            "name": "Mike Culbertson",
+            "email": "mculbertson@pivotal.io"
+        }
+    ]
+}
