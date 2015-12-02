@@ -21,9 +21,12 @@ $User->check_user_session();
 if ($_POST['operation'] != 'subnet2zone') 				{ $Result->show("danger", _("Invalid operation. Do not manipulate the POST values!"), true); }
 
 # validate $_POST['subnetId'] values
-if (!preg_match('/^[0-9]+$/i', $_POST['subnetId'])) 	 { $Result->show("danger", _("Invalid subnet ID. Do not manipulate the POST values!"), true); }
+if (!preg_match('/^[0-9]+$/i', $_POST['subnetId'])) 	{ $Result->show("danger", _("Invalid subnet ID. Do not manipulate the POST values!"), true); }
 
 $firewallZones = $Zones->get_zones();
+
+# no zones
+if($firewallZones===false)                              { $Result->show("danger", _("No zones available"), true, true); }
 ?>
 
 <!-- header  -->
@@ -42,6 +45,7 @@ $firewallZones = $Zones->get_zones();
 		</td>
 		<td>
 			<select name="zoneId" class="form-control input-sm input-w-auto input-max-200 checkMapping">
+			<option value="0"><?php print _('Select a Zone'); ?></option>
 			<?php
 				foreach ($firewallZones as $firewallZone) {
 					print '<option value="'.$firewallZone->id.'">'.$firewallZone->zone.' '.(($firewallZone->description) ? ' ('.$firewallZone->description.')' : '' ).'</option>';

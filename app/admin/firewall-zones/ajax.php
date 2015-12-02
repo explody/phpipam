@@ -97,13 +97,17 @@ if ($_POST['operation'] == 'autogen') {
 		if (preg_match('/^[0-9]+$/i',$_POST['subnetId']) && preg_match('/^[0-9a-zA-Z-.]+$/i',$_POST['dnsName']) && preg_match('/^[0-9]+$/i',$_POST['IPId'])) {
 			$Zones->update_address_object($_POST['subnetId'],$_POST['IPId'],$_POST['dnsName']);
 		}
+	} elseif ($_POST['action'] == 'subnet') {
+		if (preg_match('/^[0-9]+$/i',$_POST['subnetId'])) {
+			$Zones->generate_subnet_object ($_POST['subnetId']);
+		}
 	}
 }
 
 # check if there is any mapping for a specific zone, if not, display inputs
 if ($_POST['operation'] == 'checkMapping') {
 
-	if (!$Zones->check_zone_mapping($_POST['zoneId'])) {
+	if (!$Zones->check_zone_mapping($_POST['zoneId']) && $_POST['zoneId'] != 0) {
 		# fetch all firewall zones
 		$firewallZones = $Zones->get_zones();
 
@@ -160,7 +164,7 @@ if ($_POST['operation'] == 'checkMapping') {
 			</tr>
 		</table>
 		<?php
-	} else {
+	} elseif ($_POST['zoneId'] != 0) {
 		# return the zone details
 		$Zones->get_zone_detail($_POST['zoneId']);
 	}
