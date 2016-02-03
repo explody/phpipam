@@ -58,7 +58,7 @@ API guide
 
 Update
 =======
-- see UPDATE file for details
+- http://phpipam.net/documents/upgrade/
 
 Demo page
 ============
@@ -67,6 +67,10 @@ http://demo.phpipam.net
 Default user
 ============
 Admin / ipamadmin
+
+Reset admin password
+====================
+php functions/scripts/reset-admin-password.php
 
 Changelog
 =========
