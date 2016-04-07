@@ -275,6 +275,7 @@ CREATE TABLE `devices` (
   `vendor` varchar(156) DEFAULT NULL,
   `model` varchar(124) DEFAULT NULL,
   `description` varchar(256) DEFAULT NULL,
+  `version` varchar(64) DEFAULT NULL,
   `sections` varchar(128) DEFAULT NULL,
   `editDate` TIMESTAMP  NULL  ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
