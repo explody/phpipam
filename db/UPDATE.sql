@@ -440,6 +440,9 @@ ALTER TABLE `firewallZones` DROP COLUMN `subnetId`;
 ALTER TABLE `firewallZoneMapping` ADD INDEX `devId_idx` (`deviceId` ASC);
 ALTER TABLE `firewallZoneMapping` ADD CONSTRAINT `devId` FOREIGN KEY (`deviceId`) REFERENCES `devices` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
+/* Add a version column to devices to support recording the device's software version */
+ALTER TABLE `devices` ADD COLUMN `version` VARCHAR(64) NULL DEFAULT NULL AFTER `description`;
+
 /* add firewallAddresObject field to the ipaddresses table to store fw addr. obj. names permanently */
 ALTER TABLE `ipaddresses` ADD COLUMN `firewallAddressObject` VARCHAR(100) NULL DEFAULT NULL AFTER `PTR`;
 

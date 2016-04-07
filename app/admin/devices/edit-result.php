@@ -70,6 +70,7 @@ $values = array("id"=>@$device['switchId'],
 				"type"=>@$device['type'],
 				"vendor"=>@$device['vendor'],
 				"model"=>@$device['model'],
+				"version"=>@$device['version'],
 				"description"=>@$device['description'],
 				"sections"=>@$device['sections']
 				);

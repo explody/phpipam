@@ -50,6 +50,7 @@ else {
 	print '	<th>'._('Type').'</th>';
 	print '	<th>'._('Vendor').'</th>';
 	print '	<th>'._('Model').'</th>';
+	print '	<th>'._('Version').'</th>';
 	print '	<th>'._('Description').'</th>';
 	print '	<th><i class="icon-gray icon-info-sign" rel="tooltip" title="'._('Shows in which sections device will be visible for selection').'"></i> '._('Sections').'</th>';
 	if(sizeof($custom) > 0) {
@@ -75,6 +76,7 @@ else {
 		print '	<td>'. @$device_types_i[$device['type']]->tname .'</td>'. "\n";
 		print '	<td>'. $device['vendor'] .'</td>'. "\n";
 		print '	<td>'. $device['model'] .'</td>'. "\n";
+		print '	<td>'. $device['version'] .'</td>'. "\n";
 		print '	<td class="description">'. $device['description'] .'</td>'. "\n";
 
 		//sections
