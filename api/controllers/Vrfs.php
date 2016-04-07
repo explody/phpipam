@@ -8,14 +8,54 @@
 
 class Vrfs_controller extends Common_api_functions {
 
-	/* public variables */
+
+	/**
+	 * _params [provided
+	 *
+	 * @var mixed
+	 * @access public
+	 */
 	public $_params;
 
-	/* object holders */
-	protected $Database;			// Database object
-	protected $Sections;			// Sections object
-	protected $Tools;				// Tools object
-	protected $Admin;				// Admin object
+	/**
+	 * Database object
+	 *
+	 * @var mixed
+	 * @access protected
+	 */
+	protected $Database;
+
+	/**
+	 * Master Sections object
+	 *
+	 * @var mixed
+	 * @access protected
+	 */
+	protected $Sections;
+
+	/**
+	 * Master Subnets object
+	 *
+	 * @var mixed
+	 * @access protected
+	 */
+	protected $Subnets;
+
+	/**
+	 * Master Tools object
+	 *
+	 * @var mixed
+	 * @access protected
+	 */
+	protected $Tools;
+
+	/**
+	 * Master  Admin object
+	 *
+	 * @var mixed
+	 * @access protected
+	 */
+	protected $Admin;
 
 
 	/**
@@ -25,6 +65,7 @@ class Vrfs_controller extends Common_api_functions {
 	 * @param class $Database
 	 * @param class $Tools
 	 * @param mixed $params		// post/get values
+	 * @param class $Response
 	 */
 	public function __construct($Database, $Tools, $params, $Response) {
 		$this->Database = $Database;
@@ -98,6 +139,16 @@ class Vrfs_controller extends Common_api_functions {
 				$this->validate_vrf ();
 				// fetch
 				$result = $this->Tools->fetch_multiple_objects ("subnets", "vrfId", $this->_params->id, 'subnet', true);
+				// add gateway if present
+    			if($result!=false) {
+    				foreach ($result as $k=>$r) {
+                		$gateway = $this->read_subnet_gateway ($r->id);
+                		if ( $gateway!== false) {
+                    		$result[$k]->gatewayId = $gateway->id;
+                		}
+    				}
+    			}
+
 				// check result
 				if($result===false)					{ $this->Response->throw_exception(404, 'No subnets belonging to this vrf'); }
 				else								{ return array("code"=>200, "data"=>$this->prepare_result ($result, "subnets", true, true)); }
@@ -207,6 +258,7 @@ class Vrfs_controller extends Common_api_functions {
 		$this->validate_vrf ();
 
 		# set variables for update
+		$values = array();
 		$values["vrfId"] = $this->_params->id;
 
 		# execute delete
@@ -275,6 +327,17 @@ class Vrfs_controller extends Common_api_functions {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns id of subnet gateay
+	 *
+	 * @access private
+	 * @params mixed $subnetId
+	 * @return void
+	 */
+	private function read_subnet_gateway ($subnetId) {
+    	return $this->Subnets->find_gateway ($subnetId);
 	}
 
 }
