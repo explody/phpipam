@@ -3,5 +3,5 @@
     "COMPOSER_VENDOR_DIR": "vendor",
     "WEBDIR": ".",
     "PHP_MODULES": [ "pear" ],
-    "PHP_EXTENSIONS": [ "pdo", "pdo_mysql", "ldap", "bz2", "zlib", "curl", "mcrypt", "gmp", "mysqli", "gettext", "openssl" ]
+    "PHP_EXTENSIONS": [ "pdo", "pdo_mysql", "ldap", "bz2", "zlib", "curl", "mcrypt", "gmp", "mysqli", "gettext", "openssl", "sockets" ]
 }
