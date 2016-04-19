@@ -1,7 +1,7 @@
 ---
 applications:
 - name: ipam
-  memory: 256M
+  memory: 1024M
   instances: 1
   host: ipam
   domain: iops.pivotal.io
