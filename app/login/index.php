@@ -28,13 +28,23 @@ if (!empty($_SERVER[$user_variable])) {
     // try to autoprovision the user
     if ((!$user && $http_auth_settings->enable_provisioning) && !empty($http_auth_settings->email_variable)) 
     {
+            
             $email = $_SERVER[$http_auth_settings->email_variable];
+            
             $role = !empty($_SERVER[$http_auth_settings->role_variable]) ? 
                     $_SERVER[$http_auth_settings->role_variable] :
                     'User';
             $name = !empty($_SERVER[$http_auth_settings->name_variable]) ? 
                     $_SERVER[$http_auth_settings->name_variable] :
-                    '';        
+                    '';
+                
+            $groups = Null;
+            if (!empty($_SERVER[$http_auth_settings->assign_groups])) {
+                $group_ids = $_SERVER[$http_auth_settings->assign_groups];
+                foreach ($group_ids as $gid) {
+                    $groups[$gid] = $gid;
+                }
+            }
                     
             $userdata = array(
                 'username' => $username,
@@ -43,6 +53,10 @@ if (!empty($_SERVER[$user_variable])) {
                 'role' => $role,
                 'authMethod' => $http_auth->id
             );
+            
+            if ($groups) {
+                $userdata['groups'] = json_encode($groups);
+            }
 
             // This next line creates the user
             if (!$Database->insertObject('users', $userdata)) 

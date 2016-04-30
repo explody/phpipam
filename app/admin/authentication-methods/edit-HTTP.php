@@ -11,7 +11,7 @@ $User->check_user_session();
 if($_POST['action'] != "add") {
 	if(!is_numeric($_POST['id']))	{ $Result->show("danger", _("Invalid ID"), true, true); }
 
-	# feth method settings
+	# fetch method settings
 	$method_settings = $Admin->fetch_object ("usersAuthMethod", "id", $_POST['id']);
 	$method_settings->params = json_decode($method_settings->params);
 }
@@ -57,7 +57,7 @@ $delete = $_POST['action']=="delete" ? "disabled" : "";
 	<tr>
 		<td style="width:130px;"><?php print _('Enable Provisioning'); ?></td>
 		<td style="width:250px;">
-			<input type="checkbox" name="enable_provisioning" class="form-control input-sm" value="1" <?php print $method_settings->params->enable_provisioning ? 'checked' : ''; ?><?php print $delete; ?>>
+			<input type="checkbox" name="enable_provisioning" value="1" <?php print $method_settings->params->enable_provisioning ? 'checked' : ''; ?><?php print $delete; ?>>
 			<input type="hidden" name="type" value="HTTP">
 			<input type="hidden" name="id" value="<?php print @$method_settings->id; ?>">
 			<input type="hidden" name="action" value="<?php print @$_POST['action']; ?>">
@@ -89,6 +89,23 @@ $delete = $_POST['action']=="delete" ? "disabled" : "";
 			<?php print _('Server variable that contains the user email address.'); ?>
 		</td>
 	</tr>
+    
+    <!-- Assign Groups -->
+    <tr>
+        <td><?php print _('Assign Groups'); ?></td>
+        <td>
+            <?php 
+            $all_groups	= $Admin->fetch_all_objects ("userGroups", "g_id"); 
+            foreach ($all_groups as $g) {
+                $checked = in_array($g->g_id, $method_settings->params->assign_groups) ? 'checked' : '';
+                print "<input type='checkbox' name='assign_groups[]' value='$g->g_id' $checked>&nbsp;$g->g_name<br />";
+            }
+            ?>
+        </td>
+        <td class="assign_groups info2">
+            <?php print _('Autoprovisioned users will be assigned to these groups. Default: none'); ?>
+        </td>
+    </tr>
     
     <!-- Full Name -->
     <tr>
