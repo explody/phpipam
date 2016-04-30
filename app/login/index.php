@@ -37,11 +37,11 @@ if (!empty($_SERVER[$user_variable])) {
                 'username' => $username,
                 'email' => $email,
                 'role' => $role,
-                'authMethod' => 'HTTP'
+                'authMethod' => $http_auth->id
             );
 
             // This next line creates the user
-            if (!$Database->insertObject($table, $values)) 
+            if (!$Database->insertObject('users', $userdata)) 
             { 
                 $Result->show("danger",  _("User autoprovision failed").'!', true); 
             }
