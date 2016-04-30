@@ -38,7 +38,7 @@ if (!empty($_SERVER[$user_variable])) {
                 'email' => $email,
                 'role' => $role,
                 'authMethod' => 'HTTP'
-            )
+            );
             $Admin = new Admin ($Database);
             
             // This next line creates the user
