@@ -29,13 +29,17 @@ if (!empty($_SERVER[$user_variable])) {
     if ((!$user && $http_auth_settings->enable_provisioning) && !empty($http_auth_settings->email_variable)) 
     {
             $email = $_SERVER[$http_auth_settings->email_variable];
-            $role = !empty($http_auth_settings->role_variable) ? 
+            $role = !empty($_SERVER[$http_auth_settings->role_variable]) ? 
                     $_SERVER[$http_auth_settings->role_variable] :
                     'User';
+            $name = !empty($_SERVER[$http_auth_settings->name_variable]) ? 
+                    $_SERVER[$http_auth_settings->name_variable] :
+                    '';        
                     
             $userdata = array(
                 'username' => $username,
                 'email' => $email,
+                'real_name' => $name,
                 'role' => $role,
                 'authMethod' => $http_auth->id
             );
