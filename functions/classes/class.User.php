@@ -831,6 +831,7 @@ class User extends Common_functions {
 
         # first we need to check if username exists
         $this->fetch_user_details ($username);
+        
         # set method type if set, otherwise presume local auth
         $this->authmethodid = strlen(@$this->user->authMethod)>0 ? $this->user->authMethod : 1;
 
@@ -869,7 +870,7 @@ class User extends Common_functions {
             # admin?
             if($user->role == "Administrator")    { $this->isadmin = true; }
 
-            if(sizeof($usert)==0)    { $this->block_ip (); $this->Log->write ("User login", _('Invalid username'), 2, $username ); $this->Result->show("danger", _("Invalid username or password"), true);}
+            if(sizeof($usert)==0)    { $this->block_ip (); $this->Log->write ("User login", _('Invalid username'), 2, $username ); $this->Result->show("danger", _("Invalid username or password 4"), true);}
             else                     { $this->user = $user; }
         }
     }
@@ -960,11 +961,11 @@ class User extends Common_functions {
             # add blocked count
             $this->block_ip ();
 
-            $this->Log->write( "User login", "Invalid username or password", 2, $username );
+            $this->Log->write( "User login", "Invalid username or password 1", 2, $username );
 
             # apache
             if (!empty($_SERVER['PHP_AUTH_USER'])) { $this->show_http_login(); }
-            else                                 { $this->Result->show("danger", _("Invalid username or password"), true); }
+            else                                 { $this->Result->show("danger", _("Invalid username or password 2"), true); }
         }
     }
 
@@ -1208,7 +1209,7 @@ class User extends Common_functions {
             # add blocked count
             $this->block_ip ();
             $this->Log->write( "Radius login", "Failed to authenticate user on radius server", 2, $username );
-            $this->Result->show("danger", _("Invalid username or password"), true);
+            $this->Result->show("danger", _("Invalid username or password 3"), true);
         }
     }
 
