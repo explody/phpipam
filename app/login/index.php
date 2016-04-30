@@ -39,10 +39,9 @@ if (!empty($_SERVER[$user_variable])) {
                 'role' => $role,
                 'authMethod' => 'HTTP'
             );
-            $Admin = new Admin ($Database);
-            
+
             // This next line creates the user
-            if (!$Admin->object_modify('users', 'add', 'id', $userdata)) 
+            if (!$Database->insertObject($table, $values)) 
             { 
                 $Result->show("danger",  _("User autoprovision failed").'!', true); 
             }
