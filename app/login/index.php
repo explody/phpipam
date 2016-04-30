@@ -40,7 +40,7 @@ if (!empty($_SERVER[$user_variable])) {
                 
             $groups = Null;
             if (!empty($_SERVER[$http_auth_settings->assign_groups])) {
-                $groups = {};
+                $groups = array();
                 $group_ids = $_SERVER[$http_auth_settings->assign_groups];
                 foreach ($group_ids as $gid) {
                     $groups[$gid] = $gid;
