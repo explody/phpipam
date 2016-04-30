@@ -7,12 +7,6 @@
 # verify that user is logged in
 $User->check_user_session();
 
-$placeholders = array(
-    'username_variable' => 'PHP_AUTH_USER',
-    'email_variable'    => 'REMOTE_USER_EMAIL',
-    'role_variable'     => 'REMOTE_USER_ROLE'
-);
-
 # ID must be numeric */
 if($_POST['action'] != "add") {
 	if(!is_numeric($_POST['id']))	{ $Result->show("danger", _("Invalid ID"), true, true); }
@@ -78,7 +72,7 @@ $delete = $_POST['action']=="delete" ? "disabled" : "";
     <tr>
         <td><?php print _('Username Variable (required)'); ?></td>
         <td>
-            <input type="text" name="username_variable" class="form-control input-sm" value="<?php print @$method_settings->params->username_variable; ?>" placeholder="PHP_AUTH_USER" <?php print $delete; ?> >
+            <input type="text" name="username_variable" class="form-control input-sm" value="<?php print @$method_settings->params->username_variable; ?>" placeholder="REMOTE_USER" <?php print $delete; ?> >
         </td>
         <td class="username_variable info2">
             <?php print _('Server variable that contains the username.'); ?>
@@ -95,6 +89,17 @@ $delete = $_POST['action']=="delete" ? "disabled" : "";
 			<?php print _('Server variable that contains the user email address.'); ?>
 		</td>
 	</tr>
+    
+    <!-- Full Name -->
+    <tr>
+        <td><?php print _('Full Name Variable (optional)'); ?></td>
+        <td>
+            <input type="text" name="email_variable" class="form-control input-sm" value="<?php print @$method_settings->params->email_variable; ?>" placeholder="REMOTE_USER_NAME" <?php print $delete; ?>>
+        </td>
+        <td class="email_variable info2">
+            <?php print _('Server variable that contains the user\'s full name'); ?>
+        </td>
+    </tr>
 
 	<!-- Role -->
 	<tr>
