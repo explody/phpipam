@@ -94,10 +94,10 @@ $delete = $_POST['action']=="delete" ? "disabled" : "";
     <tr>
         <td><?php print _('Full Name Variable (optional)'); ?></td>
         <td>
-            <input type="text" name="email_variable" class="form-control input-sm" value="<?php print @$method_settings->params->email_variable; ?>" placeholder="REMOTE_USER_NAME" <?php print $delete; ?>>
+            <input type="text" name="name_variable" class="form-control input-sm" value="<?php print @$method_settings->params->name_variable; ?>" placeholder="REMOTE_USER_NAME" <?php print $delete; ?>>
         </td>
         <td class="email_variable info2">
-            <?php print _('Server variable that contains the user\'s full name'); ?>
+            <?php print _('Optional server variable that contains the user\'s full name'); ?>
         </td>
     </tr>
 
