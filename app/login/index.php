@@ -38,11 +38,10 @@ if (!empty($_SERVER[$user_variable])) {
                     $_SERVER[$http_auth_settings->name_variable] :
                     '';
                 
-            $groups = Null;
-            if (!empty($_SERVER[$http_auth_settings->assign_groups])) {
+            $groups = false;
+            if (!empty($http_auth_settings->assign_groups)) {
                 $groups = array();
-                $group_ids = $_SERVER[$http_auth_settings->assign_groups];
-                foreach ($group_ids as $gid) {
+                foreach ($http_auth_settings->assign_groups as $gid) {
                     $groups[$gid] = $gid;
                 }
             }
