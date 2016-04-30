@@ -18,7 +18,7 @@ if (!empty($_SERVER[$user_variable])) {
     $username = $_SERVER[$user_variable];
     
     try { 
-        $user = $User->Database->findObject("users", "username", $username); 
+        $user = $Database->findObject("users", "username", $username); 
     }
     catch (Exception $e) { 
         $User->Result->show("danger", _("Error: ").$e->getMessage(), true);
