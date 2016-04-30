@@ -18,10 +18,10 @@ if (!empty($_SERVER[$user_variable])) {
     $username = $_SERVER[$user_variable];
     
     try { 
-        $user = $this->Database->findObject("users", "username", $username); 
+        $user = $User->Database->findObject("users", "username", $username); 
     }
     catch (Exception $e) { 
-        $this->Result->show("danger", _("Error: ").$e->getMessage(), true);
+        $User->Result->show("danger", _("Error: ").$e->getMessage(), true);
     }
     
     // If the username does not exist, provisioning is enabled and the email variable exists,
