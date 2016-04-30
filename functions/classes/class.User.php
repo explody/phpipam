@@ -977,7 +977,7 @@ class User extends Common_functions {
      * @param mixed $password
      * @return void
      */
-    public function auth_http ($username, $password) {
+    public function auth_HTTP ($username, $password) {
         # save to session
         $this->write_session_parameters ();
 

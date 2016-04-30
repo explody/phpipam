@@ -89,7 +89,7 @@ foreach($all_methods as $method) {
 	<?php print _("phpIPAM currently supports 6 methods for authentication:"); ?>
 	<ul>
 		<li><?php print _("Local authentication"); ?></li>
-		<li><?php print _("Apache authentication"); ?></li>
+		<li><?php print _("External HTTP authentication"); ?></li>
 		<li><?php print _("AD (Active Directory) authentication"); ?></li>
 		<li><?php print _("LDAP authentication"); ?></li>
 		<li><?php print _("NetIQ authentication"); ?></li>

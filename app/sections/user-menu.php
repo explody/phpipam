@@ -60,6 +60,6 @@ $User->check_user_session();
 	<span class="info"><?php print _('Logged in as'); ?>  <?php print "&nbsp;"._($User->user->role); ?></span><br>
 
 	<!-- logout -->
-	<a  href="<?php print create_link("login"); ?>"><?php print _('Logout'); ?>  <i class="fa fa-pad-left fa-sign-out"></i></a>
+	<a  href="<?php print create_link("logout"); ?>"><?php print _('Logout'); ?>  <i class="fa fa-pad-left fa-sign-out"></i></a>
 	<?php } ?>
 </div>
