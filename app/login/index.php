@@ -5,9 +5,9 @@ include 'functions/checks/check_php_build.php';        # check for support for P
 $http_auth = $User->fetch_object('usersAuthMethod', 'type', 'HTTP');
 $http_auth_settings = json_decode($http_auth->params);
 
-if (array_key_exists('username_variable', $http_auth_settings) && !empty($http_auth_settings['username_variable'])) 
+if (!empty($http_auth_settings->username_variable)) 
 {
-    $user_variable = $http_auth_settings['username_variable'];
+    $user_variable = $http_auth_settings->username_variable;
 } else {
     $user_variable = 'PHP_AUTH_USER';
 }
@@ -26,11 +26,11 @@ if (!empty($_SERVER[$user_variable])) {
     
     // If the username does not exist, provisioning is enabled and the email variable exists,
     // try to autoprovision the user
-    if ((!$user && $http_auth_settings['enable_provisioning']) && array_key_exists('email_variable', $http_auth_settings)) 
+    if ((!$user && $http_auth_settings->enable_provisioning) && !empty($http_auth_settings->email_variable)) 
     {
-            $email = $_SERVER[$http_auth_settings['email_variable']];
-            $role = array_key_exists($_SERVER, $http_auth_settings['role_variable']) ? 
-                    $_SERVER[$http_auth_settings['role_variable']] :
+            $email = $_SERVER[$http_auth_settings->email_variable];
+            $role = !empty($http_auth_settings->role_variable) ? 
+                    $_SERVER[$http_auth_settings->role_variable] :
                     'User';
                     
             $userdata = array(
