@@ -29,8 +29,8 @@ if (!empty($_SERVER[$user_variable])) {
     if ((!$user && $http_auth_settings['enable_provisioning']) && array_key_exists('email_variable', $http_auth_settings)) 
     {
             $email = $_SERVER[$http_auth_settings['email_variable']];
-            $role = array_key_exists($_SERVER, $http_auth_settings['role_variable']) : 
-                    $_SERVER[$http_auth_settings['role_variable']] ?
+            $role = array_key_exists($_SERVER, $http_auth_settings['role_variable']) ? 
+                    $_SERVER[$http_auth_settings['role_variable']] :
                     'User';
                     
             $userdata = array(
