@@ -41,7 +41,15 @@ $values = array("id"=>@$_POST['id'],
 				"description"=>@$_POST['description'],
 				);
 # add params
-unset($_POST['id'], $_POST['type'], $_POST['description'], $_POST['action']);
+unset($_POST['id'], $_POST['type'], $_POST['description'], $_POST['action'], $_POST['csrf_cookie']);
+
+# Unset empty values to keep from cluttering authmethod settings
+foreach ($_POST as $k => $v) {
+    if (empty($v)) {
+        unset($_POST[$k]);
+    }
+}
+
 $values["params"]=json_encode($_POST);
 
 # add - set protected
