@@ -1,11 +1,13 @@
 <?php 
 if ($User->auth_method_type() == 'auth_HTTP') {
     $http_auth_settings = $User->authmethodparams;
-    if (isset($http_auth_settings->logout_redirect_url)) {
+    if (!empty($http_auth_settings->logout_redirect_url)) {
         $logout_url = $http_auth_settings->logout_redirect_url;
     } else {
         $logout_url = create_link('login');
     }
+} else {
+    $logout_url = create_link('login');
 }
 ?>
 
