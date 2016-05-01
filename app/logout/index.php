@@ -1,5 +1,5 @@
 <?php 
-if ($User->authmethodtype == 'auth_HTTP') {
+if ($User->auth_method_type() == 'auth_HTTP') {
     $http_auth_settings = $User->authmethodparams;
     if (isset($http_auth_settings->logout_redirect_url)) {
         $logout_url = $http_auth_settings->logout_redirect_url;
