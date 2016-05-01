@@ -53,15 +53,45 @@ $delete = $_POST['action']=="delete" ? "disabled" : "";
 		<td colspan="3"><hr></td>
 	</tr>
 
+    <!-- Require HTTP Auth-->
+    <tr>
+        <td style="width:130px;"><?php print _('Require HTTP Auth'); ?></td>
+        <td style="width:250px;">
+            <input type="checkbox" name="require_http" value="1" <?php print $method_settings->params->require_http ? 'checked' : ''; ?><?php print $delete; ?>>
+            <input type="hidden" name="type" value="HTTP">
+            <input type="hidden" name="id" value="<?php print @$method_settings->id; ?>">
+            <input type="hidden" name="action" value="<?php print @$_POST['action']; ?>">
+            <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+        </td>
+        <td class="info2"><?php print _('If selected, the web UI will require HTTP auth. Does not apply to the API.'); ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td><?php print _('Login URL (optional)'); ?></td>
+        <td>
+            <input type="text" name="login_url" class="form-control input-sm" value="<?php print @$method_settings->params->login_url; ?>" <?php print $delete; ?> >
+        </td>
+        <td class="login_url info2">
+            <?php print _('If a user arrives at the app without HTTP auth, redirect them to this URL. Be careful with this one. If you set it to a URL that redirects to "/login", you can put the browser into a redirect loop. Default: /'); ?>
+        </td>
+    </tr>
+    
+    <tr>
+        <td><?php print _('Logout Redirect URL (optional)'); ?></td>
+        <td>
+            <input type="text" name="logout_redirect_url" class="form-control input-sm" value="<?php print @$method_settings->params->logout_redirect_url; ?>" <?php print $delete; ?> >
+        </td>
+        <td class="logout_redirect_url info2">
+            <?php print _('Upon logout, to where should the app redirect the user? Default: /logout'); ?>
+        </td>
+    </tr>
+
 	<!-- Enable provisioning -->
 	<tr>
 		<td style="width:130px;"><?php print _('Enable Provisioning'); ?></td>
 		<td style="width:250px;">
 			<input type="checkbox" name="enable_provisioning" value="1" <?php print $method_settings->params->enable_provisioning ? 'checked' : ''; ?><?php print $delete; ?>>
-			<input type="hidden" name="type" value="HTTP">
-			<input type="hidden" name="id" value="<?php print @$method_settings->id; ?>">
-			<input type="hidden" name="action" value="<?php print @$_POST['action']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 		<td class="info2"><?php print _('If provisioning is enabled, users will be auto-created based on HTTP auth headers.'); ?>
 		</td>
