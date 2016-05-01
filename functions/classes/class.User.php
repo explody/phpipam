@@ -850,16 +850,6 @@ class User extends Common_functions {
             $this->$authmethodtype ($username, $password);
         }
     }
-    
-    /**
-     * Getter for the auth method assigned to this user
-     *
-     * @access public
-     * @return string
-     */
-    public function auth_method_type () {
-        return $this->authmethodtype ? $this->authmethodtype : false;
-    }
 
     /**
      * tries to fetch user datails from database by username if not already existing locally

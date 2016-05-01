@@ -1,11 +1,25 @@
 <?php 
-if ($User->auth_method_type() == 'auth_HTTP') {
-    $http_auth_settings = $User->authmethodparams;
+
+// Something is wrong with the $User object. the authmethodid always comes across as 1
+// while in the 'user' attribute, the 'authMethod' is correct. So, go straight
+// to the DB with the accurate ID here.
+try { 
+    $auth_method = $User->Database->getObject("usersAuthMethod", $User->user->authMethod); 
+}
+catch (Exception $e) {
+    $Result->show("danger", _("Error: ").$e->getMessage(), true);
+}
+if ($auth_method == 'HTTP') {
+    
+    $http_auth = $User->fetch_object('usersAuthMethod', 'type', 'HTTP');
+    $http_auth_settings = json_decode($http_auth->params);
+    
     if (!empty($http_auth_settings->logout_redirect_url)) {
         $logout_url = $http_auth_settings->logout_redirect_url;
     } else {
         $logout_url = create_link('login');
     }
+    
 } else {
     $logout_url = create_link('login');
 }
@@ -110,7 +124,7 @@ if ($User->auth_method_type() == 'auth_HTTP') {
         if ( $User->check_user_session(false) ) {
             # print result
             if($_GET['section']=="timeout")		{ $Result->show("success", _('You session has timed out')); }
-            else								{ $Result->show("success", _('You have logged out' . print_r($_COOKIE))); }
+            else								{ $Result->show("success", _('You have logged out')); }
 
             # write log
             $Log->write( "User logged out", "User $User->username has logged out", 0, $User->username );
