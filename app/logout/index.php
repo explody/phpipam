@@ -89,6 +89,24 @@
 		textdomain("phpipam");								// Choose domain
 	}
 	?>
+    
+    <!-- logout -->
+    <div id="loginCheck">
+        <?php
+        # deauthenticate user
+        if ( $User->check_user_session(false) ) {
+            # print result
+            if($_GET['section']=="timeout")		{ $Result->show("success", _('You session has timed out')); }
+            else								{ $Result->show("success", _('You have logged out')); }
+
+            # write log
+            $Log->write( "User logged out", "User $User->username has logged out", 0, $User->username );
+
+            # destroy session
+            $User->destroy_session();
+        }
+        ?>
+    </div>
 
 </div>
 </div>
