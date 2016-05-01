@@ -11,8 +11,7 @@ catch (Exception $e) {
 }
 if ($auth_method->type == 'HTTP') {
     
-    $http_auth = $User->fetch_object('usersAuthMethod', 'type', 'HTTP');
-    $http_auth_settings = json_decode($http_auth->params);
+    $http_auth_settings = json_decode($auth_method->params);
     
     if (!empty($http_auth_settings->logout_redirect_url)) {
         $logout_url = $http_auth_settings->logout_redirect_url;
