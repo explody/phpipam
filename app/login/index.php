@@ -12,6 +12,14 @@ if (!empty($http_auth_settings->username_variable))
     $user_variable = 'PHP_AUTH_USER';
 }
 
+if ($http_auth_settings->require_http && empty($_SERVER[$user_variable])) {
+    if (!empty($http_auth_settings->login_url)) {
+        header( "Location: $http_auth_settings->login_url" ) ;
+    } else {
+        header( 'Location: /' ) ;
+    }
+}
+
 // http auth
 if (!empty($_SERVER[$user_variable])) {
     

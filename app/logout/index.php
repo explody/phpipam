@@ -1,3 +1,29 @@
+<?php 
+
+// Something is wrong with the $User object. the authmethodid always comes across as 1
+// while in the 'user' attribute, the 'authMethod' is correct. So, go straight
+// to the DB with the accurate ID here.
+try { 
+    $auth_method = $Database->getObject('usersAuthMethod', $User->user->authMethod); 
+}
+catch (Exception $e) {
+    $Result->show('danger', _("Error: ").$e->getMessage(), true);
+}
+if ($auth_method->type == 'HTTP') {
+    
+    $http_auth_settings = json_decode($auth_method->params);
+    
+    if (!empty($http_auth_settings->logout_redirect_url)) {
+        $logout_url = $http_auth_settings->logout_redirect_url;
+    } else {
+        $logout_url = create_link('login');
+    }
+    
+} else {
+    $logout_url = create_link('login');
+}
+?>
+
 <!DOCTYPE HTML>
 <html lang="en">
 
@@ -7,7 +33,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
     
-    <meta http-equiv="refresh" content="2;URL=<?php print create_link('login');?>">
+    <meta http-equiv="refresh" content="2;URL=<?php print $logout_url;?>">
     
 	<meta name="Description" content="">
 	<meta name="title" content="<?php print $User->settings->siteTitle; ?>">
