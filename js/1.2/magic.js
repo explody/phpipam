@@ -528,8 +528,8 @@ $('a.scan_subnet').click(function() {
 	showSpinner();
 	var subnetId = $(this).attr('data-subnetId');
 	$.post('app/subnets/scan/subnet-scan.php', {subnetId:subnetId}, function(data) {
-        $('#popupOverlay div.popup_w700').html(data);
-        showPopup('popup_w700');
+        $('#popupOverlay div.popup_wmasks').html(data);
+        showPopup('popup_wmasks');
 		hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	return false;
@@ -549,6 +549,7 @@ $(document).on ('change', "select#type", function() {
 //start scanning
 $(document).on('click','#subnetScanSubmit', function() {
 	showSpinner();
+	$('#subnetScanResult').slideUp('fast');
 	var subnetId = $(this).attr('data-subnetId');
 	var type 	 = $('select[name=type]').find(":selected").val();
 	if($('input[name=debug]').is(':checked'))	{ var debug = 1; }
@@ -556,15 +557,28 @@ $(document).on('click','#subnetScanSubmit', function() {
 	var port     = $('input[name=telnetports]').val();
 	$('#alert-scan').slideUp('fast');
 	$.post('app/subnets/scan/subnet-scan-execute.php', {subnetId:subnetId, type:type, debug:debug, port:port}, function(data) {
-        $('#subnetScanResult').html(data);
+        $('#subnetScanResult').html(data).slideDown('fast');
 		hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	return false;
 });
 //remove result
 $(document).on('click', '.resultRemove', function() {
+	// if MAC table show IP that is hidden
+	if ($(this).hasClass('resultRemoveMac')) {
+    	// if this one is hidden dont show ip for next
+    	if ($(this).parent().parent().find('span.ip-address').hasClass('hidden')) {
+
+    	}
+    	// else show
+        else {
+            $(this).parent().parent().next().find('span.ip-address').removeClass('hidden');
+        }
+	}
+    // get target
 	var target = $(this).attr('data-target');
 	$('tr.'+target).remove();
+
 	return false;
 });
 //submit scanning result
@@ -1313,11 +1327,12 @@ $('.checkAuthMethod').click(function () {
 ***********************/
 $('#instructionsForm').submit(function () {
     var csrf_cookie = $("#instructionsForm input[name=csrf_cookie]").val();
+    var id = $("#instructionsForm input[name=id]").val();
 	var instructions = CKEDITOR.instances.instructions.getData();
 	$('div.instructionsPreview').hide('fast');
 
     showSpinner();
-    $.post('app/admin/instructions/edit-result.php', {instructions:instructions, csrf_cookie:csrf_cookie}, function(data) {
+    $.post('app/admin/instructions/edit-result.php', {instructions:instructions, csrf_cookie:csrf_cookie, id:id}, function(data) {
         $('div.instructionsResult').html(data).fadeIn('fast');
         if(data.search("alert-danger")==-1 && data.search("error")==-1)     	{ $('div.instructionsResult').delay(2000).fadeOut('slow'); hideSpinner(); }
         else                             	{ hideSpinner(); }

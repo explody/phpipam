@@ -9,6 +9,7 @@ if( !empty($_SERVER['PHP_AUTH_USER']) ) {
 	// Redirect user where he came from, if unknown go to dashboard.
 	if( isset($_COOKIE['phpipamredirect']) )    { header("Location: ".$_COOKIE['phpipamredirect']); }
 	else                                        { header("Location: ".create_link("dashboard")); }
+	exit();
 }
 ?>
 
@@ -113,7 +114,7 @@ if( !empty($_SERVER['PHP_AUTH_USER']) ) {
 	<div id="loginCheck">
 		<?php
 		# deauthenticate user
-		if ( $User->check_user_session(false) ) {
+		if ( $User->is_authenticated()===true ) {
 			# print result
 			if($_GET['section']=="timeout")		{ $Result->show("success", _('You session has timed out')); }
 			else								{ $Result->show("success", _('You have logged out')); }
