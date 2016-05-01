@@ -4,12 +4,12 @@
 // while in the 'user' attribute, the 'authMethod' is correct. So, go straight
 // to the DB with the accurate ID here.
 try { 
-    $auth_method = $User->Database->getObject("usersAuthMethod", $User->user->authMethod); 
+    $auth_method = $Database->getObject('usersAuthMethod', $User->user->authMethod); 
 }
 catch (Exception $e) {
-    $Result->show("danger", _("Error: ").$e->getMessage(), true);
+    $Result->show('danger', _("Error: ").$e->getMessage(), true);
 }
-if ($auth_method == 'HTTP') {
+if ($auth_method->type == 'HTTP') {
     
     $http_auth = $User->fetch_object('usersAuthMethod', 'type', 'HTTP');
     $http_auth_settings = json_decode($http_auth->params);
