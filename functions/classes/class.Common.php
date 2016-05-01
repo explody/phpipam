@@ -440,7 +440,7 @@ class Common_functions  {
 	public function strip_input_tags ($input) {
 		if(is_array($input)) {
 			foreach($input as $k=>$v) {
-    			$input[$k] = strip_tags($v);
+                $input[$k] = $this->strip_input_tags($v);
             }
 		}
 		else {
