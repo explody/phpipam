@@ -1,3 +1,14 @@
+<?php 
+if ($User->authmethodtype == 'auth_HTTP') {
+    $http_auth_settings = $User->authmethodparams;
+    if (isset($http_auth_settings->logout_redirect_url)) {
+        $logout_url = $http_auth_settings->logout_redirect_url;
+    } else {
+        $logout_url = create_link('login');
+    }
+}
+?>
+
 <!DOCTYPE HTML>
 <html lang="en">
 
@@ -7,7 +18,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
     
-    <meta http-equiv="refresh" content="2;URL=<?php print create_link('login');?>">
+    <meta http-equiv="refresh" content="2;URL=<?php print $logout_url;?>">
     
 	<meta name="Description" content="">
 	<meta name="title" content="<?php print $User->settings->siteTitle; ?>">
@@ -97,7 +108,7 @@
         if ( $User->check_user_session(false) ) {
             # print result
             if($_GET['section']=="timeout")		{ $Result->show("success", _('You session has timed out')); }
-            else								{ $Result->show("success", _('You have logged out')); }
+            else								{ $Result->show("success", _('You have logged out' . print_r($_COOKIE))); }
 
             # write log
             $Log->write( "User logged out", "User $User->username has logged out", 0, $User->username );
