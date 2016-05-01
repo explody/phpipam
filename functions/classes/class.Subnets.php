@@ -728,7 +728,12 @@ class Subnets extends Common_functions {
 	 */
 	public function has_slaves ($subnetId) {
     	// NULL subnetId cannot have slaves
-    	return is_null($subnetId) ? false : $this->count_database_objects ("subnets", "masterSubnetId", $subnetId);
+    	if (is_null($subnetId))     { return false; }
+    	else {
+        	$cnt = $this->count_database_objects ("subnets", "masterSubnetId", $subnetId);
+        	if ($cnt==0) { return false; }
+        	else         { return true; }
+    	}
 	}
 
 	/**
@@ -741,7 +746,6 @@ class Subnets extends Common_functions {
 	public function fetch_subnet_slaves ($subnetId) {
     	// fetch
 		$slaves = $this->fetch_multiple_objects ("subnets", "masterSubnetId", $subnetId, "subnet", true);
-
 		# save to subnets cache
         if ($slaves!==false) {
 			foreach($slaves as $slave) {
@@ -839,8 +843,9 @@ class Subnets extends Common_functions {
 		$root = false;
 
 		while($root === false) {
-			$subd = (array) $this->fetch_subnet("id", $subnetId);		# get subnet details
-			if(sizeof($subd)>0) {
+			$subd = $this->fetch_object("subnets", "id", $subnetId);		# get subnet details
+			if($subd!==false) {
+    			$subd = (array) $subd;
 				# not root yet
 				if(@$subd['masterSubnetId']!=0) {
 					array_unshift($parents, $subd['masterSubnetId']);
@@ -856,6 +861,8 @@ class Subnets extends Common_functions {
 				$root = true;
 			}
 		}
+		# remove 0
+		unset($parents[0]);
 		# return array
 		return $parents;
 	}

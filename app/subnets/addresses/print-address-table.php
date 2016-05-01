@@ -253,6 +253,14 @@ else {
                     // search for hostname records
 					$records = $PowerDNS->search_records ("name", $addresses[$n]->dns_name, 'name', true);
 					$ptr	 = $PowerDNS->fetch_record ($addresses[$n]->PTR);
+					$ptr_name = $PowerDNS->get_ip_ptr_name(long2ip($addresses[$n]->ip_addr));
+					if(! $ptr || $ptr_name != $ptr->name) {
+					        $ptr = $PowerDNS->search_records("name", $ptr_name);
+					        if($ptr) {
+					                $ptr = array_pop($ptr);
+					                $Addresses->ptr_link($addresses[$n]->id, $ptr->id);
+					        } else { $Addresses->ptr_link($addresses[$n]->id, 0); }
+					}
 					unset($dns_records);
 					if ($records !== false || $ptr!==false) {
 						$dns_records[] = "<hr>";
@@ -317,7 +325,7 @@ else {
 				// add button
 				if ($User->settings->enablePowerDNS==1) {
 				// add new button
-				if ($Subnets->validate_hostname($addresses[$n]->dns_name, false) && ($User->is_admin() || @$User->user->pdns=="Yes"))
+				if ($Subnets->validate_hostname($addresses[$n]->dns_name, false) && ($User->is_admin(false) || @$User->user->pdns=="Yes"))
 				$button = "<i class='fa fa-plus-circle fa-gray fa-href editRecord' data-action='add' data-id='".$Addresses->transform_address($addresses[$n]->ip_addr, "dotted")."' data-domain_id='".$addresses[$n]->dns_name."'></i>";
 				else
 				$button = "";
