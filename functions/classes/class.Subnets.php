@@ -480,7 +480,7 @@ class Subnets extends Common_functions {
 		# null
 		if (is_null($agentId) || !is_numeric($agentId))	{ return false; }
 		# fetch
-		try { $subnets = $this->Database->getObjectsQuery("SELECT `id`,`subnet`,`sectionId`,`mask` FROM `subnets` where `scanAgent` = ? and `discoverSubnet` = 1 and `isFolder`= 0 and `isFull`!= 1 and `mask` > '0' and subnet > 16843009 and `mask` > 20;", array($agentId)); }
+		try { $subnets = $this->Database->getObjectsQuery("SELECT id,subnet,sectionId,mask FROM subnets where scanAgent = ? and discoverSubnet = 1 and isFolder= 0 and isFull!= 1 and mask > '0' and subnet > 16843009 and mask > 20;", array($agentId)); }
 		catch (Exception $e) {
 			$this->Result->show("danger", _("Error: ").$e->getMessage());
 			return false;
@@ -1461,11 +1461,18 @@ class Subnets extends Common_functions {
 	            if($existing_subnet->vrfId==$vrfId || $existing_subnet->vrfId==null) {
 		            # ignore folders!
 		            if($existing_subnet->isFolder!=1) {
-									
-									# If the current subnet to check is the master of new_subnet,
-									# skip the overlap check as new_subnet *must* be a subnetwork 
-									# of the master
-									if($existing_subnet->id != $masterSubnetId)  {
+					                   
+                        // Create a list of the master subnet and all its parents, if any
+                        if ($masterSubnetId != 0) {
+                            $parents = fetch_parents_recursive($masterSubnetId);
+                            array_push($parents, $masterSubnetId);
+                        } else {
+                            $parents = [];
+                        }
+                        
+                        // If the current subnet is in the array of parents, skip the overlap check
+						if(!in_array($existing_subnet->id, $parents))  {
+                            
 				            # check overlapping
 							if($this->identify_address($new_subnet)=="IPv4") {
 								if($this->verify_IPv4_subnet_overlapping ($new_subnet,  $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask)!==false) {
