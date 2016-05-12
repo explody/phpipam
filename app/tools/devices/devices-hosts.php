@@ -99,9 +99,11 @@ if($_GET['sPage']!=0 && sizeof($device)>0) {
 
     			# create links
     			$device[$field['name']] = $Result->create_links ($device[$field['name']]);
-
+                
+                $field_label = empty($field['Comment']) ? $field['name'] : $field['Comment'];
+                
     			print "<tr>";
-    			print "<th>$field[name]</th>";
+    			print "<th>$field_label</th>";
     			print "<td>".$device[$field['name']]."</d>";
     			print "</tr>";
     		}
