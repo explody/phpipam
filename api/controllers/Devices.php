@@ -166,7 +166,7 @@ class Devices_controller extends Common_api_functions
                     # Using the search fields, build a string to query parameters chained together with " or "
                     $search_term = $this->_params->id2;
                     $extended_query = implode(' or ', array_map( 
-                                                         function($k) use ($search_term) { 
+                                                         function($k) { 
                                                              return " $k like ? "; 
                                                          }, $search_fields));
                     
