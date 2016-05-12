@@ -54,7 +54,7 @@ class Common_api_functions {
 	 * @var mixed
 	 * @access protected
 	 */
-	protected $remove_keys;
+	protected $remove_keys = ['editDate','links'];
 
 	/**
 	 * keys
@@ -87,11 +87,6 @@ class Common_api_functions {
 	 * @access protected
 	 */
 	protected $Subnets;
-
-
-
-
-
 
 	/**
 	 * Initializes new Object.
@@ -144,9 +139,7 @@ class Common_api_functions {
 			$this->valid_keys = array_merge($this->valid_keys, $this->custom_keys);
 		}
 
-		# set items to remove
-		$this->remove_keys = array("editDate");
-		# remove update time
+		# remove keys that we universally ignore inbound
 		foreach($this->valid_keys as $k=>$v) {
 			if(in_array($v, $this->remove_keys)) {
 				unset($this->valid_keys[$k]);
@@ -187,7 +180,7 @@ class Common_api_functions {
 		$result = $this->remove_subnets ($result);
 
 		// remap keys
-		$result = $this->remap_keys ($result, $controller);
+		$result = $this->remap_keys ($result);
 
 		# return
 		return $result;
@@ -204,7 +197,7 @@ class Common_api_functions {
 	 */
 	protected function filter_result ($result) {
     	// remap keys before applying filter
-    	$result = $this->remap_keys ($result, false);
+    	$result = $this->remap_keys ($result);
 		// validate
 		$this->validate_filter_by ($result);
 
@@ -382,7 +375,7 @@ class Common_api_functions {
 			return $result;
 		}
 		// tools - devices
-		elseif($controller=="tools/devices") {
+		elseif($controller=="devices") {
 			$result["self"]			 	= array ("GET","POST","DELETE","PATCH");
 			$result["addresses"]        = array ("GET");
 			// return
@@ -498,7 +491,9 @@ class Common_api_functions {
     	$values = array();
     	// loop
 		foreach($this->_params as $pk=>$pv) {
-			if(!in_array($pk, $this->valid_keys)) 	{ $this->Response->throw_exception(400, 'Invalid request key '.$pk); }
+			if(!in_array($pk, $this->valid_keys) && !in_array($pk, $this->remove_keys)) { 
+                $this->Response->throw_exception(400, 'Invalid request key '.$pk); 
+            }
 			// set parameters
 			else {
 				if(!in_array($pk, $this->controller_keys)) {
@@ -506,8 +501,12 @@ class Common_api_functions {
 				}
 			}
 		}
-		# remove editDate
-		unset($values['editDate']);
+        
+        # Quietly drop any ignored keys
+        foreach ($this->remove_keys as $ik) {
+    		unset($values[$ik]);
+        }
+        
 		# return
 		return $values;
 	}
@@ -595,19 +594,29 @@ class Common_api_functions {
 	 * @param mixed $controller (default: null)
 	 * @return void
 	 */
-	protected function remap_keys ($result = null, $controller = null) {
+	protected function remap_keys ($result = false) {
 		// define keys array
 		$this->keys = array("switch"=>"deviceId", "state"=>"tag", "ip_addr"=>"ip", "dns_name"=>"hostname");
 
 		// exceptions
-		if($controller=="vlans") 	{ $this->keys['vlanId'] = "id"; }
-		if($controller=="vrfs")  	{ $this->keys['vrfId'] = "id"; }
-		if($this->_params->controller=="tools" && $this->_params->id=="deviceTypes")  { $this->keys['tid'] = "id"; }
+		if($controller=="vlans") { 
+            $this->keys['vlanId'] = "id"; 
+        }
+		if($controller=="vrfs") { 
+            $this->keys['vrfId'] = "id"; 
+        }
+		if($this->_params->controller=="tools" && $this->_params->id=="deviceTypes") { 
+            $this->keys['tid'] = "id"; 
+        }
 
-		// POST / PATCH
-		if ($_SERVER['REQUEST_METHOD']=="POST" || $_SERVER['REQUEST_METHOD']=="PATCH")		{ return $this->remap_update_keys (); }
-		// GET
-		elseif ($_SERVER['REQUEST_METHOD']=="GET")											{ return $this->remap_result_keys ($result); }
+		// If we have been given result data, it's presumed to be outbound to a client so remap as results
+		if ($result) { 
+            return $this->remap_result_keys ($result); 
+        }
+        // Otherwise, it's inbound data from a client so remap as an inbound add/update
+		else {
+            return $this->remap_update_keys (); 
+        }
 	}
 
 	/**
@@ -619,6 +628,12 @@ class Common_api_functions {
 	private function remap_update_keys () {
 		// loop
 		foreach($this->keys as $k=>$v) {
+            
+            // If the existing key is in the controller's keys but the new key is not, do not remap it
+            if( in_array($v, $this->valid_keys) && !in_array($k, $this->valid_keys) ) {
+                continue;
+            }
+            
 			// match
 			if(array_key_exists($v, $this->_params)) {
 				// replace
