@@ -167,14 +167,17 @@ class Devices_controller extends Common_api_functions
                     $search_term = $this->_params->id2;
                     $extended_query = implode(' or ', array_map( 
                                                          function($k) use ($search_term) { 
-                                                             return " $k like '%$search_term%'"; 
+                                                             return " $k like ? "; 
                                                          }, $search_fields));
+                    
+                    # Set up an array of parameters to match the query we built
+                    $query_params = array_fill(0, count($search_fields), "%$search_term%");
                     
                     # Put together with the base query
                     $search_query = $base_query . $extended_query;
-                    
+
                     # Search query
-                    $devices = $this->Database->getObjectsQuery($search_query);
+                    $devices = $this->Database->getObjectsQuery($search_query, $query_params);
                     
                     return array('code' => 200, 'data' => $this->prepare_result($devices, 'devices', true, false));
                 } else {
