@@ -152,8 +152,9 @@ class Subnets_controller extends Common_api_functions {
 			$this->Response->throw_exception(500, "Failed to create subnet");
 		}
 		else {
-			//set result
-			return array("code"=>201, "data"=>"Subnet created", "location"=>"/api/".$this->_params->app_id."/subnets/".$this->Subnets->lastInsertId."/");
+            # Return the added subnet
+            $result = $this->Tools->fetch_object('subnets', 'id', $this->Subnets->lastInsertId);
+            return array('code' => 201, 'data' => $this->prepare_result($result, 'subnets', true, false));
 		}
 	}
 
@@ -305,7 +306,9 @@ class Subnets_controller extends Common_api_functions {
 			if(!$this->Subnets->modify_subnet ("edit", $values))
 														{ $this->Response->throw_exception(500, 'Subnet update failed'); }
 			else {
-				return array("code"=>200, "data"=>"Subnet updated");
+                // fetch the updated object and hand it back to the client
+                $result = $this->Tools->fetch_object('subnets', 'id', $values['id']);
+                return array('code' => 200, 'data' => $this->prepare_result($result, 'subnets', true, false));
 			}
 		}
 	}

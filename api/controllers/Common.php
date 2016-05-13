@@ -187,7 +187,9 @@ class Common_api_functions {
 		$result = $this->remove_subnets ($result);
 
 		// remap keys
-		$result = $this->remap_keys ($result, $controller);
+        if ($result) {
+    		$result = $this->remap_keys ($result);
+        }
 
 		# return
 		return $result;
@@ -600,14 +602,24 @@ class Common_api_functions {
 		$this->keys = array("switch"=>"deviceId", "state"=>"tag", "ip_addr"=>"ip", "dns_name"=>"hostname");
 
 		// exceptions
-		if($controller=="vlans") 	{ $this->keys['vlanId'] = "id"; }
-		if($controller=="vrfs")  	{ $this->keys['vrfId'] = "id"; }
-		if($this->_params->controller=="tools" && $this->_params->id=="deviceTypes")  { $this->keys['tid'] = "id"; }
-
-		// POST / PATCH
-		if ($_SERVER['REQUEST_METHOD']=="POST" || $_SERVER['REQUEST_METHOD']=="PATCH")		{ return $this->remap_update_keys (); }
-		// GET
-		elseif ($_SERVER['REQUEST_METHOD']=="GET")											{ return $this->remap_result_keys ($result); }
+		if($controller=="vlans") { 
+            $this->keys['vlanId'] = "id"; 
+        }
+		if($controller=="vrfs") { 
+            $this->keys['vrfId'] = "id"; 
+        }
+		if($this->_params->controller=="tools" && $this->_params->id=="deviceTypes") { 
+            $this->keys['tid'] = "id"; 
+        }
+        
+		// If we have been given result data, it's presumed to be outbound to a client so remap as results
+		if ($result) { 
+            return $this->remap_result_keys ($result); 
+        }
+        // Otherwise, it's inbound data from a client so remap as an inbound add/update
+		else {
+            return $this->remap_update_keys (); 
+        }
 	}
 
 	/**
