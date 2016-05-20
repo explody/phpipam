@@ -42,7 +42,8 @@ print "	<th class='hidden-sm hidden-xs'><span rel='tooltip' data-container='body
 if(sizeof(@$custom) > 0) {
 	foreach($custom_fields as $field) {
 		if(!in_array($field['name'], $hidden_fields)) {
-			print "<th class='hidden-sm hidden-xs hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $field[name]'>".$field['name']."</th>";
+            $field_header = empty($field['Comment']) ? $field['name'] : $field['Comment'];
+			print "<th class='hidden-sm hidden-xs hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $field_header'>".$field_header."</th>";
 			$colspanCustom++;
 		}
 	}
