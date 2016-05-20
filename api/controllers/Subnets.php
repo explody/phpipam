@@ -266,6 +266,11 @@ class Subnets_controller extends Common_api_functions {
 				if($result===false)						{ $this->Response->throw_exception(404, "No addresses found"); }
 				else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, "addresses", true, true)); }
 			}
+            elseif($this->_params->id2=="gateway") {
+				$result = $this->read_subnet_gateway ();
+				// check result
+				return array("code"=>200, "data"=>$this->prepare_result ($result, "gateway", true, true));
+			}
 			// slaves
 			elseif($this->_params->id2=="slaves") {
 				$result = $this->read_subnet_slaves ();
