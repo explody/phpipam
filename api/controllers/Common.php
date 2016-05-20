@@ -350,6 +350,7 @@ class Common_api_functions {
 		elseif($controller=="subnets") {
 			$result["self"]			 	= array ("GET","POST","DELETE","PATCH");
 			$result["addresses"]        = array ("GET");
+			$result["gateway"]          = array ("GET");
 			$result["usage"]            = array ("GET");
 			$result["first_free"]       = array ("GET");
 			$result["slaves"]           = array ("GET");
