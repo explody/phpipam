@@ -269,6 +269,9 @@ class Subnets_controller extends Common_api_functions {
             elseif($this->_params->id2=="gateway") {
 				$result = $this->read_subnet_gateway ();
 				// check result
+				if (!$result) {
+					$result = [];
+				}
 				return array("code"=>200, "data"=>$this->prepare_result ($result, "gateway", true, true));
 			}
 			// slaves
