@@ -36,6 +36,7 @@ if($_GET['page']!="install" ) {
 if($_GET['page']=="install")		{ require("app/install/index.php"); }
 elseif($_GET['page']=="upgrade")	{ require("app/upgrade/index.php"); }
 elseif($_GET['page']=="login")		{ require("app/login/index.php"); }
+elseif($_GET['page']=="logout")		{ require("app/logout/index.php"); }
 elseif($_GET['page']=="temp_share")	{ require("app/temp_share/index.php"); }
 elseif($_GET['page']=="request_ip")	{ require("app/login/index.php"); }
 else {

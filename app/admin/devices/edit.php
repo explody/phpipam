@@ -148,7 +148,7 @@ $('#switchManagementEdit').change(function() {
 	<tr>
 		<td><?php print _('SW version'); ?></td>
 		<td>
-			<input type="text" name="version" class="form-control input-sm" placeholder="<?php print _('Software version'); ?>" value="<?php if(isset($device['version'])) print $device['version']; ?>" <?php print $readonly; ?>>
+			<input type="text" name="version" class="form-control input-sm" placeholder="<?php print _('Software Version'); ?>" value="<?php if(isset($device['version'])) print $device['version']; ?>" <?php print $readonly; ?>>
 		</td>
 	</tr>
 

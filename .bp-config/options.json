@@ -1,0 +1,7 @@
+{
+    "PHP_VERSION" : "{PHP_56_LATEST}",
+    "COMPOSER_VENDOR_DIR": "vendor",
+    "WEBDIR": ".",
+    "PHP_MODULES": [ "pear" ],
+    "PHP_EXTENSIONS": [ "pdo", "pdo_mysql", "ldap", "bz2", "zlib", "curl", "mcrypt", "gmp", "mysqli", "gettext", "openssl", "sockets" ]
+}

@@ -55,7 +55,13 @@ foreach($all_methods as $method) {
 		$params = json_decode($method->params);
 		foreach($params as $key=>$parameter) {
 			// mask user/pass
-			if($key=="adminPassword")	{ $parameter = "********"; }
+			if ($key == "adminPassword") { 
+                $parameter = "********"; 
+            }
+            // turn things that don't print well back into JSON
+            if (!is_string($parameter)) {
+                $parameter = implode(',', $parameter);
+            }
 			// print
 			print $key." => ".$parameter."<br>";
 		}
@@ -89,7 +95,7 @@ foreach($all_methods as $method) {
 	<?php print _("phpIPAM currently supports 6 methods for authentication:"); ?>
 	<ul>
 		<li><?php print _("Local authentication"); ?></li>
-		<li><?php print _("Apache authentication"); ?></li>
+		<li><?php print _("External HTTP authentication"); ?></li>
 		<li><?php print _("AD (Active Directory) authentication"); ?></li>
 		<li><?php print _("LDAP authentication"); ?></li>
 		<li><?php print _("NetIQ authentication"); ?></li>

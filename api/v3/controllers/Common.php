@@ -7,105 +7,36 @@
  */
 class Common_api_functions {
 
-
 	/**
-	 * controller_keys
-	 *
-	 * @var mixed
-	 * @access protected
+	 * vars
 	 */
 	protected $controller_keys;
-
-	/**
-	 * _params provided from request
-	 *
-	 * @var mixed
-	 * @access public
-	 */
-	public $_params;
-
-    /**
-     * Custom fields
-     *
-     * @var mixed
-     * @access public
-     */
-    public $custom_fields;
-
-	/**
-	 * valid_keys
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
 	protected $valid_keys;
-
-	/**
-	 * custom_keys
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
 	protected $custom_keys;
+	protected $remove_keys;
 
-	/**
-	 * Keys to be removed
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	protected $remove_keys = ['editDate','links'];
-
-	/**
-	 * keys
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	protected $keys;
-
-	/**
-	 * Master Tools class
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
 	protected $Tools;
-
-	/**
-	 * Response class
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
 	protected $Response;
-
-	/**
-	 * Master subnets class
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
 	protected $Subnets;
 
 	/**
 	 * Initializes new Object.
 	 *
 	 * @access protected
-	 * @param mixed $Object_name		// object name
-	 * @param mixed $Database	       // Database object
+	 * @param mixed $Object		// object name
+	 * @param mixed $Database	// Database object
+	 * @return void
 	 */
-	protected function init_object ($Object_name, $Database) {
+	protected function init_object ($Object, $Database) {
 		// admin fix
-		if($Object_name=="Admin")	    { $this->$Object_name	= new $Object_name ($Database, false); }
+		if($Object=="Admin")	{ $this->$Object	= new $Object ($Database, false); }
 		// User fix
-		elseif($Object_name=="User")	{ $this->$Object_name	= new $Object_name ($Database, true); $this->$Object_name->user = null; }
-		// default
-		else					        { $this->$Object_name	= new $Object_name ($Database); }
+		elseif($Object=="User")	{ $this->$Object	= new $Object ($Database, true); $this->$Object->user = null; }
+		else					{ $this->$Object	= new $Object ($Database); }
 		// set exit method
-		$this->$Object_name->Result->exit_method = "exception";
+		$this->$Object->Result->exit_method = "exception";
 		// set API flag
-		$this->$Object_name->api = true;
+		$this->$Object->api = true;
 	}
 
 	/**
@@ -139,7 +70,9 @@ class Common_api_functions {
 			$this->valid_keys = array_merge($this->valid_keys, $this->custom_keys);
 		}
 
-		# remove keys that we universally ignore inbound
+		# set items to remove
+		$this->remove_keys = array("editDate");
+		# remove update time
 		foreach($this->valid_keys as $k=>$v) {
 			if(in_array($v, $this->remove_keys)) {
 				unset($this->valid_keys[$k]);
@@ -170,7 +103,7 @@ class Common_api_functions {
 		}
 		// filter
 		if (isset($this->_params->filter_by)) {
-								{ $result = $this->filter_result ($result); }
+								{ $result = $this->filter_result ($result, $controller); }
 		}
 		// transform address
 		if($transform_address)	{ $result = $this->transform_address ($result); }
@@ -180,9 +113,7 @@ class Common_api_functions {
 		$result = $this->remove_subnets ($result);
 
 		// remap keys
-        if ($result) {
-    		$result = $this->remap_keys ($result);
-        }
+		$result = $this->remap_keys ($result, $controller);
 
 		# return
 		return $result;
@@ -198,8 +129,6 @@ class Common_api_functions {
 	 * @return void
 	 */
 	protected function filter_result ($result) {
-    	// remap keys before applying filter
-    	$result = $this->remap_keys ($result);
 		// validate
 		$this->validate_filter_by ($result);
 
@@ -339,8 +268,6 @@ class Common_api_functions {
 	 * @return void
 	 */
 	private function define_links ($controller) {
-    	// init
-    	$result = array();
 		// sections
 		if($controller=="sections") {
 			$result["self"]			 	= array ("GET","POST","DELETE","PATCH");
@@ -352,7 +279,6 @@ class Common_api_functions {
 		elseif($controller=="subnets") {
 			$result["self"]			 	= array ("GET","POST","DELETE","PATCH");
 			$result["addresses"]        = array ("GET");
-			$result["gateway"]          = array ("GET");
 			$result["usage"]            = array ("GET");
 			$result["first_free"]       = array ("GET");
 			$result["slaves"]           = array ("GET");
@@ -378,7 +304,7 @@ class Common_api_functions {
 			return $result;
 		}
 		// tools - devices
-		elseif($controller=="devices") {
+		elseif($controller=="tools/devices") {
 			$result["self"]			 	= array ("GET","POST","DELETE","PATCH");
 			$result["addresses"]        = array ("GET");
 			// return
@@ -490,13 +416,8 @@ class Common_api_functions {
 	 * @return void
 	 */
 	protected function validate_keys () {
-    	// init values
-    	$values = array();
-    	// loop
 		foreach($this->_params as $pk=>$pv) {
-			if(!in_array($pk, $this->valid_keys) && !in_array($pk, $this->remove_keys)) { 
-                $this->Response->throw_exception(400, 'Invalid request key '.$pk); 
-            }
+			if(!in_array($pk, $this->valid_keys)) 	{ $this->Response->throw_exception(400, 'Invalid request key '.$pk); }
 			// set parameters
 			else {
 				if(!in_array($pk, $this->controller_keys)) {
@@ -504,12 +425,8 @@ class Common_api_functions {
 				}
 			}
 		}
-        
-        # Quietly drop any ignored keys
-        foreach ($this->remove_keys as $ik) {
-    		unset($values[$ik]);
-        }
-        
+		# remove editDate
+		unset($values['editDate']);
 		# return
 		return $values;
 	}
@@ -597,30 +514,19 @@ class Common_api_functions {
 	 * @param mixed $controller (default: null)
 	 * @return void
 	 */
-	protected function remap_keys ($result = false) {
+	protected function remap_keys ($result = null, $controller = null) {
 		// define keys array
 		$this->keys = array("switch"=>"deviceId", "state"=>"tag", "ip_addr"=>"ip", "dns_name"=>"hostname");
 
 		// exceptions
-		if($controller=="vlans") { 
-            $this->keys['vlanId'] = "id"; 
-        }
-		if($controller=="vrfs") { 
-            $this->keys['vrfId'] = "id"; 
-        }
-		if($this->_params->controller=="tools" && $this->_params->id=="deviceTypes") { 
-            $this->keys['tid'] = "id"; 
-        }
-        
+		if($controller=="vlans") 	{ $this->keys['vlanId'] = "id"; }
+		if($controller=="vrfs")  	{ $this->keys['vrfId'] = "id"; }
+		if($this->_params->controller=="tools" && $this->_params->id=="deviceTypes")  { $this->keys['tid'] = "id"; }
 
-		// If we have been given result data, it's presumed to be outbound to a client so remap as results
-		if ($result) { 
-            return $this->remap_result_keys ($result); 
-        }
-        // Otherwise, it's inbound data from a client so remap as an inbound add/update
-		else {
-            return $this->remap_update_keys (); 
-        }
+		// POST / PATCH
+		if ($_SERVER['REQUEST_METHOD']=="POST" || $_SERVER['REQUEST_METHOD']=="PATCH")		{ return $this->remap_update_keys (); }
+		// GET
+		elseif ($_SERVER['REQUEST_METHOD']=="GET")											{ return $this->remap_result_keys ($result); }
 	}
 
 	/**
@@ -632,12 +538,6 @@ class Common_api_functions {
 	private function remap_update_keys () {
 		// loop
 		foreach($this->keys as $k=>$v) {
-            
-            // If the existing key is in the controller's keys but the new key is not, do not remap it
-            if( in_array($v, $this->valid_keys) && !in_array($k, $this->valid_keys) ) {
-                continue;
-            }
-            
 			// match
 			if(array_key_exists($v, $this->_params)) {
 				// replace
@@ -674,9 +574,6 @@ class Common_api_functions {
 		}
 		# array
 		else {
-			// create a new array for the remapped data
-			$result_remapped = array();
-
 			// loop
 			foreach ($result as $m=>$r) {
 				// start object

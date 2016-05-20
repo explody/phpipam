@@ -1,3 +1,5 @@
 db/bkp
 app/subnets/import-subnet/upload/
 config.php
+.idea
+vendor

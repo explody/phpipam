@@ -189,6 +189,72 @@ class Subnets_controller extends Common_api_functions {
 				if($result==NULL)						{ $this->Response->throw_exception(404, "No subnets found"); }
 				else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, null, true, true)); }
 			}
+            elseif($this->_params->id=="search") {
+                
+                $recursive = false;
+                
+                $search_term = $this->_params->id2;
+                $ipv6 = false;
+                $ipv4 = false;
+                
+                require_once( dirname(__FILE__) . '/../../functions/PEAR/Net/IPv6.php' );
+                require_once( dirname(__FILE__) . '/../../functions/PEAR/Net/IPv4.php' );
+                $this->Net_IPv6 = new Net_IPv6();
+                $this->Net_IPv4 = new Net_IPv4();
+                
+                if ($this->Net_IPv6->checkIPv6($search_term)) {
+                    $ipv6 = true;
+                } 
+                elseif ($this->Net_IPv4->validateIP($search_term)) {
+                    $ipv4 = true;
+                }
+                
+                if ($ipv4) {
+                    $search_term_edited = $this->Tools->reformat_IPv4_for_search ($search_term);
+                }
+                elseif ($ipv6) {
+                    $search_term_edited = $this->Tools->reformat_IPv6_for_search ($search_term);
+                }
+                
+                $result_subnets = $this->Tools->search_subnets($search_term, 
+                                                               $search_term_edited['high'], 
+                                                               $search_term_edited['low'], 
+                                                               $search_term);
+                
+                # A problem arises that search_subnets returns every net that contains an IP 
+                # including parents all the way up the chain.  While it's technically true that
+                # a parent net contains its children nets' IPs, returning the hierarchy by default
+                # can be confusing as the IP has only one subnet, its immediate parent, declared
+                # as its container.  So, unless the caller explicitly asks for the full hierarchy,
+                # return only subnets that directly contain the searched-for IP.
+                # This only applies to ipv4/ipv6 searches.
+                if (count($result_subnets) > 0 && !$recursive && ($ipv4 || $ipv6)) {
+                        
+                    $results_by_id = array();
+                    foreach ($result_subnets as $subnet) {
+                        $results_by_id[$subnet->id] = $subnet;
+                    }
+                    
+                    foreach ($results_by_id as $sid => $subnet) {
+                        # If this is true, the current subnet has a master and that master
+                        # is in the subnet list. So, remove the master. Do this for all 
+                        # nets and only the nets directly containing the searched IP 
+                        # will remain
+                        if (!empty($subnet->masterSubnetId) && 
+                            array_key_exists($subnet->masterSubnetId, $results_by_id)) {
+                            unset($results_by_id[$subnet->masterSubnetId]);
+                        }
+                    }
+                    
+                    # Unset the original results and put back the cleaned list
+                    $result_subnets = array();
+                    foreach ($results_by_id as $sid => $subnet) {
+                        $result_subnets[] = $subnet;
+                    }
+                }
+                return array("code"=>200, "data"=>$this->prepare_result ($result_subnets, null, true, true));
+                
+            }
 			else {
 				// validate id
 				$this->validate_subnet_id ();
@@ -200,6 +266,11 @@ class Subnets_controller extends Common_api_functions {
 				// check result
 				if($result===false)						{ $this->Response->throw_exception(404, "No addresses found"); }
 				else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, "addresses", true, true)); }
+			}
+            elseif($this->_params->id2=="gateway") {
+				$result = $this->read_subnet_gateway ();
+				// check result
+				return array("code"=>200, "data"=>$this->prepare_result ($result, "gateway", true, true));
 			}
 			// slaves
 			elseif($this->_params->id2=="slaves") {

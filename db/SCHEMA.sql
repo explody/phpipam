@@ -282,6 +282,7 @@ CREATE TABLE `devices` (
   `ip_addr` varchar(100) DEFAULT NULL,
   `type` int(2) DEFAULT '0',
   `description` varchar(256) DEFAULT NULL,
+  `version` varchar(64) DEFAULT NULL,
   `sections` varchar(128) DEFAULT NULL,
   `snmp_community` varchar(100) DEFAULT NULL,
   `snmp_version` set('0','1','2') DEFAULT '0',

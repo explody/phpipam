@@ -1,3 +1,5 @@
+CGIPassAuth On
+
 <IfModule mod_rewrite.c>
 
 # apache auth basic auth example
@@ -14,6 +16,7 @@ RewriteEngine on
 # passthroughs
 RewriteRule ^api/.$ - [L]
 RewriteRule ^index.php$ - [L]
+RewriteRule ^env.php$ - [L]
 RewriteRule ^(css|js|site|test)/.*$ - [L]
 RewriteRule app/login/captcha/captchashow.php - [L]
 

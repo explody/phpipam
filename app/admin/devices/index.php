@@ -52,6 +52,9 @@ else {
 	print '	<th>'._('Name').'</th>';
 	print '	<th>'._('IP address').'</th>';
 	print '	<th>'._('Type').'</th>';
+	print '	<th>'._('Vendor').'</th>';
+	print '	<th>'._('Model').'</th>';
+	print '	<th>'._('Version').'</th>';
 	print '	<th>'._('Description').'</th>';
     if($User->settings->enableSNMP=="1")
 	print '	<th>'._('SNMP').'</th>';
@@ -81,6 +84,9 @@ else {
 		print '	<td><a href="'.create_link("tools","devices","hosts",$device['id']).'">'. $device['hostname'] .'</a></td>'. "\n";
 		print '	<td>'. $device['ip_addr'] .'</td>'. "\n";
 		print '	<td>'. @$device_types_i[$device['type']]->tname .'</td>'. "\n";
+		print '	<td>'. $device['vendor'] .'</td>'. "\n";
+		print '	<td>'. $device['model'] .'</td>'. "\n";
+		print '	<td>'. $device['version'] .'</td>'. "\n";
 		print '	<td class="description">'. $device['description'] .'</td>'. "\n";
 
 		// SNMP
