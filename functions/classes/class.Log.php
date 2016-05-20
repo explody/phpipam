@@ -473,8 +473,13 @@ class Logging extends Common_functions {
 
 		# formulate
 		$log = array();
-		foreach($changelog as $k=>$l) {
-			$log[] = "$k: $l";
+        
+		if (is_array($changelog)) { 
+			foreach($changelog as $k=>$l) {
+				$log[] = "$k: $l";
+			}
+		} elseif (is_string($changelog)) {
+			$log[] = $changelog;
 		}
 
 		# open syslog and write log
