@@ -122,18 +122,26 @@ class Vlans_controller extends Common_api_functions {
 	 * Read vlan/domain functions
 	 *
 	 * parameters:
-	 *		- {id}
-	 *		- {id}/subnets/				returns subnets belonging to this VLAN
-	 *		- {id}/subnets/{sectionId}/	returns subnets belonging to this VLAN inside one section
-	 *		- custom_fields				returns custom fields
-	 *		- search/{number}/			returns all vlans with specified number
+	 *      - /                             returns all vlans
+	 *		- /{id}/                        returns vlan details
+	 *		- /{id}/subnets/				returns subnets belonging to this VLAN
+	 *		- /{id}/subnets/{sectionId}/	returns subnets belonging to this VLAN inside one section
+	 *		- /custom_fields/			    returns custom fields
+	 *		- /search/{number}/			    returns all vlans with specified number
 	 *
 	 * @access public
 	 * @return void
 	 */
 	public function GET () {
+		// all
+		if (!isset($this->_params->id)) {
+			$result = $this->Tools->fetch_all_objects ("vlans", 'vlanId');
+			// check result
+			if($result===false)						{ $this->Response->throw_exception(404, 'No vlans configured'); }
+			else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, null, true, true)); }
+		}
 		// check weather to read belonging subnets
-		if(@$this->_params->id2=="subnets") {
+		elseif(@$this->_params->id2=="subnets") {
 			// first validate
 			$this->validate_vlan ();
 			// save result
@@ -224,7 +232,7 @@ class Vlans_controller extends Common_api_functions {
 													{ $this->Response->throw_exception(500, "Vlan creation failed"); }
 		else {
 			//set result
-			return array("code"=>201, "data"=>"Vlan created", "location"=>"/api/".$this->_params->app_id."/vlans/".$this->Admin->lastId."/");
+			return array("code"=>201, "message"=>"Vlan created", "location"=>"/api/".$this->_params->app_id."/vlans/".$this->Admin->lastId."/");
 		}
 	}
 
@@ -256,7 +264,7 @@ class Vlans_controller extends Common_api_functions {
 													{ $this->Response->throw_exception(500, "Vlan edit failed"); }
 		else {
 			//set result
-			return array("code"=>200, "data"=>"Vlan updated");
+			return array("code"=>200, "message"=>"Vlan updated");
 		}
 	}
 
@@ -288,7 +296,7 @@ class Vlans_controller extends Common_api_functions {
 			$this->Admin->remove_object_references ("subnets", "vlanId", $this->_params->id);
 
 			// set result
-			return array("code"=>200, "data"=>"Vlan deleted");
+			return array("code"=>200, "message"=>"Vlan deleted");
 		}
 	}
 

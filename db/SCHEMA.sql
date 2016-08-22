@@ -28,13 +28,13 @@ CREATE TABLE `ipaddresses` (
   `owner` varchar(32) DEFAULT NULL,
   `state`  INT(3)  NULL  DEFAULT '2',
   `switch` INT(11)  UNSIGNED  NULL  DEFAULT NULL,
+  `location` INT(11)  UNSIGNED  NULL  DEFAULT NULL,
   `port` varchar(32) DEFAULT NULL,
   `note` text,
-  `lastSeen` DATETIME  NULL  DEFAULT '0000-00-00 00:00:00',
+  `lastSeen` DATETIME  NULL  DEFAULT '1970-01-01 00:00:01',
   `excludePing` BINARY  NULL  DEFAULT '0',
   `PTRignore` BINARY  NULL  DEFAULT '0',
   `PTR` INT(11)  UNSIGNED  NULL  DEFAULT '0',
-  `NAT` VARCHAR(64)  NULL  DEFAULT NULL,
   `firewallAddressObject` VARCHAR(100) NULL DEFAULT NULL,
   `editDate` TIMESTAMP  NULL  ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -64,7 +64,7 @@ CREATE TABLE `logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `severity` int(11) DEFAULT NULL,
   `date` varchar(32) DEFAULT NULL,
-  `username` varchar(32) DEFAULT NULL,
+  `username` varchar(64) DEFAULT NULL,
   `ipaddr` varchar(64) DEFAULT NULL,
   `command` varchar(128) DEFAULT '0',
   `details` varchar(1024) DEFAULT NULL,
@@ -141,11 +141,15 @@ CREATE TABLE `settings` (
   `firewallZoneSettings` VARCHAR(1024) NOT NULL DEFAULT '{"zoneLength":3,"ipType":{"0":"v4","1":"v6"},"separator":"_","indicator":{"0":"own","1":"customer"},"zoneGenerator":"2","zoneGeneratorType":{"0":"decimal","1":"hex","2":"text"},"deviceType":"3","padding":"on","strictMode":"on","pattern":{"0":"patternFQDN"}}',
   `enablePowerDNS` TINYINT(1)  NULL  DEFAULT '0',
   `powerDNS` TEXT  NULL,
+  `enableDHCP` TINYINT(1)  NULL  DEFAULT '0',
+  `DHCP` VARCHAR(256) NULL default '{"type":"kea","settings":{"file":"\/etc\/kea\/kea.conf"}}',
   `enableMulticast` TINYINT(1)  NULL  DEFAULT '0',
-  `enableNAT` TINYINT(1)  NULL  DEFAULT '0',
+  `enableNAT` TINYINT(1)  NULL  DEFAULT '1',
   `enableSNMP` TINYINT(1)  NULL  DEFAULT '0',
-  `enableThreshold` TINYINT(1)  NULL  DEFAULT '0',
-  `enableRACK` TINYINT(1)  NULL  DEFAULT '0',
+  `enableThreshold` TINYINT(1)  NULL  DEFAULT '1',
+  `enableRACK` TINYINT(1)  NULL  DEFAULT '1',
+  `enableLocations` TINYINT(1)  NULL  DEFAULT '1',
+  `enablePSTN` TINYINT(1)  NULL  DEFAULT '0',
   `link_field` VARCHAR(32)  NULL  DEFAULT '0',
   `version` varchar(5) DEFAULT NULL,
   `dbverified` BINARY(1)  NOT NULL  DEFAULT '0',
@@ -156,7 +160,6 @@ CREATE TABLE `settings` (
   `subnetOrdering` varchar(16) DEFAULT 'subnet,asc',
   `visualLimit` int(2) NOT NULL DEFAULT '0',
   `autoSuggestNetwork` TINYINT(1)  NOT NULL  DEFAULT '0',
-  `permitUserVlanCreate` TINYINT(1)  NOT NULL  DEFAULT '0',
   `pingStatus` VARCHAR(12)  NOT NULL  DEFAULT '1800;3600',
   `defaultLang` INT(3)  NULL  DEFAULT NULL,
   `editDate` TIMESTAMP  NULL  ON UPDATE CURRENT_TIMESTAMP,
@@ -239,6 +242,7 @@ CREATE TABLE `subnets` (
   `mask` VARCHAR(3) NULL DEFAULT NULL,
   `sectionId` INT(11)  UNSIGNED  NULL  DEFAULT NULL,
   `description` text,
+  `linked_subnet` INT(11)  UNSIGNED  NULL  DEFAULT NULL,
   `firewallAddressObject` VARCHAR(100) NULL DEFAULT NULL,
   `vrfId` INT(11)  UNSIGNED  NULL  DEFAULT NULL,
   `masterSubnetId` INT(11)  UNSIGNED  NOT NULL default 0,
@@ -257,7 +261,7 @@ CREATE TABLE `subnets` (
   `isFull` TINYINT(1)  NULL  DEFAULT '0',
   `state` INT(3)  NULL  DEFAULT '2',
   `threshold` int(3)  NULL  DEFAULT 0,
-  `NAT` VARCHAR(64)  NULL  DEFAULT NULL,
+  `location` INT(11)  UNSIGNED  NULL  DEFAULT NULL,
   `editDate` TIMESTAMP  NULL  ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -292,10 +296,11 @@ CREATE TABLE `devices` (
   `rack` int(11) unsigned NULL DEFAULT null,
   `rack_start` int(11) unsigned DEFAULT null,
   `rack_size` int(11) unsigned DEFAULT null,
+  `location` INT(11)  unsigned  NULL  DEFAULT NULL,
   `editDate` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `hostname` (`hostname`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 # Dump of table userGroups
@@ -322,7 +327,7 @@ DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(25) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `username` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `authMethod` INT(2)  NULL  DEFAULT 1,
   `password` CHAR(128)  COLLATE utf8_bin DEFAULT NULL,
   `groups` varchar(1024) COLLATE utf8_bin DEFAULT NULL,
@@ -330,6 +335,8 @@ CREATE TABLE `users` (
   `real_name` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `email` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
   `pdns` SET('Yes','No')  NULL  DEFAULT 'No' ,
+  `editVlan` SET('Yes','No')  NULL  DEFAULT 'No',
+  `pstn` INT(1)  NULL  DEFAULT '1',
   `domainUser` binary(1) DEFAULT '0',
   `widgets` VARCHAR(1024)  NULL  DEFAULT 'statistics;favourite_subnets;changelog;top10_hosts_v4',
   `lang` INT(11) UNSIGNED  NULL  DEFAULT '9',
@@ -343,6 +350,7 @@ CREATE TABLE `users` (
   `compressOverride` SET('default','Uncompress') NOT NULL DEFAULT 'default',
   `hideFreeRange` tinyint(1) DEFAULT '0',
   `printLimit` int(4) unsigned DEFAULT '30',
+  `menuType` SET('Static','Dynamic')  NULL  DEFAULT 'Dynamic',
   `token` VARCHAR(24)  NULL  DEFAULT NULL,
   `token_valid_until` DATETIME  NULL,
   PRIMARY KEY (`username`),
@@ -368,15 +376,15 @@ CREATE TABLE `lang` (
 /* insert default values */
 INSERT INTO `lang` (`l_id`, `l_code`, `l_name`)
 VALUES
-	(1, 'en', 'English'),
-	(2, 'sl_SI', 'Slovenščina'),
-	(3, 'fr_FR', 'Français'),
-	(4, 'nl_NL','Nederlands'),
-	(5, 'de_DE','Deutsch'),
-	(6, 'pt_BR', 'Brazil'),
-	(7,	'es_ES'	,'Español'),
-	(8, 'cs_CZ', 'Czech'),
-	(9, 'en_US', 'English (US)');
+	(1, 'en_GB.UTF8', 'English'),
+	(2, 'sl_SI.UTF8', 'Slovenščina'),
+	(3, 'fr_FR.UTF8', 'Français'),
+	(4, 'nl_NL.UTF8','Nederlands'),
+	(5, 'de_DE.UTF8','Deutsch'),
+	(6, 'pt_BR.UTF8', 'Brazil'),
+	(7,	'es_ES.UTF8'	,'Español'),
+	(8, 'cs_CZ.UTF8', 'Czech'),
+	(9, 'en_US.UTF8', 'English (US)');
 
 
 # Dump of table vlans
@@ -516,7 +524,9 @@ VALUES
 	(11,'IP Calculator', 'Shows IP calculator as widget', 'ipcalc', NULL, 'yes', '6', 'no', 'yes'),
 	(12,'IP Request', 'IP Request widget', 'iprequest', NULL, 'no', '6', 'no', 'yes'),
 	(13,'Threshold', 'Shows threshold usage for top 5 subnets', 'threshold', NULL, 'yes', '6', 'no', 'yes'),
-	(14,'Inactive hosts', 'Shows list of inactive hosts for defined period', 'inactive-hosts', 86400, 'yes', '6', 'yes', 'yes');
+	(14,'Inactive hosts', 'Shows list of inactive hosts for defined period', 'inactive-hosts', 86400, 'yes', '6', 'yes', 'yes'),
+	(15, 'Locations', 'Shows map of locations', 'locations', NULL, 'yes', '6', 'no', 'yes');
+
 
 
 
@@ -686,10 +696,12 @@ CREATE TABLE `nat` (
   `type` set('source','static','destination') DEFAULT 'source',
   `src` text,
   `dst` text,
-  `port` int(5) DEFAULT NULL,
+  `src_port` int(5) DEFAULT NULL,
+  `dst_port` INT(5) DEFAULT NULL,
+  `device` INT(11)  UNSIGNED  NULL  DEFAULT NULL,
   `description` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 # Dump of table racks
@@ -700,9 +712,64 @@ CREATE TABLE `racks` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL DEFAULT '',
   `size` int(2) DEFAULT NULL,
+  `location` INT(11)  UNSIGNED  NULL  DEFAULT NULL,
   `description` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table locations
+# ------------------------------------------------------------
+DROP TABLE IF EXISTS `locations`;
+
+CREATE TABLE `locations` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL DEFAULT '',
+  `description` text,
+  `address` VARCHAR(128)  NULL  DEFAULT NULL,
+  `lat` varchar(12) DEFAULT NULL,
+  `long` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+    # Dump of table pstnPrefixes
+# ------------------------------------------------------------
+DROP TABLE IF EXISTS `pstnPrefixes`;
+
+CREATE TABLE `pstnPrefixes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `prefix` varchar(32) DEFAULT NULL,
+  `start` varchar(32) DEFAULT NULL,
+  `stop` varchar(32) DEFAULT NULL,
+  `master` int(11) DEFAULT '0',
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table pstnNumbers
+# ------------------------------------------------------------
+DROP TABLE IF EXISTS `pstnNumbers`;
+
+CREATE TABLE `pstnNumbers` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `prefix` int(11) unsigned DEFAULT NULL,
+  `number` varchar(32) DEFAULT NULL,
+  `name` varchar(128) DEFAULT NULL,
+  `owner` varchar(128) DEFAULT NULL,
+  `state` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 
 
@@ -712,4 +779,4 @@ CREATE TABLE `racks` (
 
 # update version
 # ------------------------------------------------------------
-UPDATE `settings` set `version` = '1.22';
+UPDATE `settings` set `version` = '1.25';

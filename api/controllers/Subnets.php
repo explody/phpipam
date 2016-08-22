@@ -129,6 +129,7 @@ class Subnets_controller extends Common_api_functions {
 	 *	required params : subnet, mask, name
 	 *	optional params : all subnet values
 	 *
+	 *      - /subnets/{id}/first_subnet/{mask}/       // creates first free subnet under master with specified mask
 	 *
 	 * @access public
 	 * @return void
@@ -138,14 +139,30 @@ class Subnets_controller extends Common_api_functions {
 		if(!isset($this->_params->isFolder)) { $this->_params->isFolder = "0"; }
 		elseif($this->_params->isFolder==1)	 { unset($this->_params->subnet, $this->_params->mask); }
 
+		// first free
+		if($this->_params->id2=="first_subnet")   {
+    		$subnet_tmp = explode("/", $this->subnet_first_free (false));
+
+    		// get master subnet
+    		$master = $this->read_subnet ();
+
+    		$this->_params->subnet = $subnet_tmp[0];
+    		$this->_params->mask = $subnet_tmp[1];
+    		$this->_params->sectionId = $master->sectionId;
+    		$this->_params->masterSubnetId = $master->id;
+    		$this->_params->permissions = $master->permissions;
+    		unset($this->_params->id2, $this->_params->id3);
+            // description
+            if(!isset($this->_params->description))    { $this->_params->description = "API autocreated"; }
+		}
+
 		# validate parameters
-		$this->validate_create_parameters ();
+        $this->validate_create_parameters ();
+        # check for valid keys
+        $values = $this->validate_keys ();
 
-		# check for valid keys
-		$values = $this->validate_keys ();
-
-		# transform subnet to decimal format
-		$values['subnet'] = $this->Addresses->transform_address($values['subnet'] ,"decimal");
+        # transform subnet to decimal format
+        $values['subnet'] = $this->Addresses->transform_address($values['subnet'] ,"decimal");
 
 		# execute
 		if(!$this->Subnets->modify_subnet ("add", $values)) {
@@ -167,13 +184,17 @@ class Subnets_controller extends Common_api_functions {
 	 *
 	 *	Identifier can be:
 	 *		- {id}
-	 *		- custom_fields				// returns custom fields
-	 *		- {subnet}					// subnets in CIDR format
-	 *		- {id}/usage/				// returns subnet usage
-	 *		- {id}/first_free/			// returns first available address in subnet
-	 *		- {id}/slaves/ 				// returns all immediate slave subnets
-	 *		- {id}/slaves_recursive/ 	// returns all slave subnets recursively
-	 *		- {id}/addresses/			// returns all IP addresses in subnet
+	 *		- custom_fields				    // returns custom fields
+	 *		- {subnet}					    // subnets in CIDR format
+	 *		- {id}/usage/				    // returns subnet usage
+	 *		- {id}/slaves/ 				    // returns all immediate slave subnets
+	 *		- {id}/slaves_recursive/ 	    // returns all slave subnets recursively
+	 *		- {id}/addresses/			    // returns all IP addresses in subnet
+	 *      - {id}/addresses/{ip}/          // returns IP address from subnet
+	 *		- {id}/first_free/			    // returns first free address in subnet
+	 *      - {id}/first_subnet/{mask}/     // returns first available subnets with specified mask
+	 *      - {id}/all_subnets/{mask}/      // returns all available subnets with specified mask
+	 *		- all							// returns all subnets in all sections
 	 *
 	 * @access public
 	 * @return void
@@ -263,6 +284,15 @@ class Subnets_controller extends Common_api_functions {
 			// addresses in subnet
 			if($this->_params->id2=="addresses") {
 				$result = $this->read_subnet_addresses ();
+				// if {ip} is set filter it out
+				if(isset($this->_params->id3)) {
+    				foreach ($result as $k=>$r) {
+        				if ($r->ip !== $this->_params->id3) {
+            				unset($result[$k]);
+        				}
+    				}
+                    if(sizeof($result)==0) { $result = false; }
+				}
 				// check result
 				if($result===false)						{ $this->Response->throw_exception(404, "No addresses found"); }
 				else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, "addresses", true, true)); }
@@ -289,7 +319,11 @@ class Subnets_controller extends Common_api_functions {
 			// usage
 			elseif ($this->_params->id2=="usage") 		{ return array("code"=>200, "data"=>$this->subnet_usage ()); }
 			// first available address
-			elseif ($this->_params->id2=="first_free") 	{ return array("code"=>200, "data"=>$this->subnet_first_free ());  }
+			elseif ($this->_params->id2=="first_free") 	{ return array("code"=>200, "data"=>$this->subnet_first_free_address ());  }
+			// search for new free subnet
+			elseif ($this->_params->id2=="all_subnets") { return array("code"=>200, "data"=>$this->subnet_first_free (true));  }
+			// search for new free subnet
+			elseif ($this->_params->id2=="first_subnet"){ return array("code"=>200, "data"=>$this->subnet_first_free (false));  }
 			// fail
 			else										{ $this->Response->throw_exception(400, 'Invalid request'); }
 		}
@@ -305,6 +339,13 @@ class Subnets_controller extends Common_api_functions {
 			// check result
 			if($result==NULL)							{ $this->Response->throw_exception(404, "Invalid Id"); }
 			else										{ return array("code"=>200, "data"=>$this->prepare_result ($result, "subnets", true, true)); }
+		}
+		// all
+		elseif ($this->_params->id=="all") {
+			$result = $this->read_all_subnets();
+			// check result
+			if ($result===false)						{ $this->Response->throw_exception(404, "Unable to read subnets"); }
+			else										{ return array("code"=>200, "data"=>$this->prepare_result($result, "subnets", true, true)); }
 		}
 		// false
 		else 											{ $this->Response->throw_exception(404, 'Invalid Id'); }
@@ -338,6 +379,7 @@ class Subnets_controller extends Common_api_functions {
 	 *	if id2 is present than execute:
 	 *		- {id}/resize/
 	 *		- {id}/split/
+	 *      - {id}/permissions/               // changes permissions (?3=2&41=1 || ?groupname1=3&groupname2=1) 0=na, 1=ro, 2=rw, 3=rwa
 	 *
 	 * @access public
 	 * @return void
@@ -352,6 +394,8 @@ class Subnets_controller extends Common_api_functions {
 			if($this->_params->id2=="resize") 			{ return $this->subnet_resize (); }
 			// split
 			elseif($this->_params->id2=="split") 		{ return $this->subnet_split (); }
+			// permissions
+    		elseif ($this->_params->id2=="permissions") { return $this->subnet_change_permissions (); }
 			// error
 			else										{ $this->Response->throw_exception(400, 'Invalid parameters'); }
 		}
@@ -395,6 +439,7 @@ class Subnets_controller extends Common_api_functions {
 	 *
 	 *	if id2 is present than execute:
 	 *		- {id}/truncate/
+	 *		- {id}/permissions/
 	 *
 	 * @access public
 	 * @return void
@@ -407,6 +452,8 @@ class Subnets_controller extends Common_api_functions {
 		if(isset($this->_params->id2)) {
 			// truncate
 			if($this->_params->id2=="truncate") 		{ return $this->subnet_truncate (); }
+			// remove
+			elseif ($this->_params->id2=="permissions") { return $this->subnet_remove_permissions (); }
 			// error
 			else										{ $this->Response->throw_exception(400, 'Invalid parameters'); }
 		}
@@ -421,7 +468,7 @@ class Subnets_controller extends Common_api_functions {
 														{ $this->Response->throw_exception(500, "Failed to delete subnet"); }
 			else {
 				//set result
-				return array("code"=>200, "data"=>"Subnet deleted");
+				return array("code"=>200, "message"=>"Subnet deleted");
 			}
 		}
 	}
@@ -444,9 +491,8 @@ class Subnets_controller extends Common_api_functions {
 		// ok, try to truncate
 		$this->Subnets->modify_subnet ("truncate", (array) $this->_params);
 		//set result
-		return array("code"=>200, "data"=>"Subnet truncated");
+		return array("code"=>200, "message"=>"Subnet truncated");
 	}
-
 
 
 
@@ -489,7 +535,7 @@ class Subnets_controller extends Common_api_functions {
 		$this->Subnets->modify_subnet ("resize", $values);
 
 		//set result
-		return array("code"=>200, "data"=>"Subnet truncated");
+		return array("code"=>200, "message"=>"Subnet resized");
 	}
 
 
@@ -520,8 +566,115 @@ class Subnets_controller extends Common_api_functions {
 		$this->Subnets->subnet_split ($subnet_old, $this->_params->number, $this->_params->prefix, $this->_params->group, $this->_params->strict);
 
 		//set result
-		return array("code"=>200, "data"=>"Subnet splitted");
+		return array("code"=>200, "message"=>"Subnet splitted");
 	}
+
+
+
+
+
+
+	/**
+	 * Changes subnet permissions
+	 *
+	 *	required params : id, number
+	 *	optional params : group (default yes), strict (default yes), prefix
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function subnet_change_permissions () {
+		// Check for id
+		$this->validate_subnet_id ();
+
+		// validate groups, permissions and save to _params
+        $this->validate_create_permissions ();
+        // save perms
+        $values['id'] = $this->_params->id;
+        $values['permissions'] = $this->_params->permissions;
+
+		# execute update
+		if(!$this->Subnets->modify_subnet ("edit", $values))
+													{ $this->Response->throw_exception(500, 'Subnet permissions update failed'); }
+		else {
+			return array("code"=>200, "message"=>"Subnet permissions updated", "data"=>$this->_params->permissions_text);
+		}
+	}
+
+	/**
+	 * Validates update permission groups
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function validate_create_permissions () {
+    	// set valid permissions array
+    	$valid_permissions_array = $this->get_possible_permissions ();
+    	// requested permissions
+    	$requested_permissions = array();
+    	$requested_permissions_full = array();
+    	// save ids
+    	$id = $this->_params->id;
+    	unset($this->_params->controller, $this->_params->app_id, $this->_params->id, $this->_params->id2, $this->_params->isFolder);
+
+    	// loop and validate
+    	if(sizeof($this->_params)>0) {
+            foreach ($this->_params as $gid=>$perm) {
+
+                // fetch and validate group
+                $group = is_numeric($gid) ? $this->Tools->fetch_object("userGroups", "g_id", $gid) : $this->Tools->fetch_object("userGroups", "g_name", $gid);
+                if ($group===false)             $this->Response->throw_exception(500, "Invalid group identifier ".$gid);
+
+                // validate permissions
+                if(is_numeric($perm)) {
+                    if(!in_array($perm, $valid_permissions_array)) {
+                                                $this->Response->throw_exception(500, "Invalid permissions ".$perm);
+                    }
+                }
+                else {
+                    if(!array_key_exists($perm, $valid_permissions_array)) {
+                                                $this->Response->throw_exception(500, "Invalid permissions ".$perm);
+                    }
+                    else {
+                        $perm = $valid_permissions_array[$perm];
+                    }
+                }
+                // validated, add to permissions array
+                $requested_permissions[$group->g_id] = $perm;
+                $requested_permissions_full[$group->g_name] = array_search($perm, $valid_permissions_array);
+            }
+            // add id1 param back and set permissions
+            $this->_params->id = $id;
+            $this->_params->permissions = json_encode($requested_permissions);
+            $this->_params->permissions_text = $requested_permissions_full;
+        }
+        else {
+            $this->Response->throw_exception(500, "Cannot remove permissions, use DELETE call");
+        }
+	}
+
+
+
+
+
+
+	/**
+	 * Removes permissions
+	 *
+	 *	required params : id
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function subnet_remove_permissions () {
+		// Check for id
+		$this->validate_subnet_id ();
+		// ok, try to truncate
+		$this->Subnets->modify_subnet ("edit", array("id"=>$this->_params->id, "permissions"=>""));
+		//set result
+		return array("code"=>200, "message"=>"Subnet permissions removed");
+	}
+
 
 
 
@@ -535,7 +688,7 @@ class Subnets_controller extends Common_api_functions {
 	 */
 	private function subnet_usage () {
 		# check that section exists
-		if(sizeof($subnet = $this->Subnets->fetch_subnet ("id", $this->_params->id))==0)
+		if($subnet = $this->Subnets->fetch_subnet ("id", $this->_params->id)===false)
 														{ $this->Response->throw_exception(400, "Subnet does not exist"); }
 
 		# set slaves
@@ -564,19 +717,47 @@ class Subnets_controller extends Common_api_functions {
 	 * @access public
 	 * @return void
 	 */
-	public function subnet_first_free () {
+	public function subnet_first_free_address () {
 		// Check for id
 		$this->validate_subnet_id ();
+		// check for isFull
+		$subnet = $this->read_subnet ();
+		if($subnet->isFull==1)  { $this->Response->throw_exception(404, "No free addresses found"); }
 		// fetch
 		$first = $this->Addresses->get_first_available_address ($this->_params->id, $this->Subnets);
 		// available?
-		if($first===false)	{ $first = null; }
+		if($first===false)	{ $this->Response->throw_exception(404, "No free addresses found"); }
 		else				{ $first = $this->Addresses->transform_to_dotted($first); }
 
 		# return
 		return $first;
 	}
 
+	/**
+	 * Returns first available subnet with specified mask
+	 *
+	 * @access public
+	 * @param bool $all (default: false)
+	 * @return void
+	 */
+	public function subnet_first_free ($all = false) {
+		// Check for id
+		$this->validate_subnet_id ();
+		// fetch
+		$first = $this->Subnets->search_available_subnets ($this->_params->id, $this->_params->id3);
+		# return
+		if ($first===false) {
+    		$this->Response->throw_exception(404, "No subnets found");
+		}
+		else {
+    		if($all) {
+        		return $first;
+    		}
+    		else {
+        		return $first[0];
+    		}
+		}
+	}
 
 
 
@@ -611,6 +792,17 @@ class Subnets_controller extends Common_api_functions {
 		}
 		# result
 		return sizeof($result)==0 ? false : $result;
+	}
+
+	/**
+	 * Fetches all subnets in database
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function read_all_subnets() {
+		// fetch and return
+		return $this->Subnets->fetch_all_subnets();
 	}
 
 	/**
@@ -775,15 +967,18 @@ class Subnets_controller extends Common_api_functions {
 		// set 0 if not set
 		if(!isset($this->_params->masterSubnetId) || $this->_params->masterSubnetId=="0") 			{ $this->_params->masterSubnetId = 0; }
 		else {
-			// validate subnet
-			if(sizeof($this->Subnets->fetch_subnet ("id", $this->_params->masterSubnetId))==0)		{ $this->Response->throw_exception(400, "Master Subnet does not exist (id=".$this->_params->masterSubnetId.")"); }
+			// validate master subnet
+			$master_subnet = $this->Subnets->fetch_subnet ("id", $this->_params->masterSubnetId);
+			if($master_subnet===false)		                                                        { $this->Response->throw_exception(400, "Master Subnet does not exist (id=".$this->_params->masterSubnetId.")"); }
 			// check that it is inside subnet
 			else {
-				// not fr folders
-				if(@$this->_params->isFolder!=1) {
+				// not for folders
+				if(@$this->_params->isFolder!=1 && $master_subnet->isFolder!=1) {
 					if(!$this->Subnets->verify_subnet_nesting ($this->_params->masterSubnetId, $this->_params->subnet."/".$this->_params->mask))
 																									{ $this->Response->throw_exception(400, "Subnet is not within boundaries of its master subnet"); }
 				}
+				// set permissions
+				$this->_params->permissions = $master_subnet->permissions;
 			}
 		}
 	}
@@ -799,7 +994,14 @@ class Subnets_controller extends Common_api_functions {
 		if(!isset($this->_params->sectionId))														{ $this->Response->throw_exception(400, "Invalid Section (".$this->_params->sectionId.")"); }
 		elseif(!is_numeric($this->_params->sectionId))												{ $this->Response->throw_exception(400, "Section Id must be numeric (".$this->_params->sectionId.")"); }
 		else {
-			if($this->Tools->fetch_object("sections", "id", $this->_params->sectionId)===false)		{ $this->Response->throw_exception(400, "Section id (".$this->_params->sectionId.") does not exist"); }
+    		$master = $this->Tools->fetch_object("sections", "id", $this->_params->sectionId);
+			if($master===false)		{ $this->Response->throw_exception(400, "Section id (".$this->_params->sectionId.") does not exist"); }
+			else {
+    			// inherit permissions from section
+    			if($this->_params->masterSubnetId == 0) {
+        			$this->_params->permissions = $master->permissions;
+    			}
+			}
 		}
 	}
 

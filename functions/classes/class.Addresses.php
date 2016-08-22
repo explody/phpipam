@@ -302,6 +302,32 @@ class Addresses extends Common_functions {
 	}
 
 	/**
+	 * Searches database for similar addresses
+	 *
+	 * @access public
+	 * @param mixed $linked_field
+	 * @param mixed $value
+	 * @param mixed $address_id
+	 * @return void
+	 */
+	public function search_similar_addresses ($linked_field, $value, $address_id) {
+    	// checks
+    	if(strlen($linked_field)>0 && strlen($value)>0 && is_numeric($address_id)) {
+        	// search
+     		try { $addresses = $this->Database->getObjectsQuery("SELECT * FROM `ipaddresses` where `$linked_field` = ? and `id` != ? and state != 4;", array($value, $address_id)); }
+    		catch (Exception $e) {
+    			$this->Result->show("danger", _("Error: ").$e->getMessage());
+    			return false;
+    		}
+    		#result
+    		return sizeof($addresses)>0 ? $addresses : false;
+        }
+        else {
+            return false;
+        }
+	}
+
+	/**
 	 * Address modification
 	 *
 	 * @access public
@@ -349,6 +375,13 @@ class Addresses extends Common_functions {
 						"firewallAddressObject"=>@$address['firewallAddressObject'],
 						"lastSeen"=>@$address['lastSeen']
 						);
+        # location
+        if (isset($address['location_item'])) {
+            if (!is_numeric($address['location_item'])) {
+                $Result->show("danger", _("Invalid location value"), true);
+            }
+            $insert['location'] = $address['location_item'];
+        }
 		# custom fields, append to array
 		foreach($this->set_custom_fields() as $c) {
 			$insert[$c['name']] = strlen(@$address[$c['name']])>0 ? @$address[$c['name']] : null;
@@ -411,6 +444,13 @@ class Addresses extends Common_functions {
 						"excludePing"=>@$address['excludePing'],
 						"PTRignore"=>@$address['PTRignore']
 						);
+        # location
+        if (isset($address['location_item'])) {
+            if (!is_numeric($address['location_item'])) {
+                $Result->show("danger", _("Invalid location value"), true);
+            }
+            $insert['location'] = $address['location_item'];
+        }
 		# custom fields, append to array
 		foreach($this->set_custom_fields() as $c) {
 			$insert[$c['name']] = strlen(@$address[$c['name']])>0 ? @$address[$c['name']] : null;
@@ -556,10 +596,10 @@ class Addresses extends Common_functions {
                         // set parameters
                         $subject = "Subnet threshold limit reached"." (".$this->transform_address($subnet->subnet,"dotted")."/".$subnet->mask.")";
                         $content[] = "<table style='margin-left:10px;margin-top:5px;width:auto;padding:0px;border-collapse:collapse;'>";
-                        $content[] = "<tr><td style='padding:5px;margin:0px;color:#333;font-size:16px;text-shadow:1px 1px 1px white;border-bottom:1px solid #eeeeee;' colspan='2'><font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:16px;'>$subject</font></td></tr>";
-                        $content[] = '<tr><td style="padding: 0px;padding-left:10px;margin:0px;line-height:18px;text-align:left;"><font face="Helvetica, Verdana, Arial, sans-serif" style="font-size:13px;">'._('Subnet').'</a></font></td>	 <td style="padding: 0px;padding-left:15px;margin:0px;line-height:18px;text-align:left;padding-top:10px;"><font face="Helvetica, Verdana, Arial, sans-serif" style="font-size:13px;"><a href="'.$this->createURL().''.create_link("subnets",$subnet->sectionId, $subnet->id).'">'. $this->transform_address($subnet->subnet,"dotted")."/".$subnet->mask .'</a></font></td></tr>';
-                        $content[] = '<tr><td style="padding: 0px;padding-left:10px;margin:0px;line-height:18px;text-align:left;"><font face="Helvetica, Verdana, Arial, sans-serif" style="font-size:13px;">'._('Subnet').'</font></td>	  	<td style="padding: 0px;padding-left:15px;margin:0px;line-height:18px;text-align:left;"><font face="Helvetica, Verdana, Arial, sans-serif" style="font-size:13px;">'. $subnet->description .'</font></td></tr>';
-                        $content[] = '<tr><td style="padding: 0px;padding-left:10px;margin:0px;line-height:18px;text-align:left;"><font face="Helvetica, Verdana, Arial, sans-serif" style="font-size:13px;">'._('Usage').' (%)</font></td>	  	<td style="padding: 0px;padding-left:15px;margin:0px;line-height:18px;text-align:left;"><font face="Helvetica, Verdana, Arial, sans-serif" style="font-size:13px;">'. gmp_strval(gmp_sub(100,(int) round($subnet_usage['freehosts_percent'], 0))) .'</font></td></tr>';
+                        $content[] = "<tr><td style='padding:5px;margin:0px;color:#333;font-size:16px;text-shadow:1px 1px 1px white;border-bottom:1px solid #eeeeee;' colspan='2'>$this->mail_font_style<strong>$subject</font></td></tr>";
+                        $content[] = '<tr><td style="padding: 0px;padding-left:10px;margin:0px;line-height:18px;text-align:left;">'.$this->mail_font_style.''._('Subnet').'</a></font></td>	<td style="padding: 0px;padding-left:15px;margin:0px;line-height:18px;text-align:left;padding-top:10px;"><a href="'.$this->createURL().''.create_link("subnets",$subnet->sectionId, $subnet->id).'">'.$this->mail_font_style_href . $this->transform_address($subnet->subnet,"dotted")."/".$subnet->mask .'</font></a></td></tr>';
+                        $content[] = '<tr><td style="padding: 0px;padding-left:10px;margin:0px;line-height:18px;text-align:left;">'.$this->mail_font_style.''._('Description').'</font></td>	  	<td style="padding: 0px;padding-left:15px;margin:0px;line-height:18px;text-align:left;">'.$this->mail_font_style.''. $subnet->description .'</font></td></tr>';
+                        $content[] = '<tr><td style="padding: 0px;padding-left:10px;margin:0px;line-height:18px;text-align:left;">'.$this->mail_font_style.''._('Usage').' (%)</font></td>	<td style="padding: 0px;padding-left:15px;margin:0px;line-height:18px;text-align:left;">'.$this->mail_font_style.''. gmp_strval(gmp_sub(100,(int) round($subnet_usage['freehosts_percent'], 0))) .'</font></td></tr>';
                         $content[] = "</table>";
                         // plain
                         $content_plain[] = "$subject"."\r\n------------------------------\r\n";
@@ -573,16 +613,13 @@ class Addresses extends Common_functions {
                         try {
                         	$phpipam_mail->Php_mailer->setFrom($mail_settings->mAdminMail, $mail_settings->mAdminName);
                         	//add all admins to CC
-                        	$cnt = 0;
-                        	if (sizeof($admins)>0) {
-                        		foreach($admins as $a) {
-                            		if ($a->mailNotify=="Yes") {
-                        			    $phpipam_mail->Php_mailer->addAddress($a->email);
-                        			    $cnt++;
-                        			}
+                        	$recipients = $this->changelog_mail_get_recipients ($subnet->id);
+
+                        	if ($recipients!==false) {
+                        		foreach($recipients as $a) {
+                    			    $phpipam_mail->Php_mailer->addAddress($a->email);
                         		}
-                        	}
-                        	if ($cnt>0) {
+
                             	$phpipam_mail->Php_mailer->Subject = $subject;
                             	$phpipam_mail->Php_mailer->msgHTML($content);
                             	$phpipam_mail->Php_mailer->AltBody = $content_plain;
@@ -1289,15 +1326,17 @@ class Addresses extends Common_functions {
 	 * @param int $address1
 	 * @param int $address2
 	 * @param int $netmask
-	 * @param bool $empty
+	 * @param bool $empty (default: false)
+	 * @param bool $is_subnet (default: false)
+	 * @param bool $is_broadcast (default: false)
 	 * @return void
 	 */
-	public function find_unused_addresses ($address1, $address2, $netmask, $empty=false) {
+	public function find_unused_addresses ($address1, $address2, $netmask, $empty=false, $is_subnet=false, $is_broadcast=false) {
 		# make sure addresses are in decimal format
 		$address1 = $this->transform_address ($address1, "decimal");
 		$address2 = $this->transform_address ($address2, "decimal");
 		# check for space
-		return $this->identify_address($address1)=="IPv6" ? $this->find_unused_addresses_IPv6 ($address1, $address2, $netmask) : $this->find_unused_addresses_IPv4 ($address1, $address2, $netmask, $empty);
+		return $this->identify_address($address1)=="IPv6" ? $this->find_unused_addresses_IPv6 ($address1, $address2, $netmask, $empty, $is_subnet, $is_broadcast) : $this->find_unused_addresses_IPv4 ($address1, $address2, $netmask, $empty);
 	}
 
 	/**
@@ -1370,42 +1409,81 @@ class Addresses extends Common_functions {
 	 * @param int $address1
 	 * @param int $address2
 	 * @param int $netmask
+	 * @param bool $empty (default: false)
+	 * @param bool $is_subnet (default: false)
+	 * @param bool $is_broadcast (default: false)
 	 * @return void
 	 */
-	protected function find_unused_addresses_IPv6 ($address1, $address2, $netmask) {
-		# calculate diff
-		$diff = $this->calculate_address_diff ($address1, $address2);
+	protected function find_unused_addresses_IPv6 ($address1, $address2, $netmask, $empty = false, $is_subnet = false, $is_broadcast = false) {
+		# Initialize PEAR NET object
+		$this->initialize_pear_net_IPv6 ();
 
-		# /128
-		if($netmask == 128) {
-				return array("ip"=>$this->transform_to_dotted(gmp_strval($address1)), "hosts"=>1);
+		if($empty) {
+    		$Subnets = new Subnets ($this->Database);
+    		return array("ip"=>$this->transform_to_dotted(gmp_strval($address1))." - ".$this->transform_to_dotted(gmp_strval($address2)), "hosts"=>$Subnets->get_max_hosts ($netmask, "IPv6"));
+		}
+        else {
+    		# calculate diff
+    		$diff = $this->calculate_address_diff ($address1, $address2);
+
+    		# /128
+    		if($netmask == 128) {
+        		if($diff>1) {
+                    return array("ip"=>$this->transform_to_dotted(gmp_strval($address1)), "hosts"=>1);
+                }
+        	}
+    		# /127
+    	    elseif($netmask == 127) {
+        	    if($diff==1 && $this->is_network($address1, $netmask)) {
+    				return array("ip"=>$this->transform_to_dotted($address2), "hosts"=>1);
+    			}
+    			elseif($diff==1 && $this->is_broadcast($address2, $netmask)) {
+    				return array("ip"=>$this->transform_to_dotted($address1), "hosts"=>1);
+    			}
+    			elseif($diff==0) {
+        			return false;
+    			}
+    			else {
+    				return array("ip"=>$this->transform_to_dotted($address1), "hosts"=>2);
+    			}
+    	    }
+    	    # null
+    	    elseif ($diff==0) {
+        	    return false;
+    	    }
+    	    # diff 1
+    	    elseif ($diff==1) {
+         		if($is_subnet) {
+                    return array("ip"=>$this->transform_to_dotted(gmp_strval($address1)), "hosts"=>1);
+        		}
+        		elseif($is_broadcast) {
+                    return array("ip"=>$this->transform_to_dotted(gmp_strval($address2)), "hosts"=>1);
+        		}
+        		else {
+            		return false;
+                }
+    	    }
+    	    # diff 2
+    	    elseif ($diff==2 && !$is_subnet && !$is_broadcast) {
+        	    var_dump($is_broadcast);
+                return array("ip"=>$this->transform_to_dotted(gmp_strval(gmp_add($address1,1))), "hosts"=>1);
+    	    }
+    	    # default
+    	    else {
+        		if($is_subnet) {
+                    return array("ip"=>$this->transform_to_dotted(gmp_strval($address1))." - ".$this->transform_to_dotted(gmp_strval(gmp_sub($address2,1))), "hosts"=>$this->reformat_number(gmp_strval(gmp_sub($diff,0))));
+        		}
+        		elseif($is_broadcast) {
+                    return array("ip"=>$this->transform_to_dotted(gmp_strval(gmp_add($address1,1)))." - ".$this->transform_to_dotted(gmp_strval($address2)), "hosts"=>$this->reformat_number(gmp_strval(gmp_sub($diff,0))));
+        		}
+        		else {
+                    return array("ip"=>$this->transform_to_dotted(gmp_strval(gmp_add($address1,1)))." - ".$this->transform_to_dotted(gmp_strval(gmp_sub($address2,1))), "hosts"=>$this->reformat_number(gmp_strval(gmp_strval(gmp_sub($diff,1)))));
+                }
+        	}
+
+        	# default false
+        	return false;
     	}
-		# /127
-	    elseif($netmask == 127) {
-			if($diff==1 && $this->is_network($address1, $netmask)) {
-				return array("ip"=>$this->transform_to_dotted($address2), "hosts"=>1);
-			}
-			elseif($diff==1 && $this->is_broadcast($address2, $netmask)) {
-				return array("ip"=>$this->transform_to_dotted($address1), "hosts"=>1);
-			}
-			else {
-				return array("ip"=>$this->transform_to_dotted($address1), "hosts"=>2);
-			}
-	    }
-	    # if diff is less than 2 return false */
-	    elseif ($diff < 2) {
-	        	return false;
-	    }
-	    # if diff is 2 return 1 IP address in the middle */
-	    elseif ($diff == 2) {
-	            return array("ip"=>$this->transform_to_dotted(gmp_strval($address1)), "hosts"=>1);
-	    }
-		# if diff is more than 2 return pool */
-		else {
-            	return array("ip"=>$this->transform_to_dotted(gmp_strval($address1))." - ".$this->transform_to_dotted(gmp_strval($address2)), "hosts"=>$this->reformat_number(gmp_strval($diff)));
-    	}
-    	# default false
-    	return false;
 	}
 
 
@@ -1827,4 +1905,180 @@ class Addresses extends Common_functions {
 		}
 		return $number;
 	}
+
+
+
+
+
+
+
+
+
+
+	/**
+	* @nat methods
+	* -------------------------------
+	*/
+	/**
+	 * Prints nat link
+	 *
+	 * @access public
+	 * @param array $all_nats
+	 * @param array $all_nats_per_object
+	 * @param object $subnet
+	 * @param object $address
+	 * @param mixed $address
+	 * @return void
+	 */
+	public function print_nat_link ($all_nats, $all_nats_per_object, $subnet, $address, $type="ipaddress") {
+    	// cast
+    	$subnet = (object) $subnet;
+    	$address = (object) $address;
+
+    	// cnt
+    	$html = array();
+    	$html[] = '<table class="popover_table">';
+
+    	$cnt = 0;
+
+    	// subnets
+        if(isset($all_nats_per_object['subnets'][$subnet->id])) {
+            foreach ($all_nats_per_object['subnets'][$subnet->id] as $nat) {
+                // set object
+                $n = $all_nats[$nat];
+                // print
+                $html[] = str_replace("'", "\"", $this->print_nat_link_line ($n, false, "subnets", $subnet->id));
+            }
+            $cnt++;
+        }
+
+    	// addresses
+    	if(isset($all_nats_per_object['ipaddresses'][$address->id])) {
+            foreach ($all_nats_per_object['ipaddresses'][$address->id] as $nat) {
+                // set object
+                $n = $all_nats[$nat];
+                // print
+                $html[] = str_replace("'", "\"", $this->print_nat_link_line ($n, false, "ipaddresses", $address->id));
+                $cnt++;
+            }
+    	}
+
+        // print if some
+        if ($cnt>0) {
+            $html[] = "</table>";
+            if($type=="subnet") {
+                print  " <a href='".create_link("subnets",$subnet->sectionId, $subnet->id, "nat")."' class='btn btn-xs btn-default show_popover fa fa-exchange' style='font-size:11px;margin-top:-3px;padding:1px 3px;' data-toggle='popover' title='"._('Object is Natted')."' data-trigger='hover' data-html='true' data-content='".implode("\n", $html)."'></a>";
+            }
+            else {
+                print  " <a href='".create_link("subnets",$subnet->sectionId, $subnet->id, "address-details", $address->id, "nat")."' class='btn btn-xs btn-default show_popover fa fa-exchange' style='font-size:11px;margin-top:-3px;padding:1px 3px;' data-toggle='popover' title='"._('Object is Natted')."' data-trigger='hover' data-html='true' data-content='".implode("\n", $html)."'></a>";
+            }
+        }
+	}
+
+    /**
+     * Prints single NAT for display in devices, subnets, addresses.
+     *
+     * @access public
+     * @param mixed $n
+     * @param bool|int $nat_id (default: false)
+     * @param bool|mixed $object_type (default: false)
+     * @param bool $object_id (default: false)
+     * @return void
+     */
+    public function print_nat_link_line ($n, $nat_id = false, $object_type = false, $object_id=false) {
+        // cast to object to be sure if array provided
+        $n = (object) $n;
+
+        // translate json to array, links etc
+        $sources      = $this->translate_nat_objects_for_popup ($n->src, $nat_id, false, $object_type, $object_id);
+        $destinations = $this->translate_nat_objects_for_popup ($n->dst, $nat_id, false, $object_type, $object_id);
+
+        // no src/dst
+        if ($sources===false)
+            $sources = array("<span class='badge badge1 badge5 alert-danger'>"._("None")."</span>");
+        if ($destinations===false)
+            $destinations = array("<span class='badge badge1 badge5 alert-danger'>"._("None")."</span>");
+
+
+        // icon
+        $icon =  $n->type=="static" ? "fa-arrows-h" : "fa-long-arrow-right";
+
+        // to html
+        $html = array();
+        $html[] = "<tr>";
+        $html[] = "<td colspan='3'>";
+        $html[] = "<strong>$n->name</strong> <span class='badge badge1 badge5'>".ucwords($n->type)."</span>";
+        $html[] = "</td>";
+        $html[] = "</tr>";
+
+        // append ports
+        if(($n->type=="static" || $n->type=="destination") && (strlen($n->src_port)>0 && strlen($n->dst_port)>0)) {
+            $sources      = implode("<br>", $sources)." /".$n->src_port;
+            $destinations = implode("<br>", $destinations)." /".$n->dst_port;
+        }
+        else {
+            $sources      = implode("<br>", $sources);
+            $destinations = implode("<br>", $destinations);
+        }
+
+        $html[] = "<tr>";
+        $html[] = "<td>$sources</td>";
+        $html[] = "<td><i class='fa $icon'></i></td>";
+        $html[] = "<td>$destinations</td>";
+        $html[] = "</tr>";
+        $html[] = "<tr><td colspan='3' style='padding-top:20px;'></td></tr>";
+
+        $html[] = "<tr>";
+        $html[] = "<td colspan='3'><hr></td>";
+        $html[] = "</tr>";
+
+        // return
+        return implode("\n", $html);
+    }
+
+    /**
+     * Translates NAT objects to be shown on page
+     *
+     * @access public
+     * @param json $json_objects
+     * @param int|bool $nat_id (default: false)
+     * @param bool $json_objects (default: false)
+     * @param bool $object_type (default: false) - to bold it (ipaddresses / subnets)
+     * @param int|bool object_id (default: false) - to bold it
+     * @return void
+     */
+    public function translate_nat_objects_for_popup ($json_objects, $nat_id = false, $admin = false, $object_type = false, $object_id=false) {
+        // to array "subnets"=>array(1,2,3)
+        $objects = json_decode($json_objects, true);
+        // init out array
+        $out = array();
+        // check
+        if(is_array($objects)) {
+            if(sizeof($objects)>0) {
+                foreach ($objects as $ot=>$ids) {
+                    if (sizeof($ids)>0) {
+                        foreach ($ids as $id) {
+                            // fetch
+                            $item = $this->fetch_object($ot, "id", $id);
+                            if($item!==false) {
+                                // bold
+                                $bold = $item->id==$object_id && $ot==$object_type ? "<span class='strong'>" : "<span>";
+                                // subnets
+                                if ($ot=="subnets") {
+                                    $out[] = "$bold".$this->transform_address($item->subnet, "dotted")."/".$item->mask."</span></span>";
+                                }
+                                // addresses
+                                else {
+                                    $out[] = "$bold".$this->transform_address($item->ip_addr, "dotted")."</span>";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // result
+        return sizeof($out)>0 ? $out : false;
+    }
+
 }

@@ -122,7 +122,7 @@ class phpipam_rack extends Tools {
      * @return void
      */
     private function define_rack_sizes () {
-        $this->rack_sizes = array(14, 20, 24, 30, 35, 40, 42, 44, 45, 48);
+        $this->rack_sizes = array(14, 20, 24, 30, 35, 40, 42, 44, 45, 46, 48);
     }
 
 
@@ -157,8 +157,8 @@ class phpipam_rack extends Tools {
      */
     public function fetch_rack_details ($id) {
         // first check all_racks
-        if (isset($this->all_racks->$id)) {
-            return $this->all_racks->$id;
+        if (isset($this->all_racks->{$id})) {
+            return $this->all_racks->{$id};
         }
         else {
             return $this->fetch_object("racks", "id", $id);
@@ -304,6 +304,27 @@ class RackDrawer extends Common_functions {
      */
     private $template;
 
+    /**
+     * Set to true to verify
+     *
+     *   $context_options=array(
+     *       "ssl"=> array(
+     *           "cafile" => "/path/to/bundle/cacert.pem",
+     *           "verify_peer"=> true,
+     *           "verify_peer_name"=> true,
+     *       )
+     *   );
+     *
+     * @var mixed
+     * @access private
+     */
+    private $context_options = array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+        )
+    );
+
 
     /**
      * Draws rack
@@ -314,7 +335,9 @@ class RackDrawer extends Common_functions {
      */
     public function draw(Rack $rack) {
         $this->rack = $rack;
-        $this->template = imagecreatefrompng( $this->createURL().BASE."css/1.2/images/blankracks/".$this->rack->getSpace().".png" );
+        $response = file_get_contents($this->createURL().BASE."css/1.2/images/blankracks/".$this->rack->getSpace().".png", false, stream_context_create($this->context_options));
+        $this->template = imagecreatefromstring($response);
+
         $this->drawNameplate();
         $this->drawContents();
 
@@ -424,7 +447,7 @@ class Model {
         {
             $setter = 'set' . ucfirst($field);
             if (method_exists($this, $setter)) {
-                $this->$setter($value);
+                $this->{$setter}($value);
             }
         }
     }

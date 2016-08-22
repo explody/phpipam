@@ -18,6 +18,16 @@ class Common_functions  {
 	public $settings = null;
 
 	/**
+	 * If Jdon validation error occurs it will be saved here
+	 *
+	 * (default value: false)
+	 *
+	 * @var bool
+	 * @access public
+	 */
+	public $json_error = false;
+
+	/**
 	 * Cache file to store all results from queries to
 	 *
 	 *  structure:
@@ -41,6 +51,36 @@ class Common_functions  {
 	 * @access private
 	 */
 	private $cache_check_exceptions = array();
+
+    /**
+     * Default font
+     *
+     * (default value: "<font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:12px)
+     *
+     * @var string
+     * @access public
+     */
+    public $mail_font_style = "<font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:12px;color:#333;'>";
+
+    /**
+     * Default font
+     *
+     * (default value: "<font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:12px)
+     *
+     * @var string
+     * @access public
+     */
+    public $mail_font_style_light = "<font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:11px;color:#777;'>";
+
+    /**
+     * Default font for links
+     *
+     * (default value: "<font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:12px)
+     *
+     * @var string
+     * @access public
+     */
+    public $mail_font_style_href = "<font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:12px;color:#a0ce4e;'>";
 
 	/**
 	 * Database
@@ -184,7 +224,7 @@ class Common_functions  {
     			// set identifier
     			$method = $this->cache_set_identifier ($table);
     			// save
-    			$this->cache_write ($table, $res->$method, $res);
+    			$this->cache_write ($table, $res->{$method}, $res);
 				return $res;
 			}
 			else {
@@ -248,6 +288,48 @@ class Common_functions  {
 	}
 
 
+	/**
+	 * Get all admins that are set to receive changelog
+	 *
+	 * @access public
+	 * @param bool|mixed $subnetId
+	 * @return void
+	 */
+	public function changelog_mail_get_recipients ($subnetId = false) {
+    	// fetch all users with mailNotify
+        $notification_users = $this->fetch_multiple_objects ("users", "mailChangelog", "Yes", "id", true);
+        // recipients array
+        $recipients = array();
+        // any ?
+        if ($notification_users!==false) {
+         	// if subnetId is set check who has permissions
+        	if (isset($subnetId)) {
+             	foreach ($notification_users as $u) {
+                	// inti object
+                	$Subnets = new Subnets ($this->Database);
+                	//check permissions
+                	$subnet_permission = $Subnets->check_permission($u, $subnetId);
+                	// if 3 than add
+                	if ($subnet_permission==3) {
+                    	$recipients[] = $u;
+                	}
+            	}
+        	}
+        	else {
+            	foreach ($notification_users as $u) {
+                	if($u->role=="Administrator") {
+                    	$recipients[] = $u;
+                	}
+            	}
+        	}
+        	return sizeof($recipients)>0 ? $recipients : false;
+        }
+        else {
+            return false;
+        }
+	}
+
+
 
 
 	/**
@@ -306,7 +388,7 @@ class Common_functions  {
                 // add ip ?
                 $ip_check = $this->cache_check_add_ip($table);
                 if ($ip_check!==false) {
-                    $this->cache[$table][$identifier][$id]->ip = $this->transform_address ($object->$ip_check, "dotted");
+                    $this->cache[$table][$identifier][$id]->ip = $this->transform_address ($object->{$ip_check}, "dotted");
                 }
             }
         }
@@ -462,11 +544,16 @@ class Common_functions  {
     	$out = array();
     	// loop
 		foreach($fields as $k=>$v) {
-			if(is_null($v) || strlen($v)==0) {
-				$out[$k] = 	$char;
-			} else {
-				$out[$k] = $v;
-			}
+    		if(is_array($v)) {
+        		$out[$k] = $v;
+    		}
+    		else {
+    			if(is_null($v) || strlen($v)==0) {
+    				$out[$k] = 	$char;
+    			} else {
+    				$out[$k] = $v;
+    			}
+    		}
 		}
 		# result
 		return $out;
@@ -676,7 +763,7 @@ class Common_functions  {
 		# reset url for base
 		if($_SERVER['SERVER_PORT'] == "443") 		{ $url = "https://$_SERVER[HTTP_HOST]"; }
 		// reverse proxy doing SSL offloading
-		elseif(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') 	{ $url = "https://$_SERVER[SERVER_NAME]"; }
+        elseif(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')  { $url = "https://$_SERVER[HTTP_X_FORWARDED_HOST]"; }
 		elseif(isset($_SERVER['HTTP_X_SECURE_REQUEST'])  && $_SERVER['HTTP_X_SECURE_REQUEST'] == 'true') 	{ $url = "https://$_SERVER[SERVER_NAME]"; }
 		// custom port
 		elseif($_SERVER['SERVER_PORT']!="80")  		{ $url = "http://$_SERVER[SERVER_NAME]:$_SERVER[SERVER_PORT]"; }
@@ -730,11 +817,11 @@ class Common_functions  {
 	 * @access public
 	 * @param mixed $hostname
 	 * @param bool $permit_root_domain
-	 * @return void
+	 * @return bool
 	 */
 	public function validate_hostname($hostname, $permit_root_domain=true) {
     	// first validate hostname
-    	$valid =  (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $hostname) 	//valid chars check
+    	$valid =  (preg_match("/^([a-z_\d](-*[a-z_\d])*)(\.([a-z_\d](-*[a-z_\d])*))*$/i", $hostname) 	//valid chars check
 	            && preg_match("/^.{1,253}$/", $hostname) 										//overall length check
 	            && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $hostname)   ); 				//length of each label
 	    // if it fails return immediately
@@ -778,6 +865,43 @@ class Common_functions  {
     	elseif (preg_match('/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/', $mac) != 1)   { return false; }
     	else                                                                            { return true; }
 	}
+
+    /**
+     * Validates json from provided string.
+     *
+     * @access public
+     * @param mixed $string
+     * @return void
+     */
+    public function validate_json_string($string) {
+        // for older php versions make sure that function "json_last_error_msg" exist and create it if not
+        if (!function_exists('json_last_error_msg')) {
+            function json_last_error_msg() {
+                static $ERRORS = array(
+                    JSON_ERROR_NONE => 'No error',
+                    JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
+                    JSON_ERROR_STATE_MISMATCH => 'State mismatch (invalid or malformed JSON)',
+                    JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded',
+                    JSON_ERROR_SYNTAX => 'Syntax error',
+                    JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+                );
+
+                $error = json_last_error();
+                return isset($ERRORS[$error]) ? $ERRORS[$error] : 'Unknown error';
+            }
+        }
+
+        // try to decode
+        json_decode($string);
+        // check for error
+        $parse_result = json_last_error_msg();
+        // save possible error
+        if($parse_result!=="No error") {
+            $this->json_error = $parse_result;
+        }
+        // return true / false
+        return (json_last_error() == JSON_ERROR_NONE);
+    }
 
 	/**
 	 * Transforms ipv6 to nt
@@ -912,6 +1036,136 @@ class Common_functions  {
 	}
 
 	/**
+	 * Fetches latlng from googlemaps by provided address
+	 *
+	 * @access public
+	 * @param mixed $address
+	 * @return void
+	 */
+	public function get_latlng_from_address ($address) {
+        // replace spaces
+        $address = str_replace(' ','+',$address);
+        // get grocode
+        $geocode=file_get_contents('https://maps.google.com/maps/api/geocode/json?address='.$address.'&sensor=false');
+        $output= json_decode($geocode);
+        // return result
+        return array("lat"=>$output->results[0]->geometry->location->lat, "lng"=>$output->results[0]->geometry->location->lng);
+	}
+
+    /**
+     * Updates location to latlng from address
+     *
+     * @access public
+     * @param mixed $id
+     * @param mixed $lat
+     * @param mixed $lng
+     * @return void
+     */
+    public function update_latlng ($id, $lat, $lng) {
+		# execute
+		try { $this->Database->updateObject("locations", array("id"=>$id, "lat"=>$lat, "long"=>$lng), "id"); }
+		catch (Exception $e) {
+			return false;
+		}
+		return true;
+    }
+
+    /**
+     * Creates form input field for custom fields.
+     *
+     * @access public
+     * @param mixed $field
+     * @param mixed $object
+     * @param mixed $action
+     * @param mixed $timepicker_index
+     * @return void
+     */
+    public function create_custom_field_input ($field, $object, $action, $timepicker_index) {
+        # make sure it is array
+        $field = (array) $field;
+        $object = (object) $object;
+        $html = array();
+
+        # replace spaces with |
+        $field['nameNew'] = str_replace(" ", "___", $field['name']);
+
+        # required
+        $required = $field['Null']=="NO" ? "*" : "";
+
+        # set default value if adding new object
+        if ($action=="add")	{ $object->{$field['name']} = $field['Default']; }
+
+
+        //set, enum
+        if(substr($field['type'], 0,3) == "set" || substr($field['type'], 0,4) == "enum") {
+        	//parse values
+        	$tmp = substr($field['type'], 0,3)=="set" ? explode(",", str_replace(array("set(", ")", "'"), "", $field['type'])) : explode(",", str_replace(array("enum(", ")", "'"), "", $field['type']));
+        	//null
+        	if($field['Null']!="NO") { array_unshift($tmp, ""); }
+
+        	$html[] = "<select name='$field[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
+        	foreach($tmp as $v) {
+            $html[] = $v==$object->{$field['name']} ? "<option value='$v' selected='selected'>$v</option>" : "<option value='$v'>$v</option>";
+        	}
+        	$html[] = "</select>";
+        }
+        //date and time picker
+        elseif($field['type'] == "date" || $field['type'] == "datetime") {
+        	// just for first
+        	if($timepicker_index==0) {
+        		$html[] =  '<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap-datetimepicker.min.css">';
+        		$html[] =  '<script type="text/javascript" src="js/1.2/bootstrap-datetimepicker.min.js"></script>';
+        		$html[] =  '<script type="text/javascript">';
+        		$html[] =  '$(document).ready(function() {';
+        		//date only
+        		$html[] =  '	$(".datepicker").datetimepicker( {pickDate: true, pickTime: false, pickSeconds: false });';
+        		//date + time
+        		$html[] =  '	$(".datetimepicker").datetimepicker( { pickDate: true, pickTime: true } );';
+        		$html[] =  '})';
+        		$html[] =  '</script>';
+        	}
+        	$timepicker_index++;
+
+        	//set size
+        	if($field['type'] == "date")	{ $size = 10; $class='datepicker';		$format = "yyyy-MM-dd"; }
+        	else							{ $size = 19; $class='datetimepicker';	$format = "yyyy-MM-dd"; }
+
+        	//field
+        	if(!isset($object->{$field['name']}))	{ $html[] = ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'] .'" maxlength="'.$size.'" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
+        	else								    { $html[] = ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'] .'" maxlength="'.$size.'" value="'. $object->{$field['name']}. '" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
+        }
+        //boolean
+        elseif($field['type'] == "tinyint(1)") {
+        	$html[] =  "<select name='$field[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
+        	$tmp = array(0=>"No",1=>"Yes");
+        	//null
+        	if($field['Null']!="NO") { $tmp[2] = ""; }
+
+        	foreach($tmp as $k=>$v) {
+        		if(strlen($object->{$field['name']})==0 && $k==2)	{ $html[] = "<option value='$k' selected='selected'>"._($v)."</option>"; }
+        		elseif($k==$object->{$field['name']})				{ $html[] = "<option value='$k' selected='selected'>"._($v)."</option>"; }
+        		else											    { $html[] = "<option value='$k'>"._($v)."</option>"; }
+        	}
+        	$html[] = "</select>";
+        }
+        //text
+        elseif($field['type'] == "text") {
+        	$html[] = ' <textarea class="form-control input-sm" name="'. $field['nameNew'] .'" placeholder="'. $field['name'] .'" rowspan=3 rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. $object->{$field['name']}. '</textarea>'. "\n";
+        }
+        //default - input field
+        else {
+        	$html[] = ' <input type="text" class="ip_addr form-control input-sm" name="'. $field['nameNew'] .'" placeholder="'. $field['name'] .'" value="'. $object->{$field['name']}. '" size="30" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n";
+        }
+
+        # result
+        return array(
+            "required" => $required,
+            "field" => implode("\n", $html),
+            "timepicker_index" => $timepicker_index
+        );
+	}
+
+	/**
 	 * Creates image link to rack.
 	 *
 	 * @access public
@@ -973,9 +1227,10 @@ class Common_functions  {
 		if(isset($req['subnetId'])) {
 			# get all parents
 			$parents = $Subnet->fetch_parents_recursive ($req['subnetId']);
+
 			print "<ul class='breadcrumb'>";
 			# remove root - 0
-			array_shift($parents);
+			//array_shift($parents);
 
 			# section details
 			$section = (array) $this->fetch_object ("sections", "id", $req['section']);
@@ -1055,12 +1310,114 @@ class Common_functions  {
 	 * @return void
 	 */
 	private function print_tools_breadcrumbs ($req) {
-		if(isset($req['tpage'])) {
-			print "<ul class='breadcrumb'>";
-			print "	<li><a href='".create_link("tools")."'>"._('Tools')."</a> <span class='divider'></span></li>";
-			print "	<li class='active'>$req[tpage]></li>";
-			print "</ul>";
+		print "<ul class='breadcrumb'>";
+		print "	<li><a href='".create_link("tools")."'>"._('Tools')."</a> <span class='divider'></span></li>";
+		if(!isset($req['subnetId'])) {
+		    print "	<li class='active'>$req[section]</li>";
 		}
+		else {
+		    print "	<li class='active'><a href='".create_link("tools", $req['section'])."'>$req[section]</a> <span class='divider'></span></li>";
+
+		    # pstn
+		    if ($_GET['section']=="pstn-prefixes") {
+    			# get all parents
+    			$Tools = new Tools ($this->Database);
+    			$parents = $Tools->fetch_prefix_parents_recursive ($req['subnetId']);
+    			# all parents
+    			foreach($parents as $parent) {
+    				$prefix = $this->fetch_object("pstnPrefixes", "id", $parent[0]);
+    				print "	<li><a href='".create_link("tools",$req['section'],$parent[0])."'><i class='icon-folder-open icon-gray'></i> $prefix->name</a> <span class='divider'></span></li>";
+    			}
+
+		    }
+		    $prefix = $this->fetch_object("pstnPrefixes", "id", $req['subnetId']);
+		    print "	<li class='active'>$prefix->name</li>";
+		}
+		print "</ul>";
+	}
+
+	/**
+	 * Prints site title
+	 *
+	 * @access public
+	 * @param mixed $get
+	 * @return void
+	 */
+	public function get_site_title ($get) {
+    	// remove html tags
+    	$get = $this->strip_input_tags ($get);
+    	// init
+    	$title[] = $this->settings->siteTitle;
+
+    	// page
+    	if (isset($get['page'])) {
+        	// dashboard
+        	if ($get['page']=="dashboard") {
+            	return $this->settings->siteTitle." Dashboard";
+        	}
+        	// install, upgrade
+        	elseif ($get['page']=="temp_share" || $get['page']=="request_ip" || $get['page']=="opensearch") {
+            	$title[] = ucwords($get['page']);
+        	}
+        	// sections, subnets
+        	elseif ($get['page']=="subnets" || $get['page']=="folder") {
+            	// subnets
+            	$title[] = "Subnets";
+
+            	// section
+            	if (isset($get['section'])) {
+                 	$se = $this->fetch_object ("sections", "id", $get['section']);
+                	if($se!==false) {
+                    	$title[] = $se->name;
+                	}
+            	}
+            	// subnet
+            	if (isset($get['subnetId'])) {
+                 	$sn = $this->fetch_object ("subnets", "id", $get['subnetId']);
+                	if($sn!==false) {
+                    	if($sn->isFolder) {
+                        	$title[] = $sn->description;
+                    	}
+                    	else {
+                        	$sn->description = strlen($sn->description)>0 ? " (".$sn->description.")" : "";
+                        	$title[] = $this->transform_address($sn->subnet, "dotted")."/".$sn->mask.$sn->description;
+                        }
+                	}
+            	}
+            	// ip address
+            	if (isset($get['ipaddrid'])) {
+                    $ip = $this->fetch_object ("ipaddresses", "id", $get['ipaddrid']);
+                    if($ip!==false) {
+                        $title[] = $this->transform_address($ip->ip_addr, "dotted");
+                    }
+            	}
+        	}
+        	// tools, admin
+        	elseif ($get['page']=="tools" || $get['page']=="administration") {
+            	$title[] = ucwords($get['page']);
+            	// subpage
+            	if (isset($get['section'])) {
+                	$title[] = ucwords($get['section']);
+            	}
+            	if (isset($get['subnetId'])) {
+                	// vland domain
+                	if($get['section']=="vlan") {
+                     	$se = $this->fetch_object ("vlanDomains", "id", $get['subnetId']);
+                    	if($se!==false) {
+                        	$title[] = $se->name." domain";
+                    	}
+                	}
+                	else {
+                    	$title[] = ucwords($get['subnetId']);
+                    }
+            	}
+        	}
+        	else {
+            	$title[] = ucwords($get['page']);
+            }
+    	}
+        // return title
+    	return implode(" / ", $title);
 	}
 }
 ?>

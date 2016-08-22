@@ -17,6 +17,16 @@ class Tools extends Common_functions {
 	public $settings = null;
 
 	/**
+	 * (array) IP address types from Addresses object
+	 *
+	 * (default value: null)
+	 *
+	 * @var mixed
+	 * @access public
+	 */
+	public $address_types = null;
+
+	/**
 	 * PEAR NET IPv4 object
 	 *
 	 * @var mixed
@@ -156,18 +166,27 @@ class Tools extends Common_functions {
 	 *	--------------------------------
 	 */
 
+
 	/**
 	 * Search database for addresses
 	 *
 	 * @access public
 	 * @param mixed $search_term
-	 * @param mixed $high
-	 * @param mixed $low
+	 * @param string $high (default: "")
+	 * @param string $low (default: "")
+	 * @param array $custom_fields (default: array())
 	 * @return void
 	 */
-	public function search_addresses($search_term, $high, $low) {
-		# fetch custom fields
-		$custom_fields = $this->fetch_custom_fields ("ipaddresses");
+	public function search_addresses($search_term, $high = "", $low = "", $custom_fields = array()) {
+
+    	$tags = $this->fetch_all_objects ("ipTags", "id");
+    	foreach ($tags as $t) {
+        	if(strtolower($t->type)==strtolower($search_term)) {
+            	$tags = $t->id;
+            	break;
+        	}
+        	$tags = false;
+    	}
 
 		# set search query
 		$query[] = "select * from `ipaddresses` ";
@@ -186,13 +205,16 @@ class Tools extends Common_functions {
 		$query[] = "or `description` like :search_term ";		//descriptions
 		$query[] = "or `note` like :search_term ";				//note
 		$query[] = "or `mac` like :search_term ";				//mac
+		//tag
+		if($tags!==false)
+		$query[] = "or `state` like :tags ";				//tag
 		$query[] = "order by `ip_addr` asc;";
 
 		# join query
 		$query = implode("\n", $query);
 
 		# fetch
-		try { $result = $this->Database->getObjectsQuery($query, array("low"=>$low, "high"=>$high, "search_term"=>"%$search_term%")); }
+		try { $result = $this->Database->getObjectsQuery($query, array("low"=>$low, "high"=>$high, "search_term"=>"%$search_term%", "tags"=>$tags)); }
 		catch (Exception $e) {
 			$this->Result->show("danger", _("Error: ").$e->getMessage());
 			return false;
@@ -209,13 +231,15 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $search_term
-	 * @param number $high
-	 * @param number $low
-	 * @return array
+	 * @param string $high (default: "")
+	 * @param string $low (default: "")
+	 * @param mixed $search_req
+	 * @param mixed $custom_fields (default: array())
+	 * @return void
 	 */
-	public function search_subnets($search_term, $high, $low, $search_req) {
+	public function search_subnets($search_term, $high = "", $low = "", $search_req, $custom_fields = array()) {
 		# first search if range provided
-		$result1 = $this->search_subnets_range  ($search_term, $high, $low);
+		$result1 = $this->search_subnets_range  ($search_term, $high, $low, $custom_fields);
 		# search inside subnets even if IP does not exist!
 		$result2 = $this->search_subnets_inside ($high, $low);
 		# search inside subnets even if IP does not exist - IPv6
@@ -235,10 +259,7 @@ class Tools extends Common_functions {
 	 * @param number $low
 	 * @return array
 	 */
-	private function search_subnets_range ($search_term, $high, $low) {
-		# fetch custom fields
-		$custom_fields = $this->fetch_custom_fields ("subnets");
-
+	private function search_subnets_range ($search_term, $high, $low, $custom_subnet_fields = array()) {
 		# reformat low/high
 		if($high==0 && $low==0)	{ $high = "1"; $low="1"; }
 
@@ -381,11 +402,10 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $search_term
+	 * @param array $custom_fields (default: array())
 	 * @return void
 	 */
-	public function search_vlans($search_term) {
-		# fetch custom fields
-		$custom_fields = $this->fetch_custom_fields ("vlans");
+	public function search_vlans($search_term, $custom_fields = array()) {
 		# query
 		$query[] = "select * from `vlans` where `name` like :search_term or `description` like :search_term or `number` like :search_term ";
 		# custom
@@ -416,11 +436,10 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $search_term
+	 * @param array $custom_fields (default: array())
 	 * @return void
 	 */
-	public function search_vrfs ($search_term) {
-		# fetch custom fields
-		$custom_fields = $this->fetch_custom_fields ("vrf");
+	public function search_vrfs ($search_term, $custom_fields = array()) {
 		# query
 		$query[] = "select * from `vrf` where `name` like :search_term or `description` like :search_term or `rd` like :search_term ";
 		# custom
@@ -443,6 +462,73 @@ class Tools extends Common_functions {
 
 	    # return result
 	    return $search;
+	}
+
+	/**
+	 * Search for PSTN prefixes.
+	 *
+	 * @access public
+	 * @param mixed $search_term
+	 * @param array $custom_prefix_fields (default: array())
+	 * @return void
+	 */
+	public function search_pstn_refixes ($search_term, $custom_prefix_fields = array()) {
+		# query
+		$query[] = "select *,concat(prefix,start) as raw from `pstnPrefixes` where `prefix` like :search_term or `name` like :search_term or `description` like :search_term ";
+		# custom
+	    if(sizeof($custom_fields) > 0) {
+			foreach($custom_fields as $myField) {
+				$myField['name'] = $this->Database->escape($myField['name']);
+				$query[] = " or `$myField[name]` like :search_term ";
+			}
+		}
+		$query[] = "order by  raw asc;";
+		# join query
+		$query = implode("\n", $query);
+
+		# fetch
+		try { $search = $this->Database->getObjectsQuery($query, array("search_term"=>"%$search_term%")); }
+		catch (Exception $e) {
+			$this->Result->show("danger", _("Error: ").$e->getMessage());
+			return false;
+		}
+
+	    # return result
+	    return $search;
+	}
+
+	/**
+	 * Search for PSTN numbers.
+	 *
+	 * @access public
+	 * @param mixed $search_term
+	 * @param array $custom_prefix_fields (default: array())
+	 * @return void
+	 */
+	public function search_pstn_numbers ($search_term, $custom_prefix_fields = array()) {
+		# query
+		$query[] = "select * from `pstnNumbers` where `number` like :search_term or `name` like :search_term or `description` like :search_term or `owner` like :search_term ";
+		# custom
+	    if(sizeof($custom_fields) > 0) {
+			foreach($custom_fields as $myField) {
+				$myField['name'] = $this->Database->escape($myField['name']);
+				$query[] = " or `$myField[name]` like :search_term ";
+			}
+		}
+		$query[] = "order by number asc;";
+		# join query
+		$query = implode("\n", $query);
+
+		# fetch
+		try { $search = $this->Database->getObjectsQuery($query, array("search_term"=>"%$search_term%")); }
+		catch (Exception $e) {
+			$this->Result->show("danger", _("Error: ").$e->getMessage());
+			return false;
+		}
+
+	    # return result
+	    return $search;
+
 	}
 
 	/**
@@ -648,13 +734,14 @@ class Tools extends Common_functions {
 		# get SCHEMA.SQL file
 		$schema = fopen(dirname(__FILE__) . "/../../db/SCHEMA.sql", "r");
 		$schema = fread($schema, 100000);
+		$schema = str_replace("\r\n", "\n", $schema);
 
 		# get definition
 		$definition = strstr($schema, "CREATE TABLE `$table` (");
-		$definition = trim(strstr($definition, ";" . PHP_EOL, true));
+		$definition = trim(strstr($definition, ";" . "\n", true));
 
 		# get each line to array
-		$definition = explode(PHP_EOL, $definition);
+		$definition = explode("\n", $definition);
 
 		# go through,if it begins with ` use it !
 		foreach($definition as $d) {
@@ -834,8 +921,17 @@ class Tools extends Common_functions {
 	 */
 	public function ip_request_send_mail ($action="new", $values) {
 
-		# get all admins and check who to end mail to
-		$recipients = $this->ip_request_get_mail_recipients ();
+		# fetch mailer settings
+		$mail_settings = $this->fetch_object("settingsMail", "id", 1);
+
+		# initialize mailer
+		$this->get_settings ();
+		$phpipam_mail = new phpipam_mail($this->settings, $mail_settings);
+		$phpipam_mail->initialize_mailer();
+
+
+		# get all users and check who to end mail to
+		$recipients = $this->ip_request_get_mail_recipients ($values['subnetId']);
 
 		# add requester to cc
 		$recipients_requester = $values['requester'];
@@ -852,22 +948,22 @@ class Tools extends Common_functions {
 		else						{ $this->Result->show("danger", _("Invalid request action"), true); }
 
 		// set html content
-		$content[] = "<table style='margin-left:10px;margin-top:5px;width:auto;padding:0px;border-collapse:collapse;'>";
-		$content[] = "<tr><td colspan='2' style='padding:5px;margin:0px;color:#333;font-size:16px;text-shadow:1px 1px 1px white;border-bottom:1px solid #eeeeee;'><font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:16px;'>$subject</font></td></tr>";
+		$content[] = "<table style='margin-left:10px;margin-top:20px;width:auto;padding:0px;border-collapse:collapse;'>";
+		$content[] = "<tr><td colspan='2' style='margin:0px;>$this->mail_font_style <strong>$subject</strong></font></td></tr>";
 		foreach($values as $k=>$v) {
 		// title search
 		if (preg_match("/s_title_/", $k)) {
-		$content[] = "<tr><td colspan='2' style='padding:5px;margin:0px;color:#333;font-size:16px;text-shadow:1px 1px 1px white;border-bottom:1px solid #eeeeee;'><font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:16px;'>$v</font></td></tr>";
+		$content[] = "<tr><td colspan='2' style='margin:0px;border-bottom:1px solid #eeeeee;'>$this->mail_font_style<strong>$v</strong></font></td></tr>";
 		}
 		else {
 		//content
 		$content[] = "<tr>";
-		$content[] = "<td style='padding:3px;padding-left:15px;margin:0px;'><font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:13px;'>$k</font></td>";
-		$content[] = "<td style='padding:3px;padding-left:15px;margin:0px;'><font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:13px;'>$v</font></td>";
+		$content[] = "<td style='padding-left:15px;margin:0px;'>$this->mail_font_style $k</font></td>";
+		$content[] = "<td style='padding-left:15px;margin:0px;'>$this->mail_font_style $v</font></td>";
 		$content[] = "</tr>";
 		}
 		}
-		$content[] = "<tr><td style='padding:5px;padding-left:15px;margin:0px;font-style:italic;padding-bottom:3px;text-align:right;color:#ccc;text-shadow:1px 1px 1px white;border-top:1px solid white;'><font face='Helvetica, Verdana, Arial, sans-serif' style='font-size:11px;'>Sent by user ".$User->user->real_name." at ".date('Y/m/d H:i')."</font></td></tr>";
+		$content[] = "<tr><td style='padding-top:15px;padding-bottom:3px;text-align:right;color:#ccc;'>$this->mail_font_style Sent at ".date('Y/m/d H:i')."</font></td></tr>";
 		//set alt content
 		$content_plain[] = "$subject"."\r\n------------------------------\r\n";
 		foreach($values as $k=>$v) {
@@ -875,15 +971,6 @@ class Tools extends Common_functions {
 		}
 		$content_plain[] = "\r\n\r\n"._("Sent by user")." ".$User->user->real_name." at ".date('Y/m/d H:i');
 		$content[] = "</table>";
-
-
-		# fetch mailer settings
-		$mail_settings = $this->fetch_object("settingsMail", "id", 1);
-
-		# initialize mailer
-		$this->get_settings ();
-		$phpipam_mail = new phpipam_mail($this->settings, $mail_settings);
-		$phpipam_mail->initialize_mailer();
 
 		// set content
 		$content 		= $phpipam_mail->generate_message (implode("\r\n", $content));
@@ -921,29 +1008,41 @@ class Tools extends Common_functions {
 	 * Returns list of recipients to get new
 	 *
 	 * @access private
+	 * @param bool|mixed $subnetId
 	 * @return void
 	 */
-	private function ip_request_get_mail_recipients () {
-		// get all admins and check who to end mail to
-		$recipients = $this->fetch_multiple_objects ("users", "role", "Administrator", "id", true);
-		//check recepients
-		if ($recipients!==false) {
-			// check
-			$m = 0;
-			foreach($recipients as $k=>$r) {
-				if($r->mailNotify!="Yes") {
-					unset($recipients[$k]);
-				} else {
-					$m++;
-				}
-			}
-			// if none return false
-			if ($m==0) 	{ return false; }
-			else 		{ return $recipients; }
-		}
-		else {
-			return false;
-		}
+	private function ip_request_get_mail_recipients ($subnetId = false) {
+    	// fetch all users with mailNotify
+        $notification_users = $this->fetch_multiple_objects ("users", "mailNotify", "Yes", "id", true);
+        // recipients array
+        $recipients = array();
+        // any ?
+        if ($notification_users!==false) {
+         	// if subnetId is set check who has permissions
+        	if (isset($subnetId)) {
+             	foreach ($notification_users as $u) {
+                	// inti object
+                	$Subnets = new Subnets ($this->Database);
+                	//check permissions
+                	$subnet_permission = $Subnets->check_permission($u, $subnetId);
+                	// if 3 than add
+                	if ($subnet_permission==3) {
+                    	$recipients[] = $u;
+                	}
+            	}
+        	}
+        	else {
+            	foreach ($notification_users as $u) {
+                	if($u->role=="Administrator") {
+                    	$recipients[] = $u;
+                	}
+            	}
+        	}
+        	return sizeof($recipients)>0 ? $recipients : false;
+        }
+        else {
+            return false;
+        }
 	}
 
 	/**
@@ -1184,22 +1283,18 @@ class Tools extends Common_functions {
 	public function get_field_fix ($table, $field) {
 		$res = fopen(dirname(__FILE__) . "/../../db/SCHEMA.sql", "r");
 		$file = fread($res, 100000);
+		$file = str_replace("\r\n", "\n", $file);
 
 		//go from delimiter on
 		$file = strstr($file, "DROP TABLE IF EXISTS `$table`;");
 		$file = trim(strstr($file, "# Dump of table", true));
 
 		//get proper line
-		$file = explode(PHP_EOL, $file);
+		$file = explode("\n", $file);
 		foreach($file as $k=>$l) {
 			if(strpos(trim($l), "$field`")==1) {
-				//get previous
-				$prev = trim($file[$k-1]);
-				$prev = explode("`", $prev);
-				$prev = "`$prev[1]`";
-
 				$res = trim($l, ",");
-				$res .= " after $prev;";
+				$res .= ";";
 
 				return $res;
 			}
@@ -1600,6 +1695,901 @@ class Tools extends Common_functions {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+	/**
+	 *	@nat methods
+	 *	------------------------------
+	 */
+
+    /**
+     * Translates NAT objects to be shown on page
+     *
+     * @access public
+     * @param json $json_objects
+     * @param int|bool $nat_id (default: false)
+     * @param bool $json_objects (default: false)
+     * @param bool $object_type (default: false) - to bold it (ipaddresses / subnets)
+     * @param int|bool object_id (default: false) - to bold it
+     * @return void
+     */
+    public function translate_nat_objects_for_display ($json_objects, $nat_id = false, $admin = false, $object_type = false, $object_id=false) {
+        // to array "subnets"=>array(1,2,3)
+        $objects = json_decode($json_objects, true);
+        // init out array
+        $out = array();
+        // set ping statuses for warning and offline
+        $this->get_settings();
+        $statuses = explode(";", $this->settings->pingStatus);
+        // check
+        if(is_array($objects)) {
+            if(sizeof($objects)>0) {
+                foreach ($objects as $ot=>$ids) {
+                    if (sizeof($ids)>0) {
+                        foreach ($ids as $id) {
+                            // fetch
+                            $item = $this->fetch_object($ot, "id", $id);
+                            if($item!==false) {
+                                // bold
+                                $bold = $item->id==$object_id && $ot==$object_type ? "<span class='strong'>" : "<span>";
+                                // remove
+                                $remove = $admin&&$nat_id ? "<span class='remove-nat-item-wrapper_".$ot."_".$item->id."'><a class='btn btn-xs btn-danger removeNatItem' data-id='$nat_id' data-type='$ot' data-item-id='$item->id' rel='tooltip' title='"._('Remove')."'><i class='fa fa-times'></i></a>" : "<span>";
+                                // subnets
+                                if ($ot=="subnets") {
+                                    $out[] = "$remove $bold<a href='".create_link("subnets", $item->sectionId, $item->id)."'>".$this->transform_address($item->subnet, "dotted")."/".$item->mask."</a></span></span>";
+                                }
+                                // addresses
+                                else {
+                                    // subnet
+                                    $snet = $this->fetch_object("subnets", "id", $item->subnetId);
+                                    // append status
+                                    if ($snet->pingSubnet=="1") {
+                                        //calculate
+                                        $tDiff = time() - strtotime($item->lastSeen);
+                                        if($item->excludePing=="1" )    { $hStatus = "padded"; $hTooltip = ""; }
+                                        elseif(is_null($item->lastSeen)) { $hStatus = "neutral"; $hTooltip = "rel='tooltip' data-container='body' data-html='true' data-placement='left' title='"._("Address was never online")."'"; }
+                                        elseif($tDiff < $statuses[0])	{ $hStatus = "success";	$hTooltip = "rel='tooltip' data-container='body' data-html='true' data-placement='left' title='"._("Address is alive")."<hr>"._("Last seen").": ".$item->lastSeen."'"; }
+                                        elseif($tDiff < $statuses[1])	{ $hStatus = "warning"; $hTooltip = "rel='tooltip' data-container='body' data-html='true' data-placement='left' title='"._("Address warning")."<hr>"._("Last seen").": ".$item->lastSeen."'"; }
+                                        elseif($tDiff > $statuses[1])	{ $hStatus = "error"; 	$hTooltip = "rel='tooltip' data-container='body' data-html='true' data-placement='left' title='"._("Address is offline")."<hr>"._("Last seen").": ".$item->lastSeen."'";}
+                                        elseif($item->lastSeen == "0000-00-00 00:00:00") { $hStatus = "neutral"; 	$hTooltip = "rel='tooltip' data-container='body' data-html='true' data-placement='left' title='"._("Address is offline")."<hr>"._("Last seen").": "._("Never")."'";}
+                                        elseif($item->lastSeen == "1970-01-01 00:00:01") { $hStatus = "neutral"; 	$hTooltip = "rel='tooltip' data-container='body' data-html='true' data-placement='left' title='"._("Address is offline")."<hr>"._("Last seen").": "._("Never")."'";}
+                                        else							{ $hStatus = "neutral"; $hTooltip = "rel='tooltip' data-container='body' data-html='true' data-placement='left' title='"._("Address status unknown")."'";}
+                                    }
+                                    else {
+                                        $hStatus = "hidden";
+                                        $hTooltip = "";
+                                    }
+                                    if($remove=="<span>") {
+                                        $remove .= "<span class='status status-$hStatus' $hTooltip></span>";
+                                    }
+
+                                    $out[] = "$remove $bold <a href='".create_link("subnets", $snet->sectionId, $item->subnetId, "address-details", $item->id)."'>".$this->transform_address($item->ip_addr, "dotted")."</a></span>";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // result
+        return sizeof($out)>0 ? $out : false;
+    }
+
+    /**
+     * This function will reindex all nat object to following structure:
+     *
+     *  ipaddresses => array (
+     *                  [address_id] => array (nat_id1, nat_id2)
+     *              )
+     *  subnets => array (
+     *                  [subnet_id] => array (nat_id1, nat_id2)
+     *              )
+     *
+     * @access public
+     * @param array $all_nats (default: array())
+     * @return void
+     */
+    public function reindex_nat_objects ($all_nats = array()) {
+        // out array
+        $out = array(
+            "ipaddresses"=>array(),
+            "subnets"=>array()
+        );
+        // loop
+        if(is_array($all_nats)) {
+            if (sizeof($all_nats)>0) {
+                foreach ($all_nats as $n) {
+                    $src = json_decode($n->src, true);
+                    $dst = json_decode($n->dst, true);
+
+                    // src
+                    if(is_array($src)) {
+                        if(is_array(@$src['subnets'])) {
+                            foreach ($src['subnets'] as $s) {
+                                $out['subnets'][$s][] = $n->id;
+                            }
+                        }
+                        if(is_array(@$src['ipaddresses'])) {
+                            foreach ($src['ipaddresses'] as $s) {
+                                $out['ipaddresses'][$s][] = $n->id;
+                            }
+                        }
+                    }
+                    // dst
+                    if(is_array($dst)) {
+                        if(is_array(@$dst['subnets'])) {
+                            foreach ($dst['subnets'] as $s) {
+                                $out['subnets'][$s][] = $n->id;
+                            }
+                        }
+                        if(is_array(@$dst['ipaddresses'])) {
+                            foreach ($dst['ipaddresses'] as $s) {
+                                $out['ipaddresses'][$s][] = $n->id;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // return
+        return $out;
+    }
+
+    /**
+     * Prints single NAT for display in devices, subnets, addresses.
+     *
+     * @access public
+     * @param mixed $n
+     * @param bool $is_admin (default: false)
+     * @param bool|int $nat_id (default: false)
+     * @param bool $admin (default: false) > shows remove links
+     * @param bool|mixed $object_type (default: false)
+     * @param bool $object_id (default: false)
+     * @return void
+     */
+    public function print_nat_table ($n, $is_admin = false, $nat_id = false, $admin = false, $object_type = false, $object_id=false) {
+        // cast to object to be sure if array provided
+        $n = (object) $n;
+
+        // translate json to array, links etc
+        $sources      = $this->translate_nat_objects_for_display ($n->src, $nat_id, $admin, $object_type, $object_id);
+        $destinations = $this->translate_nat_objects_for_display ($n->dst, $nat_id, $admin, $object_type, $object_id);
+
+        // no src/dst
+        if ($sources===false)
+            $sources = array("<span class='badge badge1 badge5 alert-danger'>"._("None")."</span>");
+        if ($destinations===false)
+            $destinations = array("<span class='badge badge1 badge5 alert-danger'>"._("None")."</span>");
+
+        // description
+        $n->description = str_replace("\n", "<br>", $n->description);
+        $n->description = strlen($n->description)>0 ? "($n->description)" : "";
+
+        // device
+        if (strlen($n->device)) {
+            if($n->device !== 0) {
+                $device = $this->fetch_object ("devices", "id", $n->device);
+                $description = strlen($device->description)>0 ? " ($device->description)" : "";
+                $n->device = $device===false ? "/" : "<a href='".create_link("tools", "devices", $device->id)."'>$device->hostname</a> ($device->ip_addr) <span class='text-muted'>$description</span>";
+            }
+        }
+        else {
+            $n->device = "/";
+        }
+
+        // icon
+        $icon =  $n->type=="static" ? "fa-arrows-h" : "fa-long-arrow-right";
+
+        // to html
+        $html = array();
+        $html[] = "<tr>";
+        $html[] = "<td colspan='4'>";
+        $html[] = "<span class='badge badge1 badge5'>".ucwords($n->type)."</span> <strong>$n->name</strong> <span class='text-muted'>$n->description</span>";
+        $html[] = "	<div class='btn-group pull-right'>";
+        $html[] = "		<a href='' class='btn btn-xs btn-default editNat' data-action='edit'   data-id='$n->id'><i class='fa fa-pencil'></i></a>";
+        $html[] = "		<a href='' class='btn btn-xs btn-default editNat' data-action='delete' data-id='$n->id'><i class='fa fa-times'></i></a>";
+        $html[] = "	</div>";
+        $html[] = "</td>";
+        $html[] = "</tr>";
+
+        // append ports
+        if(($n->type=="static" || $n->type=="destination") && (strlen($n->src_port)>0 && strlen($n->dst_port)>0)) {
+            $sources      = implode("<br>", $sources)." /".$n->src_port;
+            $destinations = implode("<br>", $destinations)." /".$n->dst_port;
+        }
+        else {
+            $sources      = implode("<br>", $sources);
+            $destinations = implode("<br>", $destinations);
+        }
+
+        $html[] = "<tr>";
+        $html[] = "<td style='width:80px;'></td>";
+        $html[] = "<td>$sources</td>";
+        $html[] = "<td><i class='fa $icon'></i></td>";
+        $html[] = "<td>$destinations</td>";
+        $html[] = "</tr>";
+
+        $html[] = "<tr>";
+        $html[] = "<td></td>";
+        $html[] = "<td colspan='3'><span class='text-muted'>";
+        $html[] = _('Device').": $n->device";
+        $html[] = "</span></td>";
+        $html[] = "</tr>";
+
+        // actions
+        if($is_admin) {
+        $html[] = "<tr>";
+        $html[] = "<td colspan='4'><hr></td>";
+        $html[] = "</tr>";
+        }
+        // return
+        return implode("\n", $html);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/**
+	 *	@pstn methods
+	 *	------------------------------
+	 *
+	 *  !pstn
+	 */
+
+    /**
+     * Returns all prefixes in correct order
+     *
+     * @access public
+     * @return void
+     * @param bool|int $master (default: false)
+     * @param bool $recursive (default: false)
+     * @return void
+     */
+    public function fetch_all_prefixes ($master = false, $recursive = false) {
+	    if($master && !$recursive) {
+    	    $query = 'select *,concat(prefix,start) as raw from pstnPrefixes where master = ? order by raw asc;';
+    	    $params = array($master);
+	    }
+	    else {
+    	    $query = 'select *,concat(prefix,start) as raw from pstnPrefixes order by raw asc;';
+    	    $params = array();
+        }
+		# fetch
+		try { $prefixes = $this->Database->getObjectsQuery($query, $params); }
+		catch (Exception $e) {
+			$this->Result->show("danger", _("Error: ").$e->getMessage());
+			return false;
+		}
+        // for master + recursive we need to go from master id to next 0 (root
+        if($master && $recursive && $prefixes) {
+            $master_set = false;
+            $out = array();
+
+            foreach ($prefixes as $k=>$p) {
+        	    if($p->id == $master) {
+            	    $out[] = $p;
+            	    $master_set = true;
+        	    }
+        	    elseif ($master_set && $p->master!=0) {
+            	    $out[] = $p;
+        	    }
+        	    elseif ($master_set && $p->master!=0) {
+            	    break;
+        	    }
+            }
+            $prefixes = $out;
+        }
+		# result
+		return sizeof($prefixes)>0 ? array_values($prefixes) : false;
+    }
+
+    /**
+     * Normalize prefix / number.
+     *
+     * @access public
+     * @param mixed $number
+     * @return void
+     */
+    public function prefix_normalize ($number) {
+        return str_replace(array("+", " ", "-"), "", $number);
+    }
+
+	/**
+	 * fetch whole tree path for prefix - from slave to parents
+	 *
+	 * @access public
+	 * @param mixed $id
+	 * @return void
+	 */
+	public function fetch_prefix_parents_recursive ($id) {
+		$parents = array();
+		$root = false;
+
+		while($root === false) {
+			$subd = $this->fetch_object("pstnPrefixes", "id", $id);		# get subnet details
+
+			if($subd!==false) {
+    			$subd = (array) $subd;
+				# not root yet
+				if(@$subd['master']!=0) {
+					array_unshift($parents, $subd['master']);
+					$id  = $subd['master'];
+				}
+				# root
+				else {
+					array_unshift($parents, $subd['master']);
+					$root = true;
+				}
+			}
+			else {
+				$root = true;
+			}
+		}
+		# remove 0
+		unset($parents[0]);
+		# return array
+		return $parents;
+	}
+
+	/**
+	 * Checks for duplicate number.
+	 *
+	 * @access public
+	 * @param bool $prefix (default: false)
+	 * @param bool $number (default: false)
+	 * @return void
+	 */
+	public function check_number_duplicates ($prefix = false, $number = false) {
+    	if($prefix===false && $number===false) {
+        	$this->Result->show("danger", "Duplicate chck failed", true);
+    	}
+    	else {
+        	$query = "select count(*) as cnt from pstnNumbers where prefix = ? and number = ?;";
+    		# fetch
+    		try { $cnt = $this->Database->getObjectQuery($query, array($prefix, $number)); }
+    		catch (Exception $e) {
+    			$this->Result->show("danger", _("Error: ").$e->getMessage());
+    			return false;
+    		}
+    		# result
+    		return $cnt->cnt>0 ? true : false;
+    	}
+	}
+
+	/**
+	 * Checks permission for specified prefix
+	 *
+	 *	we provide user details and subnetId
+	 *
+	 * @access public
+	 * @param object $user
+	 * @param int $subnetId
+	 * @return void
+	 */
+	public function check_prefix_permission ($user) {
+        return $user->role=="Administrator" ? 3 : $user->pstn;
+	}
+
+	/**
+	 * Prints structured menu of prefixes
+	 *
+	 * @access public
+	 * @param mixed $user
+	 * @param mixed $prefixes
+	 * @param mixed $custom_fields
+	 * @return void
+	 */
+	public function print_menu_prefixes ( $user, $prefixes, $custom_fields ) {
+
+		# set hidden fields
+		$this->get_settings ();
+		$hidden_fields = json_decode($this->settings->hiddenCustomFields, true);
+		$hidden_fields = is_array($hidden_fields['subnets']) ? $hidden_fields['subnets'] : array();
+
+		# set html array
+		$html = array();
+		# root is 0
+		$rootId = 0;
+
+		# remove all not permitted!
+		if(sizeof($prefixes)>0) {
+		foreach($prefixes as $k=>$s) {
+			$permission = $this->check_prefix_permission ($user);
+			if($permission == 0) { unset($prefixes[$k]); }
+		}
+		}
+
+		# create loop array
+		if(sizeof($prefixes) > 0) {
+        $children_prefixes = array();
+		foreach ( $prefixes as $item ) {
+			$item = (array) $item;
+			$children_prefixes[$item['master']][] = $item;
+		}
+		}
+		else {
+			return false;
+		}
+
+		# loop will be false if the root has no children (i.e., an empty menu!)
+		$loop = !empty( $children_prefixes[$rootId] );
+
+		# initializing $parent as the root
+		$parent = $rootId;
+		$parent_stack = array();
+
+		# old count
+		$old_count = 0;
+
+		# return table content (tr and td's)
+		while ( $loop && ( ( $option = each( $children_prefixes[$parent] ) ) || ( $parent > $rootId ) ) )
+		{
+			# repeat
+			$repeat  = str_repeat( " - ", ( count($parent_stack)) );
+
+			if(count($parent_stack) == 0) {
+				$margin = "0px";
+				$padding = "0px";
+			}
+			else {
+				# padding
+				$padding = "10px";
+
+				# margin
+				$margin  = (count($parent_stack) * 10) -10;
+				$margin  = $margin *1.5;
+				$margin  = $margin."px";
+			}
+
+			# count levels
+			$count = count( $parent_stack ) + 1;
+
+			# description
+			$name = strlen($option['value']['name'])==0 ? "/" : $option['value']['name'];
+
+			# print table line
+			if(strlen($option['value']['prefix']) > 0) {
+    			$last_item = $count < $old_count ? "last_item" : "";
+
+    			# count change?
+    			if ($count != $old_count) { $html[] = "</tbody><tbody>"; }
+
+				$html[] = "<tr class='level$count'>";
+
+				//which level?
+				if($count==1) {
+					# last?
+					if(!empty( $children_prefixes[$option['value']['id']])) {
+						$html[] = "	<td class='level$count'><span class='structure-last' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-folder-open-o'></i><a href='".create_link($_GET['page'],"pstn-prefixes",$option['value']['id'])."'>".$option['value']['prefix']." </a></td>";
+						$html[] = "	<td class='level$count'><span class='structure-last' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-folder-open-o'></i> <strong>$name</strong></td>";
+					} else {
+						$html[] = "	<td class='level$count'><span class='structure' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-angle-right'></i><a href='".create_link($_GET['page'],"pstn-prefixes",$option['value']['id'])."'>".$option['value']['prefix']." </a></td>";
+						$html[] = "	<td class='level$count'><span class='structure' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-angle-right'></i> <strong>$name</strong></td>";
+					}
+				}
+				else {
+					# last?
+					if(!empty( $children_prefixes[$option['value']['id']])) {
+						$html[] = "	<td class='level$count'><span class='structure-last' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-folder-open-o'></i> <a href='".create_link($_GET['page'],"pstn-prefixes",$option['value']['id'])."'>  ".$option['value']['prefix']."</a></td>";
+						$html[] = "	<td class='level$count'><span class='structure-last' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-folder-open-o'></i> <strong>$name</strong></td>";
+					}
+					else {
+						$html[] = "	<td class='level$count'><span class='structure' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-angle-right'></i> <a href='".create_link($_GET['page'],"pstn-prefixes",$option['value']['id'])."'>  ".$option['value']['prefix']."</a></td>";
+						$html[] = "	<td class='level$count'><span class='structure' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-angle-right'></i> <strong>$name</strong></td>";
+					}
+				}
+
+				// range
+				$html[] = " <td class='level$count'><span class='structure-last' style='padding-left:$padding; margin-left:$margin;'></span><i class='fa fa-gray fa-pad-right-3 fa-angle-right'></i> ".$option['value']['prefix'].$option['value']['start']." ".$option['value']['prefix'].$option['value']['stop']."</td>";
+
+				//start/stop
+				$html[] = "	<td>".$option['value']['start']."</td>";
+				$html[] = "	<td>".$option['value']['stop']."</td>";
+
+				//count
+                $cnt = $this->count_database_objects("pstnNumbers", "prefix", $option['value']['id']);
+
+                $html[] = "	<td><span class='badge badge1 badge5'>".$cnt."</span></td>";
+
+				//device
+				$device = ( $option['value']['deviceId']==0 || empty($option['value']['deviceId']) ) ? false : true;
+
+				if($device===false) { $html[] ='	<td>/</td>' . "\n"; }
+				else {
+					$device = $this->fetch_object ("devices", "id", $option['value']['deviceId']);
+					if ($device!==false) {
+						$html[] = "	<td><a href='".create_link("tools","devices",$device->id)."'>".$device->hostname .'</a></td>' . "\n";
+					}
+					else {
+						$html[] ='	<td>/</td>' . "\n";
+					}
+				}
+
+				//custom
+				if(sizeof($custom_fields) > 0) {
+			   		foreach($custom_fields as $field) {
+				   		# hidden?
+				   		if(!in_array($field['name'], $hidden_fields)) {
+
+				   			$html[] =  "<td class='hidden-xs hidden-sm hidden-md'>";
+
+				   			//booleans
+							if($field['type']=="tinyint(1)")	{
+								if($option['value'][$field['name']] == "0")			{ $html[] = _("No"); }
+								elseif($option['value'][$field['name']] == "1")		{ $html[] = _("Yes"); }
+							}
+							//text
+							elseif($field['type']=="text") {
+								if(strlen($option['value'][$field['name']])>0)		{ $html[] = "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $option['value'][$field['name']])."'>"; }
+								else												{ $html[] = ""; }
+							}
+							else {
+								$html[] = $option['value'][$field['name']];
+
+							}
+
+				   			$html[] =  "</td>";
+			   			}
+			    	}
+			    }
+
+				# set permission
+				$permission = $this->check_prefix_permission ($user);
+
+				$html[] = "	<td class='actions' style='padding:0px;'>";
+				$html[] = "	<div class='btn-group'>";
+
+				if($permission>2) {
+					$html[] = "		<button class='btn btn-xs btn-default editPSTN' data-action='edit'   data-id='".$option['value']['id']."'><i class='fa fa-pencil'></i></button>";
+					$html[] = "		<button class='btn btn-xs btn-default editPSTN' data-action='delete' data-id='".$option['value']['id']."'><i class='fa fa-times'></i></button>";
+				}
+				else {
+					$html[] = "		<button class='btn btn-xs btn-default disabled'><i class='fa fa-gray fa-pencil'></i></button>";
+					$html[] = "		<button class='btn btn-xs btn-default disabled'><i class='fa fa-gray fa-times'></i></button>";
+				}
+				$html[] = "	</div>";
+				$html[] = "	</td>";
+
+				$html[] = "</tr>";
+
+                # save old level count
+                $old_count = $count;
+			}
+
+			if ( $option === false ) { $parent = array_pop( $parent_stack ); }
+			# Has slave subnets
+			elseif ( !empty( $children_prefixes[$option['value']['id']] ) ) {
+				array_push( $parent_stack, $option['value']['master'] );
+				$parent = $option['value']['id'];
+			}
+			# Last items
+			else { }
+		}
+		# print
+		return $html;
+	}
+
+
+
+
+	/**
+	 * Prints dropdown menu for master prefix selection in prefix editing
+	 *
+	 * @access public
+	 * @param bool $prefixId (default: false)
+	 * @return void
+	 */
+	public function print_masterprefix_dropdown_menu($prefixId = false) {
+
+		# initialize vars
+		$children_prefixes = array();
+		$parent_stack_prefixes = array();
+		$html = array();
+		$rootId = 0;			// root is 0
+		$parent = $rootId;      // initializing $parent as the root
+
+		# fetch all prefixes in section
+		$all_prefixes = $this->fetch_all_prefixes ();
+		# folder or subnet?
+		foreach($all_prefixes as $s) {
+			$children_prefixes[$s->master][] = (array) $s;
+		}
+
+		# loop will be false if the root has no children (i.e., an empty menu!)
+		$loop  = !empty( $children_prefixes[$rootId] );
+
+		# structure
+		$html[] = "<select name='master' class='form-control input-sm input-w-auto input-max-200'>";
+
+		# root subnet
+		$html[] = "<option value='0'>"._("Root subnet")."</option>";
+
+		# return table content (tr and td's) - subnets
+		if(sizeof($children_prefixes)>0) {
+		while ( $loop && ( ( $option = each( $children_prefixes[$parent] ) ) || ( $parent > $rootId ) ) )
+		{
+			# repeat
+			$repeat  = str_repeat( " &nbsp;&nbsp; ", ( count($parent_stack_prefixes)) );
+			# count levels
+			$count = count($parent_stack_prefixes)+1;
+
+			# selected
+			$selected = $option['value']['id'] == $prefixId ? "selected='selected'" : "";
+			if($option['value']['id'])
+            $html[] = "<option value='".$option['value']['id']."' $selected>$repeat ".$option['value']['prefix']." (".$option['value']['name'].")</option>";
+
+			if ( $option === false ) { $parent = array_pop( $parent_stack_prefixes ); }
+			# Has slave subnets
+			elseif ( !empty( $children_prefixes[$option['value']['id']] ) ) {
+				array_push( $parent_stack_prefixes, $option['value']['master'] );
+				$parent = $option['value']['id'];
+			}
+			# Last items
+			else { }
+		}
+		}
+		$html[] = "</select>";
+		# join and print
+		print implode( "\n", $html );
+	}
+
+
+
+
+	/**
+	 * This function compresses all pstn
+	 *
+	 *	input is array of pstn ranges
+	 *	output compresses pstn range
+	 *
+	 * @access public
+	 * @param array $numbers
+	 * @return void
+	 */
+	public function compress_pstn_ranges ($numbers, $state=4) {
+    	# set size
+    	$size = sizeof($numbers);
+    	// vars
+    	$numbers_formatted = array();
+    	$fIndex = int;
+
+		# loop through IP addresses
+		for($c=0; $c<$size; $c++) {
+			# ignore already comressed range
+			if($numbers[$c]->class!="compressed-range") {
+				# gap between this and previous
+				if(gmp_strval( @gmp_sub($numbers[$c]->number, $numbers[$c-1]->number)) != 1) {
+					# remove index flag
+					unset($fIndex);
+					# save IP address
+					$numbers_formatted[$c] = $numbers[$c];
+					$numbers_formatted[$c]->class = "ip";
+
+					# no gap this -> next
+					if(gmp_strval( @gmp_sub($numbers[$c]->number, $numbers[$c+1]->number)) == -1 && $numbers[$c]->state==$state) {
+						//is state the same?
+						if($numbers[$c]->state==$numbers[$c+1]->state) {
+							$fIndex = $c;
+							$numbers_formatted[$fIndex]->startIP = $numbers[$c]->number;
+							$numbers_formatted[$c]->class = "compressed-range";
+						}
+					}
+				}
+				# no gap between this and previous
+				else {
+					# is state same as previous?
+					if($numbers[$c]->state==$numbers[$c-1]->state && $numbers[$c]->state==$state) {
+						$numbers_formatted[$fIndex]->stopIP = $numbers[$c]->number;	//adds dhcp state
+						$numbers_formatted[$fIndex]->numHosts = gmp_strval( gmp_add(@gmp_sub($numbers[$c]->number, $numbers_formatted[$fIndex]->number),1));	//add number of hosts
+					}
+					# different state
+					else {
+						# remove index flag
+						unset($fIndex);
+						# save IP address
+						$numbers_formatted[$c] = $numbers[$c];
+						$numbers_formatted[$c]->class = "ip";
+						# check if state is same as next to start range
+						if($numbers[$c]->state==@$numbers[$c+1]->state &&  gmp_strval( @gmp_sub($numbers[$c]->number, $numbers[$c+1]->number)) == -1 && $numbers[$c]->state==$state) {
+							$fIndex = $c;
+							$numbers_formatted[$fIndex]->startIP = $numbers[$c]->number;
+							$numbers_formatted[$c]->class = "compressed-range";
+						}
+					}
+				}
+			}
+			else {
+				# save already compressed
+				$numbers_formatted[$c] = $numbers[$c];
+			}
+		}
+		# overrwrite ipaddresses and rekey
+		$addresses = @array_values($numbers_formatted);
+		# return
+		return $addresses;
+	}
+
+	/**
+	 * Calculates pstn usage - dhcp, active, ...
+	 *
+	 * @access public
+	 * @param obj $prefix		//subnet in decimal format
+	 * @param obj $numbers	     //netmask in decimal format
+	 * @return void
+	 */
+	public function calculate_prefix_usege ($prefix, $numbers) {
+	    # calculate max number of hosts
+	    $details['maxhosts'] = ($prefix->stop - $prefix->start + 1);
+
+		# get IP address count per address type
+		if($numbers!==false) {
+		    $details_p = $this->calculate_prefix_usage_sort_numbers ($numbers);
+    	    foreach($this->address_types as $t) {
+    		    $details[$t['type']."_percent"] = round( ( ($details_p[$t['type']] * 100) / $details['maxhosts']), 2 );
+    	    }
+
+            # calculate free hosts
+            $details['freehosts'] =  $details['maxhosts'] - sizeof($numbers);
+        }
+        else {
+            $details['freehosts'] =  $details['maxhosts'];
+        }
+	    # calculate use percentage for each type
+	    $details['freehosts_percent'] = round( ( ($details['freehosts'] * 100) / $details['maxhosts']), 2 );
+
+	    # result
+	    return $details;
+	}
+
+	/**
+	 * Calculates number usage per host type
+	 *
+	 * @access public
+	 * @param mixed $addresses
+	 * @return void
+	 */
+	public function calculate_prefix_usage_sort_numbers ($numbers) {
+		$count = array();
+		$count['used'] = 0;				//initial sum count
+		# fetch address types
+		$this->get_addresses_types();
+		# create array of keys with initial value of 0
+		foreach($this->address_types as $a) {
+			$count[$a['type']] = 0;
+		}
+		# count
+		if($numbers!==false) {
+			foreach($numbers as $n) {
+				$count[$this->translate_address_type($n->state)]++;
+				$count['used'] = gmp_strval(gmp_add($count['used'], 1));
+			}
+		}
+		# result
+		return $count;
+	}
+
+	/**
+	 * Returns array of address types
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function get_addresses_types () {
+		# from cache
+		if($this->address_types == null) {
+        	# fetch
+        	$types = $this->fetch_all_objects ("ipTags", "id");
+
+            # save to array
+			$types_out = array();
+			foreach($types as $t) {
+				$types_out[$t->id] = (array) $t;
+			}
+			# save to cache
+			$this->address_types = $types_out;
+		}
+	}
+
+	/**
+	 * Translates address type from index (int) to type
+	 *
+	 *	e.g.: 0 > offline
+	 *
+	 * @access public
+	 * @param mixed $index
+	 * @return void
+	 */
+	public function translate_address_type ($index) {
+		# fetch
+		$this->get_addresses_types();
+		# return
+		return $this->address_types[$index]["type"];
+	}
+
+
+
+
+
+
+
+
+
+
+
+	/**
+	 *	@location methods
+	 *	------------------------------
+	 *
+	 *  !location
+	 */
+
+    /**
+     * Fetches all location objects.
+     *
+     * @access public
+     * @param bool|int $id (default: false)
+     * @param bool count (default: false)
+     * @return void
+     */
+    public function fetch_location_objects ($id = false, $count = false) {
+        // check
+        if(is_numeric($id)) {
+            // count ?
+            $select = $count ? "count(*) as cnt " : "*";
+            // query
+            $query = "select $select from
+                        (
+                        SELECT d.id, d.hostname as name, '' as mask, 'devices' as type, '' as sectionId, d.location, d.description
+                        FROM devices d
+                        JOIN locations l
+                        ON d.location = l.id
+                        UNION ALL
+                        SELECT r.id, r.name, '' as mask, 'racks' as type, '' as sectionId, r.location, r.description
+                        FROM racks r
+                        JOIN locations l
+                        ON r.location = l.id
+                        UNION ALL
+                        SELECT s.id, s.subnet as name, s.mask, 'subnets' as type, s.sectionId, s.location, s.description
+                        FROM subnets s
+                        JOIN locations l
+                        ON s.location = l.id
+                        UNION ALL
+                        SELECT a.id, a.ip_addr as name, 'mask', 'addresses' as type, a.subnetId as sectionId, a.location, a.dns_name as description
+                        FROM ipaddresses a
+                        JOIN locations l
+                        ON a.location = l.id
+                        )
+                        as linked where location = ?;";
+
+     		// fetch
+    		try { $objects = $this->Database->getObjectsQuery($query, array($id)); }
+    		catch (Exception $e) { $this->Result->show("danger", $e->getMessage(), true); }
+
+    		// return
+    		return sizeof($objects)>0 ? $objects : false;
+        }
+        else {
+            return false;
+        }
+    }
 
 
 

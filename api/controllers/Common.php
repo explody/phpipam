@@ -97,15 +97,15 @@ class Common_api_functions {
 	 */
 	protected function init_object ($Object_name, $Database) {
 		// admin fix
-		if($Object_name=="Admin")	    { $this->$Object_name	= new $Object_name ($Database, false); }
+		if($Object_name=="Admin")	    { $this->{$Object_name}	= new $Object_name ($Database, false); }
 		// User fix
-		elseif($Object_name=="User")	{ $this->$Object_name	= new $Object_name ($Database, true); $this->$Object_name->user = null; }
+		elseif($Object_name=="User")	{ $this->{$Object_name}	= new $Object_name ($Database, true); $this->{$Object_name}->user = null; }
 		// default
-		else					        { $this->$Object_name	= new $Object_name ($Database); }
+		else					        { $this->{$Object_name}	= new $Object_name ($Database); }
 		// set exit method
-		$this->$Object_name->Result->exit_method = "exception";
+		$this->{$Object_name}->Result->exit_method = "exception";
 		// set API flag
-		$this->$Object_name->api = true;
+		$this->{$Object_name}->api = true;
 	}
 
 	/**
@@ -529,6 +529,78 @@ class Common_api_functions {
 	}
 
 	/**
+	 * Validates MAC address
+	 *
+	 * @access public
+	 * @param mixed $mac
+	 * @return void
+	 */
+	public function validate_mac ($mac) {
+    	// first put it to common format (1)
+    	$mac = $this->reformat_mac_address ($mac);
+    	// we permit empty
+        if (strlen($mac)==0)                                                            { return true; }
+    	elseif (preg_match('/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/', $mac) != 1)   { return false; }
+    	else                                                                            { return true; }
+	}
+
+	/**
+	 * Reformats MAC address to requested format
+	 *
+	 * @access public
+	 * @param mixed $mac
+	 * @param string $format (default: 1)
+	 *      1 : 00:66:23:33:55:66
+	 *      2 : 00-66-23-33-55-66
+	 *      3 : 0066.2333.5566
+	 *      4 : 006623335566
+	 * @return void
+	 */
+	public function reformat_mac_address ($mac, $format = 1) {
+    	// strip al tags first
+    	$mac = strtolower(str_replace(array(":",".","-"), "", $mac));
+    	// format 4
+    	if ($format==4) {
+        	return $mac;
+    	}
+    	// format 3
+    	if ($format==3) {
+        	$mac = str_split($mac, 4);
+        	$mac = implode(".", $mac);
+    	}
+    	// format 2
+    	elseif ($format==2) {
+        	$mac = str_split($mac, 2);
+        	$mac = implode("-", $mac);
+    	}
+    	// format 1
+    	else {
+        	$mac = str_split($mac, 2);
+        	$mac = implode(":", $mac);
+    	}
+    	// return
+    	return $mac;
+	}
+
+	/**
+	 * Returns array of possible permissions
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function get_possible_permissions () {
+		// set
+		$permissions = array(
+    		            "na"=>0,
+    		            "ro"=>1,
+    		            "rw"=>2,
+    		            "rwa"=>3
+                        );
+        // return
+		return $permissions;
+	}
+
+	/**
 	 * This method removes all folders if controller is subnets
 	 *
 	 * @access protected
@@ -641,9 +713,9 @@ class Common_api_functions {
 			// match
 			if(array_key_exists($v, $this->_params)) {
 				// replace
-				$this->_params->$k = $this->_params->$v;
+				$this->_params->{$k} = $this->_params->{$v};
 				// remove
-				unset($this->_params->$v);
+				unset($this->_params->{$v});
 			}
 		}
 	}
@@ -665,10 +737,10 @@ class Common_api_functions {
 				if(array_key_exists($k, $this->keys)) {
 					// replace
 					$key = $this->keys[$k];
-					$result_remapped->$key = $v;
+					$result_remapped->{$key} = $v;
 				}
 				else {
-					$result_remapped->$k = $v;
+					$result_remapped->{$k} = $v;
 				}
 			}
 		}
@@ -687,15 +759,14 @@ class Common_api_functions {
 					if(array_key_exists($k, $this->keys)) {
 						// replace
 						$key_val = $this->keys[$k];
-						$result_remapped[$m]->$key_val = $v;
+						$result_remapped[$m]->{$key_val} = $v;
 					}
 					else {
-						$result_remapped[$m]->$k = $v;
+						$result_remapped[$m]->{$k} = $v;
 					}
 				}
 			}
 		}
-
 
 		# result
 		return $result_remapped;

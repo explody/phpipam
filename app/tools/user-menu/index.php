@@ -90,7 +90,6 @@ if($User->user->authMethod == 1) {
 	<td class="info2"><?php print _('Select language'); ?></td>
 </tr>
 
-<?php if($User->user->role=="Administrator") { ?>
 <!-- weather to receive mails -->
 <tr>
 	<td><?php print _('Mail notifications'); ?></td>
@@ -100,7 +99,11 @@ if($User->user->authMethod == 1) {
 			<option value="Yes" <?php if($User->user->mailNotify=="Yes") { print "selected='selected'"; } ?>><?php print _("Yes"); ?></option>
 		</select>
 	</td>
-	<td class="info2"><?php print _('Select yes to receive notification change mail for state change'); ?></td>
+	<?php if($User->user->role=="Administrator") { ?>
+	<td class="info2"><?php print _('Select yes to receive mail notification changes (IP state change, new hosts, requests)'); ?></td>
+    <?php } else { ?>
+	<td class="info2"><?php print _('Select yes to receive mail notifications for IP requests'); ?></td>
+    <?php } ?>
 </tr>
 <!-- weather to receive mails for changelog -->
 <tr>
@@ -111,9 +114,13 @@ if($User->user->authMethod == 1) {
 			<option value="Yes" <?php if($User->user->mailChangelog=="Yes") { print "selected='selected'"; } ?>><?php print _("Yes"); ?></option>
 		</select>
 	</td>
+	<?php if($User->user->role=="Administrator") { ?>
 	<td class="info2"><?php print _('Select yes to receive notification change mail for changelog'); ?></td>
+    <?php } else { ?>
+	<td class="info2"><?php print _('Select yes to receive notification change mail for changelog'); ?></td>
+    <?php } ?>
 </tr>
-<?php } ?>
+
 
 
 <!-- display settings -->
@@ -173,6 +180,28 @@ if($User->user->authMethod == 1) {
 	</td>
 	<td class="info2">
 		<?php print _('Number of IP addresses per page'); ?>
+	</td>
+</tr>
+
+<!-- Menu type -->
+<tr>
+	<td class="title"><?php print _('Menu Type'); ?></td>
+	<td>
+		<select name="menuType" class="form-control input-sm input-w-auto">
+			<?php
+			$opts = array(
+				"Static"=>_("Static"),
+				"Dynamic"=>_("Dynamic")
+			);
+			foreach($opts as $key=>$line) {
+				if($User->user->menuType == $key) { print "<option value='$key' selected>$line</option>"; }
+				else 								{ print "<option value='$key'>$line</option>"; }
+			}
+			?>
+		</select>
+	</td>
+	<td class="info2">
+		<?php print _('Select menu type to display'); ?>
 	</td>
 </tr>
 

@@ -160,6 +160,73 @@ class Logging extends Common_functions {
 	protected $user_id	= null;
 
 	/**
+	 * Changelog keys for nicer display fo changelog
+	 *
+	 * @var mixed
+	 * @access protected
+	 */
+	public $changelog_keys = array(
+    	"section" => array(
+                        "id" => "index",
+                        "name" => "Subnet name",
+                        "description" => "Description",
+                        "masterSection" => "Parent section index",
+                        "strictMode" => "Enforce strict checks",
+                        "subnetOrdering" => "Order of subnets",
+                        "order" => "Order of display",
+                        "showVLAN" => "Show VLANs in side menu",
+                        "showVRF" => "Show VRF in side menu"
+    	),
+    	"subnet" => array(
+                        "id" => "Subnet id",
+                        "subnet" => "Subnet",
+                        "masterSubnetId" => "Master subnet index",
+                        "mask" => "Netmask",
+                        "sectionId" => "Section index",
+                        "description" => "Description",
+                        "firewallAddressObject" => "Firewall object index",
+                        "vrfId" => "VRF index",
+                        "vlanId" => "VLAN index",
+                        "showName" => "Show name instead of subnet",
+                        "device" => "Device index",
+                        "pingSubnet" => "ICMP check for online hosts",
+                        "discoverSubnet" => "Discover new hosts for this subnet",
+                        "allowRequests" => "Allow IP requests for subnet",
+                        "DNSrecursive" => "Create recursive PowerDNS records",
+                        "DNSrecords" => "Show PowerDNS records",
+                        "nameserverId" => "Nameserver index",
+                        "scanAgent" => "Scan agent index",
+                        "isFolder" => "Object is folder",
+                        "isFull" => "Subnet is marked as full",
+                        "state" => "Address state index",
+                        "NAT" => "NAT object index",
+                        "threshold" => "Sunbet usage alert threshold",
+                        "linked_subnet" => "Linked IPv6 subnet"
+    	            ),
+        "address" => array(
+                        "id" => "Address id",
+                        "subnetId" => "Subnet index",
+                        "ip_addr" => "IP address",
+                        "is_gayeway" => "Gateway",
+                        "description" => "Description",
+                        "dns_name" => "Hostname",
+                        "mac" => "MAC address",
+                        "owner" => "Address owner",
+                        "state" => "Address state index",
+                        "switch" => "Device index",
+                        "port" => "Port",
+                        "note" => "Note",
+                        "lastSeen" => "Device last online",
+                        "excludePing" => "Exclude from ICMP check",
+                        "PTRignore" => "Dont create PTR records",
+                        "PTR" => "PTR object index",
+                        "NAT" => "NAT object index",
+                        "firewallAddressObject" => "Firewall object index",
+                        "is_gateway" => "Address is subnet gateway"
+                    )
+	);
+
+	/**
 	 * Database object
 	 *
 	 * @var mixed
@@ -681,7 +748,7 @@ class Logging extends Common_functions {
 			}
 
 			# reformat null values
-			$log =str_replace(": <br>", ": / <br>", $log);
+			$log = str_replace(": <br>", ": / <br>", $log);
 
 			//if change happened write it!
 			if(isset($log) && sizeof($log)>0) {
@@ -712,6 +779,11 @@ class Logging extends Common_functions {
 
 		# null and from cli, set admin user
 		if ($this->user===null && php_sapi_name()=="cli") { $this->user_id = 1; }
+
+        # if user is not specify dont write changelog
+        if (!isset($this->user) || $this->user == false || $this->user == null) {
+            return true;
+        }
 
 		# set update id based on action
 		if ($this->object_action=="add")	{ $obj_id = $this->object_new['id']; }
@@ -831,7 +903,10 @@ class Logging extends Common_functions {
 					$this->object_new['ip_addr_old'],
 					$this->object_new['nostrict'],
 					$this->object_new['start'],
-					$this->object_new['stop']
+					$this->object_new['stop'],
+					$this->object_new['ip'],
+					$this->object_new['subnetvlan'],
+					$this->object_new['addressId']
 					);
 			unset(	$this->object_old['subnet'],
 					$this->object_old['type'],
@@ -839,8 +914,15 @@ class Logging extends Common_functions {
 					$this->object_old['ip_addr_old'],
 					$this->object_old['nostrict'],
 					$this->object_old['start'],
-					$this->object_old['stop']
+					$this->object_old['stop'],
+					$this->object_old['ip'],
+					$this->object_old['subnetvlan'],
+					$this->object_old['addressId']
 					);
+            # remove mac
+            if ($this->object_action=="add") {
+                unset ($this->object_new['mac_old'], $this->object_new['addressId']);
+            }
 			# reformat ip
 			if (isset($this->object_old['ip_addr']))	{ $this->object_old['ip_addr'] = $this->Subnets->transform_address ($this->object_old['ip_addr'],"dotted"); }
 			if (isset($this->object_new['ip_addr']))	{ $this->object_new['ip_addr'] = $this->Subnets->transform_address ($this->object_new['ip_addr'],"dotted"); }
@@ -1392,7 +1474,7 @@ class Logging extends Common_functions {
 		$this->object_type = str_replace("ip_range", "address range", $this->object_type);
 
 		# folder
-		if ( $this->object_new['isFolder']=="1"	||$this->object_old['isFolder']=="1")	{ $this->object_type = "folder"; }
+		if ( $this->object_new['isFolder']=="1"	|| $this->object_old['isFolder']=="1")	{ $this->object_type = "folder"; }
 
 		# set subject
 		$subject = string;
@@ -1406,27 +1488,58 @@ class Logging extends Common_functions {
 
 		# set object details
 		$details = string;
-		if ($this->object_type=="section") 		{ $details = "<a href='".$this->createURL().create_link("subnets",$obj_details['id'])."'>".$obj_details['name'] . "(".$obj_details['description'].") - id ".$obj_details['id']."</a>"; }
-		elseif ($this->object_type=="subnet")	{ $details = "<a href='".$this->createURL().create_link("subnets",$obj_details['sectionId'],$obj_details['id'])."'>".$this->Subnets->transform_address ($obj_details['subnet'], "dotted")."/".$obj_details['mask']." (".$obj_details['description'].") - id ".$obj_details['id']."</a>"; }
-		elseif ($this->object_type=="folder")	{ $details = "<a href='".$this->createURL().create_link("folder",$obj_details['sectionId'],$obj_details['id'])."'>".$obj_details['description']." - id ".$obj_details['id']."</a>"; }
-		elseif ($this->object_type=="address")	{ $details = "<a href='".$this->createURL().create_link("subnets",$address_subnet['sectionId'],$obj_details['subnetId'],"address-details",$obj_details['id'])."'>".$this->Subnets->transform_address ($obj_details['ip_addr'], "dotted")." ( hostname ".$obj_details['dns_name'].", subnet: ".$this->Subnets->transform_address ($address_subnet['subnet'], "dotted")."/".$address_subnet['mask'].")- id ".$obj_details['id']."</a>"; }
+		if ($this->object_type=="section") 		{ $details = "<a style='font-family:Helvetica, Verdana, Arial, sans-serif; font-size:12px;color:#a0ce4e;' href='".$this->createURL().create_link("subnets",$obj_details['id'])."'>".$obj_details['name'] . "(".$obj_details['description'].") - id ".$obj_details['id']."</a>"; }
+		elseif ($this->object_type=="subnet")	{ $details = "<a style='font-family:Helvetica, Verdana, Arial, sans-serif; font-size:12px;color:#a0ce4e;' href='".$this->createURL().create_link("subnets",$obj_details['sectionId'],$obj_details['id'])."'>".$this->Subnets->transform_address ($obj_details['subnet'], "dotted")."/".$obj_details['mask']." (".$obj_details['description'].") - id ".$obj_details['id']."</a>"; }
+		elseif ($this->object_type=="folder")	{ $details = "<a style='font-family:Helvetica, Verdana, Arial, sans-serif; font-size:12px;color:#a0ce4e;' href='".$this->createURL().create_link("folder",$obj_details['sectionId'],$obj_details['id'])."'>".$obj_details['description']." - id ".$obj_details['id']."</a>"; }
+		elseif ($this->object_type=="address")	{ $details = "<a style='font-family:Helvetica, Verdana, Arial, sans-serif; font-size:12px;color:#a0ce4e;' href='".$this->createURL().create_link("subnets",$address_subnet['sectionId'],$obj_details['subnetId'],"address-details",$obj_details['id'])."'>".$this->Subnets->transform_address ($obj_details['ip_addr'], "dotted")." ( hostname ".$obj_details['dns_name'].", subnet: ".$this->Subnets->transform_address ($address_subnet['subnet'], "dotted")."/".$address_subnet['mask'].")- id ".$obj_details['id']."</a>"; }
 		elseif ($this->object_type=="address range")	{ $details = $changelog; }
 
 		# set content
-		$style = "face='Helvetica, Verdana, Arial, sans-serif' style='font-size:13px;'";
 		$content = array();
 		$content[] = "<div style='padding:10px;'>";
 		$content[] = "<table>";
-		$content[] = "<tr><td><font $style>Object type:</font><td><font $style>".$this->object_type."</font></td></tr>";
-		$content[] = "<tr><td><font $style>Object details:</font><td><font $style>".$details."</font></td></tr>";
-		$content[] = "<tr><td><font $style>User:</font><td><font $style>".$this->user->real_name." (".$this->user->username.")"."</font></td></tr>";
-		$content[] = "<tr><td><font $style>Action:</font><td><font $style>".$this->object_action."</font></td></tr>";
-		$content[] = "<tr><td><font $style>Date:</font><td><font $style>".date("Y-m-d H:i:s")."</font></td></tr>";
-		$content[] = "<tr><td colspan='2'><hr></td></tr>";
-		$content[] = "<tr><td colspan='2'><font $style>Changes:<br>";
-		$content[] = "<tr><td colspan='2'><font $style>&nbsp;<br>";
+		$content[] = "<tr><td colspan='2'>$this->mail_font_style<strong>The following change was made on ipam:</strong></font></td></tr>";
+		$content[] = "<tr><td colspan='2'>&nbsp;</td></tr>";
+		$content[] = "<tr><td>$this->mail_font_style Object type:</font><td>$this->mail_font_style".ucwords($this->object_type)."</font></td></tr>";
+		$content[] = "<tr><td>$this->mail_font_style Object details:</font><td>$this->mail_font_style_href".$details."</font></td></tr>";
+		$content[] = "<tr><td>$this->mail_font_style User:</font><td>$this->mail_font_style".$this->user->real_name." (".$this->user->username.")"."</font></td></tr>";
+		$content[] = "<tr><td>$this->mail_font_style Action:</font><td>$this->mail_font_style".$this->object_action."</font></td></tr>";
+		$content[] = "<tr><td>$this->mail_font_style Date:</font><td>$this->mail_font_style".date("Y-m-d H:i:s")."</font></td></tr>";
+		$content[] = "<tr><td colspan='2'><hr style='height:0px;border-top:0px;border-bottom:1px solid #ddd;'></td></tr>";
+		$content[] = "<tr><td style='vertical-align:top;'>$this->mail_font_style Changes:</td>";
+		$content[] = "<td>";
+		// add changelog
 		$changelog = str_replace("\r\n", "<br>",$changelog);
-		$content[] = "$changelog</font></td></tr>";
+		$changelog = array_filter(explode("<br>", $changelog));
+		$content[] = "<table>";
+		foreach ($changelog as $c) {
+    		// field
+    		$field = explode(":", $c);
+    	    $value = explode("=>", $field[1]);
+
+    	    // format field
+    	    $field = trim(str_replace(array("[","]"), "", $field[0]));
+    	    if(is_array($this->changelog_keys[$this->object_type])) {
+        	    if (array_key_exists($field, $this->changelog_keys[$this->object_type])) {
+            	    $field = $this->changelog_keys[$this->object_type][$field];
+        	    }
+    	    }
+    	    else {
+        	    $field = $field;
+    	    }
+
+    		$content[] = "<tr>";
+    		$content[] = "  <td>$this->mail_font_style<strong> $field</strong>: </font></td>";
+    		$content[] = "  <td>$this->mail_font_style ".trim($value[0])." </font></td>";
+    		if($this->object_action=="edit") {
+    		$content[] = "  <td>$this->mail_font_style => </font></td>";
+    		$content[] = "  <td>$this->mail_font_style ".trim($value[1])." </font></td>";
+    		}
+    		$content[] = "</tr>";
+		}
+		$content[] = "</table>";
+
+		$content[] = "</font></td></tr>";
 		$content[] = "</table>";
 		$content[] = "</div>";
 
@@ -1442,8 +1555,21 @@ class Logging extends Common_functions {
 
 
 		# get all admins and check who to end mail to
-		$recipients = $this->changelog_mail_get_recipients ();
-		if($recipients ===false) 				{ return true; }
+		//subnets, addresses - send mail to normal users also
+		if ($this->object_type=="subnet" || $this->object_type=="address") {
+    		if($this->object_type=="subnet") {
+        		$recipients = $this->changelog_mail_get_recipients ($obj_details['id']);
+    		}
+    		else {
+        		$recipients = $this->changelog_mail_get_recipients ($obj_details['subnetId']);
+    		}
+		}
+		else {
+    		$recipients = $this->changelog_mail_get_recipients (false);
+		}
+		if($recipients ===false) {
+    		return true;
+        }
 
 		# fetch mailer settings
 		$mail_settings = $this->Tools->fetch_object("settingsMail", "id", 1);
@@ -1475,36 +1601,5 @@ class Logging extends Common_functions {
 
 		# ok
 		return true;
-	}
-
-
-	/**
-	 * Get all admins that are set to receive changelog
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function changelog_mail_get_recipients () {
-		// get all admins and check who to end mail to
-		$recipients = $this->Tools->fetch_multiple_objects ("users", "role", "Administrator", "id", true);
-		//check recipients
-		if ($recipients!==false) {
-			// check
-			$m = 0;
-			foreach($recipients as $k=>$r) {
-				if($r->mailChangelog!="Yes") {
-					unset($recipients[$k]);
-				}
-				else {
-					$m++;
-				}
-			}
-			// if none return false
-			if ($m==0) 	{ return false; }
-			else 		{ return $recipients; }
-		}
-		else {
-			return false;
-		}
 	}
 }

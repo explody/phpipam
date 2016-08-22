@@ -426,7 +426,7 @@ class User extends Common_functions {
     private function set_redirect_cookie () {
         # save current redirect vaule
         if($_SERVER['SCRIPT_URL']!="/login/" && $_SERVER['SCRIPT_URL']!="logout" && $_SERVER['SCRIPT_URL']!="?page=login" && $_SERVER['SCRIPT_URL']!="?page=logout" && $_SERVER['SCRIPT_URL']!="/" && $_SERVER['SCRIPT_URL']!="%2f");
-        setcookie("phpipamredirect", $_SERVER['REQUEST_URI'], time()+10, "/");
+        setcookie("phpipamredirect", $_SERVER['REQUEST_URI'], time()+10, "/", null, null, true);
     }
 
     /**
@@ -847,7 +847,7 @@ class User extends Common_functions {
             # set method name variable
             $authmethodtype = $this->authmethodtype;
             # authenticate
-            $this->$authmethodtype ($username, $password);
+            $this->{$authmethodtype} ($username, $password);
         }
     }
 
@@ -1328,7 +1328,8 @@ class User extends Common_functions {
                         //display
                         "compressOverride"=>$post['compressOverride'],
                         "hideFreeRange"=>$this->verify_checkbox(@$post['hideFreeRange']),
-                        "printLimit"=>@$post['printLimit']
+                        "printLimit"=>@$post['printLimit'],
+                        "menuType"=>$post['menuType'],
                         );
         if(strlen($post['password1'])>0) {
         $items['password'] = $this->crypt_user_pass ($post['password1']);
