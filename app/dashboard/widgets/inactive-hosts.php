@@ -14,6 +14,9 @@ if(!is_object(@$User)) {
 	$Addresses 	= new Addresses ($Database);
 	$Result		= new Result ();
 }
+else {
+    header("Location: ".create_link('tools', 'inactive-hosts'));
+}
 
 # user must be authenticated
 $User->check_user_session ();
@@ -44,8 +47,11 @@ if($_SERVER['HTTP_X_REQUESTED_WITH']!="XMLHttpRequest")	{
 	print "</div>";
 }
 
+// time_range - 30 days
+$seconds = 86400 * 30;
+
 # Find inactive hosts
-$inactive_hosts = $Subnets->find_inactive_hosts ($widget->wparams, $slimit);
+$inactive_hosts = $Subnets->find_inactive_hosts ($seconds, $slimit);
 
 # check permissions
 if ($inactive_hosts!==false) {

@@ -46,6 +46,9 @@ if (!in_array("snmp", get_loaded_extensions()))                             { $R
 if ($Admin->verify_checkbox(@$_POST['enableRACK'])==1)
 if (!in_array("gd", get_loaded_extensions()))                               { $Result->show("danger", _("Missing gd support in php"), true); }
 
+//remove link_field if None
+if ($_POST['link_field']=="None") $_POST['link_field'] = "";
+
 # set update values
 $values = array("id"=>1,
 				//site settings
@@ -64,7 +67,9 @@ $values = array("id"=>1,
 				"enableIPrequests"=>$Admin->verify_checkbox(@$_POST['enableIPrequests']),
 				"enableMulticast"=>$Admin->verify_checkbox(@$_POST['enableMulticast']),
 				"enableRACK"=>$Admin->verify_checkbox(@$_POST['enableRACK']),
+				"enableLocations"=>$Admin->verify_checkbox(@$_POST['enableLocations']),
 				"enableSNMP"=>$Admin->verify_checkbox(@$_POST['enableSNMP']),
+				"enablePSTN"=>$Admin->verify_checkbox(@$_POST['enablePSTN']),
 				"enableThreshold"=>$Admin->verify_checkbox(@$_POST['enableThreshold']),
 				"enableVRF"=>$Admin->verify_checkbox(@$_POST['enableVRF']),
 				"enableDNSresolving"=>$Admin->verify_checkbox(@$_POST['enableDNSresolving']),
@@ -72,8 +77,11 @@ $values = array("id"=>1,
 				"vlanMax"=>@$_POST['vlanMax'],
 				"enableChangelog"=>$Admin->verify_checkbox(@$_POST['enableChangelog']),
 				"tempShare"=>$Admin->verify_checkbox(@$_POST['tempShare']),
+				"enableNAT"=>$Admin->verify_checkbox(@$_POST['enableNAT']),
 				"enablePowerDNS"=>$Admin->verify_checkbox(@$_POST['enablePowerDNS']),
+				"enableDHCP"=>$Admin->verify_checkbox(@$_POST['enableDHCP']),
 				"enableFirewallZones"=>$Admin->verify_checkbox(@$_POST['enableFirewallZones']),
+				"link_field"=>@$_POST['link_field'],
 				"log"=>@$_POST['log'],
 				//display
 				"donate"=>$Admin->verify_checkbox(@$_POST['donate']),

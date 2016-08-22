@@ -121,10 +121,12 @@ class Sections_controller extends Common_api_functions {
 	 * GET sections functions
 	 *
 	 *	ID can be:
-	 *		- {id}
-	 *		- {id}/subnets/		// returns all subnets in this section
-	 *		- name 				// section name
-	 *		- custom_fields		// returns custom fields
+	 *      - /                     // returns all sections
+	 *		- /{id}/                // returns section details
+	 *		- /{id}/subnets/		// returns all subnets in this section
+	 *		- /{name}/subnets/		// returns all subnets in this named section
+	 *		- /{name}/ 				// section name
+	 *		- /custom_fields/		// returns custom fields
 	 *
 	 *	If no ID is provided all sections are returned
 	 *
@@ -133,28 +135,39 @@ class Sections_controller extends Common_api_functions {
 	 */
 	public function GET () {
 		// fetch subnets in section
-		if(@$this->_params->id2=="subnets" && is_numeric($this->_params->id)) {
+		if(@$this->_params->id2=="subnets") {	// && is_numeric($this->_params->id)) { // allow non-numeric for search by name
 			// we dont need id2 anymore
 			unset($this->_params->id2);
 			//validate section
 			$this->GET ();
 			// init required objects
 			$this->init_object ("Subnets", $this->Database);
+			$this->init_object ("Addresses", $this->Database);
 			//fetch
 			$result = $this->Subnets->fetch_section_subnets ($this->_params->id);
             // add gateway
 			if($result!=false) {
 				foreach ($result as $k=>$r) {
-    				//gw
-            		$gateway = $this->read_subnet_gateway ($r->id);
-            		if ( $gateway!== false) {
-                		$result[$k]->gatewayId = $gateway->id;
-            		}
-            		//nameservers
-            		$ns = $this->read_subnet_nameserver ($r->nameserverId);
-                    if ($ns!==false) {
-                        $result[$k]->nameservers = $ns;
-                    }
+    					//gw
+        				$gateway = $this->read_subnet_gateway ($r->id);
+	            		if ( $gateway!== false) {
+	                		$result[$k]->gatewayId = $gateway->id;
+	            		}
+
+	            		//nameservers
+	            		$ns = $this->read_subnet_nameserver ($r->nameserverId);
+                        if ($ns!==false) {
+                                $result[$k]->nameservers = $ns;
+                        }
+
+                        // get usage
+                        $result[$k]->usage = $this->read_subnet_usage($r->id);
+
+                        // fetch addresses
+            			if(@$this->_params->id3=="addresses") {
+                			// fetch
+                			$result[$k]->addresses = $this->Addresses->fetch_subnet_addresses ($r->id);
+            			}
 				}
 			}
 			// check result
@@ -167,7 +180,7 @@ class Sections_controller extends Common_api_functions {
 			if(is_numeric($this->_params->id)) {
 				$result = $this->Sections->fetch_section ("id", $this->_params->id);
 				// check result
-				if(sizeof($result)==0) 					{ $this->Response->throw_exception(404, NULL); }
+				if($result===false) 					{ $this->Response->throw_exception(404, "Section does not exist"); }
 				else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, null, true, true)); }
 			}
 			# return custom fields
@@ -240,7 +253,7 @@ class Sections_controller extends Common_api_functions {
 														{ $this->Response->throw_exception(500, "Section create failed"); }
 		else {
 			//set result
-			return array("code"=>201, "data"=>"Section created", "location"=>"/api/".$this->_params->app_id."/sections/".$this->Sections->lastInsertId."/");
+			return array("code"=>201, "message"=>"Section created", "location"=>"/api/".$this->_params->app_id."/sections/".$this->Sections->lastInsertId."/");
 		}
 	}
 
@@ -258,7 +271,7 @@ class Sections_controller extends Common_api_functions {
 		# Check for id
 		if(!isset($this->_params->id))					{ $this->Response->throw_exception(400, "Section Id required"); }
 		# check that section exists
-		if(sizeof($this->Sections->fetch_section ("id", $this->_params->id))==0)
+		if($this->Sections->fetch_section ("id", $this->_params->id)===false)
 														{ $this->Response->throw_exception(404, "Section does not exist"); }
 
 		# validate and prepare keys
@@ -287,7 +300,7 @@ class Sections_controller extends Common_api_functions {
 		# Check for id
 		if(!isset($this->_params->id))					{ $this->Response->throw_exception(400, "Section Id required"); }
 		# check that section exists
-		if(sizeof($this->Sections->fetch_section ("id", $this->_params->id))==0)
+		if($this->Sections->fetch_section ("id", $this->_params->id)===false)
 														{ $this->Response->throw_exception(404, "Section does not exist"); }
 
 		# set variables for update
@@ -324,6 +337,34 @@ class Sections_controller extends Common_api_functions {
 	private function read_subnet_nameserver ($nsid) {
     	return $this->Tools->fetch_object ("nameservers", "id", $nsid);
 	}
+
+	/**
+ 	 * Calculates subnet usage
+	 *
+	 * @access private
+	 * @param mixed $subnetId
+	 * @return void
+	 */
+	private function read_subnet_usage ($subnetId) {
+        # check that section exists
+        if($subnet = $this->Subnets->fetch_subnet ("id", $subnetId)===false)
+           { $this->Response->throw_exception(400, "Subnet does not exist"); }
+
+        # set slaves
+        $slaves = $this->Subnets->has_slaves ($subnetId) ? true : false;
+
+        # fetch all addresses and calculate usage
+        if($slaves) {
+            $addresses = $this->Addresses->fetch_subnet_addresses_recursive ($subnetId, false);
+        } else {
+            $addresses = $this->Addresses->fetch_subnet_addresses ($subnetId);
+        }
+        // calculate
+        $subnet_usage  = $this->Subnets->calculate_subnet_usage (gmp_strval(sizeof($addresses)), $subnet->mask, $subnet->subnet, $subnet->isFull );     //Calculate free/used etc
+
+        # return
+        return $subnet_usage;
+	 }
 }
 
 ?>

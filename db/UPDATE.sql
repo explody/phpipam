@@ -20,13 +20,13 @@ INSERT INTO `usersAuthMethod` (`id`, `type`, `params`, `protected`, `description
 VALUES
 	(1, 'local', NULL, 'Yes', 'Local database');
 /* Add authMethod field */
-ALTER TABLE `users` ADD `authMethod` INT(2)  NULL  DEFAULT 1  AFTER `username`;
+ALTER TABLE `users` ADD `authMethod` INT(2)  NULL  DEFAULT 1;
 /* update all domain users to use domain auth, settings will be migrated after first successfull login */
 UPDATE `users` set `authMethod`=3 where `domainUser` = 1;
 
 /* add ping types */
-ALTER TABLE `settings` ADD `scanFPingPath` VARCHAR(64)  NULL  DEFAULT '/bin/fping'  AFTER `scanPingPath`;
-ALTER TABLE `settings` ADD `scanPingType` SET('ping','pear','fping')  NOT NULL  DEFAULT 'ping'  AFTER `scanFPingPath`;
+ALTER TABLE `settings` ADD `scanFPingPath` VARCHAR(64)  NULL  DEFAULT '/bin/fping';
+ALTER TABLE `settings` ADD `scanPingType` SET('ping','pear','fping')  NOT NULL  DEFAULT 'ping';
 
 /* vlanDomains */
 CREATE TABLE `vlanDomains` (
@@ -41,11 +41,11 @@ INSERT INTO `vlanDomains` (`id`, `name`, `description`, `permissions`)
 VALUES
 	(1, 'default', 'default L2 domain', NULL);
 /* add domainId to vlans */
-ALTER TABLE `vlans` ADD `domainId` INT  NOT NULL  DEFAULT '1'  AFTER `vlanId`;
+ALTER TABLE `vlans` ADD `domainId` INT  NOT NULL  DEFAULT '1';
 
 /* add last login for users */
-ALTER TABLE `users` ADD `lastLogin` TIMESTAMP  NULL AFTER `editDate`;
-ALTER TABLE `users` ADD `lastActivity` TIMESTAMP  NULL AFTER `lastLogin`;
+ALTER TABLE `users` ADD `lastLogin` TIMESTAMP  NULL;
+ALTER TABLE `users` ADD `lastActivity` TIMESTAMP  NULL;
 
 /* permit null dns_name */
 ALTER TABLE `ipaddresses` CHANGE `dns_name` `dns_name` VARCHAR(100)  CHARACTER SET utf8  NULL  DEFAULT NULL;
@@ -73,7 +73,7 @@ UPDATE `settings` set `version` = '1.12';
 UPDATE `settings` set `dbverified` = 0;
 
 /* add gateway field to database */
-ALTER TABLE `ipaddresses` ADD `is_gateway` TINYINT(1)  NULL  DEFAULT '0'  AFTER `ip_addr`;
+ALTER TABLE `ipaddresses` ADD `is_gateway` TINYINT(1)  NULL  DEFAULT '0';
 
 /* change tag */
 ALTER TABLE `ipaddresses` CHANGE `state` `state` INT(3)  NULL  DEFAULT '1';
@@ -109,7 +109,7 @@ UPDATE `settings` set `dbverified` = 0;
 ALTER TABLE `usersAuthMethod` CHANGE `type` `type` SET('local','AD','LDAP','Radius')  CHARACTER SET utf8  NOT NULL  DEFAULT 'local';
 
 /* add temp access */
-ALTER TABLE `settings` ADD `tempAccess` TEXT  NULL  AFTER `authmigrated`;
+ALTER TABLE `settings` ADD `tempAccess` TEXT  NULL;
 
 
 
@@ -121,12 +121,12 @@ UPDATE `settings` set `version` = '1.14';
 UPDATE `settings` set `dbverified` = 0;
 
 /* add tempShare */
-ALTER TABLE `settings` ADD `tempShare` TINYINT(1)  NULL  DEFAULT '0'  AFTER `authmigrated`;
+ALTER TABLE `settings` ADD `tempShare` TINYINT(1)  NULL  DEFAULT '0';
 
 /* move display Settings to user */
-ALTER TABLE `users` ADD `dhcpCompress` BOOL  NOT NULL  DEFAULT '0' AFTER `lastActivity`;
-ALTER TABLE `users` ADD `hideFreeRange` tinyint(1) DEFAULT '0' AFTER `dhcpCompress`;
-ALTER TABLE `users` ADD `printLimit` int(4) unsigned DEFAULT '30' AFTER `hideFreeRange`;
+ALTER TABLE `users` ADD `dhcpCompress` BOOL  NOT NULL  DEFAULT '0';
+ALTER TABLE `users` ADD `hideFreeRange` tinyint(1) DEFAULT '0';
+ALTER TABLE `users` ADD `printLimit` int(4) unsigned DEFAULT '30';
 
 /* drop old display settings */
 ALTER TABLE `settings` DROP `dhcpCompress`;
@@ -173,17 +173,17 @@ UPDATE `ipaddresses` SET `state` = 1 WHERE `state` = 0;
 ALTER TABLE `ipaddresses` CHANGE `state` `state` INT(3)  NULL  DEFAULT '2';
 
 /* add autoSuggestNetwork flag and permitRWAvlan */
-ALTER TABLE `settings` ADD `autoSuggestNetwork` TINYINT(1)  NOT NULL  DEFAULT '0'  AFTER `visualLimit`;
-ALTER TABLE `settings` ADD `permitUserVlanCreate` TINYINT(1)  NOT NULL  DEFAULT '0'  AFTER `autoSuggestNetwork`;
+ALTER TABLE `settings` ADD `autoSuggestNetwork` TINYINT(1)  NOT NULL  DEFAULT '0';
+ALTER TABLE `settings` ADD `permitUserVlanCreate` TINYINT(1)  NOT NULL  DEFAULT '0';
 
 /* add section DNS */
-ALTER TABLE `sections` ADD `DNS` VARCHAR(128)  NULL  DEFAULT NULL  AFTER `showVRF`;
+ALTER TABLE `sections` ADD `DNS` VARCHAR(128)  NULL  DEFAULT NULL;
 
 /* mark subnet as full */
-ALTER TABLE `subnets` ADD `isFull` TINYINT(1)  NULL  DEFAULT '0'  AFTER `isFolder`;
+ALTER TABLE `subnets` ADD `isFull` TINYINT(1)  NULL  DEFAULT '0';
 
 /* add state */
-ALTER TABLE `subnets` ADD `state` INT(3)  NULL  DEFAULT '2'  AFTER `isFull`;
+ALTER TABLE `subnets` ADD `state` INT(3)  NULL  DEFAULT '2';
 
 
 
@@ -195,7 +195,7 @@ UPDATE `settings` set `version` = '1.16';
 UPDATE `settings` set `dbverified` = 0;
 
 /* add compress tag for ranges */
-ALTER TABLE `ipTags` ADD `compress` SET('No','Yes')  NOT NULL  DEFAULT 'No'  AFTER `locked`;
+ALTER TABLE `ipTags` ADD `compress` SET('No','Yes')  NOT NULL  DEFAULT 'No';
 UPDATE `ipTags` SET `compress` = 'Yes' WHERE `id` = '4';
 
 /* dhcp compress */
@@ -234,7 +234,7 @@ VALUES
 	('IP Calculator', 'Shows IP calculator as widget', 'ipcalc', NULL, 'yes', '6', 'no', 'yes');
 
 /* add security type and permit empty app code */
-ALTER TABLE `api` ADD `app_security` SET('crypt','ssl','none')  NOT NULL  DEFAULT 'ssl'  AFTER `app_comment`;
+ALTER TABLE `api` ADD `app_security` SET('crypt','ssl','none')  NOT NULL  DEFAULT 'ssl';
 ALTER TABLE `api` CHANGE `app_code` `app_code` VARCHAR(32) NULL  DEFAULT '';
 
 
@@ -248,17 +248,17 @@ UPDATE `settings` set `dbverified` = 0;
 
 
 /* add tokens */
-ALTER TABLE `users` ADD `token` VARCHAR(24)  NULL  DEFAULT NULL  AFTER `printLimit`;
-ALTER TABLE `users` ADD `token_valid_until` DATETIME  NULL  AFTER `token`;
+ALTER TABLE `users` ADD `token` VARCHAR(24)  NULL  DEFAULT NULL;
+ALTER TABLE `users` ADD `token_valid_until` DATETIME  NULL;
 
 /* add scan agents */
-ALTER TABLE `subnets` ADD `scanAgent` int(11) DEFAULT NULL  AFTER `discoverSubnet`;
+ALTER TABLE `subnets` ADD `scanAgent` int(11) DEFAULT NULL;
 
 /* powerDNS integration */
-ALTER TABLE `settings` ADD `enablePowerDNS` TINYINT(1)  NULL  DEFAULT '0'  AFTER `enableDNSresolving`;
-ALTER TABLE `settings` ADD `powerDNS` TEXT  NULL  AFTER `enablePowerDNS`;
+ALTER TABLE `settings` ADD `enablePowerDNS` TINYINT(1)  NULL  DEFAULT '0';
+ALTER TABLE `settings` ADD `powerDNS` TEXT  NULL;
 
-ALTER TABLE `subnets` ADD `DNSrecursive` TINYINT(1)  NULL  DEFAULT '0'  AFTER `discoverSubnet`;
+ALTER TABLE `subnets` ADD `DNSrecursive` TINYINT(1)  NULL  DEFAULT '0';
 
 
 
@@ -270,16 +270,16 @@ UPDATE `settings` set `version` = '1.18';
 UPDATE `settings` set `dbverified` = 0;
 
 /* powerDNS integration */
-ALTER TABLE `ipaddresses` ADD `PTRignore` BINARY(1)  NULL  DEFAULT '0'  AFTER `excludePing`;
-ALTER TABLE `ipaddresses` ADD `PTR` INT(11)  UNSIGNED  NULL  DEFAULT '0'  AFTER `PTRignore`;
+ALTER TABLE `ipaddresses` ADD `PTRignore` BINARY(1)  NULL  DEFAULT '0';
+ALTER TABLE `ipaddresses` ADD `PTR` INT(11)  UNSIGNED  NULL  DEFAULT '0';
 
-ALTER TABLE `subnets` ADD `DNSrecords` TINYINT(1)  NULL  DEFAULT '0'  AFTER `DNSrecursive`;
+ALTER TABLE `subnets` ADD `DNSrecords` TINYINT(1)  NULL  DEFAULT '0';
 
 /* log destination */
-ALTER TABLE `settings` ADD `log` SET('Database','syslog')  NOT NULL  DEFAULT 'Database'  AFTER `tempAccess`;
+ALTER TABLE `settings` ADD `log` SET('Database','syslog')  NOT NULL  DEFAULT 'Database';
 
 /* link subnet to device */
-ALTER TABLE `subnets` ADD `device` INT  UNSIGNED  NULL  DEFAULT '0'  AFTER `showName`;
+ALTER TABLE `subnets` ADD `device` INT  UNSIGNED  NULL  DEFAULT '0';
 
 /* add table for recursive nameservers to subnets */
 DROP TABLE IF EXISTS `nameservers`;
@@ -300,7 +300,7 @@ VALUES
 	('Google NS', '8.8.8.8;8.8.4.4', 'Google public nameservers', '1;2');
 
 /* add reference to nameservers in subnets table */
-ALTER TABLE `subnets` ADD `nameserverId` int(11) NULL DEFAULT '0' AFTER `DNSrecursive`;
+ALTER TABLE `subnets` ADD `nameserverId` int(11) NULL DEFAULT '0';
 
 
 
@@ -328,13 +328,13 @@ ALTER TABLE `users` CHANGE `username` `username` varchar(25) CHARACTER SET utf8 
 ALTER TABLE `usersAuthMethod` CHANGE `type` `type` set('local','AD','LDAP','NetIQ', 'Radius') NOT NULL DEFAULT 'local';
 
 /* add header infotext for login page */
-ALTER TABLE `settings`  ADD `siteLoginText` varchar(128) NULL DEFAULT NULL AFTER `siteURL`;
+ALTER TABLE `settings`  ADD `siteLoginText` varchar(128) NULL DEFAULT NULL;
 
 /* add unique ip+subnet requirement */
 ALTER TABLE `ipaddresses` ADD UNIQUE INDEX `sid_ip_unique` (`ip_addr`, `subnetId`);
 
 /* add tag to ip requests */
-ALTER TABLE `requests` ADD `state` INT  NULL  DEFAULT '2'  AFTER `dns_name`;
+ALTER TABLE `requests` ADD `state` INT  NULL  DEFAULT '2';
 
 
 /* scanagents */
@@ -389,8 +389,8 @@ CREATE TABLE `firewallZoneMapping` (
 
 /* Alter the settings table to inject the modul switch and default zone settings */
 ALTER TABLE `settings`
-ADD COLUMN `enableFirewallZones` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '' AFTER `enableDNSresolving`,
-ADD COLUMN `firewallZoneSettings` VARCHAR(1024) NOT NULL DEFAULT '{"zoneLength":3,"ipType":{"0":"v4","1":"v6"},"separator":"_","indicator":{"0":"own","1":"customer"},"zoneGenerator":"2","zoneGeneratorType":{"0":"decimal","1":"hex","2":"text"},"deviceType":"3","padding":"on","strictMode":"on"}' COMMENT '' AFTER `enableFirewallZones`;
+ADD COLUMN `enableFirewallZones` TINYINT(1) NOT NULL DEFAULT '0' COMMENT '',
+ADD COLUMN `firewallZoneSettings` VARCHAR(1024) NOT NULL DEFAULT '{"zoneLength":3,"ipType":{"0":"v4","1":"v6"},"separator":"_","indicator":{"0":"own","1":"customer"},"zoneGenerator":"2","zoneGeneratorType":{"0":"decimal","1":"hex","2":"text"},"deviceType":"3","padding":"on","strictMode":"on"}' COMMENT '';
 
 
 
@@ -444,13 +444,13 @@ ALTER TABLE `firewallZoneMapping` ADD CONSTRAINT `devId` FOREIGN KEY (`deviceId`
 ALTER TABLE `devices` ADD COLUMN `version` VARCHAR(64) NULL DEFAULT NULL AFTER `description`;
 
 /* add firewallAddresObject field to the ipaddresses table to store fw addr. obj. names permanently */
-ALTER TABLE `ipaddresses` ADD COLUMN `firewallAddressObject` VARCHAR(100) NULL DEFAULT NULL AFTER `PTR`;
+ALTER TABLE `ipaddresses` ADD COLUMN `firewallAddressObject` VARCHAR(100) NULL DEFAULT NULL;
 
 /* activate the firewallAddressObject IP field filter on default */
 UPDATE `settings` SET IPfilter = CONCAT(IPfilter,';firewallAddressObject');
 
 /* add a column for subnet firewall address objects */
-ALTER TABLE `subnets` ADD COLUMN `firewallAddressObject` VARCHAR(100) NULL DEFAULT NULL AFTER `description`;
+ALTER TABLE `subnets` ADD COLUMN `firewallAddressObject` VARCHAR(100) NULL DEFAULT NULL;
 
 /* add http auth method */
 ALTER TABLE `usersAuthMethod` CHANGE `type` `type` SET('local','AD','LDAP','NetIQ','Radius','http')  CHARACTER SET utf8  NOT NULL  DEFAULT 'local';
@@ -459,7 +459,7 @@ INSERT INTO `usersAuthMethod` (`type`, `params`, `protected`, `description`)
 VALUES ('http', NULL, 'Yes', 'Apache authentication');
 
 /* allow powerdns record management for user */
-ALTER TABLE `users` ADD `pdns` SET('Yes','No')  NULL  DEFAULT 'No'  AFTER `email`;
+ALTER TABLE `users` ADD `pdns` SET('Yes','No')  NULL  DEFAULT 'No';
 
 /* add Ip request widget */
 INSERT INTO `widgets` (`wtitle`, `wdescription`, `wfile`, `wparams`, `whref`, `wsize`, `wadminonly`, `wactive`)
@@ -470,7 +470,7 @@ VALUES
 ALTER TABLE `subnets` CHANGE `mask` `mask` VARCHAR(3)  CHARACTER SET utf8  NULL  DEFAULT NULL;
 
 /* add section to vrf */
-ALTER TABLE `vrf` ADD `sections` VARCHAR(128)  NULL  DEFAULT NULL  AFTER `description`;
+ALTER TABLE `vrf` ADD `sections` VARCHAR(128)  NULL  DEFAULT NULL;
 
 
 
@@ -479,16 +479,16 @@ ALTER TABLE `vrf` ADD `sections` VARCHAR(128)  NULL  DEFAULT NULL  AFTER `descri
 UPDATE `settings` set `version` = '1.21';
 
 /* New modules */
-ALTER TABLE `settings` ADD `enableMulticast` TINYINT(1)  NULL  DEFAULT '0'  AFTER `powerDNS`;
-ALTER TABLE `settings` ADD `enableNAT` TINYINT(1)  NULL  DEFAULT '0'  AFTER `enableMulticast`;
-ALTER TABLE `settings` ADD `enableSNMP` TINYINT(1)  NULL  DEFAULT '0'  AFTER `enableNAT`;
-ALTER TABLE `settings` ADD `enableThreshold` TINYINT(1)  NULL  DEFAULT '0'  AFTER `enableSNMP`;
-ALTER TABLE `settings` ADD `enableRACK` TINYINT(1)  NULL  DEFAULT '0'  AFTER `enableThreshold`;
-ALTER TABLE `settings` ADD `link_field` VARCHAR(32)  NULL  DEFAULT '0'  AFTER `enableRACK`;
+ALTER TABLE `settings` ADD `enableMulticast` TINYINT(1)  NULL  DEFAULT '0';
+ALTER TABLE `settings` ADD `enableNAT` TINYINT(1)  NULL  DEFAULT '0';
+ALTER TABLE `settings` ADD `enableSNMP` TINYINT(1)  NULL  DEFAULT '0';
+ALTER TABLE `settings` ADD `enableThreshold` TINYINT(1)  NULL  DEFAULT '0';
+ALTER TABLE `settings` ADD `enableRACK` TINYINT(1)  NULL  DEFAULT '0';
+ALTER TABLE `settings` ADD `link_field` VARCHAR(32)  NULL  DEFAULT '0';
 
 /* add nat link */
-ALTER TABLE `ipaddresses` ADD `NAT` VARCHAR(64)  NULL  DEFAULT NULL  AFTER `PTR`;
-ALTER TABLE `subnets` ADD `NAT` VARCHAR(64)  NULL  DEFAULT NULL  AFTER `state`;
+ALTER TABLE `ipaddresses` ADD `NAT` VARCHAR(64)  NULL  DEFAULT NULL;
+ALTER TABLE `subnets` ADD `NAT` VARCHAR(64)  NULL  DEFAULT NULL;
 
 /* NAT table */
 CREATE TABLE `nat` (
@@ -503,11 +503,11 @@ CREATE TABLE `nat` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 /* snmp to devices */
-ALTER TABLE `devices` ADD `snmp_community` VARCHAR(100)  NULL  DEFAULT NULL  AFTER `sections`;
-ALTER TABLE `devices` ADD `snmp_version` SET('0','1','2')  NULL  DEFAULT '0'  AFTER `snmp_community`;
-ALTER TABLE `devices` ADD `snmp_port` mediumint(5) unsigned DEFAULT '161' AFTER `snmp_version`;
-ALTER TABLE `devices` ADD `snmp_timeout` mediumint(5) unsigned DEFAULT '1000000' AFTER `snmp_port`;
-ALTER TABLE `devices` ADD `snmp_queries` VARCHAR(128)  NULL  DEFAULT NULL  AFTER `snmp_timeout`;
+ALTER TABLE `devices` ADD `snmp_community` VARCHAR(100)  NULL  DEFAULT NULL;
+ALTER TABLE `devices` ADD `snmp_version` SET('0','1','2')  NULL  DEFAULT '0';
+ALTER TABLE `devices` ADD `snmp_port` mediumint(5) unsigned DEFAULT '161';
+ALTER TABLE `devices` ADD `snmp_timeout` mediumint(5) unsigned DEFAULT '1000000';
+ALTER TABLE `devices` ADD `snmp_queries` VARCHAR(128)  NULL  DEFAULT NULL;
 
 /* racks */
 CREATE TABLE `racks` (
@@ -519,12 +519,12 @@ CREATE TABLE `racks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* rack info to devices */
-ALTER TABLE `devices` ADD `rack` int(11) unsigned DEFAULT null AFTER `snmp_timeout`;
-ALTER TABLE `devices` ADD `rack_start` int(11) unsigned DEFAULT null AFTER `rack`;
-ALTER TABLE `devices` ADD `rack_size` int(11) unsigned DEFAULT null AFTER `rack_start`;
+ALTER TABLE `devices` ADD `rack` int(11) unsigned DEFAULT null;
+ALTER TABLE `devices` ADD `rack_start` int(11) unsigned DEFAULT null;
+ALTER TABLE `devices` ADD `rack_size` int(11) unsigned DEFAULT null;
 
 /* add threshold module to subnets */
-ALTER TABLE `subnets` ADD `threshold` int(3)  NULL  DEFAULT 0  AFTER `NAT`;
+ALTER TABLE `subnets` ADD `threshold` int(3)  NULL  DEFAULT 0;
 
 /* threshold and inactive hosts widget */
 INSERT INTO `widgets` ( `wtitle`, `wdescription`, `wfile`, `wparams`, `whref`, `wsize`, `wadminonly`, `wactive`) VALUES ('Threshold', 'Shows threshold usage for top 5 subnets', 'threshold', NULL, 'yes', '6', 'no', 'yes');
@@ -547,3 +547,132 @@ DROP TABLE IF EXISTS `snmp`;
 /* reset db check field and donation */
 UPDATE `settings` set `dbverified` = 0;
 UPDATE `settings` set `donate` = 0;
+
+/* add DHCP to settings */
+ALTER TABLE `settings` ADD `enableDHCP` TINYINT(1)  NULL  DEFAULT '0';
+ALTER TABLE `settings` ADD `DHCP` VARCHAR(256) NULL default '{"type":"kea","settings":{"file":"\/etc\/kea\/kea.conf"}}';
+
+/* permit normal users to manage VLANs */
+ALTER TABLE `users` ADD `editVlan` SET('Yes','No')  NULL  DEFAULT 'No';
+
+/* remove permitUserVlanCreate - not needed */
+ALTER TABLE `settings` DROP `permitUserVlanCreate`;
+
+/* add menu type */
+ALTER TABLE `users` ADD `menuType` SET('Static','Dynamic')  NULL  DEFAULT 'Dynamic';
+
+
+
+/* VERSION 1.23 */
+UPDATE `settings` set `version` = '1.23';
+
+/* reset db check field and donation */
+UPDATE `settings` set `dbverified` = 0;
+UPDATE `settings` set `donate` = 0;
+
+/* change default datetime */
+ALTER TABLE `ipaddresses` CHANGE `lastSeen` `lastSeen` DATETIME  NULL  DEFAULT '1970-01-01 00:00:01';
+
+/* add linked subnet field */
+ALTER TABLE `subnets` ADD `linked_subnet` INT(11)  UNSIGNED  NULL  DEFAULT NULL;
+
+/* add device to table */
+ALTER TABLE `nat` ADD `device` INT(11)  UNSIGNED  NULL  DEFAULT NULL;
+
+/* drop NAT fields */
+ALTER TABLE `subnets` DROP `NAT`;
+ALTER TABLE `ipaddresses` DROP `NAT`;
+
+/* extend username field to 64 chars */
+ALTER TABLE `logs` CHANGE `username` `username` VARCHAR(64)  CHARACTER SET utf8  NULL  DEFAULT NULL;
+ALTER TABLE `users` CHANGE `username` `username` VARCHAR(64)  CHARACTER SET utf8  NOT NULL  DEFAULT '';
+
+/* locations */
+ALTER TABLE `settings` ADD `enableLocations` TINYINT(1)  NULL  DEFAULT '1';
+ALTER TABLE `devices` ADD `location` INT(11)  UNSIGNED  NULL  DEFAULT NULL;
+ALTER TABLE `racks` ADD `location` INT(11)  UNSIGNED  NULL  DEFAULT NULL;
+ALTER TABLE `subnets` ADD `location` INT(11)  UNSIGNED  NULL  DEFAULT NULL;
+
+
+CREATE TABLE `locations` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL DEFAULT '',
+  `description` text,
+  `lat` varchar(12) DEFAULT NULL,
+  `long` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `locations` ADD `address` VARCHAR(128)  NULL  DEFAULT NULL;
+
+/* nat changes */
+ALTER TABLE `nat` CHANGE `port` `src_port` INT(5)  NULL  DEFAULT NULL;
+ALTER TABLE `nat` ADD `dst_port` INT(5)  NULL  DEFAULT NULL;
+
+
+
+/* VERSION 1.24 */
+UPDATE `settings` set `version` = '1.24';
+
+/* reset db check field and donation */
+UPDATE `settings` set `dbverified` = 0;
+UPDATE `settings` set `donate` = 0;
+
+/* PSTN */
+ALTER TABLE `settings` ADD `enablePSTN` TINYINT(1)  NULL  DEFAULT '1';
+
+/* pstnPrefixes */
+CREATE TABLE `pstnPrefixes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `prefix` varchar(32) DEFAULT NULL,
+  `start` varchar(32) DEFAULT NULL,
+  `stop` varchar(32) DEFAULT NULL,
+  `master` int(11) DEFAULT '0',
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* pstnNumbers */
+CREATE TABLE `pstnNumbers` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `prefix` int(11) unsigned DEFAULT NULL,
+  `number` varchar(32) DEFAULT NULL,
+  `name` varchar(128) DEFAULT NULL,
+  `owner` varchar(128) DEFAULT NULL,
+  `state` int(11) unsigned DEFAULT NULL,
+  `deviceId` int(11) unsigned DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* use permissions for pstn */
+ALTER TABLE `users` ADD `pstn` INT(1)  NULL  DEFAULT '1';
+
+
+
+
+/* VERSION 1.25 */
+UPDATE `settings` set `version` = '1.25';
+
+/* reset db check field and donation */
+UPDATE `settings` set `dbverified` = 0;
+UPDATE `settings` set `donate` = 0;
+
+/* update languges */
+UPDATE `lang` SET `l_code` = 'en_GB.UTF8' WHERE `l_code` = 'en';
+UPDATE `lang` SET `l_code` = 'sl_SI.UTF8' WHERE `l_code` = 'sl_SI';
+UPDATE `lang` SET `l_code` = 'fr_FR.UTF8' WHERE `l_code` = 'fr_FR';
+UPDATE `lang` SET `l_code` = 'nl_NL.UTF8' WHERE `l_code` = 'nl_NL';
+UPDATE `lang` SET `l_code` = 'de_DE.UTF8' WHERE `l_code` = 'de_DE';
+UPDATE `lang` SET `l_code` = 'pt_BR.UTF8' WHERE `l_code` = 'pt_BR';
+UPDATE `lang` SET `l_code` = 'es_ES.UTF8' WHERE `l_code` = 'es_ES';
+UPDATE `lang` SET `l_code` = 'cs_CZ.UTF8' WHERE `l_code` = 'cs_CZ';
+UPDATE `lang` SET `l_code` = 'en_US.UTF8' WHERE `l_code` = 'en_US';
+
+/* location to addresses */
+ALTER TABLE `ipaddresses` ADD `location` INT(11)  UNSIGNED  NULL  DEFAULT NULL;
+
+INSERT INTO `widgets` (`wid`, `wtitle`, `wdescription`, `wfile`, `wparams`, `whref`, `wsize`, `wadminonly`, `wactive`) VALUES (NULL, 'Locations', 'Shows map of locations', 'locations', NULL, 'yes', '6', 'no', 'yes');
+

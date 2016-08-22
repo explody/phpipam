@@ -16,6 +16,9 @@ if(!is_object(@$User)) {
 	$Addresses 	= new Addresses ($Database);
 	$Result		= new Result ();
 }
+else {
+    header("Location: ".create_link('tools', 'threshold'));
+}
 
 # user must be authenticated
 $User->check_user_session ();
@@ -27,16 +30,13 @@ $User->check_user_session ();
 $height = 200;
 $slimit = 5;			//we dont need this, we will recalculate
 
-# count
-$m = 0;
-
 # if direct request include plot JS
 if($_SERVER['HTTP_X_REQUESTED_WITH']!="XMLHttpRequest")	{
 	# get widget details
 	if(!$widget = $Tools->fetch_object ("widgets", "wfile", $_REQUEST['section'])) { $Result->show("danger", _("Invalid widget"), true); }
 	# reset size and limit
 	$height = 350;
-	$slimit = 100;
+	$slimit = 5;
 	# and print title
 	print "<div class='container'>";
 	print "<h4 style='margin-top:40px;'>$widget->wtitle</h4><hr>";
@@ -45,7 +45,7 @@ if($_SERVER['HTTP_X_REQUESTED_WITH']!="XMLHttpRequest")	{
 
 if ($User->settings->enableThreshold=="1") {
     # get thresholded subnets
-    $threshold_subnets = $Subnets->fetch_threshold_subnets (100);
+    $threshold_subnets = $Subnets->fetch_threshold_subnets (1000);
 
     # any found ?
     if ($threshold_subnets !== false) {
@@ -55,11 +55,6 @@ if ($User->settings->enableThreshold=="1") {
             $sp = $Subnets-> check_permission ($User->user, $s->id);
             if($sp != "0") {
                 $out[] = $s;
-            }
-            $m++;
-            # break after limit
-            if ($m>$slimit) {
-                break;
             }
         }
     }

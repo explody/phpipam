@@ -10,7 +10,7 @@ require( dirname(__FILE__) . '/../../../functions/functions.php');
 # initialize user object
 $Database 	= new Database_PDO;
 $User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
+$Admin	 	= new Admin ($Database, false);
 $Subnets	= new Subnets ($Database);
 $Result 	= new Result ();
 
@@ -41,7 +41,7 @@ $subnet->description = strlen($subnet->description)>0 ? "(".$subnet->description
 
 <!-- content -->
 <div class="pContent">
-	<table class="table table-noborder table-condensed">
+	<table class="table table-noborder table-condensed table-scan">
     <!-- subnet -->
     <tr>
         <td class="middle"><?php print _('Subnet'); ?></td>

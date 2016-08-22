@@ -39,7 +39,7 @@ $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_cu
 <?php
 /* first check if they exist! */
 if($devices===false) {
-	$Result->show("warn alert-absolute", _('No devices configured').'!', false);
+	$Result->show("warning", _('No devices configured').'!', false);
 }
 /* Print them out */
 else {
@@ -81,7 +81,7 @@ else {
 		//print details
 		print '<tr>'. "\n";
 
-		print '	<td><a href="'.create_link("tools","devices","hosts",$device['id']).'">'. $device['hostname'] .'</a></td>'. "\n";
+		print '	<td><a href="'.create_link("tools","devices",$device['id']).'">'. $device['hostname'] .'</a></td>'. "\n";
 		print '	<td>'. $device['ip_addr'] .'</td>'. "\n";
 		print '	<td>'. @$device_types_i[$device['type']]->tname .'</td>'. "\n";
 		print '	<td>'. $device['vendor'] .'</td>'. "\n";
