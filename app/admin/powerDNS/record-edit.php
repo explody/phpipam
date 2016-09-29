@@ -27,6 +27,9 @@ $pdns = $PowerDNS->db_settings;
 # default post
 $post = $_POST;
 
+# validate action
+$Admin->validate_action ($_POST['action'], true);
+
 # get record
 if($_POST['action']!="add") {
 	$record = $PowerDNS->fetch_record ($_POST['id']);
@@ -67,7 +70,7 @@ else {
 		}
 		else {
 			$record = new StdClass ();
-			$record->ttl = 3600;
+			$record->ttl = @$pdns->ttl;
 			$record->name = $post['domain_id'];
 			$record->content = $_POST['id'];
 		}

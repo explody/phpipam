@@ -726,11 +726,15 @@ class Addresses extends Common_functions {
 	public function get_first_available_address ($subnetId, $Subnets) {
 
 		# fetch all addresses in subnet and subnet
-		$addresses = $this->fetch_subnet_addresses ($subnetId, "ip_addr", "asc");
+		$addresses = $this->fetch_subnet_addresses ($subnetId, "ip_addr", "asc", array("ip_addr"));
 		$subnet = (array) $Subnets->fetch_subnet(null, $subnetId);
 
 		# if folder return false
 		if ($subnet['isFolder']=="1")                                                                   { return false; }
+
+		# false if slaves
+		$this->Subnets = new Subnets ($this->Database);
+		if($this->Subnets->has_slaves ($subnetId))                                                      { return false; }
 
 	    # get max hosts
 	    $max_hosts = $Subnets->get_max_hosts ($subnet['mask'], $this->identify_address($subnet['subnet']));
@@ -770,7 +774,6 @@ class Addresses extends Common_functions {
 		    if($subnet['mask']==32 || $subnet['mask']==31 || $ip_version=="IPv6") 						{ return $subnet['subnet']; }
 		    else																						{ return gmp_strval(gmp_add($subnet['subnet'], 1)); }
 	    }
-
 	}
 
 
@@ -1182,21 +1185,27 @@ class Addresses extends Common_functions {
 	 * Fetches all IP addresses in subnet
 	 *
 	 * @access public
-	 * @param int $subnetId
-	 * @param mixed $order
-	 * @param mixed $order_direction
-	 * @return objects addresses
+	 * @param mixed $subnetId
+	 * @param mixed $order (default: null)
+	 * @param mixed $order_direction (default: null)
+	 * @param string $fields (default: "*")
+	 * @return void
 	 */
-	public function fetch_subnet_addresses ($subnetId, $order=null, $order_direction=null) {
+	public function fetch_subnet_addresses ($subnetId, $order=null, $order_direction=null, $fields = "*") {
 		# set order
 		if(!is_null($order)) 	{ $order = array($order, $order_direction); }
 		else 					{ $order = array("ip_addr", "asc"); }
+
+		# fields
+		if($fields!="*") {
+    		$fields = implode(",", $fields);
+		}
 
 		# escape ordering
 		$order[0] = $this->Database->escape ($order[0]);
 		$order[1] = $this->Database->escape ($order[1]);
 
-		try { $addresses = $this->Database->getObjectsQuery("SELECT * FROM `ipaddresses` where `subnetId` = ? order by `$order[0]` $order[1];", array($subnetId)); }
+		try { $addresses = $this->Database->getObjectsQuery("SELECT $fields FROM `ipaddresses` where `subnetId` = ? order by `$order[0]` $order[1];", array($subnetId)); }
 		catch (Exception $e) {
 			$this->Result->show("danger", _("Error: ").$e->getMessage());
 			return false;
@@ -1465,7 +1474,6 @@ class Addresses extends Common_functions {
     	    }
     	    # diff 2
     	    elseif ($diff==2 && !$is_subnet && !$is_broadcast) {
-        	    var_dump($is_broadcast);
                 return array("ip"=>$this->transform_to_dotted(gmp_strval(gmp_add($address1,1))), "hosts"=>1);
     	    }
     	    # default

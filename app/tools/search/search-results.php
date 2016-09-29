@@ -21,9 +21,8 @@ if(isset($_REQUEST['ip'])) {
 $search_term = trim($search_term);
 $search_term = str_replace("*", "%", $search_term);
 
-
 // IP address low/high reformat
-if ($Tools->validate_ip($search_term)) {
+if (preg_match('/^[a-f0-9.:]+$/i', $search_term)) {
     // identify
     $type = $Addresses->identify_address( $search_term ); //identify address type
 
@@ -66,7 +65,7 @@ $colSpan 	= $fieldSize + $mySize + 4;
 # search addresses
 if(@$_REQUEST['addresses']=="on" && strlen($_REQUEST['ip'])>0) 	{ $result_addresses = $Tools->search_addresses($search_term, $search_term_edited['high'], $search_term_edited['low'], $custom_address_fields); }
 # search subnets
-if(@$_REQUEST['subnets']=="on" && strlen($_REQUEST['ip'])>0) 	{ $result_subnets   = $Tools->search_subnets($search_term, $search_term_edited['high'], $search_term_edited['low'], $_REQUEST['ip'], $hidden_subnet_fields); }
+if(@$_REQUEST['subnets']=="on" && strlen($_REQUEST['ip'])>0) 	{ $result_subnets   = $Tools->search_subnets($search_term, $search_term_edited['high'], $search_term_edited['low'], $_REQUEST['ip'], $custom_subnet_fields); }
 # search vlans
 if(@$_REQUEST['vlans']=="on" && strlen($_REQUEST['ip'])>0) 		{ $result_vlans     = $Tools->search_vlans($search_term, $custom_vlan_fields); }
 # search vrf
@@ -491,8 +490,8 @@ if(sizeof($result_vrf) > 0) {
 		print " <td class='actions'>";
 		if($User->is_admin(false)) {
 		print '<div class="btn-group">';
-		print '	<a class="btn btn-xs btn-default editVRF" data-action="edit"   data-vlanid="'.$vrf['vrfId'].'"><i class="fa fa-gray fa-pencil"></i></a>';
-		print '	<a class="btn btn-xs btn-default editVRF" data-action="delete" data-vlanid="'.$vrf['vrfId'].'"><i class="fa fa-gray fa-times"></i></a>';
+		print '	<a class="btn btn-xs btn-default vrfManagement" data-action="edit"   data-vrfid="'.$vrf['vrfId'].'"><i class="fa fa-gray fa-pencil"></i></a>';
+		print '	<a class="btn btn-xs btn-default vrfManagement" data-action="delete" data-vrfid="'.$vrf['vrfId'].'"><i class="fa fa-gray fa-times"></i></a>';
 		print '</div>';
 		}
 		print "</td>";

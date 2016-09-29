@@ -43,6 +43,16 @@ class Tools extends Common_functions {
 	protected $Net_IPv6;
 
 	/**
+	 * Addresses object
+	 *
+	 * (default value: false)
+	 *
+	 * @var bool|object
+	 * @access protected
+	 */
+	protected $Addresses = false;
+
+	/**
 	 * for Result printing
 	 *
 	 * @var mixed
@@ -106,12 +116,13 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param int $domainId (default: 1)
-	 * @return void
+	 * @return array|bool
 	 */
 	public function fetch_vlans_and_subnets ($domainId=1) {
 	    # custom fields
 	    $custom_fields = $this->fetch_custom_fields("vlans");
 		# if set add to query
+		$custom_fields_query = "";
 	    if(sizeof($custom_fields)>0) {
 			foreach($custom_fields as $myField) {
 				$custom_fields_query  .= ',`vlans`.`'.$myField['name'].'`';
@@ -127,6 +138,7 @@ class Tools extends Common_functions {
 		}
 
 		# reorder
+		$out = array();
 		foreach ($vlans as $vlan) {
 			$out[$vlan->vlanId][] = $vlan;
 		}
@@ -143,7 +155,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param int $number
-	 * @return void
+	 * @return mixed|bool
 	 */
 	public function validate_vlan ($number) {
 		# fetch highest vlan id
@@ -175,7 +187,7 @@ class Tools extends Common_functions {
 	 * @param string $high (default: "")
 	 * @param string $low (default: "")
 	 * @param array $custom_fields (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public function search_addresses($search_term, $high = "", $low = "", $custom_fields = array()) {
 
@@ -235,7 +247,7 @@ class Tools extends Common_functions {
 	 * @param string $low (default: "")
 	 * @param mixed $search_req
 	 * @param mixed $custom_fields (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public function search_subnets($search_term, $high = "", $low = "", $search_req, $custom_fields = array()) {
 		# first search if range provided
@@ -255,11 +267,12 @@ class Tools extends Common_functions {
 	 *
 	 * @access private
 	 * @param mixed $search_term
-	 * @param number $high
-	 * @param number $low
+	 * @param string $high
+	 * @param string $low
+	 * @param mixed $custom_fields (default: array())
 	 * @return array
 	 */
-	private function search_subnets_range ($search_term, $high, $low, $custom_subnet_fields = array()) {
+	private function search_subnets_range ($search_term, $high, $low, $custom_fields = array()) {
 		# reformat low/high
 		if($high==0 && $low==0)	{ $high = "1"; $low="1"; }
 
@@ -292,9 +305,8 @@ class Tools extends Common_functions {
 	 * Search inside subnets if host address is provided!
 	 *
 	 * @access private
-	 * @param mixed $search_term
-	 * @param number $high
-	 * @param number $low
+	 * @param string $high
+	 * @param string $low
 	 * @return array
 	 */
 	private function search_subnets_inside ($high, $low) {
@@ -304,6 +316,7 @@ class Tools extends Common_functions {
 			# fetch all subnets
 			$subnets = $Subnets->fetch_all_subnets_search();
 			# loop and search
+			$ids = array();
 			foreach($subnets as $s) {
 				# cast
 				$s = (array) $s;
@@ -324,6 +337,9 @@ class Tools extends Common_functions {
 			}
 			# filter
 			$ids = sizeof(@$ids)>0 ? array_filter($ids) : array();
+
+			$result = array();
+
 			# search
 			if(sizeof($ids)>0) {
 				foreach($ids as $id) {
@@ -343,9 +359,8 @@ class Tools extends Common_functions {
 	 * Search inside subnets if host address is provided! ipv6
 	 *
 	 * @access private
-	 * @param mixed $search_term
-	 * @param number $high
-	 * @param number $low
+	 * @param string $high
+	 * @param string $low
 	 * @return array
 	 */
 	private function search_subnets_inside_v6 ($high, $low, $search_req) {
@@ -356,22 +371,19 @@ class Tools extends Common_functions {
 
 			// validate
 			if ($this->Net_IPv6->checkIPv6($search_req)) {
-				# ifmask remove it
-				if (strpos($search_req, "/")>0) {
-					$search_req = $this->Net_IPv6->removeNetmaskSpec($search_req);
-				}
 				# subnets class
 				$Subnets = new Subnets ($this->Database);
 				# fetch all subnets
 				$subnets = $Subnets->fetch_all_subnets_search("IPv6");
 				# loop and search
+				$ids = array();
 				foreach($subnets as $s) {
 					# cast
 					$s = (array) $s;
 					# parse address
 					$net = $this->Net_IPv6->parseAddress($this->transform_address($s['subnet'], "dotted").'/'.$s['mask']);
 
-					if(gmp_cmp($low, $this->transform_address(@$net['start'], "decimal")) == 1 && gmp_cmp($low, $this->transform_address($net['end'], "decimal")) == -1) {
+					if(gmp_cmp($low, $this->transform_address(@$net['start'], "decimal")) == 1 && gmp_cmp($low, $this->transform_address(@$net['end'], "decimal")) == -1) {
 						$ids[] = $s['id'];
 
 					}
@@ -380,6 +392,7 @@ class Tools extends Common_functions {
 				$ids = sizeof(@$ids)>0 ? array_filter($ids) : array();
 				# search
 				if(sizeof($ids)>0) {
+    				$result = array();
 					foreach($ids as $id) {
 						$result[] = $Subnets->fetch_subnet(null, $id);
 					}
@@ -403,7 +416,7 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param mixed $search_term
 	 * @param array $custom_fields (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public function search_vlans($search_term, $custom_fields = array()) {
 		# query
@@ -437,7 +450,7 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param mixed $search_term
 	 * @param array $custom_fields (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public function search_vrfs ($search_term, $custom_fields = array()) {
 		# query
@@ -470,14 +483,14 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param mixed $search_term
 	 * @param array $custom_prefix_fields (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public function search_pstn_refixes ($search_term, $custom_prefix_fields = array()) {
 		# query
 		$query[] = "select *,concat(prefix,start) as raw from `pstnPrefixes` where `prefix` like :search_term or `name` like :search_term or `description` like :search_term ";
 		# custom
-	    if(sizeof($custom_fields) > 0) {
-			foreach($custom_fields as $myField) {
+	    if(sizeof($custom_prefix_fields) > 0) {
+			foreach($custom_prefix_fields as $myField) {
 				$myField['name'] = $this->Database->escape($myField['name']);
 				$query[] = " or `$myField[name]` like :search_term ";
 			}
@@ -503,14 +516,14 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param mixed $search_term
 	 * @param array $custom_prefix_fields (default: array())
-	 * @return void
+	 * @return array
 	 */
 	public function search_pstn_numbers ($search_term, $custom_prefix_fields = array()) {
 		# query
 		$query[] = "select * from `pstnNumbers` where `number` like :search_term or `name` like :search_term or `description` like :search_term or `owner` like :search_term ";
 		# custom
-	    if(sizeof($custom_fields) > 0) {
-			foreach($custom_fields as $myField) {
+	    if(sizeof($custom_prefix_fields) > 0) {
+			foreach($custom_prefix_fields as $myField) {
 				$myField['name'] = $this->Database->escape($myField['name']);
 				$query[] = " or `$myField[name]` like :search_term ";
 			}
@@ -550,7 +563,7 @@ class Tools extends Common_functions {
 		if(strpos($address, "/")>0) {
 			# Initialize PEAR NET object
 			$this->initialize_pear_net_IPv4 ();
-			$net = $this->Net_IPv4->parseAddress($ip);
+			$net = $this->Net_IPv4->parseAddress($address);
 
 			$result['low']   = $Addresses->transform_to_decimal($net->network);
 			$result['high']	 = $Addresses->transform_to_decimal($net->broadcast);
@@ -603,11 +616,13 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $address
-	 * @return void
+	 * @return array
 	 */
 	public function reformat_IPv6_for_search ($address) {
 		# parse address
 		$this->initialize_pear_net_IPv6 ();
+
+		$return = array();
 
 		# validate
 		if ($this->Net_IPv6->checkIPv6($address)==false) {
@@ -652,11 +667,13 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $table
-	 * @return void
+	 * @return array
 	 */
 	public function fetch_custom_fields ($table) {
     	# fetch columns
 		$fields = $this->fetch_columns ($table);
+
+		$res = array();
 
 		# save Field values only
 		foreach($fields as $field) {
@@ -686,7 +703,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $table
-	 * @return void
+	 * @return array
 	 */
 	public function fetch_custom_fields_numeric ($table) {
 		# fetch all custom fields
@@ -709,7 +726,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access private
 	 * @param mixed $table
-	 * @return void
+	 * @return array
 	 */
 	private function fetch_columns ($table) {
 		# escape method/table
@@ -728,7 +745,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $table
-	 * @return void
+	 * @return array
 	 */
 	public function fetch_standard_fields ($table) {
 		# get SCHEMA.SQL file
@@ -744,6 +761,7 @@ class Tools extends Common_functions {
 		$definition = explode("\n", $definition);
 
 		# go through,if it begins with ` use it !
+		$out = array();
 		foreach($definition as $d) {
 			$d = trim($d);
 			if(strpos(trim($d), "`")==0) {
@@ -759,7 +777,7 @@ class Tools extends Common_functions {
 	 * Fetches standard tables from SCHEMA.sql file
 	 *
 	 * @access private
-	 * @return void
+	 * @return array
 	 */
 	private function fetch_standard_tables () {
 		# get SCHEMA.SQL file
@@ -769,6 +787,7 @@ class Tools extends Common_functions {
 		# get definitions to array, explode with CREATE TABLE `
 		$creates = explode("CREATE TABLE `", $schema);
 		# fill tables array
+		$tables = array();
 		foreach($creates as $k=>$c) {
 			if($k>0)	{ $tables[] = strstr($c, "`", true); }	//we exclude first !
 		}
@@ -785,7 +804,7 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param mixed $table
 	 * @param mixed $field
-	 * @return void
+	 * @return array
 	 */
 	public function fetch_full_field_definition ($table, $field) {
 		# escape field
@@ -819,7 +838,7 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param bool $admin (default: false)
 	 * @param bool $inactive (default: false)
-	 * @return void
+	 * @return array
 	 */
 	public function fetch_widgets ($admin = false, $inactive = false) {
 
@@ -835,6 +854,7 @@ class Tools extends Common_functions {
 		catch (Exception $e) { $this->Result->show("danger", $e->getMessage(), false);	return false; }
 
 	    # reindex
+	    $wout = array();
 	    foreach($widgets as $w) {
 			$wout[$w->wfile] = $w;
 	    }
@@ -847,7 +867,7 @@ class Tools extends Common_functions {
 	 * Verify that widget file exists
 	 *
 	 * @access public
-	 * @return void
+	 * @return bool
 	 */
 	public function verify_widget ($file) {
 		return file_exists("app/dashboard/widgets/$file.php")==false ? false : true;
@@ -871,7 +891,7 @@ class Tools extends Common_functions {
 	 * fetches all IP requests and saves them to $requests
 	 *
 	 * @access public
-	 * @return void
+	 * @return int|array
 	 */
 	public function requests_fetch ($num = true) {
 		return $num ? $this->requests_fetch_num () : $this->requests_fetch_objects ();
@@ -881,7 +901,7 @@ class Tools extends Common_functions {
 	 * Fetches number of active IP requests
 	 *
 	 * @access private
-	 * @return void
+	 * @return int
 	 */
 	private function requests_fetch_num () {
     	return $this->count_database_objects ("requests", "processed", 0);
@@ -891,7 +911,7 @@ class Tools extends Common_functions {
 	 * Fetches all requests and saves them to $requests
 	 *
 	 * @access private
-	 * @return void
+	 * @return array
 	 */
 	private function requests_fetch_objects () {
     	return $this->fetch_multiple_objects ("requests", "processed", 0);
@@ -901,7 +921,7 @@ class Tools extends Common_functions {
 	 * Fetches all subnets that are set to allow requests
 	 *
 	 * @access public
-	 * @return void
+	 * @return array|null
 	 */
 	public function requests_fetch_available_subnets () {
 		try { $subnets = $this->Database->getObjectsQuery("SELECT * FROM `subnets` where `allowRequests`=1 and `isFull` != 1;"); }
@@ -917,7 +937,7 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param string $action (default: "new")
 	 * @param mixed $values
-	 * @return void
+	 * @return bool
 	 */
 	public function ip_request_send_mail ($action="new", $values) {
 
@@ -969,7 +989,7 @@ class Tools extends Common_functions {
 		foreach($values as $k=>$v) {
 		$content_plain[] = $k." => ".$v;
 		}
-		$content_plain[] = "\r\n\r\n"._("Sent by user")." ".$User->user->real_name." at ".date('Y/m/d H:i');
+		$content_plain[] = "\r\n\r\nSent at ".date('Y/m/d H:i');
 		$content[] = "</table>";
 
 		// set content
@@ -994,9 +1014,9 @@ class Tools extends Common_functions {
 			//send
 			$phpipam_mail->Php_mailer->send();
 		} catch (phpmailerException $e) {
-			$Result->show("danger", "Mailer Error: ".$e->errorMessage(), true);
+			$this->Result->show("danger", "Mailer Error: ".$e->errorMessage(), true);
 		} catch (Exception $e) {
-			$Result->show("danger", "Mailer Error: ".$e->errorMessage(), true);
+			$this->Result->show("danger", "Mailer Error: ".$e->errorMessage(), true);
 		}
 
 		# ok
@@ -1009,7 +1029,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access private
 	 * @param bool|mixed $subnetId
-	 * @return void
+	 * @return array|bool
 	 */
 	private function ip_request_get_mail_recipients ($subnetId = false) {
     	// fetch all users with mailNotify
@@ -1050,7 +1070,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access private
 	 * @param mixed $values
-	 * @return void
+	 * @return array
 	 */
 	private function ip_request_reformat_mail_values ($values) {
 		// no array
@@ -1058,6 +1078,8 @@ class Tools extends Common_functions {
 
 		// addresses
 		$this->Addresses = new Addresses ($this->Database);
+
+		$mail = array();
 
 		// change fields for mailings
 		foreach ($values as $k=>$v) {
@@ -1153,7 +1175,7 @@ class Tools extends Common_functions {
 	 * Checks if all database fields are installed ok
 	 *
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
 	public function verify_database () {
 
@@ -1230,7 +1252,6 @@ class Tools extends Common_functions {
 	public function field_exists ($tablename, $fieldname) {
 	    # escape
 	    $tableName = $this->Database->escape($tablename);
-	    $tableName = $this->Database->escape($tablename);
 		# check
 	    $query = "DESCRIBE `$tablename` `$fieldname`;";
 		try { $count = $this->Database->getObjectQuery($query); }
@@ -1243,7 +1264,6 @@ class Tools extends Common_functions {
 	 * Updates DB check flag in database
 	 *
 	 * @access private
-	 * @return void
 	 */
 	private function update_db_verify_field () {
 		# query
@@ -1257,7 +1277,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $table
-	 * @return void
+	 * @return false|string
 	 */
 	public function get_table_fix ($table) {
 		$res = fopen(dirname(__FILE__) . "/../../db/SCHEMA.sql", "r");
@@ -1278,7 +1298,7 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param mixed $table
 	 * @param mixed $field
-	 * @return void
+	 * @return string|false
 	 */
 	public function get_field_fix ($table, $field) {
 		$res = fopen(dirname(__FILE__) . "/../../db/SCHEMA.sql", "r");
@@ -1307,7 +1327,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $table
-	 * @return void
+	 * @return bool
 	 */
 	public function fix_table ($table) {
 		# first fetch fix query
@@ -1327,10 +1347,9 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param mixed $table
 	 * @param mixed $field
-	 * @return void
+	 * @return bool
 	 */
 	public function fix_field ($table, $field) {
-
 		# set fix query
 		$query  = "alter table `$table` add ";
 		$query .= trim($this->get_field_fix ($table, $field), ",");
@@ -1364,7 +1383,7 @@ class Tools extends Common_functions {
 	 * Check for latest version
 	 *
 	 * @access public
-	 * @return void
+	 * @return mixed|bool
 	 */
 	public function check_latest_phpipam_version () {
 		# fetch settings
@@ -1377,7 +1396,7 @@ class Tools extends Common_functions {
 	 * Checks for latest phpipam version from phpipam webpage
 	 *
 	 * @access public
-	 * @return void
+	 * @return string|false
 	 */
 	public function check_latest_phpipam_version_phpipamnet () {
 		# fetch webpage
@@ -1400,7 +1419,7 @@ class Tools extends Common_functions {
 	 * Fetch latest version form Github for phpipam > 1.2
 	 *
 	 * @access public
-	 * @return void
+	 * @return mixed|bool
 	 */
 	public function check_latest_phpipam_version_github () {
 		# set releases href
@@ -1422,7 +1441,6 @@ class Tools extends Common_functions {
 					$this->phpipam_latest_release = $e;
 					// return
 					return str_replace("Version", "", $e->title);
-					break;
 				}
 			}
 			// none
@@ -1437,7 +1455,6 @@ class Tools extends Common_functions {
 	 * Updates DB version check flag in database
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function update_phpipam_checktime () {
 		# query
@@ -1464,11 +1481,9 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $cidr
-	 * @return void
+	 * @return mixed
 	 */
 	public function calculate_ip_calc_results ($cidr) {
-		# addresses class
-		$Addresses = new Addresses ($this->Database);
 		# detect address and calculate
 		return $this->identify_address($cidr)=="IPv6" ? $this->calculate_IPv6_calc_results($cidr) : $this->calculate_IPv4_calc_results($cidr);
 	}
@@ -1490,6 +1505,7 @@ class Tools extends Common_functions {
         $net = $this->Net_IPv4->parseAddress( $cidr );
 
         # set ip address type
+        $out = array();
         $out['Type']            = 'IPv4';
 
         # calculate network details
@@ -1527,7 +1543,7 @@ class Tools extends Common_functions {
 	 * @access private
 	 * @param $network
 	 * @param $broadcast
-	 * @return void
+	 * @return string|false
 	 */
 	private function get_ipv4_address_type ($network, $broadcast) {
 		# get all possible classes
@@ -1554,6 +1570,7 @@ class Tools extends Common_functions {
 	 */
 	private function define_ipv4_address_types () {
 	    # define classes
+	    $classes = array();
 	    $classes['private A']          = '10.0.0.0/8';
 	    $classes['private B']          = '172.16.0.0/12';
 	    $classes['private C']          = '192.168.0.0/16';
@@ -1576,7 +1593,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access private
 	 * @param mixed $cidr
-	 * @return void
+	 * @return array
 	 */
 	private function calculate_IPv6_calc_results ($cidr) {
 		# initialize subnets Class
@@ -1585,6 +1602,7 @@ class Tools extends Common_functions {
 		$this->initialize_pear_net_IPv6 ();
 
         # set ip address type
+        $out = array();
         $out['Type']                      = 'IPv6';
 
         # calculate network details
@@ -1630,7 +1648,7 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param mixed $addresses
 	 * @param int $pflen (default: 128)
-	 * @return void
+	 * @return string
 	 */
 	public function reverse_IPv6 ($addresses, $pflen=128) {
 		# Initialize PEAR NET object
@@ -1655,7 +1673,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access private
 	 * @param CIDR $cidr
-	 * @return void
+	 * @return string|false
 	 */
 	private function get_ipv6_address_type ($cidr) {
 		# Initialize PEAR NET object
@@ -1672,7 +1690,7 @@ class Tools extends Common_functions {
 	 * Defines all IPv6 address types
 	 *
 	 * @access private
-	 * @return array
+	 * @return string[]
 	 */
 	private function define_ipv6_address_types () {
         $all_types[10] = "NET_IPV6_NO_NETMASK";
@@ -1720,7 +1738,7 @@ class Tools extends Common_functions {
      * @param bool $json_objects (default: false)
      * @param bool $object_type (default: false) - to bold it (ipaddresses / subnets)
      * @param int|bool object_id (default: false) - to bold it
-     * @return void
+     * @return array|bool
      */
     public function translate_nat_objects_for_display ($json_objects, $nat_id = false, $admin = false, $object_type = false, $object_id=false) {
         // to array "subnets"=>array(1,2,3)
@@ -1796,7 +1814,7 @@ class Tools extends Common_functions {
      *
      * @access public
      * @param array $all_nats (default: array())
-     * @return void
+     * @return array
      */
     public function reindex_nat_objects ($all_nats = array()) {
         // out array
@@ -1854,7 +1872,7 @@ class Tools extends Common_functions {
      * @param bool $admin (default: false) > shows remove links
      * @param bool|mixed $object_type (default: false)
      * @param bool $object_id (default: false)
-     * @return void
+     * @return string
      */
     public function print_nat_table ($n, $is_admin = false, $nat_id = false, $admin = false, $object_type = false, $object_id=false) {
         // cast to object to be sure if array provided
@@ -1961,7 +1979,7 @@ class Tools extends Common_functions {
      * @return void
      * @param bool|int $master (default: false)
      * @param bool $recursive (default: false)
-     * @return void
+     * @return array|bool
      */
     public function fetch_all_prefixes ($master = false, $recursive = false) {
 	    if($master && !$recursive) {
@@ -2006,7 +2024,7 @@ class Tools extends Common_functions {
      *
      * @access public
      * @param mixed $number
-     * @return void
+     * @return mixed
      */
     public function prefix_normalize ($number) {
         return str_replace(array("+", " ", "-"), "", $number);
@@ -2017,7 +2035,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $id
-	 * @return void
+	 * @return array
 	 */
 	public function fetch_prefix_parents_recursive ($id) {
 		$parents = array();
@@ -2055,7 +2073,7 @@ class Tools extends Common_functions {
 	 * @access public
 	 * @param bool $prefix (default: false)
 	 * @param bool $number (default: false)
-	 * @return void
+	 * @return null|boolean
 	 */
 	public function check_number_duplicates ($prefix = false, $number = false) {
     	if($prefix===false && $number===false) {
@@ -2081,8 +2099,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param object $user
-	 * @param int $subnetId
-	 * @return void
+	 * @return int
 	 */
 	public function check_prefix_permission ($user) {
         return $user->role=="Administrator" ? 3 : $user->pstn;
@@ -2095,7 +2112,7 @@ class Tools extends Common_functions {
 	 * @param mixed $user
 	 * @param mixed $prefixes
 	 * @param mixed $custom_fields
-	 * @return void
+	 * @return mixed
 	 */
 	public function print_menu_prefixes ( $user, $prefixes, $custom_fields ) {
 
@@ -2142,9 +2159,6 @@ class Tools extends Common_functions {
 		# return table content (tr and td's)
 		while ( $loop && ( ( $option = each( $children_prefixes[$parent] ) ) || ( $parent > $rootId ) ) )
 		{
-			# repeat
-			$repeat  = str_repeat( " - ", ( count($parent_stack)) );
-
 			if(count($parent_stack) == 0) {
 				$margin = "0px";
 				$padding = "0px";
@@ -2167,8 +2181,6 @@ class Tools extends Common_functions {
 
 			# print table line
 			if(strlen($option['value']['prefix']) > 0) {
-    			$last_item = $count < $old_count ? "last_item" : "";
-
     			# count change?
     			if ($count != $old_count) { $html[] = "</tbody><tbody>"; }
 
@@ -2280,8 +2292,6 @@ class Tools extends Common_functions {
 				array_push( $parent_stack, $option['value']['master'] );
 				$parent = $option['value']['id'];
 			}
-			# Last items
-			else { }
 		}
 		# print
 		return $html;
@@ -2295,9 +2305,9 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param bool $prefixId (default: false)
-	 * @return void
+	 * @return mixed
 	 */
-	public function print_masterprefix_dropdown_menu($prefixId = false) {
+	public function print_masterprefix_dropdown_menu ($prefixId = false) {
 
 		# initialize vars
 		$children_prefixes = array();
@@ -2328,8 +2338,6 @@ class Tools extends Common_functions {
 		{
 			# repeat
 			$repeat  = str_repeat( " &nbsp;&nbsp; ", ( count($parent_stack_prefixes)) );
-			# count levels
-			$count = count($parent_stack_prefixes)+1;
 
 			# selected
 			$selected = $option['value']['id'] == $prefixId ? "selected='selected'" : "";
@@ -2341,10 +2349,7 @@ class Tools extends Common_functions {
 			elseif ( !empty( $children_prefixes[$option['value']['id']] ) ) {
 				array_push( $parent_stack_prefixes, $option['value']['master'] );
 				$parent = $option['value']['id'];
-			}
-			# Last items
-			else { }
-		}
+			}		}
 		}
 		$html[] = "</select>";
 		# join and print
@@ -2362,7 +2367,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param array $numbers
-	 * @return void
+	 * @return array
 	 */
 	public function compress_pstn_ranges ($numbers, $state=4) {
     	# set size
@@ -2431,12 +2436,13 @@ class Tools extends Common_functions {
 	 * Calculates pstn usage - dhcp, active, ...
 	 *
 	 * @access public
-	 * @param obj $prefix		//subnet in decimal format
+	 * @param obj $prefix        //subnet in decimal format
 	 * @param obj $numbers	     //netmask in decimal format
-	 * @return void
+	 * @return array
 	 */
 	public function calculate_prefix_usege ($prefix, $numbers) {
 	    # calculate max number of hosts
+	    $details = array();
 	    $details['maxhosts'] = ($prefix->stop - $prefix->start + 1);
 
 		# get IP address count per address type
@@ -2463,8 +2469,8 @@ class Tools extends Common_functions {
 	 * Calculates number usage per host type
 	 *
 	 * @access public
-	 * @param mixed $addresses
-	 * @return void
+	 * @param mixed $numbers
+	 * @return array
 	 */
 	public function calculate_prefix_usage_sort_numbers ($numbers) {
 		$count = array();
@@ -2490,7 +2496,6 @@ class Tools extends Common_functions {
 	 * Returns array of address types
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function get_addresses_types () {
 		# from cache
@@ -2515,7 +2520,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $index
-	 * @return void
+	 * @return array
 	 */
 	public function translate_address_type ($index) {
 		# fetch
@@ -2547,7 +2552,7 @@ class Tools extends Common_functions {
      * @access public
      * @param bool|int $id (default: false)
      * @param bool count (default: false)
-     * @return void
+     * @return array|bool
      */
     public function fetch_location_objects ($id = false, $count = false) {
         // check
@@ -2611,7 +2616,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param string $search (default: false)
-	 * @return void
+	 * @return array|bool
 	 */
 	public function fetch_all_domains_and_vlans ($search = false) {
 		// set query
@@ -2659,7 +2664,7 @@ class Tools extends Common_functions {
 	 * @param string $filetype (default: "xls")
 	 * @param object $subnet
 	 * @param array $custom_address_fields
-	 * @return void
+	 * @return array
 	 */
 	public function parse_import_file ($filetype = "xls", $subnet = object, $custom_address_fields) {
     	# start object and get settings
@@ -2667,7 +2672,7 @@ class Tools extends Common_functions {
     	$this->Subnets = new Subnets ($this->Database);
 
         # CSV
-        if (strtolower($filetype) == "csv")     { $outFile = $this->parse_import_file_csv ($subnet, $custom_address_fields); }
+        if (strtolower($filetype) == "csv")     { $outFile = $this->parse_import_file_csv (); }
         # XLS
         elseif(strtolower($filetype) == "xls")  { $outFile = $this->parse_import_file_xls ($subnet, $custom_address_fields); }
         # error
@@ -2683,7 +2688,7 @@ class Tools extends Common_functions {
 	 * @access private
 	 * @param object $subnet
 	 * @param array $custom_address_fields
-	 * @return void
+	 * @return mixed
 	 */
 	private function parse_import_file_xls ($subnet, $custom_address_fields) {
      	# get excel object
@@ -2693,6 +2698,8 @@ class Tools extends Common_functions {
     	//get number of rows
     	$numRows = $data->rowcount(0);
     	$numRows++;
+
+    	$outFile = array();
 
     	//get all to array!
     	for($m=0; $m < $numRows; $m++) {
@@ -2729,11 +2736,9 @@ class Tools extends Common_functions {
 	 * Parses CSV import file
 	 *
 	 * @access private
-	 * @param object $subnet
-	 * @param array $custom_address_fields
-	 * @return void
+	 * @return array
 	 */
-	private function parse_import_file_csv ($subnet, $custom_address_fields) {
+	private function parse_import_file_csv () {
     	/* get file to string */
     	$outFile = file_get_contents(dirname(__FILE__) . '/../../app/subnets/import-subnet/upload/import.csv') or die ($this->Result->show("danger", _('Cannot open upload/import.csv'), true));
 
@@ -2743,20 +2748,23 @@ class Tools extends Common_functions {
 
     	/* validate IP */
     	foreach($outFile as $k=>$v) {
-        	if(!filter_var($data->val($m,'A'), FILTER_VALIDATE_IP)) {
+        	//put it to array
+        	$field = explode(",", $v);
+
+        	if(!filter_var($field[0], FILTER_VALIDATE_IP)) {
             	unset($outFile[$k]);
         	}
         	else {
             	# mac
         		if ($this->settings-enableMulticast=="1") {
-            		if (strlen($v[6])==0 && $this->Subnets->is_multicast($v[1]))  {
-                		$mac = $this->Subnets->create_multicast_mac ($v[1]);
-                    }
-                    else {
-                        $mac = $v[6];
+            		if (strlen($field[5])==0 && $this->Subnets->is_multicast($field[0]))  {
+                		$field[5] = $this->Subnets->create_multicast_mac ($field[0]);
                     }
         		}
         	}
+
+        	# save
+        	$outFile[$k] = implode(",", $field);
     	}
 
     	# return
@@ -2774,6 +2782,7 @@ class Tools extends Common_functions {
 	 * @return void
 	 */
 	private function parse_validate_file ($outFile = array(), $subnet = object) {
+    	$result = array();
     	# present ?
     	if (sizeof($outFile)>0) {
             foreach($outFile as $k=>$line) {
@@ -2804,9 +2813,6 @@ class Tools extends Common_functions {
                 $result[] = $field;
             }
         }
-        else {
-            $result = array();
-        }
 
         # return
         return $result;
@@ -2817,7 +2823,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param string $type (default: "IPv4")
-	 * @return void
+	 * @return int
 	 */
 	public function count_subnets ($type="IPv4") {
 		# set proper query
@@ -2825,7 +2831,7 @@ class Tools extends Common_functions {
 		elseif($type=="IPv6")	{ $query = 'select count(cast(`ip_addr` as UNSIGNED)) as count from `ipaddresses` where cast(`ip_addr` as UNSIGNED) > "4294967295";'; }
 
 		try { $count = $this->Database->getObjectQuery($query); }
-		catch (Exception $e) { !$quit ? : $this->Result->show("danger", $e->getMessage(), true);	return false; }
+		catch (Exception $e) { $this->Result->show("danger", $e->getMessage(), true); }
 
 		/* return true if it exists */
 		return $count->count;
@@ -2838,7 +2844,7 @@ class Tools extends Common_functions {
 	 * @param mixed $type
 	 * @param string $limit (default: "10")
 	 * @param bool $perc (default: false)
-	 * @return void
+	 * @return array
 	 */
 	public function fetch_top_subnets ($type, $limit = "10", $perc = false) {
 	    # set limit
@@ -2880,41 +2886,17 @@ class Tools extends Common_functions {
 
 		# fetch
 		try { $stats = $this->Database->getObjectsQuery($query); }
-		catch (Exception $e) { !$debugging ? : $this->Result->show("danger", $e->getMessage(), true);	return false; }
+		catch (Exception $e) { !$this->debugging ? : $this->Result->show("danger", $e->getMessage(), true);	return false; }
 
 	    # return subnets array
 	    return (array) $stats;
 	}
 
 	/**
-	 * Validate posted action on scripts
-	 *
-	 * @access public
-	 * @param mixed $action
-	 * @return void
-	 */
-	public function validate_action ($action) {
-		# get valid actions
-		$valid_actions = $this->get_valid_actions ();
-		# check
-		in_array($action, $valid_actions) ?: $this->Result->show("danger", _("Invalid action!"), true);
-	}
-
-	/**
-	 * Sets valid actions
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function get_valid_actions () {
-		return array("add", "all-add", "edit", "all-edit", "delete", "truncate", "split", "resize", "move");
-	}
-
-	/**
 	 * Fetches all addresses to export to hosts file
 	 *
 	 * @access public
-	 * @return void
+	 * @return array
 	 */
 	public function fetch_addresses_for_export () {
 		# fetch
@@ -2929,7 +2911,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $code		//lang code
-	 * @return void
+	 * @return bool
 	 */
 	public function verify_translation ($code) {
 		//verify that proper files exist
@@ -2941,7 +2923,7 @@ class Tools extends Common_functions {
 	 *
 	 * @access public
 	 * @param mixed $code		//lang code
-	 * @return void
+	 * @return string
 	 */
 	public function get_translation_version ($code) {
 		//check for version

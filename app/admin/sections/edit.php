@@ -20,6 +20,12 @@ $User->check_user_session();
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "section");
 
+# strip tags - XSS
+$_POST = $User->strip_input_tags ($_POST);
+
+# validate action
+$Admin->validate_action ($_POST['action'], true);
+
 # fetch all sections for master section
 $sections = $Sections->fetch_all_sections ();
 # fetch groups

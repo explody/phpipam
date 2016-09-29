@@ -7,6 +7,16 @@
 # verify that user is logged in
 $User->check_user_session();
 
+# strip tags - XSS
+$_GET  = $User->strip_input_tags ($_GET);
+$_REQUEST = $User->strip_input_tags ($_REQUEST);
+
+# validate subnetId parameter - meaning cfilter
+if(isset($_REQUEST['subnetId'])) {
+    // validate $_REQUEST['subnetId']
+    if(!!preg_match('/[^A-Za-z0-9.#*% <>_ \\-$]/', $_REQUEST['subnetId']))  { $Result->show("danger", _("Invalid search string")."!", true); }
+}
+
 # change parameters - search string provided
 if(isset($_GET['sPage'])) {
 	$_REQUEST['cfilter']  = $_REQUEST['subnetId'];
@@ -18,6 +28,9 @@ elseif(isset($_GET['subnetId'])) {
 else {
 	$_REQUEST['climit']  = 50;
 }
+
+# numeric check
+if(!is_numeric($_REQUEST['climit']))  { $Result->show("danger", _("Invalid limit")."!", true); }
 
 # get clog entries
 if(!isset($_REQUEST['cfilter'])) 	{ $clogs = $Log->fetch_all_changelogs (false, "", $_REQUEST['climit']); }

@@ -24,6 +24,8 @@ require( dirname(__FILE__) . '/controllers/Responses.php');			// exception, head
 
 # settings
 $enable_authentication = true;
+$time_response = true;          // adds [time] to response
+$lock_file = "";                // (optional) file to write lock to
 
 # database object
 $Database 	= new Database_PDO;
@@ -33,6 +35,7 @@ $Tools	    = new Tools ($Database);
 $Response = new Responses ();
 
 # get phpipam settings
+if(SETTINGS===null)
 $settings 	= $Tools->fetch_object ("settings", "id", 1);
 
 # set empty controller for options
@@ -42,6 +45,10 @@ if($_SERVER['REQUEST_METHOD']=="OPTIONS") {
 
 /* wrap in a try-catch block to catch exceptions */
 try {
+
+	// start measuring
+	$start = microtime(true);
+
 
 	/* Validate application ---------- */
 
@@ -89,32 +96,41 @@ try {
 
 
 	// append POST parameters if POST or PATCH
-	if($_SERVER['REQUEST_METHOD']=="POST" || $_SERVER['REQUEST_METHOD']=="PATCH"){
+	if($_SERVER['REQUEST_METHOD']=="POST" || $_SERVER['REQUEST_METHOD']=="PATCH") {
 		// if application tupe is JSON (application/json)
         if($_SERVER['CONTENT_TYPE']=="application/json"){
-                $rawPostData = file_get_contents('php://input');
-                $json = json_decode($rawPostData,true);
-                if(is_array($json))
-                $params = array_merge((array) $params, $json);
-                $params = (object) $params;
+            $rawPostData = file_get_contents('php://input');
+            $json = json_decode($rawPostData,true);
+            if(is_array($json))
+            $params = array_merge((array) $params, $json);
+            $params = (object) $params;
         }
 		// if application tupe is XML (application/json)
         elseif($_SERVER['CONTENT_TYPE']=="application/xml"){
-                $rawPostData = file_get_contents('php://input');
-                $xml = $Response->xml_to_array($rawPostData);
-                if(is_array($xml))
-                $params = array_merge((array) $params, $xml);
-                $params = (object) $params;
+            $rawPostData = file_get_contents('php://input');
+            $xml = $Response->xml_to_array($rawPostData);
+            if(is_array($xml))
+            $params = array_merge((array) $params, $xml);
+            $params = (object) $params;
         }
 		//if application type is default (application/x-www-form-urlencoded)
         elseif(sizeof(@$_POST)>0) {
-                $params = array_merge((array) $params, $_POST);
-                $params = (object) $params;
+            $params = array_merge((array) $params, $_POST);
+            $params = (object) $params;
+        }
+        //url encoded input
+        else {
+            // input
+            $input = file_get_contents('php://input');
+            if (strlen($input)>0) {;
+                parse_str($input, $out);
+                if(is_array($out)) {
+                    $params = array_merge((array) $params, $out);
+                    $params = (object) $params;
+                }
+            }
         }
     }
-
-
-
 
 	/* Authentication ---------- */
 
@@ -158,6 +174,10 @@ try {
 	if( file_exists( dirname(__FILE__) . "/controllers/$controller_file.php") ) {
 		require( dirname(__FILE__) . "/controllers/$controller_file.php");
 	}
+	// check custom controllers
+	elseif( file_exists( dirname(__FILE__) . "/controllers/custom/$controller_file.php") ) {
+		require( dirname(__FILE__) . "/controllers/custom/$controller_file.php");
+	}
 	else {
 		$Response->throw_exception(400, 'Invalid controller');
 	}
@@ -171,25 +191,68 @@ try {
 		$Response->throw_exception(501, $Response->errors[501]);
 	}
 
-	// execute the action
-	$result = $controller->{$_SERVER['REQUEST_METHOD']} ();
+	// if lock is enabled wait until it clears
+	if( $app->app_lock==1 && strtoupper($_SERVER['REQUEST_METHOD'])=="POST") {
+    	// set transaction lock file name
+    	$controller->set_transaction_lock_file ($lock_file);
 
+    	// check if locked form previous process
+    	while ($controller->is_transaction_locked ()) {
+        	// max ?
+        	if ((microtime(true) - $start) > $app->app_lock_wait) {
+            	$Response->throw_exception(503, "Transaction timed out after $app->app_lock_wait seconds because of transaction lock");
+        	}
+        	// add random delay
+        	usleep(rand(250000,500000));
+    	}
+
+    	// add new lock
+    	$controller->add_transaction_lock ();
+    	// execute the action
+    	$result = $controller->{$_SERVER['REQUEST_METHOD']} ();
+    }
+    else {
+    	// execute the action
+    	$result = $controller->{$_SERVER['REQUEST_METHOD']} ();
+    }
+
+    // remove transaction lock
+    if(is_object($controller) && $app->app_lock==1 && strtoupper($_SERVER['REQUEST_METHOD'])=="POST") {
+        if($controller->is_transaction_locked ()) {
+            $controller->remove_transaction_lock ();
+        }
+    }
 } catch ( Exception $e ) {
 	// catch any exceptions and report the problem
 	$result = $e->getMessage();
+	$Response->result['success'] = 0;
 
 	// set flag if it came from Result, just to be sure
 	if($Response->exception!==true) {
 		$Response->exception = true;
-		$Response->result['success'] = false;
+		$Response->result['success'] = 0;
 		$Response->result['code'] 	 = 500;
 		$Response->result['message'] = $result;
 	}
+
+    // remove transaction lock
+    if(is_object($controller) && $app->app_lock==1 && strtoupper($_SERVER['REQUEST_METHOD'])=="POST") {
+        if($controller->is_transaction_locked ()) {
+            $controller->remove_transaction_lock ();
+        }
+    }
 }
 
+// stop measuring
+$stop = microtime(true);
+
+// add stop time
+if($time_response) {
+    $time = $stop - $start;
+}
 
 //output result
-echo $Response->formulate_result ($result);
+echo $Response->formulate_result ($result, $time);
 
 // exit
 exit();

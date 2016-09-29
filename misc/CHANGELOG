@@ -1,4 +1,4 @@
-== 1.25.01
+== 1.26.032
 
     New features:
     ------------
@@ -22,6 +22,7 @@
     + Locations module
         + Map devices / racks / subnets to location;
         + Google maps integration;
+    + SAML2 authentication (SSO)
 
 
     Enhancements, changes:
@@ -34,6 +35,12 @@
         + Added subnet usage result for each subnet in section;
         + Added custom fields for all controllers;
         + New subnets automatically get parent permissions;
+        + Added IP calculation to subnet;
+        + Changed all not_found when searching objects to 404 and all invalid parameters to 409 (conflict);
+        + If new item is created id will be available in response field “id”;
+        + New parameter $time_response in api/index.php that will return execution time in field “time";
+        + Extensive first_free subnet calls search speedup;
+        + POST transaction locking;
         + New methods:
             + addresses:
                 GET    /addresses/first_free/{subnetId}/      // returns first available address (subnetId can be provided with parameters)
@@ -49,6 +56,7 @@
                 POST   /subnets/{id}/first_subnet/{mask}/     // creates first free subnet under master with specified mask
                 DELETE /subnets/{id}/permissions/             // removes permissions
                 PATCH  /subnets/{id}/permissions/             // sets subnet permissions (?grouname1=ro&groupname2=3&43=1)
+        + New controller Prefix;
         + New subcontrollers:
             + /tools/nat/
             + /tools/racks/

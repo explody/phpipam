@@ -21,6 +21,11 @@ $User->check_user_session();
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "user");
 
+# strip tags - XSS
+$_POST = $User->strip_input_tags ($_POST);
+
+# validate action
+$Admin->validate_action ($_POST['action'], true);
 
 # fetch custom fields
 $custom 	= $Tools->fetch_custom_fields('users');

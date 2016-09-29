@@ -386,6 +386,9 @@ class Tools_controller extends Common_api_functions {
 		if ($this->_params->id=="vlans" || $this->_params->id=="vrf")
 													{ $this->Response->throw_exception(400, 'Please use '.$this->_params->id.' controller'); }
 
+		# remap keys
+		$this->remap_keys ();
+
 		# check for valid keys
 		$values = $this->validate_keys ();
 
@@ -400,7 +403,7 @@ class Tools_controller extends Common_api_functions {
 													{ $this->Response->throw_exception(500, $this->_params->id." object creation failed"); }
 		else {
 			//set result
-			return array("code"=>201, "data"=>$this->_params->id." object created", "location"=>"/api/".$this->_params->app_id."/tools/".$this->_params->id."/".$this->Admin->lastId."/");
+			return array("code"=>201, "data"=>$this->_params->id." object created", "id"=>$this->Admin->lastId, "location"=>"/api/".$this->_params->app_id."/tools/".$this->_params->id."/".$this->Admin->lastId."/");
 		}
 
 	}
@@ -434,6 +437,8 @@ class Tools_controller extends Common_api_functions {
 		# vlans, vrfs
 		if ($this->_params->id=="vlans" || $this->_params->id=="vrf")
 													{ $this->Response->throw_exception(400, 'Please use '.$this->_params->id.' controller'); }
+		# remap keys
+		$this->remap_keys ();
 
 		# verify object
 		$this->validate_tools_object ();
@@ -559,7 +564,7 @@ class Tools_controller extends Common_api_functions {
 	 */
 	private function validate_tools_object () {
 		if ($this->Tools->fetch_object ($this->_params->id, $this->sort_key, $this->_params->id2)===false)
-																			{ $this->Response->throw_exception(400, "Invalid identifier"); }
+																			{ $this->Response->throw_exception(404, "Invalid identifier"); }
 	}
 
 	/**
@@ -582,10 +587,10 @@ class Tools_controller extends Common_api_functions {
 	private function validate_device_type () {
 		if ($this->_params->id == "devices" && isset($this->_params->type)) {
 			// numeric
-			if (!is_numeric($this->_params->type))							{ $this->Response->throw_exception(400, "Invalid devicetype identifier"); }
+			if (!is_numeric($this->_params->type))							{ $this->Response->throw_exception(409, "Invalid devicetype identifier"); }
 			// check
 			if ($this->Tools->fetch_object ("deviceTypes", "tid", $this->_params->type)===false)
-																			{ $this->Response->throw_exception(400, "Device type does not exist"); }
+																			{ $this->Response->throw_exception(404, "Device type does not exist"); }
 		}
 	}
 
@@ -619,10 +624,9 @@ class Tools_controller extends Common_api_functions {
 	 * Returns nameserver details
 	 *
 	 * @access private
-	 * @param mixed $nsid
 	 * @return void
 	 */
-	private function read_subnet_nameserver ($nsid) {
+	private function read_subnet_nameserver () {
     	return $this->Tools->fetch_object ("nameservers", "id", $result->nameserverId);
 	}
 

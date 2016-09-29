@@ -222,7 +222,7 @@ class Vlans_controller extends Common_api_functions {
 		$values = $this->validate_keys ();
 
 		# verify or set domain
-		$this->validate_domain ($this->_params->domainId);
+		$this->validate_domain ();
 
 		# validate input
 		$this->validate_vlan_edit ();
@@ -232,7 +232,7 @@ class Vlans_controller extends Common_api_functions {
 													{ $this->Response->throw_exception(500, "Vlan creation failed"); }
 		else {
 			//set result
-			return array("code"=>201, "message"=>"Vlan created", "location"=>"/api/".$this->_params->app_id."/vlans/".$this->Admin->lastId."/");
+			return array("code"=>201, "message"=>"Vlan created", "id"=>$this->Admin->lastId, "location"=>"/api/".$this->_params->app_id."/vlans/".$this->Admin->lastId."/");
 		}
 	}
 
@@ -319,11 +319,11 @@ class Vlans_controller extends Common_api_functions {
 	 */
 	private function validate_vlan () {
 		// validate id
-		if(!isset($this->_params->id))														{ $this->Response->throw_exception(400, "Vlan Id is required");  }
+		if(!isset($this->_params->id))														{ $this->Response->throw_exception(409, "Vlan Id is required");  }
 		// validate number
-		if(!is_numeric($this->_params->id))													{ $this->Response->throw_exception(400, "Vlan Id must be numeric"); }
+		if(!is_numeric($this->_params->id))													{ $this->Response->throw_exception(409, "Vlan Id must be numeric"); }
 		// check that it exists
-		if($this->Tools->fetch_object ("vlans", "vlanId", $this->_params->id) === false )	{ $this->Response->throw_exception(400, "Invalid Vlan id"); }
+		if($this->Tools->fetch_object ("vlans", "vlanId", $this->_params->id) === false )	{ $this->Response->throw_exception(404, "Invalid Vlan id"); }
 	}
 
 
@@ -343,7 +343,7 @@ class Vlans_controller extends Common_api_functions {
 			if($check_vlan!==false) {
 				foreach($check_vlan as $v) {
 					if($v->number == $this->_params->number) {
-																							{ $this->Response->throw_exception(400, "Vlan already exists"); }
+																							{ $this->Response->throw_exception(409, "Vlan already exists"); }
 					}
 				}
 			}
@@ -351,12 +351,12 @@ class Vlans_controller extends Common_api_functions {
 
 		//if number too high
 		if($this->_params->number>$this->settings->vlanMax && $_SERVER['REQUEST_METHOD']!="DELETE")
-																							{ $this->Response->throw_exception(400, 'Highest possible VLAN number is '.$this->settings->vlanMax.'!'); }
+																							{ $this->Response->throw_exception(409, 'Highest possible VLAN number is '.$this->settings->vlanMax.'!'); }
 		if($_SERVER['REQUEST_METHOD']=="POST") {
-			if($this->_params->number<0)													{ $this->Response->throw_exception(400, "Vlan number cannot be negative"); }
-			elseif(!is_numeric($this->_params->number))										{ $this->Response->throw_exception(400, "Vlan number must be number"); }
+			if($this->_params->number<0)													{ $this->Response->throw_exception(409, "Vlan number cannot be negative"); }
+			elseif(!is_numeric($this->_params->number))										{ $this->Response->throw_exception(409, "Vlan number must be number"); }
 		}
-		if(strlen($this->_params->name)==0)													{ $this->Response->throw_exception(400, "Vlan name is required"); }
+		if(strlen($this->_params->name)==0)													{ $this->Response->throw_exception(409, "Vlan name is required"); }
 	}
 
 	/**
@@ -369,10 +369,10 @@ class Vlans_controller extends Common_api_functions {
 		// validate id
 		if(!isset($this->_params->domainId))												{ $this->_params->domainId = 1; }
 		// validate number
-		if(!is_numeric($this->_params->domainId))											{ $this->Response->throw_exception(400, "Domain id must be numeric"); }
+		if(!is_numeric($this->_params->domainId))											{ $this->Response->throw_exception(409, "Domain id must be numeric"); }
 		// check that it exists
 		if($this->Tools->fetch_object ("vlanDomains", "id", $this->_params->domainId) === false )
-																							{ $this->Response->throw_exception(400, "Invalid domain id"); }
+																							{ $this->Response->throw_exception(404, "Invalid domain id"); }
 	}
 
 	/**

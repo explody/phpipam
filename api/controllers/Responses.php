@@ -44,6 +44,16 @@ class Responses {
 	 */
 	public $exception = false;
 
+	/**
+	 * Execution time
+	 *
+	 * (default value: false)
+	 *
+	 * @var bool
+	 * @access public
+	 */
+	public $time = false;
+
 
 
 
@@ -78,6 +88,7 @@ class Responses {
 		$this->errors[403] = "Forbidden";
 		$this->errors[404] = "Not Found";
 		$this->errors[405] = "Method Not Allowed";
+		$this->errors[409] = "Conflict";
 		$this->errors[415] = "Unsupported Media Type";
 		// Server errors
 		$this->errors[500] = "Internal Server Error";
@@ -121,8 +132,11 @@ class Responses {
 	 */
 	private function set_header () {
 		// wrong code
-		if(!isset($this->exception))		{ header("HTTP/1.1 500 Invalid result code"); }
-		else								{ header("HTTP/1.1 ".$this->result['code']." ".$this->errors[$this->result['code']]); }
+		if(!isset($this->exception))		                 { $this->throw_exception (500, "Invalid result code"); }
+		// wrong code
+		elseif(!isset($this->errors[$this->result['code']])) { $this->throw_exception (500, "Invalid result code"); }
+		// ok
+		else								                 { header("HTTP/1.1 ".$this->result['code']." ".$this->errors[$this->result['code']]); }
 
 		// 401 - add location
 		if ($this->result['code']==401) {
@@ -135,9 +149,10 @@ class Responses {
 	 *
 	 * @access public
 	 * @param mixed $result
+	 * @param bool|int|double $time
 	 * @return void
 	 */
-	public function formulate_result ($result) {
+	public function formulate_result ($result, $time = false) {
 		// make sure result is array
 		$this->result = is_null($this->result) ? (array) $result : $this->result;
 
@@ -150,6 +165,11 @@ class Responses {
 		$this->set_cache_header ();
 		// set result header if not already set with $result['success']=false
 		$this->exception===true ? : $this->set_success_header ();
+
+		// time
+		if($time!==false) {
+    		$this->time = $time;
+		}
 
 		// return result
 		return $this->create_result ();
@@ -242,6 +262,11 @@ class Responses {
 	 * @return void
 	 */
 	private function set_location_header ($location) {
+    	# validate location header
+    	if(!preg_match('/^[a-zA-Z0-9\-\_\/.]+$/i',$location)) {
+        	$this->throw_exception (500, "Invalid location header");
+    	}
+    	# set
 		header("Location: ".$location);
 	}
 
@@ -271,8 +296,11 @@ class Responses {
 		$this->result['code'] = $tmp['code'];
 		$this->result['success'] = $tmp['success'];
 		if(isset($tmp['message']))	{ $this->result['message'] = $tmp['message']; }
+		if(isset($tmp['id']))	    { $this->result['id'] = $tmp['id']; }
+		if(isset($tmp['subnetId']))	{ $this->result['subnetId'] = $tmp['subnetId']; }
 		if(isset($tmp['data']))		{ $this->result['data'] = $tmp['data']; }
 		if(isset($tmp['ip']))	    { $this->result['ip'] = $tmp['ip']; }
+		if($this->time!==false)	    { $this->result['time'] = round($this->time,3); }
 	}
 
 	/**

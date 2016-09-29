@@ -1,4 +1,5 @@
 <?php
+header('X-XSS-Protection:1; mode=block');
 # verify php build
 include 'functions/checks/check_php_build.php';        # check for support for PHP modules and database connection
 
@@ -190,19 +191,36 @@ if (!empty($_SERVER[$user_variable])) {
     ?>
 
 	<?php
-    # include proper subpage
-    if ($_GET['page'] == 'login') {
-        include_once 'login_form.php';
-    } elseif ($_GET['page'] == 'request_ip') {
-        include_once 'request_ip_form.php';
-    } else {
-        $_GET['subnetId'] = '404';
-        echo "<div id='error'>";
-        include_once 'app/error.php';
-        echo '</div>';
-    }
-    
-    ?>
+	# include proper subpage
+	if($_GET['page'] == "login") 				{ include_once('login_form.php'); }
+	else if ($_GET['page'] == "request_ip") 	{ include_once('request_ip_form.php'); }
+	else 										{ $_GET['subnetId'] = "404"; print "<div id='error'>"; include_once('app/error.php'); print "</div>"; }
+	?>
+
+	<!-- login response -->
+	<div id="loginCheck">
+		<?php
+		# deauthenticate user
+		if ( $User->is_authenticated()===true ) {
+			# print result
+			if($_GET['section']=="timeout")		{ $Result->show("success", _('You session has timed out')); }
+			else								{ $Result->show("success", _('You have logged out')); }
+
+			# write log
+			$Log->write( "User logged out", "User $User->username has logged out", 0, $User->username );
+
+			# destroy session
+			$User->destroy_session();
+		}
+
+		//check if SAML2 login is possible
+		$saml2settings=$Tools->fetch_object("usersAuthMethod", "type", "SAML2");
+		if($saml2settings!=false){
+			$Result->show("success", _('You can login with SAML2 <a href="'.create_link('saml2').'">here</a>'));
+		}
+
+		?>
+	</div>
 
 </div>
 </div>

@@ -349,7 +349,6 @@ CREATE TABLE `users` (
   `lastActivity` TIMESTAMP  NULL,
   `compressOverride` SET('default','Uncompress') NOT NULL DEFAULT 'default',
   `hideFreeRange` tinyint(1) DEFAULT '0',
-  `printLimit` int(4) unsigned DEFAULT '30',
   `menuType` SET('Static','Dynamic')  NULL  DEFAULT 'Dynamic',
   `token` VARCHAR(24)  NULL  DEFAULT NULL,
   `token_valid_until` DATETIME  NULL,
@@ -469,6 +468,8 @@ CREATE TABLE `api` (
   `app_permissions` int(1) DEFAULT '1',
   `app_comment` TEXT  NULL,
   `app_security` SET('crypt','ssl','user','none')  NOT NULL  DEFAULT 'ssl',
+  `app_lock` INT(1)  NOT NULL  DEFAULT '0',
+  `app_lock_wait` INT(4)  NOT NULL  DEFAULT '30',
   PRIMARY KEY (`id`),
   UNIQUE KEY `app_id` (`app_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -574,7 +575,7 @@ DROP TABLE IF EXISTS `usersAuthMethod`;
 
 CREATE TABLE `usersAuthMethod` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `type` set('local','http','AD','LDAP','NetIQ','Radius') NOT NULL DEFAULT 'local',
+  `type` set('local','http','AD','LDAP','NetIQ','Radius','SAML2') NOT NULL DEFAULT 'local',
   `params` varchar(1024) DEFAULT NULL,
   `protected` set('Yes','No') NOT NULL DEFAULT 'Yes',
   `description` text,
@@ -779,4 +780,4 @@ CREATE TABLE `pstnNumbers` (
 
 # update version
 # ------------------------------------------------------------
-UPDATE `settings` set `version` = '1.25';
+UPDATE `settings` set `version` = '1.26';

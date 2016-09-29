@@ -25,6 +25,12 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "vlan");
 
+# strip tags - XSS
+$_POST = $User->strip_input_tags ($_POST);
+
+# validate action
+$Admin->validate_action ($_POST['action'], true);
+
 # fetch vlan details
 $vlan = $Admin->fetch_object ("vlans", "vlanId", @$_POST['vlanId']);
 $vlan = $vlan!==false ? (array) $vlan : array();
