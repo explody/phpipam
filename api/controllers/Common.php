@@ -180,7 +180,9 @@ class Common_api_functions {
 		$result = $this->remove_subnets ($result);
 
 		// remap keys
-		$result = $this->remap_keys ($result);
+        if ($result) {
+    		$result = $this->remap_keys ($result);
+        }
 
 		# return
 		return $result;
@@ -681,6 +683,7 @@ class Common_api_functions {
 		if($this->_params->controller=="tools" && $this->_params->id=="deviceTypes") { 
             $this->keys['tid'] = "id"; 
         }
+        
 
 		// If we have been given result data, it's presumed to be outbound to a client so remap as results
 		if ($result) { 
