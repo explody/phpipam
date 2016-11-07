@@ -220,23 +220,23 @@ else                                    { def_size = readCookie('table-page-size
 
 
 // table
-$('table.sorted').bdt({
-   pageRowCount: def_size,
-   searchFormClass: 'form-inline pull-right searchFormClass',
-   divClass: 'text-right'
-});
-$('table.sorted-left').bdt({
-   pageRowCount: def_size,
-   searchFormClass: 'form-inline pull-left searchFormClass clearfix',
-   divClass: 'text-left clearfix'
-});
-$('table.sorted').stickyTableHeaders();
-$("li.disabled a").click(function () {
-   return false;
-});
-$('form.search-form').submit(function() {
-   return false;
-});
+// $('table.sorted').bdt({
+//    pageRowCount: def_size,
+//    searchFormClass: 'form-inline pull-right searchFormClass',
+//    divClass: 'text-right'
+// });
+// $('table.sorted-left').bdt({
+//    pageRowCount: def_size,
+//    searchFormClass: 'form-inline pull-left searchFormClass clearfix',
+//    divClass: 'text-left clearfix'
+// });
+// $('table.sorted').stickyTableHeaders();
+// $("li.disabled a").click(function () {
+//    return false;
+// });
+// $('form.search-form').submit(function() {
+//    return false;
+// });
 
 
 
@@ -2241,6 +2241,7 @@ $(document).on("click", ".editSwitchSNMP", function() {
 $(document).on("click", "#editSwitchSNMPsubmit", function() {
     submit_popup_data (".switchSNMPManagementEditResult", "app/admin/devices/edit-snmp-result.php", $('form#switchSNMPManagementEdit').serialize());
 });
+
 //snmp test
 $(document).on("click", "#test-snmp", function() {
 	open_popup ("700", "app/admin/devices/edit-snmp-test.php", $('form#switchSNMPManagementEdit').serialize(), true);

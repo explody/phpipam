@@ -42,6 +42,7 @@ table.table-noborder td {
 }
 table th {
 	vertical-align: top !important;
+    white-space: nowrap;
 }
 table tr.text-top td {
 	vertical-align: top !important;

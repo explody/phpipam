@@ -10,7 +10,7 @@ $User->check_user_session();
 # rack object
 $Racks      = new phpipam_rack ($Database);
 
-$l  = 0;  # limit
+$l  = 20000;  # limit
 $p  = 0;  # page number
 
 if (isset($_GET['l'])) {
@@ -54,6 +54,15 @@ $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_cu
 	<button class='btn btn-sm btn-default editSwitch' data-action='add'   data-switchid='' style='margin-bottom:10px;'><i class='fa fa-plus'></i> <?php print _('Add device'); ?></button>
 	<a href="<?php print create_link("administration", "device-types"); ?>" class="btn btn-sm btn-default"><i class="fa fa-tablet"></i> <?php print _('Manage device types'); ?></a>
 </div>
+
+<script language="JavaScript">
+$(document).ready(function() {
+    $('#switchManagement').DataTable( {
+        "paging": true,
+        "searching": true
+    } );
+} );
+</script>
 
 <?php
 /* first check if they exist! */
