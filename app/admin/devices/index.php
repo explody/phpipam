@@ -10,27 +10,27 @@ $User->check_user_session();
 # rack object
 $Racks      = new phpipam_rack ($Database);
 
-$limit = 0;
-$page  = 0;
+$l  = 0;  # limit
+$p  = 0;  # page number
 
-if (isset($_GET['limit'])) {
-    if (is_numeric($_GET['limit']) && $_GET['limit'] > 0) {
-        $limit = $_GET['limit'];    
+if (isset($_GET['l'])) {
+    if (is_numeric($_GET['l']) && $_GET['l'] > 0) {
+        $l = $_GET['l'];    
     } else {
-        $limit = 20;
+        $l = 20;
     }
 }
 
-if (isset($_GET['page'])) {
-    if (is_numeric($_GET['page']) && $_GET['page'] > 0) {
-        $page = $_GET['page'];    
+if (isset($_GET['p'])) {
+    if (is_numeric($_GET['p']) && $_GET['p'] > 0) {
+        $p = $_GET['p'];    
     } 
 }
 
-$offset = $page * $limit;
+$offset = $p * $l;
 
 # fetch Devices
-$devices = $Admin->fetch_objects("devices", "hostname", true, $limit, $offset);
+$devices = $Admin->fetch_objects("devices", "hostname", true, $l, $offset);
 
 # fetch all Device types and reindex
 $device_types = $Admin->fetch_all_objects("deviceTypes", "tid");
