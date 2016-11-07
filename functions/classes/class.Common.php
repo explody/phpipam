@@ -184,6 +184,36 @@ class Common_functions  {
 		# result
 		return sizeof($res)>0 ? $res : false;
 	}
+    
+    /**
+	 * Fetch all objects from specified table in database
+	 *
+	 * @access public
+	 * @param mixed $table
+	 * @param mixed $sortField (default:id)
+     * @param int $limit (default:100)
+     * @param int $offset (default:0)
+	 * @param mixed bool (default:true)
+	 * @return bool|object
+	 */
+	public function fetch_objects ($table=null, $sortField="id", $sortAsc=true, $limit=100, $offset=0) {
+		# null table
+		if(is_null($table)||strlen($table)==0) return false;
+		# fetch
+		try { $res = $this->Database->getObjects($table, $sortField, $sortAsc); }
+		catch (Exception $e) {
+			$this->Result->show("danger", _("Error: ").$e->getMessage());
+			return false;
+		}
+		# save
+		if (sizeof($res)>0) {
+    		foreach ($res as $r) {
+        		$this->cache_write ($table, $r->id, $r);
+    		}
+		}
+		# result
+		return sizeof($res)>0 ? $res : false;
+	}
 
 	/**
 	 * Fetches specified object specified table in database
