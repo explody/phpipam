@@ -196,10 +196,15 @@ class Common_functions  {
 	 * @param mixed bool (default:true)
 	 * @return bool|object
 	 */
-	public function fetch_objects ($table=null, $sortField="id", $sortAsc=true, $limit=100, $offset=0) {
+	public function fetch_objects ($table=null, $sortField="id", $sortAsc=true, $limit=20, $offset=0) {
 		# null table
 		if(is_null($table)||strlen($table)==0) return false;
-		# fetch
+        
+		# If limit is not a positive integer, set it to default
+        if ($limit < 1 || !is_numeric($limit)) {
+            $limit = 20;
+        }
+        
 		try { $res = $this->Database->getObjects($table, $sortField, $sortAsc, $limit, $offset); }
 		catch (Exception $e) {
 			$this->Result->show("danger", _("Error: ").$e->getMessage());
