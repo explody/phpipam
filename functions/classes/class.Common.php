@@ -200,7 +200,7 @@ class Common_functions  {
 		# null table
 		if(is_null($table)||strlen($table)==0) return false;
 		# fetch
-		try { $res = $this->Database->getObjects($table, $sortField, $sortAsc); }
+		try { $res = $this->Database->getObjects($table, $sortField, $sortAsc, $limit, $offset); }
 		catch (Exception $e) {
 			$this->Result->show("danger", _("Error: ").$e->getMessage());
 			return false;
