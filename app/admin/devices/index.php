@@ -16,9 +16,9 @@ $default_search_fields = ['hostname','ip_addr','description','version'];
 * Most of this from the API's Devices class
 * TODO: violates DRY 
 **/
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && array_key_exists('device_search', $_POST)) {
     
-    $search_term = $_POST['device_search'];
+    $search_term = $_POST['search_term'];
     
     $base_query = "SELECT * from devices where ";
     
@@ -68,6 +68,9 @@ if ($device_types !== false) {
 	}
 }
 
+$device_count = $Database->numObjects('devices');
+
+
 # get hidden fields
 $hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
 $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
@@ -87,19 +90,46 @@ $Racks      = new phpipam_rack ($Database);
     </div>
 
     <div id="list_search">
-        <form>
-            <input type="text" class="form-control searchInput input-sm" name="ip" placeholder="Search string" value="" size="40" />
+        <form id="search">
+            <input type="text" class="form-control searchInput input-sm" name="search" placeholder="Search string" value="" size="40" />
+            <input type="hidden" name="search_location" value="devices" />
         </form>
         <span class="input-group-btn">
-            <button class="btn btn-default btn-sm searchSubmit" type="button">Search Devices</button>
+            <button class="btn btn-default btn-sm listSearchSubmit" type="button">Search Devices</button>
         </span>
+    </div>
+    
+</div>
+
+<div class="dataTables_wrapper no-footer">
+    
+    <div id="list_count">
+        <label>Show <select name="devices_length">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+        </select> devices</label>
+    </div>
+    
+    <div class="dataTables_paginate paging_simple_numbers" id="switchManagement_paginate">
+        <a class="paginate_button previous disabled" aria-controls="switchManagement" data-dt-idx="0" tabindex="0" id="switchManagement_previous">Previous</a>
+        <span>
+            <a class="paginate_button current" aria-controls="switchManagement" data-dt-idx="1" tabindex="0">1</a>
+            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="2" tabindex="0">2</a>
+            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="3" tabindex="0">3</a>
+            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="4" tabindex="0">4</a>
+            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="5" tabindex="0">5</a>
+        </span>
+        <a class="paginate_button next" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
     </div>
 </div>
 
 <script language="JavaScript">
 $(document).ready(function() {
     $('#switchManagement').dataTable( {
-        "paging": true,
+        "paging": false,
         "searching": false,
         "scrollX": true,
         "scrollCollapse": true,

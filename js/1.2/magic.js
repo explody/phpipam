@@ -928,6 +928,26 @@ function search_execute (loc) {
 	if(prettyLinks=="Yes")	{ window.location = base + "tools/search/"+ip; }
 	else					{ window.location = base + "?page=tools&section=search&ip="+ip; }
 }
+
+function list_search_execute () {
+    showSpinner();
+
+    var lsf    = $("form#search")
+    var search = $("[name='search']").val();
+    var tgt    = $("[name='search_target']").val();
+    
+    if (tgt == "admin_devices") {
+        var loc  = "?page=administration&section=devices&search="+search;
+        var ploc = "administration/devices/search/"+search;
+    }
+    
+    if(prettyLinks=="Yes") { 
+        window.location = base + ploc; 
+    } else { 
+        window.location = base + loc; 
+    }
+}
+
 //submit form - topmenu
 $('.searchSubmit').click(function () {
     search_execute ("topmenu");
@@ -947,6 +967,12 @@ $('form#search').submit(function () {
 $('a.search_ipaddress').click(function() {
     // set cookie json-encoded with parameters
     createCookie("search_parameters",'{"addresses":"on","subnets":"off","vlans":"off","vrf":"off"}',365);
+});
+
+//submit form - lists
+$('.listSearchSubmit').click(function () {
+    list_search_execute ();
+    return false;
 });
 
 //show/hide search select fields

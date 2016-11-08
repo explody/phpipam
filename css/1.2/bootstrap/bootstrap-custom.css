@@ -594,6 +594,11 @@ div#list_search {
     width: 20%;
 }
 
+div#list_count {
+    float: left;
+    padding-top: 0.6em;
+}
+
 div.list_header {
     overflow: auto;
 	width: 100%;
