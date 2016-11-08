@@ -111,7 +111,7 @@ $all_dev_count = $Database->numObjects('devices');
         <label>Show <select name="table_page_size" id="table_page_size" onchange="table_page_size(this.value);">
             <?php 
             foreach(array(10,20,50,100,500,1000) as &$cnt) {
-            print "<option value=\"$cnt\" " . $cnt = $l ? 'selected' : '' . ">$cnt</option>";
+            print "<option value=\"$cnt\" " . (($cnt = $l) ? 'selected' : '') . ">$cnt</option>";
             }
             print "<option value=\"$all_dev_count\">All</option>";
             ?>
