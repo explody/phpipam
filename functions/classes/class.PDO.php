@@ -120,6 +120,35 @@ abstract class DB {
 		}
 	}
 
+    /**
+     * helper to construct query parameters given a list of
+     * field/column names, a search term and a boolean 'exact' where true
+     * means "where field='searchterm'" and false means "where field like '%searchterm%'"
+     * returns an array with two items [0] a query format string and [1] the list of query params
+     * suitable for passing to getObjectsQuery()
+     *
+     * @access public
+     * @static
+     * @param array $fields 
+     * @param string $search
+     * @param bool $exact (default: false)
+     * @return array
+     */
+    public static function constructSearch($fields, $search, $exact=false) {
+
+        $op = $exact ? '=' : 'like'; 
+        
+        $query = implode(' or ', array_map( 
+                             function($k) { 
+                                 return " $k $op ? "; 
+                             }, $fields));
+        
+        $params = array_fill(0, count($fields), $exact ? "$search" : "%$search%");
+        
+        return array($query, $params);
+
+    }
+
 	/**
 	 * Connect to the database
 	 * Call whenever a connection is needed to be made
