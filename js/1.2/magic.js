@@ -941,6 +941,7 @@ function list_search_execute () {
         var ploc = "administration/devices/search/"+search;
     }
     
+    var prettyLinks = $('#prettyLinks').html();
     if(prettyLinks=="Yes") { 
         window.location = base + ploc; 
     } else { 
