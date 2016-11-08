@@ -7,30 +7,60 @@
 # verify that user is logged in
 $User->check_user_session();
 
-# rack object
-$Racks      = new phpipam_rack ($Database);
+# fetch custom fields
+$custom = $Tools->fetch_custom_fields('devices');
 
-$l  = 20000;  # limit
-$p  = 0;  # page number
+$default_search_fields = ['hostname','ip_addr','description','version'];
 
-if (isset($_GET['l'])) {
-    if (is_numeric($_GET['l']) && $_GET['l'] > 0) {
-        $l = $_GET['l'];    
-    } else {
-        $l = 20;
+/** 
+* Most of this from the API's Devices class
+* TODO: violates DRY 
+**/
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    $search_term = $_POST['device_search'];
+    
+    $base_query = "SELECT * from devices where ";
+    
+    # Search all custom fields
+    $custom_fields = array_keys($custom);
+    
+    # Merge default fields with custom fields
+    $search_fields = array_merge($custom_fields, $this->default_search_fields);
+    
+    list($extended_query, $query_params) = $Database->constructSearch($fields,$search_term);
+    
+    # Put together with the base query
+    $search_query = $base_query . $extended_query;
+
+    # Search query
+    $devices = $Database->getObjectsQuery($search_query, $query_params);
+    
+} else {
+    
+    $l  = 20000;  # limit
+    $p  = 0;  # page number
+
+    if (isset($_GET['l'])) {
+        if (is_numeric($_GET['l']) && $_GET['l'] > 0) {
+            $l = $_GET['l'];    
+        } else {
+            $l = 20;
+        }
     }
+
+    if (isset($_GET['p'])) {
+        if (is_numeric($_GET['p']) && $_GET['p'] > 0) {
+            $p = $_GET['p'];    
+        } 
+    }
+
+    $offset = $p * $l;
+
+    # fetch Devices
+    $devices = $Admin->fetch_objects("devices", "hostname", true, $l, $offset);
+
 }
-
-if (isset($_GET['p'])) {
-    if (is_numeric($_GET['p']) && $_GET['p'] > 0) {
-        $p = $_GET['p'];    
-    } 
-}
-
-$offset = $p * $l;
-
-# fetch Devices
-$devices = $Admin->fetch_objects("devices", "hostname", true, $l, $offset);
 
 # fetch all Device types and reindex
 $device_types = $Admin->fetch_all_objects("deviceTypes", "tid");
@@ -40,12 +70,14 @@ if ($device_types !== false) {
 	}
 }
 
-# fetch custom fields
-$custom = $Tools->fetch_custom_fields('devices');
-
 # get hidden fields
 $hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
 $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
+
+
+# rack object
+$Racks      = new phpipam_rack ($Database);
+
 ?>
 
 <h4><?php print _('Device management'); ?></h4>
@@ -58,8 +90,8 @@ $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_cu
 <script language="JavaScript">
 $(document).ready(function() {
     $('#switchManagement').DataTable( {
-        "paging": true,
-        "searching": true
+        "paging": false,
+        "searching": false
     } );
 } );
 </script>

@@ -187,6 +187,7 @@ class Common_functions  {
     
     /**
 	 * Fetch all objects from specified table in database
+     * TODO: violates DRY
 	 *
 	 * @access public
 	 * @param mixed $table
@@ -201,7 +202,7 @@ class Common_functions  {
 		if(is_null($table)||strlen($table)==0) return false;
         
 		# If limit is not a positive integer, set it to default
-        if ($limit < 1 || !is_numeric($limit)) {
+        if ($limit < 0 || !is_numeric($limit)) {
             $limit = 20;
         }
         
