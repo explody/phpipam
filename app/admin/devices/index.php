@@ -40,7 +40,7 @@ if (array_key_exists('search', $_GET)) {
 } else {
     
     $l = array_key_exists('table-page-size', $_COOKIE) ? $_COOKIE['table-page-size'] : 50;
-    $p  = 0;  # page number
+    $p  = 1;  # page number
 
     if (isset($_GET['l'])) {
         if (is_numeric($_GET['l']) && $_GET['l'] > 0) {
@@ -54,7 +54,7 @@ if (array_key_exists('search', $_GET)) {
         } 
     }
 
-    $offset = $p * $l;
+    $offset = ($p > 1 ? $p * $l : 0);
 
     # fetch Devices
     $devices = $Admin->fetch_objects("devices", "hostname", true, $l, $offset);
@@ -108,26 +108,35 @@ $all_dev_count = $Database->numObjects('devices');
 <div class="dataTables_wrapper no-footer">
     
     <div id="list_count">
-        <label>Show <select name="table_page_size" id="table_page_size" onchange="table_page_size(this.value);">
+        <label>Show <select name="table_page_size" id="table_page_size">
             <?php 
             foreach(array(10,20,50,100,500,1000) as $cnt) {
             print "<option value=\"$cnt\" " . (($cnt == $l) ? 'selected' : '') . ">$cnt</option>\n";
             }
-            print "<option value=\"$all_dev_count\">All</option>";
+            print "<option value=\"$all_dev_count\"" . (($all_dev_count == $l) ? 'selected' : '') . ">All</option>";
             ?>
         </select> devices</label>
     </div>
     
     <div class="dataTables_paginate paging_simple_numbers" id="switchManagement_paginate">
-        <a class="paginate_button previous disabled" aria-controls="switchManagement" data-dt-idx="0" tabindex="0" id="switchManagement_previous">Previous</a>
+        <a class="paginate_button previous <?php print (($p > 1) ? '' : 'disabled' ); ?>" aria-controls="switchManagement" data-dt-idx="0" tabindex="0" id="switchManagement_previous">Previous</a>
         <span>
-            <a class="paginate_button current" aria-controls="switchManagement" data-dt-idx="1" tabindex="0">1</a>
-            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="2" tabindex="0">2</a>
-            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="3" tabindex="0">3</a>
-            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="4" tabindex="0">4</a>
-            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="5" tabindex="0">5</a>
+            <?php 
+            $display_max = 10;
+            $pages = ceil($all_dev_count / $l);
+            foreach (range($p,$pages) as $page) {
+                
+                if ($page > $display_max) {
+                    print "...";
+                    print '<a class="paginate_button current" aria-controls="switchManagement" data-dt-idx="'.$pages.'" tabindex="0">'.$pages.'</a>';
+                    break;
+                }
+                print '<a class="paginate_button current" aria-controls="switchManagement" data-dt-idx="'.$page.'" tabindex="0">'.$page.'</a>';
+                
+            }
+            ?>
         </span>
-        <a class="paginate_button next" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
+        <a class="paginate_button next <?php print (($p == $pages) ? 'disabled' : '' ); ?>" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
     </div>
 </div>
 

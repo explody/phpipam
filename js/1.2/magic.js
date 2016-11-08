@@ -1018,6 +1018,11 @@ $('input#list_search_term').keyup(function(event){
     }
 });
 
+$('select#table_page_size').change(function() {
+    table_page_size($('select#table_page_size').val());
+}
+
+
 //show/hide search select fields
 $(document).on("mouseenter", "#userMenuSearch", function(event){
     var object1 = $("#searchSelect");
