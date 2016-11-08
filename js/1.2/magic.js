@@ -932,7 +932,7 @@ function search_execute (loc) {
 function list_search_execute () {
     showSpinner();
 
-    var lsf    = $("form#search")
+    var lsf    = $("form#list_search")
     var search = $("[name='search']").val();
     var tgt    = $("[name='search_target']").val();
     
@@ -944,8 +944,10 @@ function list_search_execute () {
     var prettyLinks = $('#prettyLinks').html();
     if(prettyLinks=="Yes") { 
         window.location = base + ploc; 
+        // lsf.attr("target", ploc);
     } else { 
         window.location = base + loc; 
+        // lsf.attr("target", loc);
     }
 }
 

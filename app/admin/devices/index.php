@@ -15,10 +15,11 @@ $default_search_fields = ['hostname','ip_addr','description','version'];
 /** 
 * Most of this from the API's Devices class
 * TODO: violates DRY 
+* TODO: make sure the search term is escaped/sanitized
 **/
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && array_key_exists('device_search', $_POST)) {
+if (array_key_exists('search', $_GET)) {
     
-    $search_term = $_POST['search_term'];
+    $search_term = $_GET['search'];
     
     $base_query = "SELECT * from devices where ";
     
@@ -90,9 +91,9 @@ $Racks      = new phpipam_rack ($Database);
     </div>
 
     <div id="list_search">
-        <form id="search">
+        <form id="list_search" method="POST">
             <input type="text" class="form-control searchInput input-sm" name="search" placeholder="Search string" value="" size="40" />
-            <input type="hidden" name="search_location" value="devices" />
+            <input type="hidden" name="search_target" value="admin_devices" />
         </form>
         <span class="input-group-btn">
             <button class="btn btn-default btn-sm listSearchSubmit" type="button">Search Devices</button>
