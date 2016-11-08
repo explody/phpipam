@@ -139,7 +139,7 @@ abstract class DB {
         $op = $exact ? '=' : 'like'; 
         
         $query = implode(' or ', array_map( 
-                             function($k) { 
+                             function($k) use ($op) { 
                                  return " $k $op ? "; 
                              }, $fields));
         
