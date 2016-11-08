@@ -215,8 +215,8 @@ $(function() {
 });
 
 //default row count
-if(readCookie('table-page-size')==null) { def_size = 25; }
-else                                    { def_size = readCookie('table-page-size'); }
+if(readCookie('table-page-size')==null) { current_table_page_size = 50; }
+else                                    { current_table_page_size = readCookie('table-page-size'); }
 
 
 // table
@@ -916,28 +916,25 @@ function search_execute (loc) {
     // set cookie json-encoded with parameters
     createCookie("search_parameters",'{"addresses":"'+addresses+'","subnets":"'+subnets+'","vlans":"'+vlans+'","vrf":"'+vrf+'","pstn":"'+pstn+'"}',365);
 
-    //lets try to detect IEto set location
-    var ua = window.navigator.userAgent;
-    var msie = ua.indexOf("MSIE ");
-
-    //IE
-    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) 	{ var base = $('.iebase').html(); }
-    else 																{ var base = ""; }
     //go to search page
     var prettyLinks = $('#prettyLinks').html();
-	if(prettyLinks=="Yes")	{ window.location = base + "tools/search/"+ip; }
-	else					{ window.location = base + "?page=tools&section=search&ip="+ip; }
+	if(prettyLinks=="Yes") { 
+        send_to("tools/search/"+ip);
+    } else { 
+        send_to("?page=tools&section=search&ip="+ip); 
+    }
 }
 
 function list_search_execute () {
     //showSpinner();
     var lsf    = $("form#list_search")
     var search = $("input#list_search_term").val();
-    var tgt    = $("input#list_search_target").val();
+    var tgt    = $("input#list_target").val();
     var loc;
     var ploc;
     var base = "";
     
+    // TODO: make this a pattern instead of explicit per-page conditionals
     if (tgt == "admin_devices") {
         loc  = "?page=administration&section=devices&search="+search;
         ploc = "administration/devices/search/"+search;
@@ -945,12 +942,46 @@ function list_search_execute () {
 
     var prettyLinks = $('#prettyLinks').html();
     if(prettyLinks=="Yes") { 
-        window.location = base + ploc; 
-        // lsf.attr("target", ploc);
+        send_to(ploc);
     } else { 
-        window.location = base + loc; 
-        // lsf.attr("target", loc);
+        send_to(loc);
     }
+}
+
+function table_page_size (count) {
+    
+    createCookie("table-page-size",count,365);
+    
+    var tgt = $("input#list_target").val();
+    
+    if (tgt == "admin_devices") {
+        loc  = "?page=administration&section=devices&l="+count;
+        ploc = "administration/devices/"+count+"/";
+    }
+    
+    // TODO: DRY
+    var prettyLinks = $('#prettyLinks').html();
+    if(prettyLinks=="Yes") { 
+        send_to(ploc);
+    } else { 
+        send_to(loc);
+    }
+    
+}
+
+function send_to(loc){
+    //lets try to detect IEto set location
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+
+    //IE
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) { 
+        var base = $('.iebase').html(); 
+    } else { 
+        var base = ""; 
+    }
+    
+    window.location = base + loc; 
 }
 
 //submit form - topmenu
