@@ -930,17 +930,19 @@ function search_execute (loc) {
 }
 
 function list_search_execute () {
-    showSpinner();
-
+    //showSpinner();
     var lsf    = $("form#list_search")
-    var search = $("[name='search']").val();
-    var tgt    = $("[name='search_target']").val();
+    var search = $("input#list_search_term").val();
+    var tgt    = $("input#list_search_target").val();
+    var loc;
+    var ploc;
+    var base = "";
     
     if (tgt == "admin_devices") {
-        var loc  = "?page=administration&section=devices&search="+search;
-        var ploc = "administration/devices/search/"+search;
+        loc  = "?page=administration&section=devices&search="+search;
+        ploc = "administration/devices/search/"+search;
     }
-    
+
     var prettyLinks = $('#prettyLinks').html();
     if(prettyLinks=="Yes") { 
         window.location = base + ploc; 
@@ -973,9 +975,15 @@ $('a.search_ipaddress').click(function() {
 });
 
 //submit form - lists
-$('.listSearchSubmit').click(function () {
+$('button#listSearchSubmit').click(function () {
     list_search_execute ();
     return false;
+});
+
+$('button#listSearchSubmit').keyup(function(event){
+    if(event.keyCode == 13){
+        list_search_execute ();
+    }
 });
 
 //show/hide search select fields

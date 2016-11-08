@@ -92,11 +92,11 @@ $Racks      = new phpipam_rack ($Database);
 
     <div id="list_search">
         <form id="list_search" method="POST">
-            <input type="text" class="form-control searchInput input-sm" name="search" placeholder="Search string" value="" size="40" />
-            <input type="hidden" name="search_target" value="admin_devices" />
+            <input type="text" class="form-control input-sm" id="list_search_term" name="search" placeholder="Search string" value="" size="40" />
+            <input type="hidden" id="list_search_target" name="list_search_target" value="admin_devices" />
         </form>
         <span class="input-group-btn">
-            <button class="btn btn-default btn-sm listSearchSubmit" type="button">Search Devices</button>
+            <button class="btn btn-default btn-sm" id="listSearchSubmit" type="button">Search Devices</button>
         </span>
     </div>
     
