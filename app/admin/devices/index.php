@@ -27,7 +27,7 @@ if (array_key_exists('search', $_GET)) {
     $custom_fields = array_keys($custom);
     
     # Merge default fields with custom fields
-    $search_fields = array_merge($custom_fields, $this->default_search_fields);
+    $search_fields = array_merge($custom_fields, $default_search_fields);
     
     list($extended_query, $query_params) = $Database->constructSearch($fields,$search_term);
     
