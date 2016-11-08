@@ -38,14 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
 } else {
     
-    $l  = 20000;  # limit
+    $l  = 50;  # limit
     $p  = 0;  # page number
 
     if (isset($_GET['l'])) {
         if (is_numeric($_GET['l']) && $_GET['l'] > 0) {
             $l = $_GET['l'];    
-        } else {
-            $l = 20;
         }
     }
 
@@ -82,16 +80,29 @@ $Racks      = new phpipam_rack ($Database);
 
 <h4><?php print _('Device management'); ?></h4>
 <hr>
-<div class="btn-group">
-	<button class='btn btn-sm btn-default editSwitch' data-action='add'   data-switchid='' style='margin-bottom:10px;'><i class='fa fa-plus'></i> <?php print _('Add device'); ?></button>
-	<a href="<?php print create_link("administration", "device-types"); ?>" class="btn btn-sm btn-default"><i class="fa fa-tablet"></i> <?php print _('Manage device types'); ?></a>
+<div class="list_header">
+    <div class="btn-group">
+    	<button class='btn btn-sm btn-default editSwitch' data-action='add'   data-switchid='' style='margin-bottom:10px;'><i class='fa fa-plus'></i> <?php print _('Add device'); ?></button>
+    	<a href="<?php print create_link("administration", "device-types"); ?>" class="btn btn-sm btn-default"><i class="fa fa-tablet"></i> <?php print _('Manage device types'); ?></a>
+    </div>
+
+    <div id="list_search">
+        <form>
+            <input type="text" class="form-control searchInput input-sm" name="ip" placeholder="Search string" value="" size="40" />
+        </form>
+        <span class="input-group-btn">
+            <button class="btn btn-default btn-sm searchSubmit" type="button">Search Devices</button>
+        </span>
+    </div>
 </div>
 
 <script language="JavaScript">
 $(document).ready(function() {
-    $('#switchManagement').DataTable( {
-        "paging": false,
-        "searching": false
+    $('#switchManagement').dataTable( {
+        "paging": true,
+        "searching": false,
+        "scrollX": true,
+        "scrollCollapse": true,
     } );
 } );
 </script>
@@ -234,5 +245,18 @@ else {
 }
 ?>
 
+<div class="dataTables_wrapper no-footer">
+    <div class="dataTables_paginate paging_simple_numbers" id="switchManagement_paginate">
+        <a class="paginate_button previous disabled" aria-controls="switchManagement" data-dt-idx="0" tabindex="0" id="switchManagement_previous">Previous</a>
+        <span>
+            <a class="paginate_button current" aria-controls="switchManagement" data-dt-idx="1" tabindex="0">1</a>
+            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="2" tabindex="0">2</a>
+            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="3" tabindex="0">3</a>
+            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="4" tabindex="0">4</a>
+            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="5" tabindex="0">5</a>
+        </span>
+        <a class="paginate_button next" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
+    </div>
+</div>
 <!-- edit result holder -->
 <div class="switchManagementEdit"></div>

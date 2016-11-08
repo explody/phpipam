@@ -586,8 +586,18 @@ div#user_menu #searchForm {
 	margin-top: -5px;
 }
 
+div#list_search {
+	margin-bottom: 5px;
+    margin-left: auto;
+    float: right;
+    display: table;
+    width: 20%;
+}
 
-
+div.list_header {
+    overflow: auto;
+	width: 100%;
+}
 
 
 
