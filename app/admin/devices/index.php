@@ -69,17 +69,17 @@ if ($device_types !== false) {
 	}
 }
 
-$device_count = $Database->numObjects('devices');
+if (count($devices) > 0) {
+    $device_count = $Database->numObjects('devices');
+
+    # get hidden fields
+    $hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
+    $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
 
 
-# get hidden fields
-$hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
-
-
-# rack object
-$Racks      = new phpipam_rack ($Database);
-
+    # rack object
+    $Racks      = new phpipam_rack ($Database);
+}
 ?>
 
 <h4><?php print _('Device management'); ?></h4>
@@ -142,6 +142,8 @@ $(document).ready(function() {
 /* first check if they exist! */
 if($devices===false) {
 	$Result->show("warning", _('No devices configured').'!', false);
+} elseif (count($devices) == 0) {
+    $Result->show("warning", _('No devices found'), false);
 }
 /* Print them out */
 else {

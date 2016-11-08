@@ -980,9 +980,10 @@ $('button#listSearchSubmit').click(function () {
     return false;
 });
 
-$('button#listSearchSubmit').keyup(function(event){
+$('input#list_search_term').keyup(function(event){
     if(event.keyCode == 13){
         list_search_execute ();
+        return false;
     }
 });
 
