@@ -39,7 +39,7 @@ if (array_key_exists('search', $_GET)) {
     
 } else {
     
-    $l  = 50;  # limit
+    $l = array_key_exists('table-page-size', $_COOKIE) ? $_COOKIE['table-page-size'] : 50;
     $p  = 0;  # page number
 
     if (isset($_GET['l'])) {
@@ -61,6 +61,8 @@ if (array_key_exists('search', $_GET)) {
 
 }
 
+$dev_count = count($devices);
+
 # fetch all Device types and reindex
 $device_types = $Admin->fetch_all_objects("deviceTypes", "tid");
 if ($device_types !== false) {
@@ -69,17 +71,18 @@ if ($device_types !== false) {
 	}
 }
 
-if (count($devices) > 0) {
-    $device_count = $Database->numObjects('devices');
+if ($dev_count > 0) {
 
     # get hidden fields
     $hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
     $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
 
-
     # rack object
     $Racks      = new phpipam_rack ($Database);
 }
+
+$all_dev_count = $Database->numObjects('devices');
+
 ?>
 
 <h4><?php print _('Device management'); ?></h4>
@@ -93,7 +96,7 @@ if (count($devices) > 0) {
     <div id="list_search">
         <form id="list_search" method="POST">
             <input type="text" class="form-control input-sm" id="list_search_term" name="search" placeholder="Search string" value="" size="40" />
-            <input type="hidden" id="list_search_target" name="list_search_target" value="admin_devices" />
+            <input type="hidden" id="list_target" name="list_target" value="admin_devices" />
         </form>
         <span class="input-group-btn">
             <button class="btn btn-default btn-sm" id="listSearchSubmit" type="button">Search Devices</button>
@@ -105,12 +108,13 @@ if (count($devices) > 0) {
 <div class="dataTables_wrapper no-footer">
     
     <div id="list_count">
-        <label>Show <select name="devices_length">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="500">500</option>
+        <label>Show <select name="table_page_size" id="table_page_size" onchange="table_page_size(this.value);">
+            <?php 
+            foreach(array(10,20,50,100,500,1000) as &$cnt) {
+            print "<option value=\"$cnt\" " . $cnt = $l ? 'selected' : '' . ">$cnt</option>";
+            }
+            print "<option value=\"$all_dev_count\">All</option>";
+            ?>
         </select> devices</label>
     </div>
     
@@ -142,7 +146,7 @@ $(document).ready(function() {
 /* first check if they exist! */
 if($devices===false) {
 	$Result->show("warning", _('No devices configured').'!', false);
-} elseif (count($devices) == 0) {
+} elseif ($dev_count == 0) {
     $Result->show("warning", _('No devices found'), false);
 }
 /* Print them out */
