@@ -140,7 +140,7 @@ if ($dev_count > 0) {
 
             ?>
         </span>
-        <a class="paginate_button next <?php print (($p == $pages) ? 'disabled' : '' ); ?>" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
+        <a class="paginate_button next <?php print (($p >= $pages) ? 'disabled' : '' ); ?>" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
     </div>
 </div>
 
@@ -152,7 +152,7 @@ $(document).ready(function() {
         "scrollX": true,
         "scrollCollapse": true,
         "language": {
-            "info": "Showing page <?php print "$p"; ?>  of <?php print "$pages"; ?>"
+            "info": "Showing page <?php print "$p"; ?>  of <?php print ($pages > 0 ? $pages : "1"); ?>"
         },
     } );
 } );
@@ -313,7 +313,7 @@ else {
 
             ?>
         </span>
-        <a class="paginate_button next <?php print (($p == $pages) ? 'disabled' : '' ); ?>" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
+        <a class="paginate_button next <?php print (($p >= $pages) ? 'disabled' : '' ); ?>" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
     </div>
 </div>
 <!-- edit result holder -->
