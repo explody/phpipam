@@ -657,10 +657,12 @@ abstract class DB {
 	 * @param string $class (default: 'stdClass')
 	 * @return void
 	 */
-	public function getObjectsQuery($query = null, $values = array(), $sortField = 'id', $sortAsc = true, $numRecords = 0, $offset = 0, $class = 'stdClass') {
+	public function getObjectsQuery($query = null, $values = array(), $sortField = false, $sortAsc = true, $numRecords = 0, $offset = 0, $class = 'stdClass') {
 		if (!$this->isConnected()) $this->connect();
 
-        $query = $this->sortQuery($query, $sortField, $sortAsc ? 'ASC' : 'DESC');
+        if ($sortField) {
+            $query = $this->sortQuery($query, $sortField, ($sortAsc ? 'ASC' : 'DESC'));
+        }
         
         if ($numRecords > 0 || $offset > 0) {
             $query = $this->pageQuery($query, $numRecords, $offset);
