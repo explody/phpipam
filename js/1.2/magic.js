@@ -1018,10 +1018,17 @@ $('input#list_search_term').keyup(function(event){
     }
 });
 
+// table size selector
 $('select#table_page_size').change(function() {
     table_page_size($('select#table_page_size').val());
-}
+});
 
+//submit form - lists
+// $('a.paginate_button').click(function () {
+//     var tgt = $('a.paginate_button').target();
+//     send_to(tgt);
+//     return false;
+// });
 
 //show/hide search select fields
 $(document).on("mouseenter", "#userMenuSearch", function(event){

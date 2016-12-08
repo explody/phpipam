@@ -35,9 +35,11 @@ RewriteRule ^logout/dashboard/$ dashboard/ [R]
 RewriteRule ^tools/search/(.*)$ index.php?page=tools&section=search&ip=$1 [L]
 
 # custom per-app rewrites
+RewriteRule ^administration/devices/search/([0-9]+)/([0-9]+)/(.*) index.php?page=administration&section=devices&l=$1&p=$2&search=$3 [L]
+RewriteRule ^administration/devices/search/([0-9]+)/(.*) index.php?page=administration&section=devices&l=$1&search=$2 [L]
 RewriteRule ^administration/devices/search/(.*) index.php?page=administration&section=devices&search=$1 [L]
-RewriteRule ^administration/devices/([0-9]+)/ index.php?page=administration&section=devices&l=$1 [L]
 RewriteRule ^administration/devices/([0-9]+)/([0-9]+)/ index.php?page=administration&section=devices&l=$1&p=$2 [L]
+RewriteRule ^administration/devices/([0-9]+)/ index.php?page=administration&section=devices&l=$1 [L]
 
 # Rewrites
 RewriteRule ^(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/$ index.php?page=$1&section=$2&subnetId=$3&sPage=$4&ipaddrid=$5&tab=$6 [L]

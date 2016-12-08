@@ -121,6 +121,46 @@ abstract class DB {
 	}
 
     /**
+     * Tiny helper to take a query and apply an offset and limit,
+     * mostly for pagination
+     *
+     * @access public
+     * @static
+     * @param string $query The complete query without offset or limits
+     * @param int $offset Query results offset, default 0 (no offset)
+     * @param int $limit Max records to return, default 0 (all)
+     * @return string
+     */
+     public static function pageQuery($query, $limit=0, $offset=0) {
+        
+        if ($limit > 0) {
+            $query = ($query . ' LIMIT ' . $limit);
+        }
+        if ($offset > 0){
+            $query = ($query . ' OFFSET ' . $offset);
+        }
+        return $query;
+
+    }
+    
+    /**
+     * Tiny helper to take a query and apply sorting and sort order
+     *
+     * @access public
+     * @static
+     * @param string $query The complete query without sorting
+     * @param string $sortkey Database column to sort on
+     * @param string $sortOrder 'ASC' or 'DESC', default 'ASC'
+     * @return string
+     */
+     public static function sortQuery($query, $sortkey='id', $sortOrder="ASC") {
+
+        $query = ($query . ' ORDER BY `' . $sortkey . '` ' . $sortOrder);
+        return $query;
+
+    }
+    
+    /**
      * helper to construct query parameters given a list of
      * field/column names, a search term and a boolean 'exact' where true
      * means "where field='searchterm'" and false means "where field like '%searchterm%'"
@@ -322,6 +362,32 @@ abstract class DB {
 
 		return $statement->fetchColumn();
     }
+    
+    /**
+	 * Get a quick number of objects in a table with a conditonal 'where' statement
+	 *
+	 * @access public
+	 * @param string $tableName
+	 * @param string $conditions The portion of the SQL query after 'WHERE'
+     * @param mixed $value Optional array of values to to pass to execute() if the conditonal is an SQL template string
+	 * @return string
+	 */
+	public function numObjectsConditional($tableName, $conditions, $values=null) {
+        if (!$this->isConnected()) $this->connect();
+        $tableName = $this->escape($tableName);
+        $query = 'SELECT COUNT(*) as `num` FROM `' . $tableName . '` where ' . $conditions;
+        $statement = $this->pdo->prepare($query);
+
+        if ($values === null) {
+            $this->log_query ($statement);
+    		$statement->execute();
+        } else {
+            $this->log_query ($statement, (array) $values);
+    		$statement->execute((array) $values);
+        }
+        
+        return $statement->fetchColumn();
+    }
 
 	/**
 	 * Get a quick number of objects in a table for filtered field
@@ -334,18 +400,12 @@ abstract class DB {
 	 * @return void
 	 */
 	public function numObjectsFilter($tableName, $method, $value, $like = false) {
-		if (!$this->isConnected()) $this->connect();
 
-		$like === true ? $operator = "LIKE" : $operator = "=";
+		$operator = $like ? "LIKE" : "=";
+        $conditional = '`' . $method . '` ' . $operator . ' ?';
 
-		$tableName = $this->escape($tableName);
-		$statement = $this->pdo->prepare('SELECT COUNT(*) as `num` FROM `'.$tableName.'` where `'.$method.'` '.$operator.' ?;');
+        return $this->numObjectsConditional($tableName, $conditional, $value);
 
-		//debuq
-		$this->log_query ($statement, (array) $value);
-		$statement->execute(array($value));
-
-		return $statement->fetchColumn();
 	}
 
 	/**
@@ -518,7 +578,7 @@ abstract class DB {
 	 * @param string $class (default: 'stdClass')
 	 * @return void
 	 */
-	public function getObjects($tableName, $sortField = 'id', $sortAsc = true, $numRecords = null, $offset = 0, $class = 'stdClass') {
+	public function getObjects($tableName, $sortField = 'id', $sortAsc = true, $numRecords = 0, $offset = 0, $class = 'stdClass') {
 		if (!$this->isConnected()) $this->connect();
 
 		$sortStr = '';
@@ -526,18 +586,20 @@ abstract class DB {
 			$sortStr = 'DESC';
 		}
 
-		//we should escape all of the params that we need to
+		// we should escape all of the params that we need to
 		$tableName = $this->escape($tableName);
 		$sortField = $this->escape($sortField);
-
-		if ($numRecords === null) {
-			//get all (no limit)
-			$statement = $this->pdo->query('SELECT * FROM `'.$tableName.'` ORDER BY `'.$sortField.'` '.$sortStr.';');
-		} else {
-			//get a limited range of objects
-			$statement = $this->pdo->query('SELECT * FROM `'.$tableName.'` ORDER BY `'.$sortField.'` '.$sortStr.' LIMIT '.$numRecords.' OFFSET '.$offset.';');
-		}
-
+        
+        // The base query. We're sorting by default so pass it through sortQuery() to append sorting 
+        $query = $this->sortQuery('SELECT * FROM `'.$tableName.'`', $sortField, $sortStr);
+        
+        // If we specify either the number of records to return or an offset, pass it through pageQuery to append the limits
+        if ($numRecords > 0 || $offset > 0) {
+            $query = $this->pageQuery($query, $numRecords, $offset);
+        }
+        
+        $statement = $this->pdo->query($query);
+        
 		$results = array();
 
 		if (is_object($statement)) {
@@ -588,12 +650,22 @@ abstract class DB {
 	 * @access public
 	 * @param mixed $query (default: null)
 	 * @param array $values (default: array())
+     * @param string $sortField (default: 'id')
+     * @param bool $sortAsc (default: true)
+     * @param mixed $numRecords (default: null)
+     * @param int $offset (default: 0)
 	 * @param string $class (default: 'stdClass')
 	 * @return void
 	 */
-	public function getObjectsQuery($query = null, $values = array(), $class = 'stdClass') {
+	public function getObjectsQuery($query = null, $values = array(), $sortField = 'id', $sortAsc = true, $numRecords = 0, $offset = 0, $class = 'stdClass') {
 		if (!$this->isConnected()) $this->connect();
 
+        $query = $this->sortQuery($query, $sortField, $sortAsc ? 'ASC' : 'DESC');
+        
+        if ($numRecords > 0 || $offset > 0) {
+            $query = $this->pageQuery($query, $numRecords, $offset);
+        }
+        
 		$statement = $this->pdo->prepare($query);
 
 		//debug

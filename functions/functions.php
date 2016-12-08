@@ -45,6 +45,7 @@ require( dirname(__FILE__) . '/classes/class.Mail.php' );		//Class for Mailing
 require( dirname(__FILE__) . '/classes/class.Rackspace.php' );	//Class for Racks
 require( dirname(__FILE__) . '/classes/class.SNMP.php' );	    //Class for SNMP queries
 require( dirname(__FILE__) . '/classes/class.DHCP.php' );	    //Class for DHCP
+require( dirname(__FILE__) . '/classes/class.PaginationLinks.php' );	    //Class for generating pagination links
 
 # save settings to constant
 if($_GET['page']!="install" ) {

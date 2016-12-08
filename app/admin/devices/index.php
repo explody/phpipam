@@ -11,17 +11,35 @@ $User->check_user_session();
 $custom = $Tools->fetch_custom_fields('devices');
 
 $default_search_fields = ['hostname','ip_addr','description','version'];
-
+$table_name = 'devices';
+$search_term = false;
 /** 
 * Most of this from the API's Devices class
 * TODO: violates DRY 
 * TODO: make sure the search term is escaped/sanitized
 **/
+$l = array_key_exists('table-page-size', $_COOKIE) ? $_COOKIE['table-page-size'] : 50;
+$p  = 1;  # page number
+
+if (isset($_GET['l'])) {
+    if (is_numeric($_GET['l']) && $_GET['l'] > 0) {
+        $l = $_GET['l'];    
+    }
+}
+
+if (isset($_GET['p'])) {
+    if (is_numeric($_GET['p']) && $_GET['p'] > 0) {
+        $p = $_GET['p'];    
+    } 
+}
+
+$offset = ($p > 1 ? $p * $l : 0);
+
 if (array_key_exists('search', $_GET)) {
     
     $search_term = $_GET['search'];
     
-    $base_query = "SELECT * from devices where ";
+    $base_query = "SELECT * from " . $table_name . " where ";
     
     # Search all custom fields
     $custom_fields = array_keys($custom);
@@ -35,30 +53,14 @@ if (array_key_exists('search', $_GET)) {
     $search_query = $base_query . $extended_query;
 
     # Search query
-    $devices = $Database->getObjectsQuery($search_query, $query_params);
+    $devices = $Database->getObjectsQuery($search_query, $query_params, "hostname", true, $l, $offset);
+    $all_dev_count = $Database->numObjectsConditional($table_name, $extended_query, $query_params);
     
 } else {
     
-    $l = array_key_exists('table-page-size', $_COOKIE) ? $_COOKIE['table-page-size'] : 50;
-    $p  = 1;  # page number
-
-    if (isset($_GET['l'])) {
-        if (is_numeric($_GET['l']) && $_GET['l'] > 0) {
-            $l = $_GET['l'];    
-        }
-    }
-
-    if (isset($_GET['p'])) {
-        if (is_numeric($_GET['p']) && $_GET['p'] > 0) {
-            $p = $_GET['p'];    
-        } 
-    }
-
-    $offset = ($p > 1 ? $p * $l : 0);
-
     # fetch Devices
     $devices = $Admin->fetch_objects("devices", "hostname", true, $l, $offset);
-
+    $all_dev_count = $Database->numObjects('devices');
 }
 
 $dev_count = count($devices);
@@ -81,7 +83,7 @@ if ($dev_count > 0) {
     $Racks      = new phpipam_rack ($Database);
 }
 
-$all_dev_count = $Database->numObjects('devices');
+
 
 ?>
 
@@ -95,7 +97,7 @@ $all_dev_count = $Database->numObjects('devices');
 
     <div id="list_search">
         <form id="list_search" method="POST">
-            <input type="text" class="form-control input-sm" id="list_search_term" name="search" placeholder="Search string" value="" size="40" />
+            <input type="text" class="form-control input-sm" id="list_search_term" name="search" placeholder="Search string" value="<?php print "$search_term"; ?>" size="40" />
             <input type="hidden" id="list_target" name="list_target" value="admin_devices" />
         </form>
         <span class="input-group-btn">
@@ -116,24 +118,26 @@ $all_dev_count = $Database->numObjects('devices');
             print "<option value=\"$all_dev_count\"" . (($all_dev_count == $l) ? 'selected' : '') . ">All</option>";
             ?>
         </select> devices</label>
+        (<?php print $all_dev_count;?> devices found)
     </div>
     
     <div class="dataTables_paginate paging_simple_numbers" id="switchManagement_paginate">
+
         <a class="paginate_button previous <?php print (($p > 1) ? '' : 'disabled' ); ?>" aria-controls="switchManagement" data-dt-idx="0" tabindex="0" id="switchManagement_previous">Previous</a>
         <span>
             <?php 
-            $display_max = 10;
-            $pages = ceil($all_dev_count / $l);
-            foreach (range($p,$pages) as $page) {
-                
-                if ($page > $display_max) {
-                    print "...";
-                    print '<a class="paginate_button current" aria-controls="switchManagement" data-dt-idx="'.$pages.'" tabindex="0">'.$pages.'</a>';
-                    break;
-                }
-                print '<a class="paginate_button current" aria-controls="switchManagement" data-dt-idx="'.$page.'" tabindex="0">'.$page.'</a>';
-                
-            }
+            
+            $pages = floor($all_dev_count / $l);
+            $pnlink = '<a class="paginate_button %s" '.
+                      'href="/administration/devices/' . ($search_term ? 'search/' : null) .
+                      $l . '/%%d/' . ($search_term ? $search_term : null) . 
+                      '" aria-controls="switchManagement" data-dt-idx="%%d" tabindex="0">%%d</a>'."\n";
+            
+            print PaginationLinks::create($p,$pages,1,
+                sprintf($pnlink, null),
+                sprintf($pnlink, 'current')
+             );
+
             ?>
         </span>
         <a class="paginate_button next <?php print (($p == $pages) ? 'disabled' : '' ); ?>" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
@@ -147,6 +151,9 @@ $(document).ready(function() {
         "searching": false,
         "scrollX": true,
         "scrollCollapse": true,
+        "language": {
+            "info": "Showing page <?php print "$p"; ?>  of <?php print "$pages"; ?>"
+        },
     } );
 } );
 </script>
@@ -293,15 +300,20 @@ else {
 
 <div class="dataTables_wrapper no-footer">
     <div class="dataTables_paginate paging_simple_numbers" id="switchManagement_paginate">
-        <a class="paginate_button previous disabled" aria-controls="switchManagement" data-dt-idx="0" tabindex="0" id="switchManagement_previous">Previous</a>
+
+        <a class="paginate_button previous <?php print (($p > 1) ? '' : 'disabled' ); ?>" aria-controls="switchManagement" data-dt-idx="0" tabindex="0" id="switchManagement_previous">Previous</a>
         <span>
-            <a class="paginate_button current" aria-controls="switchManagement" data-dt-idx="1" tabindex="0">1</a>
-            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="2" tabindex="0">2</a>
-            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="3" tabindex="0">3</a>
-            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="4" tabindex="0">4</a>
-            <a class="paginate_button " aria-controls="switchManagement" data-dt-idx="5" tabindex="0">5</a>
+            <?php 
+            
+            # $pages and $pnlink are set up above where the top links are generated
+            print PaginationLinks::create($p,$pages,1,
+                 sprintf($pnlink, null),
+                 sprintf($pnlink, 'current')
+             );
+
+            ?>
         </span>
-        <a class="paginate_button next" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
+        <a class="paginate_button next <?php print (($p == $pages) ? 'disabled' : '' ); ?>" aria-controls="switchManagement" data-dt-idx="6" tabindex="0" id="switchManagement_next">Next</a>
     </div>
 </div>
 <!-- edit result holder -->
