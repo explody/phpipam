@@ -14,15 +14,15 @@ if ($User->settings->enableLocations=="1") {
         unset($location);
         $location_index = $device['location'];
 
-        $sid_orig = $_GET['subnetId'];
-        $_GET['subnetId'] = $device['location'];
+        $sid_orig = $_GET['id'];
+        $_GET['id'] = $device['location'];
 
         $hide_title = true;
 
 
         include(dirname(__FILE__).'/../../locations/single-location.php');
 
-        $_GET['subnetId'] = $sid_orig;
+        $_GET['id'] = $sid_orig;
         $location = $loc_old;
     }
     else {

@@ -14,7 +14,7 @@ $hidden_fields = json_decode($User->settings->hiddenCustomFields, true);
 $hidden_fields = is_array(@$hidden_fields['devices']) ? $hidden_fields['devices'] : array();
 
 # check
-is_numeric($_GET['subnetId']) ? : $Result->show("danger", _("Invalid ID"), true);
+is_numeric($_GET['id']) ? : $Result->show("danger", _("Invalid ID"), true);
 
 # title - subnets
 print "<h4>"._("Belonging PSTN prefixes")."</h4><hr>";

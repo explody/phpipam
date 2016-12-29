@@ -9,12 +9,12 @@
 $User->check_user_session();
 
 
-if(isset($_GET['subnetId'])) {
+if(isset($_GET['id'])) {
     # check
-    is_numeric($_GET['subnetId']) ? : $Result->show("danger", _("Invalid ID"), true);
+    is_numeric($_GET['id']) ? : $Result->show("danger", _("Invalid ID: " + $_GET['id']), true);
 
     # fetch device
-    $device = $Tools->fetch_object ("devices", "id", $_GET['subnetId']);
+    $device = $Tools->fetch_object ("devices", "id", $_GET['id']);
 
     # count subnets and addresses
     $cnt_subnets   = $Tools->count_database_objects ("subnets", "device", $device->id);
@@ -25,17 +25,37 @@ if(isset($_GET['subnetId'])) {
     ?>
     <!-- tabs -->
     <ul class='nav nav-tabs' style='margin-bottom:20px;'>
-        <li role='presentation' <?php if(!isset($_GET['sPage'])) print " class='active'"; ?>> <a href='<?php print create_link("tools", "devices", $device->id); ?>'><?php print _("Device details"); ?></a></li>
-        <li role='presentation' <?php if(@$_GET['sPage']=="subnets") print "class='active'"; ?>> <a href='<?php print create_link("tools", "devices", $device->id, "subnets", $subnet['id']); ?>'><?php print _("Subnets"); ?> <span class='badge' style="margin-left: 5px;"><?php print $cnt_subnets; ?></span></a></li>
-        <li role='presentation' <?php if(@$_GET['sPage']=="addresses") print "class='active'"; ?>> <a href='<?php print create_link("tools", "devices", $device->id, "addresses", $subnet['id']); ?>'><?php print _("Addresses"); ?> <span class='badge' style="margin-left: 5px;"><?php print $cnt_addresses; ?></span></a></li>
+        <li role='presentation' <?php if(!isset($_GET['sPage'])) print " class='active'"; ?>> 
+            <a href='<?php print create_link("tools", "devices", $device->id); ?>'><?php print _("Device details"); ?></a>
+        </li>
+        <li role='presentation' <?php if(@$_GET['sPage']=="subnets") print "class='active'"; ?>>
+            <a href='<?php print create_link("tools", "devices", $device->id, "subnets", $subnet['id']); ?>'><?php print _("Subnets"); ?> 
+                <span class='badge' style="margin-left: 5px;"><?php print $cnt_subnets; ?></span>
+            </a>
+        </li>
+        <li role='presentation' <?php if(@$_GET['sPage']=="addresses") print "class='active'"; ?>>
+            <a href='<?php print create_link("tools", "devices", $device->id, "addresses", $subnet['id']); ?>'><?php print _("Addresses"); ?>
+                <span class='badge' style="margin-left: 5px;"><?php print $cnt_addresses; ?></span>
+            </a>
+        </li>
         <?php if($User->settings->enableNAT==1) { ?>
-        <li role='presentation' <?php if(@$_GET['sPage']=="nat") print "class='active'"; ?>> <a href='<?php print create_link("tools", "devices", $device->id, "nat", $subnet['id']); ?>'><?php print _("NAT"); ?> <span class='badge' style="margin-left: 5px;"><?php print $cnt_nat; ?></span></a></li>
+        <li role='presentation' <?php if(@$_GET['sPage']=="nat") print "class='active'"; ?>>
+            <a href='<?php print create_link("tools", "devices", $device->id, "nat", $subnet['id']); ?>'><?php print _("NAT"); ?>
+                <span class='badge' style="margin-left: 5px;"><?php print $cnt_nat; ?></span>
+            </a>
+        </li>
         <?php } ?>
         <?php if($User->settings->enableLocations==1) { ?>
-        <li role='presentation' <?php if(@$_GET['sPage']=="location") print "class='active'"; ?>> <a href='<?php print create_link("tools", "devices", $device->id, "location"); ?>'><?php print _("Location"); ?></a></li>
+        <li role='presentation' <?php if(@$_GET['sPage']=="location") print "class='active'"; ?>>
+            <a href='<?php print create_link("tools", "devices", $device->id, "location"); ?>'><?php print _("Location"); ?></a>
+        </li>
         <?php } ?>
         <?php if($User->settings->enablePSTN==1) { ?>
-        <li role='presentation' <?php if(@$_GET['sPage']=="pstn-prefixes") print "class='active'"; ?>> <a href='<?php print create_link("tools", "devices", $device->id, "pstn-prefixes"); ?>'><?php print _("PSTN prefixes"); ?> <span class='badge' style="margin-left: 5px;"><?php print $cnt_pstn; ?></span></a></li>
+        <li role='presentation' <?php if(@$_GET['sPage']=="pstn-prefixes") print "class='active'"; ?>>
+            <a href='<?php print create_link("tools", "devices", $device->id, "pstn-prefixes"); ?>'><?php print _("PSTN prefixes"); ?>
+                <span class='badge' style="margin-left: 5px;"><?php print $cnt_pstn; ?></span>
+            </a>
+        </li>
         <?php } ?>
 
     </ul>

@@ -646,11 +646,9 @@ nav.navbar#menu-navbar {
 table#subnetsMenu td#subnetsLeft .menu-administration,
 table#subnetsMenu td#subnetsLeft .menu-tools {
 	padding: 0px;
-	width: 230px;
+	max-width: 230px;
 }
-table#subnetsMenu td#subnetsLeft .menu-tools {
-	width: 200px;
-}
+
 #leftMenu.menu-administration ul li,
 #leftMenu.menu-tools li a {
 	border-radius: 0px !important;
@@ -756,7 +754,6 @@ table#subnetsMenu td#subnetsLeft .menu-tools {
 #subnetsContent .menu-tools {
 	padding-left: 20px;
 }
-
 
 
 
@@ -931,7 +928,6 @@ table#subnetsMenu td#subnetsLeft {
 	white-space:nowrap;
 	width:200px;
 	border-right: 1px solid #eee;
-
 	vertical-align: top !important;
 }
 table#subnetsMenu td#subnetsLeft .menu-subnets {
@@ -941,7 +937,9 @@ table#subnetsMenu td#subnetsContent {
 	padding-top: 20px;
 }
 
-
+td#subnetsContent {
+	max-width: 1500px;
+}
 
 
 
@@ -1891,8 +1889,18 @@ table.editSubnetDetails td.middle {
 	vertical-align: middle;
 	white-space: nowrap;
 }
+
+table#switchManagement {
+    white-space: nowrap;
+}
+
 table#switchManagement tr.unspecified td {
 	border-top: double #ddd;
+}
+
+button.btn-xs.editSwitch {
+    width: 23px;
+    height: 23px;
 }
 
 table#manageSection {
@@ -2631,4 +2639,9 @@ table.popover_table {
 }
 table.popover_table td {
     border: none !important;
+}
+
+table.dataTable {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }

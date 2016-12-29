@@ -8,10 +8,10 @@
 $User->check_user_session();
 
 # check
-is_numeric($_GET['subnetId']) ? : $Result->show("danger", _("Invalid ID"), true);
+is_numeric($_GET['id']) ? : $Result->show("danger", _("Invalid ID"), true);
 
 # fetch device
-$device = (array) $Tools->fetch_object ("devices", "id", $_GET['subnetId']);
+$device = (array) $Tools->fetch_object ("devices", "id", $_GET['id']);
 
 # strip tags - XSS
 $_GET = $User->strip_input_tags ($_GET);
@@ -46,11 +46,11 @@ if(sizeof($addresses) > 0) {
 		$ip = (array) $ip;
 
 		# check permission
-		$subnet_permission  = $Subnets->check_permission($User->user, $ip['subnetId']);
+		$subnet_permission  = $Subnets->check_permission($User->user, $ip['id']);
 
 		if($subnet_permission>0) {
 			# get subnet and section details for belonging IP
-			$subnet  = (array) $Subnets->fetch_subnet(null, $ip['subnetId']);
+			$subnet  = (array) $Subnets->fetch_subnet(null, $ip['id']);
 			$section = (array) $Sections->fetch_section (null, $subnet['sectionId']);
 
 			# print

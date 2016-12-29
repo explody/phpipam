@@ -927,22 +927,18 @@ function search_execute (loc) {
     }
 }
 
-function list_search_execute () {
-    //showSpinner();
-    var lsf    = $("form#list_search")
-    var search = $("input#list_search_term").val();
-    var tgt    = $("input#list_target").val();
-    var loc;
-    var ploc;
-    var base = "";
-    
-    // TODO: make this a pattern instead of explicit per-page conditionals
-    if (tgt == "admin_devices") {
-        loc  = "?page=administration&section=devices&search="+search;
-        ploc = "administration/devices/search/"+search;
-    }
+function list_search_execute (page, section) {
 
     var prettyLinks = $('#prettyLinks').html();
+    var srch   = $("input#list_search_term").val();
+
+    if (!srch) {
+        srch = '';
+    }
+    
+    var loc  = "?page=" + page + "&section=" + section + "&search=" + srch;
+    var ploc = page + "/" + section + "/search/" + srch;
+
     if(prettyLinks=="Yes") { 
         send_to(ploc);
     } else { 
@@ -950,19 +946,26 @@ function list_search_execute () {
     }
 }
 
-function table_page_size (count) {
+function table_page_size (page, section, count, pagenum) {
     
     createCookie("table-page-size",count,365);
     
-    var tgt = $("input#list_target").val();
+    // TODO: DRY all over
     
-    if (tgt == "admin_devices") {
-        loc  = "?page=administration&section=devices&l="+count;
-        ploc = "administration/devices/"+count+"/";
+    var prettyLinks = $('#prettyLinks').html();
+    var srch = $("input#list_search_term").val();
+     
+    if (!pagenum) {
+        pagenum = 1;
     }
     
-    // TODO: DRY
-    var prettyLinks = $('#prettyLinks').html();
+    if (!srch) {
+        srch = '';
+    }
+     
+    var loc  = "?page=" + page + "&section=" + section + "&p=" + pagenum + "&search=" + srch;
+    var ploc = page + "/" + section + "/search/" + pagenum + "/" + srch;
+
     if(prettyLinks=="Yes") { 
         send_to(ploc);
     } else { 
@@ -1015,22 +1018,18 @@ $('button#listSearchSubmit').click(function () {
 
 $('input#list_search_term').keyup(function(event){
     if(event.keyCode == 13){
-        list_search_execute ();
+        list_search_execute ($('meta[name=application-name]').attr("data-page"),
+                             $('meta[name=application-name]').attr("data-section"));
         return false;
     }
 });
 
 // table size selector
 $('select#table_page_size').change(function() {
-    table_page_size($('select#table_page_size').val());
+    table_page_size($('meta[name=application-name]').attr("data-page"),
+                    $('meta[name=application-name]').attr("data-section"),
+                    $('select#table_page_size').val());
 });
-
-//submit form - lists
-// $('a.paginate_button').click(function () {
-//     var tgt = $('a.paginate_button').target();
-//     send_to(tgt);
-//     return false;
-// });
 
 //show/hide search select fields
 $(document).on("mouseenter", "#userMenuSearch", function(event){
