@@ -1,0 +1,11 @@
+{
+    "minimum-stability": "dev",
+    "require": {
+        "twig/twig": "~1.0",
+        "phpmailer/phpmailer": "^5.2",
+        "stefangabos/zebra_session": "^2.1",
+        "adldap/adldap": "5.0.0.x-dev",
+        "php-excel-reader/spreadsheet-reader": "dev-master",
+        "onelogin/php-saml": "^2.10"
+    }
+}

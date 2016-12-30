@@ -5,4 +5,6 @@ define("VERSION", "1.26");									//version changes if database structure chang
 define("REVISION", "030");									//revision always changes, verision only if database structure changes
 /* set last possible upgrade */
 define("LAST_POSSIBLE", "1.1");								//minimum required version to be able to upgrade
+/* media version */
+define("MEDIA_VERSION", "1.3.0");
 ?>

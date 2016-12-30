@@ -211,6 +211,13 @@ abstract class DB {
 			$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 		} catch (\PDOException $e) {
+            
+            print ROOT . "<br />\n";
+            print BASE . "<br />\n";
+            print STATIC_PATH . "<br />\n";
+            print MEDIA . "<br />\n";
+            print 'HERE: ' . $db['host'] . "<br />\n";
+            
 			throw new Exception ("Could not connect to database! ".$e->getMessage());
 		}
 
@@ -669,19 +676,19 @@ abstract class DB {
         }
         
 		$statement = $this->pdo->prepare($query);
-
+        
 		//debug
 		$this->log_query ($statement, $values);
 		$statement->execute((array)$values);
 
 		$results = array();
-
+        
 		if (is_object($statement)) {
 			while ($newObj = $statement->fetchObject($class)) {
 				$results[] = $newObj;
 			}
 		}
-
+        
 		return $results;
 	}
 
@@ -987,7 +994,7 @@ class Database_PDO extends DB {
 	 */
 	private function set_db_params () {
 		# use config file
-		require( dirname(__FILE__) . '/../../config.php' );
+		require dirname(__FILE__) . '/../../config.php';
 		# set
 		$this->host 	= $db['host'];
 		$this->port 	= $db['port'];

@@ -7,3 +7,5 @@ css/1.2/images/logo/logo.png
 functions/scripts/custom/
 api/_lock.txt
 .remote-sync.json
+bower_components
+node_modules

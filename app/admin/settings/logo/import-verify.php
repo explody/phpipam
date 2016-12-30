@@ -2,13 +2,13 @@
 /*
  * CSV import verify + parse data
  *************************************************/
-
+ 
+ /* get settings */
+ require_once dirname(__FILE__) . '/../../../../config.php';
+ 
 /* get extension */
 $filename = $_FILES['file']['name'];
 $filename = end(explode(".", $filename));
-
-/* get settings */
-include(dirname(__FILE__)."/../../../../config.php");
 
 /* list of permitted file extensions */
 $allowed = array('png');
@@ -24,8 +24,9 @@ if(isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
         echo '{"status":"error","error":"Sorry, file limit is 1Mb"}';
     }
 	//if cannot move
-	else if(!move_uploaded_file($_FILES["file"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'].BASE."css/1.2/images/logo/logo.png")) {
-		echo '{"status":"error", "error":"Cannot move file to upload dir. You can upload file manually to '.$_SERVER['DOCUMENT_ROOT'].BASE.'css/1.2/images/logo/logo.png"}';
+    // TODO: app should not need to write to the static dir. Figure out something better.
+	else if(!move_uploaded_file($_FILES["file"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'].MEDIA."/images/logo/logo.png")) {
+		echo '{"status":"error", "error":"Cannot move file to upload dir. You can upload file manually to '.$_SERVER['DOCUMENT_ROOT'].MEDIA.'/images/logo/logo.png"}';
 		exit;
 	}
 	else {

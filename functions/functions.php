@@ -1,7 +1,7 @@
 <?php
 
 /* @config file ------------------ */
-require( dirname(__FILE__) . '/../config.php' );
+require dirname(__FILE__) . '/../config.php';
 
 /* @http only cookies ------------------- */
 ini_set('session.cookie_httponly', 1);
@@ -19,11 +19,12 @@ if(!function_exists('gettext')) {
 	function _($text) 			{ return $text; }
 }
 
+// BASE is defined in config.php now. Remove shortly.
 // auto-set base if not already defined
-if(!defined('BASE')) {
-	$root = substr($_SERVER['DOCUMENT_ROOT'],-1)=="/" ? substr($_SERVER['DOCUMENT_ROOT'],0,-1) : $_SERVER['DOCUMENT_ROOT'];	// fix for missing / in some environments
-	define('BASE', substr(str_replace($root, "", dirname(__FILE__)),0,-9));
-}
+// if(!defined('BASE')) {
+// 	$root = substr($_SERVER['DOCUMENT_ROOT'],-1)=="/" ? substr($_SERVER['DOCUMENT_ROOT'],0,-1) : $_SERVER['DOCUMENT_ROOT'];	// fix for missing / in some environments
+// 	define('BASE', substr(str_replace($root, "", dirname(__FILE__)),0,-9));
+// }
 
 /* @classes ---------------------- */
 require( dirname(__FILE__) . '/classes/class.Common.php' );		//Class common - common functions
@@ -46,6 +47,8 @@ require( dirname(__FILE__) . '/classes/class.Rackspace.php' );	//Class for Racks
 require( dirname(__FILE__) . '/classes/class.SNMP.php' );	    //Class for SNMP queries
 require( dirname(__FILE__) . '/classes/class.DHCP.php' );	    //Class for DHCP
 require( dirname(__FILE__) . '/classes/class.PaginationLinks.php' );	    //Class for generating pagination links
+require( dirname(__FILE__) . '/classes/class.PagedSearch.php' );
+require( dirname(__FILE__) . '/classes/class.Components.php' );
 
 # save settings to constant
 if($_GET['page']!="install" ) {
@@ -110,7 +113,8 @@ function create_link ($l0 = null, $l1 = null, $l2 = null, $l3 = null, $l4 = null
 	return $link;
 }
 
+// Moved to config.php so we can see the version data everywhere
 /* get version */
-include('version.php');
+// include('version.php');
 
 ?>

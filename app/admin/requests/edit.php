@@ -15,6 +15,7 @@ $Addresses	= new Addresses ($Database);
 $Subnets	= new Subnets ($Database);
 $Tools		= new Tools ($Database);
 $Result 	= new Result ();
+$Components = new Components ();
 
 # verify that user is logged in
 $User->check_user_session();
@@ -245,8 +246,10 @@ $custom_fields = $Tools->fetch_custom_fields('ipaddresses');
 	        elseif($myField['type'] == "date" || $myField['type'] == "datetime") {
 	            // just for first
 	            if($timeP==0) {
-	                print '<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap-datetimepicker.min.css">';
-	                print '<script type="text/javascript" src="js/1.2/bootstrap-datetimepicker.min.js"></script>';
+                    
+                    $Components->css('bootstrap.datetimepicker');
+                    $Components->js('bootstrap.datetimepicker');
+
 	                print '<script type="text/javascript">';
 	                print '$(document).ready(function() {';
 	                //date only

@@ -14,7 +14,9 @@ RewriteEngine on
 # RewriteBase /
 
 # passthroughs
-RewriteRule ^api/.$ - [L]
+RewriteRule ^static/.*$ - [L]
+RewriteRule ^api/.*$ - [L]
+RewriteRule ^saml/.*$ - [L]
 RewriteRule ^index.php$ - [L]
 RewriteRule ^env.php$ - [L]
 RewriteRule ^(css|js|site|test)/.*$ - [L]
@@ -35,11 +37,15 @@ RewriteRule ^logout/dashboard/$ dashboard/ [R]
 RewriteRule ^tools/search/(.*)$ index.php?page=tools&section=search&ip=$1 [L]
 
 # custom per-app rewrites
-RewriteRule ^administration/devices/search/([0-9]+)/([0-9]+)/(.*) index.php?page=administration&section=devices&l=$1&p=$2&search=$3 [L]
-RewriteRule ^administration/devices/search/([0-9]+)/(.*) index.php?page=administration&section=devices&l=$1&search=$2 [L]
-RewriteRule ^administration/devices/search/(.*) index.php?page=administration&section=devices&search=$1 [L]
-RewriteRule ^administration/devices/([0-9]+)/([0-9]+)/ index.php?page=administration&section=devices&l=$1&p=$2 [L]
-RewriteRule ^administration/devices/([0-9]+)/ index.php?page=administration&section=devices&l=$1 [L]
+#RewriteRule ^(.*)/devices/search/([0-9]+)/([0-9]+)/(.*) index.php?page=$1&section=devices&l=$2&p=$3&search=$4 [L]
+RewriteRule ^(.*)/devices/search/([0-9]+)/(.*) index.php?page=$1&section=devices&p=$2&search=$3 [L]
+RewriteRule ^(.*)/devices/search/(.*) index.php?page=$1&section=devices&search=$2 [L]
+# RewriteRule ^(.*)/devices/([0-9]+)/([0-9]+)/$ index.php?page=$1&section=devices&l=$2&p=$3 [L]
+
+# begin redoing rewrites
+RewriteRule ^administration/devices/([0-9]+)/$ index.php?page=tools&section=devices&id=$1 [L]
+RewriteRule ^(.*)/devices/([0-9]+)/$ index.php?page=$1&section=devices&id=$2 [L]
+RewriteRule ^(.*)/devices/([0-9]+)/(.*)/$ index.php?page=$1&section=devices&id=$2&sPage=$3 [L]
 
 # Rewrites
 RewriteRule ^(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/$ index.php?page=$1&section=$2&subnetId=$3&sPage=$4&ipaddrid=$5&tab=$6 [L]

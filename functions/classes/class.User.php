@@ -259,7 +259,7 @@ class User extends Common_functions {
      * @return void
      */
     private function set_session_name () {
-        include( dirname(__FILE__).'/../../config.php' );
+        require dirname(__FILE__) . '/../../config.php';
         $this->sessname = strlen(@$phpsessname)>0 ? $phpsessname : "phpipam";
     }
 

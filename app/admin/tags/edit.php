@@ -12,6 +12,7 @@ $Database 	= new Database_PDO;
 $User 		= new User ($Database);
 $Admin	 	= new Admin ($Database);
 $Result 	= new Result ();
+$Components = new Components ();
 
 # verify that user is logged in
 $User->check_user_session();
@@ -35,10 +36,11 @@ if($_POST['action']!="add") {
 	# null ?
 	$tag===false ? $Result->show("danger", _("Invalid ID"), true, true) : null;
 }
+
+$Components->css('bootstrap.colorpicker');
+$Components->js('bootstrap.colorpicker');
 ?>
 
-<script type="text/javascript" src="js/1.2/bootstrap-colorpicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap-colorpicker.min.css">
 <script type="text/javascript">
 $(function(){
     $('.select-bgcolor').colorpicker();

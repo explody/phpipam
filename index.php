@@ -2,8 +2,11 @@
 ob_start();
 
 /* config */
-if (!file_exists("config.php"))	{ die("<br><hr>-- config.php file missing! Please copy default config file `config.dist.php` to `config.php` and set configuration! --<hr><br>phpipam installation documentation: <a href='http://phpipam.net/documents/installation/'>http://phpipam.net/documents/installation/</a>"); }
-else 							{ require('config.php'); }
+if (!file_exists("config.php"))	{ 
+    die("<br><hr>-- config.php file missing! Please copy default config file `config.dist.php` to `config.php` and set configuration! --<hr><br>phpipam installation documentation: <a href='http://phpipam.net/documents/installation/'>http://phpipam.net/documents/installation/</a>"); 
+} else { 
+    require_once 'config.php'; 
+}
 
 /* site functions */
 require('functions/functions.php');
@@ -76,6 +79,9 @@ else {
 
 	<!-- chrome frame support -->
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+    
+    <!-- app info -->
+    <meta name="application-name" content="phpipam" data-page="<?php print $_GET['page']; ?>" data-section="<?php print $_GET['section']; ?>" />
 
 	<!-- title -->
 	<title><?php print $title; ?></title>
@@ -83,48 +89,59 @@ else {
 	<!-- OpenSearch -->
 	<link rel="search" type="application/opensearchdescription+xml" href="/?page=opensearch" title="Search <?php print $User->settings->siteTitle; ?>">
 
-	<!-- css -->
-	<link rel="shortcut icon" type="image/png" href="css/1.2/images/favicon.png">
-	<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap-custom.css">
-	<link rel="stylesheet" type="text/css" href="css/1.2/font-awesome/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap-switch.min.css">
-    <link rel="stylesheet" type="text/css" href="js/1.2/DataTables/datatables.css">
+    <!-- css -->
+    <link rel="shortcut icon" type="image/png" href="css/1.2/images/favicon.png">
 
-	<!-- js -->
-	<script type="text/javascript" src="js/1.2/jquery-2.1.3.min.js"></script>
-	<script type="text/javascript" src="js/1.2/jclock.jquery.js"></script>
-	<?php if($_GET['page']=="login" || $_GET['page']=="request_ip") { ?>
-	<script type="text/javascript" src="js/1.2/login.js"></script>
-	<?php } ?>
-	<script type="text/javascript" src="js/1.2/magic.js"></script>
-	<script type="text/javascript" src="js/1.2/bootstrap.min.js"></script>
-	<script type="text/javascript" src="js/1.2/jquery-ui-1.10.4.custom.min.js"></script>
-	<script type="text/javascript" src="js/1.2/bootstrap-switch.min.js"></script>
-	<script type="text/javascript" src="js/1.2/DataTables/datatables.js"></script>
-	<script type="text/javascript" src="js/1.2/stickytableheaders/jquery.stickytableheaders.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.switch.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/jquery.datatables.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.custom.css" />
+
+    <!-- js -->
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.ui.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.jclock.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.datatables.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.stickytableheaders.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.switch.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/magic.js"></script>
+    
+<?php
+    if($_GET['page']=="login" || $_GET['page']=="request_ip") {
+	       print '<script type="text/javascript" src="' . MEDIA . '/js/login.js"></script>';
+	} 
+?>
+
 	<script type="text/javascript">
 	$(document).ready(function(){
 	     if ($("[rel=tooltip]").length) { $("[rel=tooltip]").tooltip(); }
 	});
 	</script>
-	<?php if ($User->settings->enableThreshold=="1") { ?>
-	<link rel="stylesheet" type="text/css" href="css/1.2/slider.css">
-	<script type="text/javascript" src="js/1.2/bootstrap-slider.js"></script>
-    <?php }	?>
-	<!--[if lt IE 9]>
-	<script type="text/javascript" src="js/1.2/dieIE.js"></script>
-	<![endif]-->
-    <?php if ($User->settings->enableLocations=="1") { ?>
-    <?php
-    # API key check
-    if(isset($gmaps_api_key)) {
-        $key = strlen($gmaps_api_key)>0 ? "?key=".$gmaps_api_key : "";
-    }
+	<?php 
+    if ($User->settings->enableThreshold=="1") {
+        print '<link rel="stylesheet" type="text/css" href="' . MEDIA . '/css/bootstrap.slider.css" />';
+        print '<script type="text/javascript" src="' . MEDIA . '/js/bootstrap.slider.js"></script>';
+    }	
     ?>
-    <script type="text/javascript" src="https://maps.google.com/maps/api/js<?php print $key; ?>"></script>
-    <script type="text/javascript" src="js/1.2/gmaps.js"></script>
-    <?php }	?>
+    
+	<!--[if lt IE 9]>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/dieIE.js"></script>
+	<![endif]-->
+    
+    <?php 
+    if ($User->settings->enableLocations=="1") { 
+        # API key check
+        if(isset($gmaps_api_key)) {
+            $key = strlen($gmaps_api_key)>0 ? "?key=".$gmaps_api_key : "";
+        }
+    
+        // TODO: add http support to the Components class
+        print '<script type="text/javascript" src="https://maps.google.com/maps/api/js' . $key . '"></script>';
+        print '<script type="text/javascript" src="' . MEDIA . '/js/gmaps.js"></script>';
+    }	
+    ?>
 </head>
 
 <!-- body -->
