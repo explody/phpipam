@@ -1,15 +1,21 @@
 <?php
 
+// Critical, do not change
+require_once dirname(__FILE__) . "/../paths.php";
+
 /* @config file ------------------ */
-require dirname(__FILE__) . '/../config.php';
+require CONFIG;
 
 /* @http only cookies ------------------- */
 ini_set('session.cookie_httponly', 1);
 
 /* @debugging functions ------------------- */
 ini_set('display_errors', 1);
-if (!$debugging) { error_reporting(E_ERROR ^ E_WARNING); }
-else			 { error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT); }
+if (!$debugging) { 
+    error_reporting(E_ERROR ^ E_WARNING); 
+} else { 
+    error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT); 
+}
 
 /**
  * detect missing gettext and fake function

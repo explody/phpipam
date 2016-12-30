@@ -1,11 +1,14 @@
 <?php
 ob_start();
 
+// Critical, do not change
+require dirname(__FILE__) . "/paths.php";
+
 /* config */
-if (!file_exists("config.php"))	{ 
+if (!file_exists(CONFIG))	{ 
     die("<br><hr>-- config.php file missing! Please copy default config file `config.dist.php` to `config.php` and set configuration! --<hr><br>phpipam installation documentation: <a href='http://phpipam.net/documents/installation/'>http://phpipam.net/documents/installation/</a>"); 
 } else { 
-    require_once 'config.php'; 
+    require CONFIG; 
 }
 
 /* site functions */

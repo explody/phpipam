@@ -500,7 +500,7 @@ class Common_functions  {
 	 * @return void
 	 */
 	public function set_debugging () {
-		require dirname(__FILE__) . '/../../config.php';
+		require CONFIG;
 		$this->debugging = $debugging ? true : false;
 	}
 

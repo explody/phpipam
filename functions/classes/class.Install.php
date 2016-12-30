@@ -293,7 +293,7 @@ class Install extends Common_functions {
 	 * @return void
 	 */
 	public function set_debugging () {
-		require dirname(__FILE__) . '/../../config.php';
+		require CONFIG;
 		if($debugging==true) { $this->debugging = true; }
 	}
 
@@ -304,7 +304,7 @@ class Install extends Common_functions {
 	 * @return void
 	 */
 	private function set_db_params () {
-		require dirname(__FILE__) . '/../../config.php';
+		require CONFIG;
 		$this->db = $db;
 	}
 

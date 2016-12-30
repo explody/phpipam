@@ -4,7 +4,7 @@
  *************************************************/
  
  /* get settings */
- require_once dirname(__FILE__) . '/../../../../config.php';
+ require CONFIG;
  
 /* get extension */
 $filename = $_FILES['file']['name'];
