@@ -211,13 +211,6 @@ abstract class DB {
 			$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 		} catch (\PDOException $e) {
-            
-            print ROOT . "<br />\n";
-            print BASE . "<br />\n";
-            print STATIC_PATH . "<br />\n";
-            print MEDIA . "<br />\n";
-            print 'HERE: ' . $db['host'] . "<br />\n";
-            
 			throw new Exception ("Could not connect to database! ".$e->getMessage());
 		}
 
