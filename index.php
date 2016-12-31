@@ -12,7 +12,10 @@ if (!file_exists(CONFIG))	{
 }
 
 /* site functions */
-require('functions/functions.php');
+require 'functions/functions.php';
+
+/* composer */
+require_once VENDOR . '/autoload.php';
 
 # set default page
 if(!isset($_GET['page'])) { $_GET['page'] = "dashboard"; }

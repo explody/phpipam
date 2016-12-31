@@ -1,5 +1,7 @@
 <?php
 
+require_once VENDOR . '/autoload.php';
+
 /**
  * phpIPAM class with common functions, used in all other classes
  *

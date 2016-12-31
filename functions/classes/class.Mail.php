@@ -65,8 +65,8 @@ class phpipam_mail extends Common_functions {
 	 * @return void
 	 */
 	public function initialize_mailer () {
-		# we need phpmailer
-		require_once( dirname(__FILE__).'/../PHPMailer/PHPMailerAutoload.php');
+
+        # phpmailer require moved to autoload in class.Common.php
 
 		# initialize object
 		$this->Php_mailer = new PHPMailer(true);			//localhost by default

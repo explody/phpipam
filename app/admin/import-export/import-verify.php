@@ -69,9 +69,8 @@ if(isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
 	}
 	// grab first row from XLS
 	elseif(strtolower($filetype) == "xls") {
-		# get excel object
-		require_once(dirname(__FILE__) . '/../../../functions/php-excel-reader/excel_reader2.php');				//excel reader 2.21
-		$data = new Spreadsheet_Excel_Reader('upload/data_import.xls', false);
+        // now autoloaded 
+		$data = new PHPExcelReader\SpreadsheetReader('upload/data_import.xls', false);
 		$sheet = 0; $row = 1;
 
 		for($col=1;$col<=$data->colcount($sheet);$col++) {

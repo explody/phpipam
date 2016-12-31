@@ -6,6 +6,9 @@ require_once dirname(__FILE__) . "/../paths.php";
 /* @config file ------------------ */
 require CONFIG;
 
+/* @composer autoload ------------------ */
+require_once VENDOR . '/autoload.php';
+
 /* @http only cookies ------------------- */
 ini_set('session.cookie_httponly', 1);
 
@@ -66,6 +69,11 @@ if($_GET['page']!="install" ) {
 	if ($settings!==false) {
 		define(SETTINGS, json_encode($settings));
 	}
+    
+    if ($settings->dbSessions == 'Yes') {
+        $session = new Zebra_Session($Database->get_connection(), 'al1Q7SDTXhtICkvjIMHohMM');
+    }
+    
 }
 
 /**

@@ -20,6 +20,12 @@ define('APP_ROOT', realpath(dirname(__FILE__)));
 define('SERVER_ROOT', APP_ROOT);
 
 /**
+ *  Path to our composer vendor directory
+ *  Default: APP_ROOT/vendor
+ **/
+define('VENDOR', APP_ROOT . '/vendor');
+
+/**
  *  Full path to the main config file
  *  Default: APP_ROOT/config
  **/
