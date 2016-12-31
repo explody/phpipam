@@ -1028,6 +1028,19 @@ class Database_PDO extends DB {
 		parent::connect();
 		//@$this->pdo->query('SET NAMES \'' . $this->charset . '\';');
 	}
+    
+    /**
+     * Returns the PDO connection
+     *
+     * @access public
+     * @return object
+     */
+    public function get_connection() {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+        return $this->pdo;
+    }
 
 	/**
 	 * makeDsn function
