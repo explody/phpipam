@@ -27,17 +27,22 @@ $device = $Admin->strip_input_tags($_POST);
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['switchId']))			{ $Result->show("danger", _("Invalid ID"), true); }
 
-# available devices set
-foreach($device as $key=>$line) {
-	if (strlen(strstr($key,"section-"))>0) {
-		$key2 = str_replace("section-", "", $key);
-		$temp[] = $key2;
+# Multiselect transitional support 
+if (array_key_exists('sections', $_POST)) {
+    $device['sections'] = sizeof($_POST['sections'])>0 ? implode(";", $_POST['sections']) : null;
+} else {
 
-		unset($device[$key]);
-	}
+    foreach($device as $key=>$line) {
+    	if (strlen(strstr($key,"section-"))>0) {
+    		$key2 = str_replace("section-", "", $key);
+    		$temp[] = $key2;
+    		unset($device[$key]);
+    	}
+    }
+    # glue sections together
+    $device['sections'] = sizeof($temp)>0 ? implode(";", $temp) : null;
+
 }
-# glue sections together
-$device['sections'] = sizeof($temp)>0 ? implode(";", $temp) : null;
 
 # Hostname must be present
 if($device['hostname'] == "") 											{ $Result->show("danger", _('Hostname is mandatory').'!', true); }

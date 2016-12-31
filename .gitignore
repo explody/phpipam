@@ -11,3 +11,4 @@ api/_lock.txt
 .remote-sync.json
 bower_components
 node_modules
+commit-message

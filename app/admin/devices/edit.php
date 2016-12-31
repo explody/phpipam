@@ -228,6 +228,8 @@ $('#switchManagementEdit').change(function() {
 	<tr>
 		<td></td>
 		<td>
+            <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/multi-select.css" />
+            <select multiple="multiple" id="sections" name="sections[]">
 		<?php
 		# select sections
 		$Sections = new Sections ($Database);
@@ -236,14 +238,24 @@ $('#switchManagementEdit').change(function() {
 		# reformat device sections to array
 		$deviceSections = explode(";", $device['sections']);
 		$deviceSections = is_array($deviceSections) ? $deviceSections : array();
-
+        $selectedSections = array();
 		if ($sections!==false) {
 			foreach($sections as $section) {
-				if(in_array($section->id, $deviceSections)) 	{ print '<div class="checkbox" style="margin:0px;"><input type="checkbox" name="section-'. $section->id .'" value="on" checked> '. $section->name .'</div>'. "\n"; }
-				else 											{ print '<div class="checkbox" style="margin:0px;"><input type="checkbox" name="section-'. $section->id .'" value="on">'. $section->name .'</span></div>'. "\n"; }
+				if(in_array($section->id, $deviceSections)) { 
+                    $selectedSections[] = $section->id;
+                } 
+                print '<option value="' . $section->id . '">' . $section->name . '</option>';
 			}
 		}
 		?>
+            </select>
+            <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.multi-select.js"></script>
+            <script type="text/javascript">
+               $('#sections').multiSelect({});
+               $('#sections').multiSelect(
+                   'select', <?php echo "['" . implode("','", $selectedSections) . "']"; ?>
+               );
+            </script>
 		</td>
 	</tr>
 

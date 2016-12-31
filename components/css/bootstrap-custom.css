@@ -2129,35 +2129,33 @@ table#userPrint h4 {
 }
 .popup_w400 {
 	width: 400px;
-
 	left: 50%;
 	margin-left: -200px;
-
 	z-index: 102;
 }
 .popup_w500 {
 	width: 500px;
-
 	left: 50%;
 	margin-left: -250px;
-
 	z-index: 103;
+}
+.popup_w600 {
+	width: 600px;
+	left: 50%;
+	margin-left: -300px;
+	z-index: 104;
 }
 .popup_w700,
 .popup_wmasks {
 	width: 700px;
-
 	left: 50%;
 	margin-left: -350px;
-
-	z-index: 104;
+	z-index: 105;
 }
 .popup_wmasks {
-
 	width: 800px;
 	margin-left: -400px;
-
-	z-index: 105;
+	z-index: 106;
 }
 .popup_wmasks .pContent {
 /* 	max-height: 700px !important; */
@@ -2168,7 +2166,7 @@ table#userPrint h4 {
 	left: 50%;
 	margin-left: -45%;
 
-	z-index: 106;
+	z-index: 107;
 
 	height: 90%;
 	top: 5% !important;

@@ -8,7 +8,7 @@
 $User->check_user_session();
 
 # check
-is_numeric($_GET['subnetId']) ? : $Result->show("danger", _("Invalid ID"), true);
+is_numeric($_GET['id']) ? : $Result->show("danger", _("Invalid ID"), true);
 
 # cast
 $device = (array) $device;
@@ -45,7 +45,9 @@ if ($subnets !== false ) {
 
 			# print
 			print "<tr>";
-			print "	<td class='ip'><a href='".create_link("subnets",$section['id'])."'>".$section['description']."</a></td>";
+			print "	<td class='ip'><a href='".create_link("subnets",$section['id'])."'>"; 
+            print  (empty($section['name']) ? $section['description'] : $section['name']);
+            print "</a></td>";
 			print "	<td class='ip'><a href='".create_link("subnets",$section['id'],$s->id)."'>".$Subnets->transform_to_dotted($s->subnet)."/".$s->mask."</a></td>";
 			print "	<td class='port'>".$s->description."</td>";
 			print "	<td class='description'>".@$vlan->number ." ".@$vlan->description."</td>";
