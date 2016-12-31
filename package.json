@@ -1,0 +1,38 @@
+{
+  "name": "phpipam",
+  "version": "1.3.0",
+  "config": {
+      "static": "static" 
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-less": "^1.4.0",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-css-url-replace": "^0.2.7",
+    "grunt-font-awesome-vars": "^1.0.1",
+    "jshint-stylish": "latest",
+    "less-plugin-clean-css": "^1.5.1"
+  },
+  "dependencies": {
+    "grunt": "^1.0.1"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/explody/phpipam.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/explody/phpipam/issues"
+  },
+  "homepage": "https://github.com/explody/phpipam#readme",
+  "description": ""
+}
