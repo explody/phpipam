@@ -93,7 +93,7 @@ else {
 	<link rel="search" type="application/opensearchdescription+xml" href="/?page=opensearch" title="Search <?php print $User->settings->siteTitle; ?>">
 
     <!-- css -->
-    <link rel="shortcut icon" type="image/png" href="css/1.2/images/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="<?php print MEDIA; ?>/images/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.switch.css" />
@@ -184,8 +184,8 @@ else {
     <!-- logo -->
 	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
     <?php
-	if(file_exists( dirname(__FILE__)."/css/1.2/images/logo/logo.png")) {
-    	print "<img style='width:220px;margin:10px;margin-top:20px;' src='css/1.2/images/logo/logo.png'>";
+	if(file_exists( dirname(__FILE__) . MEDIA . "/images/logo/logo.png")) {
+    	print '<img style="width:220px;margin:10px;margin-top:20px;" alt="phpipam" src="' . MEDIA . '/images/logo/logo.png">';
 	}
     ?>
 	</div>

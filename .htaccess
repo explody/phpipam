@@ -1,4 +1,4 @@
-CGIPassAuth On
+#CGIPassAuth On
 
 <IfModule mod_rewrite.c>
 

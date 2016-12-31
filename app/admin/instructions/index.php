@@ -52,7 +52,7 @@ if($_GET['subnetId']=="1" || $_GET['subnetId']="2")  {
     	<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
     	<input type="hidden" name="id" value="<?php print $_GET['subnetId']; ?>">
 
-    	<script src="js/1.2/ckeditor/ckeditor.js"></script>
+    	<script src="<?php print MEDIA; ?>/ckeditor/ckeditor.js"></script>
     	<script>
         	CKEDITOR.replace( 'instructions', {
     	    	uiColor: '#f9f9f9',

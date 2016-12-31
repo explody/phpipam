@@ -111,22 +111,22 @@ if (!empty($_SERVER[$user_variable])) {
 	<title><?php print $User->settings->siteTitle; ?> :: login</title>
 
 	<!-- css -->
-	<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap-custom.css">
-	<link rel="stylesheet" type="text/css" href="css/1.2/font-awesome/font-awesome.min.css">
-	<link rel="shortcut icon" href="css/1.2/images/favicon.png">
+	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.custom.css" />
+	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/font-awesome.css" />
+	<link rel="shortcut icon" href="<?php print MEDIA; ?>/images/favicon.png">
 
 	<!-- js -->
-	<script type="text/javascript" src="js/1.2/jquery-2.1.3.min.js"></script>
-	<script type="text/javascript" src="js/1.2/login.js"></script>
-	<script type="text/javascript" src="js/1.2/bootstrap.min.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/login.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
 	     if ($("[rel=tooltip]").length) { $("[rel=tooltip]").tooltip(); }
 	});
 	</script>
 	<!--[if lt IE 9]>
-	<script type="text/javascript" src="js/1.2/dieIE.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/dieIE.js"></script>
 	<![endif]-->
 </head>
 
@@ -157,8 +157,8 @@ if (!empty($_SERVER[$user_variable])) {
     <!-- logo -->
 	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
     <?php
-	if(file_exists( "css/1.2/images/logo/logo.png")) {
-    	print "<img style='width:220px;margin:10px;margin-top:20px;' src='css/1.2/images/logo/logo.png'>";
+	if(file_exists( MEDIA . "/images/logo/logo.png")) {
+        print '<img style="width:220px;margin:10px;margin-top:20px;" alt="phpipam" src="' . MEDIA . '/images/logo/logo.png">';
 	}
     ?>
 	</div>

@@ -21,15 +21,15 @@ require('../functions/functions.php')
 	<title>phpIPAM installation error</title>
 
 	<!-- css -->
-	<link rel="stylesheet" type="text/css" href="../css/1.2/bootstrap/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="../css/1.2/bootstrap/bootstrap-custom.css">
-	<link rel="shortcut icon" href="../css/1.2/images/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/bootstrap-custom.css">
+	<link rel="shortcut icon" href="<?php print MEDIA; ?>/images/favicon.ico">
 
 	<!--[if IE 6]>
-	<script type="text/javascript" src="js/1.2/dieIE.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/dieIE.js"></script>
 	<![endif]-->
 	<!--[if IE 7]>
-	<script type="text/javascript" src="js/1.2/dieIE.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/dieIE.js"></script>
 	<![endif]-->
 </head>
 

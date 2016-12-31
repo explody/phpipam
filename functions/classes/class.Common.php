@@ -1187,8 +1187,8 @@ class Common_functions  {
         elseif($field['type'] == "date" || $field['type'] == "datetime") {
         	// just for first
         	if($timepicker_index==0) {
-        		$html[] =  '<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap-datetimepicker.min.css">';
-        		$html[] =  '<script type="text/javascript" src="js/1.2/bootstrap-datetimepicker.min.js"></script>';
+        		$html[] =  '<link rel="stylesheet" type="text/css" href="' . MEDIA . '/css/bootstrap.datetimepicker.css">';
+        		$html[] =  '<script type="text/javascript" src="' . MEDIA . '/js/bootstrap.datetimepicker.js"></script>';
         		$html[] =  '<script type="text/javascript">';
         		$html[] =  '$(document).ready(function() {';
         		//date only

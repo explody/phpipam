@@ -74,9 +74,9 @@ $(document).ready(function() {
 
 
 <!-- charts -->
-<script language="javascript" type="text/javascript" src="js/1.2/flot/jquery.flot.js"></script>
-<script language="javascript" type="text/javascript" src="js/1.2/flot/jquery.flot.categories.js"></script>
-<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="js/1.2/flot/excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.flot.categories.js"></script>
+<!--[if lte IE 8]><script language="javascript" type="text/javascript" src="<?php print MEDIA; ?>/js/excanvas.js"></script><![endif]-->
 
 
 <div class="welcome" style="text-align:right">

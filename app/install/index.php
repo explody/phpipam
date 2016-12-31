@@ -73,7 +73,7 @@ if($Install->check_db_connection(false) && $Install->check_table("vrf", false)) 
 	});
 	</script>
 	<!--[if lt IE 9]>
-	<script type="text/javascript" src="js/1.2/dieIE.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/dieIE.js"></script>
 	<![endif]-->
 </head>
 
