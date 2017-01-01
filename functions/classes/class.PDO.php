@@ -581,17 +581,23 @@ abstract class DB {
 	public function getObjects($tableName, $sortField = 'id', $sortAsc = true, $numRecords = 0, $offset = 0, $class = 'stdClass') {
 		if (!$this->isConnected()) $this->connect();
 
-		$sortStr = '';
-		if (!$sortAsc) {
-			$sortStr = 'DESC';
-		}
-
-		// we should escape all of the params that we need to
-		$tableName = $this->escape($tableName);
-		$sortField = $this->escape($sortField);
+        $tableName = $this->escape($tableName);
         
-        // The base query. We're sorting by default so pass it through sortQuery() to append sorting 
-        $query = $this->sortQuery('SELECT * FROM `'.$tableName.'`', $sortField, $sortStr);
+        // Sort by default but allow a sortField of 'false' to skip sorting entirely
+        if ($sortField) {
+    		$sortStr = '';
+    		if (!$sortAsc) {
+    			$sortStr = 'DESC';
+    		}
+
+    		// we should escape all of the params that we need to
+    		$sortField = $this->escape($sortField);
+            
+            // The base query. We're sorting by default so pass it through sortQuery() to append sorting 
+            $query = $this->sortQuery('SELECT * FROM `'.$tableName.'`', $sortField, $sortStr);
+        } else {
+            $query = 'SELECT * FROM `'.$tableName.'`';
+        }
         
         // If we specify either the number of records to return or an offset, pass it through pageQuery to append the limits
         if ($numRecords > 0 || $offset > 0) {
@@ -673,7 +679,7 @@ abstract class DB {
 		//debug
 		$this->log_query ($statement, $values);
 		$statement->execute((array)$values);
-
+        print $statement->debugDumpParams();
 		$results = array();
         
 		if (is_object($statement)) {

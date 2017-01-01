@@ -148,10 +148,17 @@ class Common_functions  {
 
 
 
-
-
-
-
+    /**
+     * For use with usort as the callable. Will sort array of objects on $prop
+     * 
+     * @access public
+     * @param string $prop object property on which to sort
+     */
+     public static function sort_objs($prop) {
+         return function ($a, $b) use ($prop) {
+             return strnatcmp($a->$prop, $b->$prop);
+         };
+     }
 
 	/**
 	 *	@general fetch methods
@@ -730,7 +737,7 @@ class Common_functions  {
 	    // return hms
 	    return $hms;
 	}
-
+     
 	/**
 	 * Shortens text to max chars
 	 *

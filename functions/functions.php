@@ -58,6 +58,7 @@ require( dirname(__FILE__) . '/classes/class.DHCP.php' );	    //Class for DHCP
 require( dirname(__FILE__) . '/classes/class.PaginationLinks.php' );	    //Class for generating pagination links
 require( dirname(__FILE__) . '/classes/class.PagedSearch.php' );
 require( dirname(__FILE__) . '/classes/class.Components.php' );
+require( dirname(__FILE__) . '/classes/class.Devices.php' );
 
 # save settings to constant
 if($_GET['page']!="install" ) {
