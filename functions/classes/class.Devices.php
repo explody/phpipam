@@ -45,6 +45,14 @@ class Devices extends Tools {
      * @access private
      */
     private $tbl = 'devices';
+    
+    /**
+     * Device types table name
+     *
+     * @var string
+     * @access private
+     */
+    private $typetbl = 'deviceTypes';
       
     /**
      * constructor
@@ -68,7 +76,7 @@ class Devices extends Tools {
 	 * @return array|bool
 	 */
     private function _all($sort) {
-        return $this->fetch_all_objects($tbl, $sort);
+        return $this->fetch_all_objects($this->tbl, $sort);
     }
     
     /**
@@ -135,7 +143,7 @@ class Devices extends Tools {
      * @param string $groupby Optional object property name to use for grouping the results (see _group())
 	 * @return array|bool
 	 */
-    private function _byquery($query, $values, $sort, $groupby) {
+    private function _byquery($query, $values = [], $sort = false, $groupby = false) {
         $devs = $this->Database->getObjectsQuery($query,$values,$sort);
         if ($groupby) {
             $devs = $this->_group($devs, $groupby, $sort);
@@ -152,7 +160,7 @@ class Devices extends Tools {
 	 * @return array
 	 */
     public function all($sort = false, $groupby = false){
-        $sort = ($sort ? $sort : $defsort);
+        $sort = ($sort ? $sort : $this->defsort);
         $devs = $this->_all($sort);
         
         if ($groupby) {
@@ -173,7 +181,7 @@ class Devices extends Tools {
 	 * @return array
 	 */
     public function for_section($sid, $sort = NULL, $groupby = false) {
-        $sort = ($sort === NULL ? $defsort : $sort);
+        $sort = ($sort === NULL ? $this->defsort : $sort);
         // Put the sid directly into the query because parameterizing the regex query does not appear to work
         $q = 'SELECT * from devices where sections regexp "(;*)' . $sid . '(;*)"';
         return $this->_byquery($q,[],$sort,$groupby);
@@ -189,11 +197,37 @@ class Devices extends Tools {
 	 * @return array
 	 */
     public function for_location($lid, $sort = NULL, $groupby = false) {
-        $sort = ($sort === NULL ? $defsort : $sort);
+        $sort = ($sort === NULL ? $this->defsort : $sort);
         $q = 'SELECT * from devices where location=?';
         return $this->_byquery($q,[$lid],$sort,$groupby);
     }
-
+    
+    /**
+	 * Fetch all device types
+	 *
+	 * @access public
+	 * @return array Device type objects
+	 */
+    public function types($sort='tname') {
+        return $this->fetch_all_objects($this->typetbl,$sort);
+    }
+    
+    /**
+	 * Fetch device type name by ID
+	 *
+	 * @access public
+     * @param int $tid Device type ID
+	 * @return string|bool Device type name or false if no result
+	 */
+    public function type_name($tid) {
+        $q = "SELECT tname from `" . $this->typetbl . "` where tid=?";
+        $ts = $this->_byquery($q,[$tid]);
+        if (empty($ts)) {
+            return false;
+        } else {
+            return $ts[0]->tname;
+        }
+    }
 }
 
 

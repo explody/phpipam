@@ -679,7 +679,7 @@ abstract class DB {
 		//debug
 		$this->log_query ($statement, $values);
 		$statement->execute((array)$values);
-        print $statement->debugDumpParams();
+
 		$results = array();
         
 		if (is_object($statement)) {
