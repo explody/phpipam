@@ -322,13 +322,6 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
         // TODO: proper foreign keys. Consistent obect model
 
         if ($User->settings->devicegrouping) {
-            $opts = Tools::generate_options($devs, 'id', 'hostname', 
-                                             array('id' => $address['switch']));
-            foreach ($opts as $o) {
-                print "$o\n";
-            }
-        } else {
-            
             // the group keys will be IDs. Replace them with readable names
             foreach(array_keys($devs) as $gid) {
               if (array_key_exists($User->settings->devicegroupfield, Devices::$extRefs)) {
@@ -353,6 +346,14 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
                     print "    $o\n";
                 }
                 print "</optgroup>";
+            }
+            
+        } else {
+            
+            $opts = Tools::generate_options($devs, 'id', 'hostname', 
+                                             array('id' => $address['switch']));
+            foreach ($opts as $o) {
+                print "$o\n";
             }
         }
         
