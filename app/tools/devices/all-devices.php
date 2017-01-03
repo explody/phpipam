@@ -19,10 +19,10 @@ $table_name = 'devices';
 $s = new PagedSearch($Database, $table_name, $default_search_fields, "hostname", true);
 
 # fetch all Device types and reindex
-$device_types = $Tools->fetch_all_objects("deviceTypes", "tid");
+$device_types = $Tools->fetch_all_objects("deviceTypes", "id");
 if ($device_types !== false) {
   foreach ($device_types as $dt) {
-      $device_types_i[$dt->tid] = $dt;
+      $device_types_i[$dt->id] = $dt;
   }
 }
 
@@ -179,7 +179,7 @@ else {
     	// reindex types
     	if (isset($device_types)) {
     		foreach($device_types as $dt) {
-    			$device_types_indexed[$dt->tid] = $dt;
+    			$device_types_indexed[$dt->id] = $dt;
     		}
     	}
 
@@ -190,7 +190,7 @@ else {
     	print "	<td>". $device['ip_addr'] .'</td>'. "\n";
     	print '	<td><span class="badge badge1 badge5">'. $cnt .'</span> '._('Objects').'</td>'. "\n";
         print '	<td class="description">'. $device['description'] .'</td>'. "\n";
-    	print '	<td class="hidden-sm">'. $device_types_indexed[$device['type']]->tname .'</td>'. "\n";
+    	print '	<td class="hidden-sm">'. $device_types_indexed[$device['type']]->name .'</td>'. "\n";
         print '	<td>'. $device['version'] .'</td>'. "\n";
         
         //custom
