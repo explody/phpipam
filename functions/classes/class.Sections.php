@@ -292,8 +292,10 @@ class Sections extends Common_functions {
 	 * @return array
 	 */
 	public function fetch_subsections ($sectionId) {
-		try { $subsections = $this->Database->getObjectsQuery("SELECT * FROM `sections` where `masterSection` = ?;", array($sectionId)); }
-		catch (Exception $e) {
+		try { 
+            $subsections = $this->Database->getObjectsQuery("SELECT * FROM `sections` where `masterSection` = ?", 
+                                                            array($sectionId), 'name');
+        } catch (Exception $e) {
 			$this->Result->show("danger", _("Error: ").$e->getMessage());
 			return false;
 		}
