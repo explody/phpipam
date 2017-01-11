@@ -39,21 +39,28 @@ foreach($_POST as $key=>$line) {
 }
 $_POST['namesrv1'] = isset($all_nameservers) ? implode(";", $all_nameservers) : "";
 
-// set sections
-foreach($_POST as $key=>$line) {
-	if (strlen(strstr($key,"section-"))>0) {
-		$key2 = str_replace("section-", "", $key);
-		$temp[] = $key2;
-		unset($_POST[$key]);
-	}
-}
-# glue sections together
-$_POST['permissions'] = sizeof($temp)>0 ? implode(";", $temp) : null;
+$sections = '';
 
+# Multiselect transitional support 
+if (array_key_exists('sections', $_POST)) {
+    $sections = sizeof($_POST['sections'])>0 ? implode(";", $_POST['sections']) : null;
+} else {
+    
+    foreach($_POST as $key=>$line) {
+    	if (strlen(strstr($key,"section-"))>0) {
+    		$key2 = str_replace("section-", "", $key);
+    		$temp[] = $key2;
+    		unset($_POST[$key]);
+    	}
+    }
+    # glue sections together
+    $sections = sizeof($temp)>0 ? implode(";", $temp) : null;
+    
+}
 # set update array
 $values = array("id"=>@$_POST['nameserverId'],
 				"name"=>$_POST['name'],
-				"permissions"=>$_POST['permissions'],
+				"permissions"=>$sections,
 				"namesrv1"=>$_POST['namesrv1'],
 				"description"=>$_POST['description']
 				);

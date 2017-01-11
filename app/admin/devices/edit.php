@@ -228,12 +228,11 @@ $('#switchManagementEdit').change(function() {
 	<tr>
 		<td></td>
 		<td>
-            <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/multi-select.css" />
             <select multiple="multiple" id="sections" name="sections[]">
 		<?php
 		# select sections
 		$Sections = new Sections ($Database);
-		$sections = $Sections->fetch_all_sections();
+		$sections = $Sections->fetch_all_sections('name');
 
 		# reformat device sections to array
 		$deviceSections = explode(";", $device['sections']);

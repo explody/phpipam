@@ -102,6 +102,7 @@ else {
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.switch.css" />
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/font-awesome.css" />
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/jquery.datatables.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/multi-select.css" />
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.custom.css" />
 
     <!-- js -->

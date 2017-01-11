@@ -2591,7 +2591,7 @@ $(document).on("click", "#moveVLANsubmit", function() {
 /* ---- VLAN domains ----- */
 //load edit form
 $('.editVLANdomain').click(function() {
-	open_popup("400", "app/admin/vlans/edit-domain.php", {id:$(this).attr('data-domainid'), action:$(this).attr('data-action')} );
+	open_popup("500", "app/admin/vlans/edit-domain.php", {id:$(this).attr('data-domainid'), action:$(this).attr('data-action')} );
 });
 //submit form
 $(document).on("click", "#editVLANdomainsubmit", function() {
@@ -2602,7 +2602,7 @@ $(document).on("click", "#editVLANdomainsubmit", function() {
 /* ---- VRF ----- */
 //load edit form
 $('.vrfManagement').click(function() {
-	open_popup("400", "app/admin/vrfs/edit.php", {vrfId:$(this).attr('data-vrfid'), action:$(this).attr('data-action')} );
+	open_popup("500", "app/admin/vrfs/edit.php", {vrfId:$(this).attr('data-vrfid'), action:$(this).attr('data-action')} );
 });
 //submit form
 $(document).on("click", "#editVRF", function() {

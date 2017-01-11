@@ -109,20 +109,34 @@ $nameservers['namesrv1'] = !isset($nameservers) ? array(" ") : explode(";", $nam
 	<tr>
 		<td style="vertical-align: top !important"><?php print _('Sections to display nameserver set in'); ?>:</td>
 		<td>
+            <select multiple="multiple" id="sections" name="sections[]">
 		<?php
+        # TODO: DRY, see admin/devices/edit.php
 		# select sections
-		$sections = $Sections->fetch_all_sections();
+		$sections = $Sections->fetch_all_sections('name');
+        
 		# reformat domains sections to array
 		$nameservers_sections = explode(";", @$nameservers['permissions']);
 		$nameservers_sections = is_array($nameservers_sections) ? $nameservers_sections : array();
+        $selectedSections = array();
 		// loop
 		if ($sections !== false) {
 			foreach($sections as $section) {
-				if(in_array($section->id, @$nameservers_sections)) 	{ print '<div class="checkbox" style="margin:0px;"><input type="checkbox" name="section-'. $section->id .'" value="on" checked> '. $section->name .'</div>'. "\n"; }
-				else 												{ print '<div class="checkbox" style="margin:0px;"><input type="checkbox" name="section-'. $section->id .'" value="on">'. $section->name .'</span></div>'. "\n"; }
+                if(in_array($section->id, $nameservers_sections)) { 
+                    $selectedSections[] = $section->id;
+                } 
+                print '<option value="' . $section->id . '">' . $section->name . '</option>';
 			}
 		}
 		?>
+            </select>
+            <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.multi-select.js"></script>
+            <script type="text/javascript">
+               $('#sections').multiSelect({});
+               $('#sections').multiSelect(
+                   'select', <?php echo "['" . implode("','", $selectedSections) . "']"; ?>
+               );
+            </script>
 		</td>
 		<td></td>
 	</tr>

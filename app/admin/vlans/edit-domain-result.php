@@ -31,27 +31,32 @@ if($_POST['action']!="add" && !is_numeric($_POST['id']))				{ $Result->show("dan
 if(@$_POST['name'] == "") 												{ $Result->show("danger", _('Name is mandatory').'!', true); }
 
 
-// set sections
-if(@$_POST['id']!=1) {
-	foreach($_POST as $key=>$line) {
-		if (strlen(strstr($key,"section-"))>0) {
-			$key2 = str_replace("section-", "", $key);
-			$temp[] = $key2;
-			unset($_POST[$key]);
-		}
-	}
-	# glue sections together
-	$_POST['permissions'] = sizeof($temp)>0 ? implode(";", $temp) : null;
-}
-else {
-	$_POST['permissions'] = "";
+# TODO: DRY - most forms that use multi-select.
+
+$sections = '';
+
+# Multiselect transitional support 
+if (array_key_exists('sections', $_POST)) {
+    $sections = sizeof($_POST['sections'])>0 ? implode(";", $_POST['sections']) : null;
+} else {
+    
+    foreach($_POST as $key=>$line) {
+    	if (strlen(strstr($key,"section-"))>0) {
+    		$key2 = str_replace("section-", "", $key);
+    		$temp[] = $key2;
+    		unset($_POST[$key]);
+    	}
+    }
+    # glue sections together
+    $sections = sizeof($temp)>0 ? implode(";", $temp) : null;
+    
 }
 
 # set update values
 $values = array("id"=>@$_POST['id'],
 				"name"=>@$_POST['name'],
 				"description"=>@$_POST['description'],
-				"permissions"=>@$_POST['permissions']
+				"permissions"=>$sections,
 				);
 
 # update domain

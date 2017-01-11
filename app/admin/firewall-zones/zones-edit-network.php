@@ -9,13 +9,13 @@
 require( dirname(__FILE__) . '/../../../functions/functions.php');
 
 # initialize classes
-$Database = new Database_PDO;
-$User 	  = new User ($Database);
-$Admin 	  = new Admin($Database);
-$Subnets  = new Subnets ($Database);
-$Sections = new Sections ($Database);
-$Result   = new Result ();
-$Zones    = new FirewallZones($Database);
+$Database   = new Database_PDO;
+$User 	    = new User ($Database);
+$Subnets    = new Subnets ($Database);
+$Sections   = new Sections ($Database);
+$Result     = new Result ();
+$Zones      = new FirewallZones($Database);
+$Components = new Components ($Tools);
 
 # validate session parameters
 $User->check_user_session();
@@ -33,6 +33,12 @@ if ($_POST['id'] && $_POST['subnetId'] != '') {
 $sections = $Sections->fetch_all_sections();
 
 ?>
+
+<!-- select2 -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+
+<!-- common jquery plugins -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -81,16 +87,26 @@ $(document).ready(function() {
 			<?php print _('Section'); ?>
 		</td>
 		<td>
-			<select name="sectionId" class="firewallZoneSection form-control input-sm input-w-auto input-max-200">
+			<select name="sectionId" id="fw-zone-section-select" class="select2">
 			<?php
 			if(sizeof($sections)>1){
 				print '<option value="0">'._('No section selected').'</option>';
 			}
-			foreach ($sections as $section) {
-				if($section->description) 	{	print '<option value="'.$section->id.'">'. $section->name.' ('.$section->description.')</option>'; }
-				else 						{	print '<option value="'.$section->id.'">'. $section->name.'</option>'; }}
+            $Components->render_options($sections, 
+                  'id', 
+                  ['name','description'], 
+                   array(
+                       'sort' => true,
+                       'group' => false,
+                       'selected' => array('id' => $_POST['sectionId']),
+                   )
+               );
 			?>
 			</select>
+            <?php
+            Components::render_select2_js('#fw-zone-section-select',
+                                          ['templateResult' => '$(this).s2boldDescTwoLine']);
+            ?>
 		</td>
 	</tr>
 	<tr>
@@ -103,19 +119,23 @@ $(document).ready(function() {
 			if ($firewallZone->sectionId) {
 				print '<td><div class="sectionSubnets">';
 				print $Subnets->print_mastersubnet_dropdown_menu($firewallZone->sectionId,$firewallZone->subnetId);
-				print '</div></td>';
+				print '</div>';
 			} else {
 				# if there is only one section, fetch the subnets of that section
 				if(sizeof($sections)<=1){
 					print '<td>';
 					print $Subnets->print_mastersubnet_dropdown_menu($sections[0]->id,$firewallZone->subnetId);
-					print '</td>';
+
 				} else {
 					# if there are more than one section, use ajax to fetch the subnets of the selected section
-					print '<td><div class="sectionSubnets"></div></td>';
+					print '<td><div class="sectionSubnets"></div>';
 				}
 			}
+            
+            Components::render_select2_js('#master-select',
+                                          ['templateResult' => '$(this).s2oneLine']);
 			?>
+        </td>
 	</tr>
 
 <?php } ?>
