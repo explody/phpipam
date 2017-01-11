@@ -111,7 +111,7 @@ $(document).ready(function(){
         	<tr>
         		<td><?php print _('Device'); ?></td>
         		<td>
-        			<select name="deviceid" id="r-device-select" class="form-control input-sm input-w-auto">
+        			<select name="deviceid" id="r-device-select" class="select2">
                         <option></options>
         			<?php
                     $Components->render_options($devices, 

@@ -239,7 +239,7 @@ $('.slider').slider().on('slide', function(ev){
     <tr>
         <td class="middle"><?php print _('Section'); ?></td>
         <td>
-        	<select name="sectionIdNew" id="sn-section-select" class="form-control input-sm input-w-auto">
+        	<select name="sectionIdNew" id="sn-section-select" class="select2">
                 <option value="0"><?php print _('None'); ?></option>
             	<?php
             	if($sections!==false) {
@@ -278,7 +278,7 @@ $('.slider').slider().on('slide', function(ev){
 	<tr>
 		<td class="middle"><?php print _('Device'); ?></td>
 		<td id="deviceDropdown">
-            <select name="switch" id="sn-device-select" class="form-control input-sm input-w-auto" data-live-search="true" >
+            <select name="switch" id="sn-device-select" class="select2" data-live-search="true" >
             <option disabled selected hidden value="0"><?php print _('Select device'); ?></option>
             <option value="0"><?php print _('None'); ?></option>
     

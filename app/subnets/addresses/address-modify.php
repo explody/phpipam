@@ -311,7 +311,7 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
         <tr>
             <td><?php print _('Device'); ?></td>
             <td>
-                <select name="switch" id="ip-device-select" class="form-control input-sm input-w-auto" data-live-search="true" >
+                <select name="switch" id="ip-device-select" class="select2" data-live-search="true" >
                 <option disabled selected hidden value="0"><?php print _('Select device'); ?></option>
                 <option value="0"><?php print _('None'); ?></option>
         
@@ -355,7 +355,7 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
     <tr>
         <td><?php print _('Location'); ?></td>
         <td>
-            <select name="location_item" id="location-select" class="form-control input-sm input-w-auto">
+            <select name="location_item" id="location-select" class="select2">
                 <option value="0"><?php print _("None"); ?></option>
                 <?php
                 if($locations!==false) {

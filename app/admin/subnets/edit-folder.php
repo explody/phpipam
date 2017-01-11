@@ -95,19 +95,27 @@ $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : fals
     <tr>
         <td class="middle"><?php print _('Section'); ?></td>
         <td>
-        	<select name="sectionIdNew" class="form-control input-sm input-w-auto">
+            <select name="sectionIdNew" id="sn-section-select" class="select2">
+                <option value="0"><?php print _('None'); ?></option>
             	<?php
-	            if($sections!==false) {
-	            	foreach($sections as $section) {
-	            		/* selected? */
-	            		if($_POST['sectionId'] == $section->id)  { print '<option value="'. $section->id .'" selected>'. $section->name .'</option>'. "\n"; }
-	            		else 									 { print '<option value="'. $section->id .'">'. $section->name .'</option>'. "\n"; }
-	            	}
-            	}
-            	?>
-            </select>
+            	if($sections!==false) {
 
+                    $Components->render_options($sections, 
+                          'id', 
+                          ['name','description'], 
+                           array(
+                               'sort' => true,
+                               'group' => false,
+                               'selected' => array('id' => $_POST['sectionId']),
+                           )
+                       );
+            	}
+            ?>
         	</select>
+            <?php
+            Components::render_select2_js('#sn-section-select',
+                                          ['templateResult' => '$(this).s2boldDescTwoLine']);
+            ?>
         </td>
         <td class="info2"><?php print _('Move to different section'); ?></td>
     </tr>
