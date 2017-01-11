@@ -13,6 +13,7 @@ $User 		= new User ($Database);
 $Admin	 	= new Admin ($Database, false);
 $Tools	 	= new Tools ($Database);
 $Result 	= new Result ();
+$Components = new Components ($Tools);
 
 # verify that user is logged in
 $User->check_user_session();
@@ -62,6 +63,11 @@ $custom = $Tools->fetch_custom_fields('pstnPrefixes');
 
 ?>
 
+<!-- select2 -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+
+<!-- common jquery plugins -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
 
 <!-- header -->
 <div class="pHeader"><?php print ucwords(_("$_POST[action]")); ?> <?php print _('PSTN prefix'); ?></div>
@@ -164,21 +170,33 @@ $custom = $Tools->fetch_custom_fields('pstnPrefixes');
     	<tr>
     		<th><?php print _('Device'); ?></th>
     		<td id="deviceDropdown">
-    			<select name="deviceId" class="form-control input-sm input-w-auto">
+    			<select name="deviceId" id="pstn-device-select" class="select2">
     				<option value="0"><?php print _('None'); ?></option>
     				<?php
+                    // TODO: better performance for very large <select> lists 
     				// fetch all devices
     				$devices = $Admin->fetch_all_objects("devices");
     				// loop
     				if ($devices!==false) {
-    					foreach($devices as $device) {
-							//if same
-							if($device->id == $prefix->deviceId) 	{ print '<option value="'. $device->id .'" selected>'. $device->hostname .'</option>'. "\n"; }
-							else 									{ print '<option value="'. $device->id .'">'. $device->hostname .'</option>'. "\n";			 }
-    					}
+                        $Components->render_options($devices, 
+                              'id', 
+                              'hostname', 
+                               array(
+                                   'group' => $User->settings->devicegrouping,
+                                   'groupby' => $User->settings->devicegroupfield,
+                                   'resolveGroupKey' => true,
+                                   'gsort' => true,
+                                   'extFields' => Devices::$extRefs,
+                                   'selected' => array('id' => $prefix->deviceId),
+                               )
+                           );
     				}
     				?>
     			</select>
+                <?php
+                Components::render_select2_js('#pstn-device-select',
+                                              ['templateResult' => '$(this).s2oneLine']);
+                ?>
     		</td>
     		<td class="info2"><?php print _('Select device where prefix is located'); ?></td>
         </tr>

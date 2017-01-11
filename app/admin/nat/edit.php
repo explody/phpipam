@@ -13,6 +13,7 @@ $User 		= new User ($Database);
 $Admin	 	= new Admin ($Database);
 $Tools	 	= new Tools ($Database);
 $Result 	= new Result ();
+$Components = new Components ($Tools);
 
 # verify that user is logged in
 $User->check_user_session();
@@ -34,6 +35,11 @@ $readonly = $_POST['action']=="delete" ? "readonly" : "";
 $link = $readonly ? false : true;
 ?>
 
+<!-- select2 -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+
+<!-- common jquery plugins -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
 
 <!-- header -->
 <div class="pHeader"><?php print ucwords(_("$_POST[action]")); ?> <?php print _('NAT'); ?></div>
@@ -87,17 +93,29 @@ $link = $readonly ? false : true;
             	<?php
                 $devices = $Tools->fetch_all_objects ("devices", "hostname");
                 ?>
-            	<select name="device" class="form-control input-sm input-w-auto" <?php print $readonly; ?>>
+            	<select name="device" id="nat-device-select" class="select2" <?php print $readonly; ?>>
         	    <option value="0"><?php print _('None'); ?></option>
                 <?php
                 if($devices !== false) {
-                    foreach ($devices as $d) {
-                        $selected = $nat->device==$d->id ? "selected" : "";
-                        print "<option value='$d->id' $selected>$d->hostname</option>";
-                    }
+                    $Components->render_options($devices, 
+                          'id', 
+                          'hostname', 
+                           array(
+                               'group' => $User->settings->devicegrouping,
+                               'groupby' => $User->settings->devicegroupfield,
+                               'resolveGroupKey' => true,
+                               'gsort' => true,
+                               'extFields' => Devices::$extRefs,
+                               'selected' => array('id' => $prefix->deviceId)
+                           )
+                       );
                 }
                 ?>
             	</select>
+                <?php
+                Components::render_select2_js('#nat-device-select',
+                                              ['templateResult' => '$(this).s2oneLine']);
+                ?>
         	</td>
         	<td>
             	<span class="text-muted"><?php print _("Select Device"); ?></span>

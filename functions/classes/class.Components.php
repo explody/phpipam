@@ -15,33 +15,175 @@ class Components {
     private $media_dir  = "../../static";
     
     /**
-	 * __construct function.
-	 *
-	 * @access public
-	 * @param version Optional version. Defaults to VERSION
-	 */
-	public function __construct($version = MEDIA_VERSION) {
+     * Tools class
+     *
+     * @var Tools object
+     * @access private
+     */
+    private $Tools;
+    
+    /**
+     * __construct function.
+     *
+     * @access public
+     * @param version Optional version. Defaults to VERSION
+     */
+    public function __construct($tools, $version = MEDIA_VERSION) {
+        $this->Tools = $tools;
         $this->version = $version;
     }
     
     /**
-	 * _server_path function. Returns the server path to the component
+     *	Takes an array of objects and returns an array of <option> elements
+     *  for use in <selects>.
      * 
-	 * @access private
+     *  @access public
+     *  @param array $objects List of objects on which to iterate 
+     *  @param string $valprop Property of the objects to use for the <option> 
+     *                         value
+     *  @param string|array $contprop Single or list of property names from the 
+     *                          objects to use for the content of the <option>. 
+     *                          Defaults to the same as $valprop
+     *  @param array $selected Array in {k=>v} where if object.k === v, we'll 
+     *                         add 'selected'
+     *  @param array $classes List of classes to add to the <option>
+     */
+     public static function generate_options($objects, 
+                                             $valprop,
+                                             $contprop = false, 
+                                             $selected = false, 
+                                             $classes = false) {
+                                                 
+          $options = [];
+          foreach ($objects as $obj) {
+              $o = '<option value="' . $obj->$valprop . '"';
+              if ($classes) {
+                  $o = $o . 'class="' . implode(" ", $classes) . '"';
+              }
+              if ($selected) {
+                  // This enables passing multiple possible values to check 
+                  foreach ($selected as $k=>$v) {
+                      if ($obj->$k === $v) {
+                          $o = $o . ' selected';
+                      }
+                  }
+              } 
+              
+              /* 
+                 If $contprop is specified...
+                 If it is an array, loop and ensure that $obj has each of the
+                 named properties. If so, add the property values to an array.
+                 If it is a string, ensure that $obj has that one property and 
+                 add that single value to an array.
+                 Once the values are compiled, implode them into a string.
+              */
+              $cprops = [];
+              if ($contprop) {
+                  if (is_array($contprop)) {
+                        foreach($contprop as $cprop) {
+                            if (property_exists($obj, $cprop)) {
+                                $cprops[] = $obj->$cprop;
+                            }
+                        }
+                  } elseif (is_string($contprop)) {
+                      $cprops = (property_exists($obj, $contprop) ? [$obj->$contprop] : []);
+                  }
+                  
+                  // array_filter strips out any pesky nulls/empties that make it in
+                  $content = implode(' | ', array_filter($cprops));
+                  
+              } else {
+                  $content = $obj->$valprop;
+              }
+              
+              $o = $o . '>' . $content . '</option>';
+              
+              $options[] = $o;
+          }
+          return $options;
+     }
+
+     /**
+      *  Takes an array of objects arranged in groups such as 
+      *   [ grp => array(obj1,obj2,obj3) ]
+      *  and generates an array of option groups and options such as
+      *   [ '<optgroup' => array('<option>','<option>','<option>') ]
+      *  WARN: does not generate or include a closing </optgroup> tag
+      *  See generate_options() for param details
+       * 
+      *  @access public
+      *  @param array $objects Array of objects as described above 
+      *  @param array $gclasses List of classes to add to the <optgroup>
+      *  @param array $oclasses List of classes to pass on to generate_options()
+      */
+      public static function generate_option_groups($objgroups, 
+                                                    $valprop,
+                                                    $contprop = false, 
+                                                    $selected = false,
+                                                    $gclasses = false,
+                                                    $oclasses = false) {
+
+           $optgroups = [];
+           foreach ($objgroups as $grp=>$objects) {
+               $options = self::generate_options($objects,$valprop,$contprop,$selected,$oclasses);
+               $og = '<optgroup label="' . $grp . '" ';
+               if ($gclasses) {
+                   $og = $og . 'class="' . implode(" ", $classes) . '" ';
+               }
+               $og = $og . '>';
+               $optgroups[$og] = $options;
+           }
+           
+           return $optgroups;
+      }
+      
+      /**
+       *  Render the inline script element necessary for a select2 dropdown
+       * 
+       *  @access public
+       *  @param array $selector Name of the jQuery selector of the <select>
+       *  @param array $options Optional array of options to pass to select2()
+       */
+       public static function render_select2_js($selector,$options=[]) {
+           $defoptions = array('theme' => 'bootstrap', 
+                               'width' => "", // intentional
+                               'minimumResultsForSearch' => 15,
+                               'templateResult' => '$(this).s2oneLine'
+                         );
+           $options = (object) array_merge($defoptions, $options);
+
+           print "<script type=\"text/javascript\">\n";
+           print "$('$selector').select2({\n";
+               
+           foreach ($options as $k=>$v) {
+                   print "   $k: " . ((is_int($v) || $k === 'templateResult') ? 
+                                      $v : 
+                                      "\"$v\"") . ",\n";
+           }
+
+           print "});";
+           print "</script>";
+
+       }
+    
+    /**
+     * _server_path function. Returns the server path to the component
+     * 
+     * @access private
      * @param type String the type of component
-	 * @param component String filename minus the file extension
-	 */
+     * @param component String filename minus the file extension
+     */
     private function _server_path($type, $component) {
         return $this->media_path . '/' . $this->version . '/' . $type . '/' . $component . '.' . $type;
     }
     
     /**
-	 * _file_path function. Returns the local file path to the component
+     * _file_path function. Returns the local file path to the component
      * 
-	 * @access private
+     * @access private
      * @param type String the type of component
-	 * @param component String filename minus the file extension
-	 */
+     * @param component String filename minus the file extension
+     */
     private function _file_path($type, $component) {
         
         if (substr($this->media_dir, 0, 1) === "/") {
@@ -59,11 +201,11 @@ class Components {
     }
     
     /**
-	 * _js_tag function. Outputs an html <script> tag for a js file
+     * _js_tag function. Outputs an html <script> tag for a js file
      * 
-	 * @access private
-	 * @param component String filename minus the file extension
-	 */
+     * @access private
+     * @param component String filename minus the file extension
+     */
     private function _js_tag($component, $remote = false) {
         $path = ($remote ? $component : $this->_server_path('js',$component));
         return '<script type="text/javascript" src="' . $path . '"></script>';
@@ -82,11 +224,11 @@ class Components {
     }
     
     /**
-	 * _render_tag function.
-	 *
-	 * @access private
-	 * @param type String indicating type of component to include. 'js' or 'css'
-	 */
+     * _render_tag function.
+     *
+     * @access private
+     * @param type String indicating type of component to include. 'js' or 'css'
+     */
     private function _render_tag ($type, $components) {
         $f = "_" . $type . "_tag";
         
@@ -105,11 +247,11 @@ class Components {
     }
     
     /**
-	 * js function.
-	 *
-	 * @access public
-	 * @param components String or array of strings of js filenames, not including the file extension
-	 */
+     * js function.
+     *
+     * @access public
+     * @param components String or array of strings of js filenames, not including the file extension
+     */
     public function js ($components) {
         $this->_render_tag('js',$components);
     }
@@ -123,5 +265,149 @@ class Components {
     public function css ($components) {
         $this->_render_tag('css',$components);
     }
+    
+    /**
+     * Render options and option groups for use in <select>
+     * 
+     * @access public
+     * @param array $objs Array of objects such as returned from 
+     *               Database::getObjects(), in form {key1: obj1, key2: obj2}
+     * @param string $valueField Name of the object property to use as the 
+     *               <option> value
+     * @param string|array $displayField Single property name or list of names to 
+     *               use as the <option> content. Multiple properties will be 
+     *               concatenated together with " | "
+     * @param array $options An array of options for rendering <option> and 
+     *               <optgroup> elements
+     * @param bool|string $options['sort'] Sort the objects. Either a property
+     *               name on which to sort them, or 'true' to sort by name.
+     *               Will apply to options under optgroups.
+     *               Default: false.  SQL sorting the objects is faster.
+     * @param bool $options['gsort'] For grouped options, sort the optgroups.
+     *               Default: true
+     * @param bool|string $options['group'] Arrange the options under <optgroup>  
+     *               Requires $options['groupby'].
+     *               Default: false
+     * @param bool|string $options['groupby'] Object property name to use for the 
+     *               content of <optgroup>. Required if $group is true.
+     *               Default: false
+     * @param bool|string $options['resolveGroupKey'] If set to a string, the 
+     *               value of the $groupby field is presumed to be a numeric ID 
+     *               referencing a row in a db table and we'll attempt to 
+     *               fetch the object from that table based on the value of
+     *               the property specified by $groupby, and replace the numeric
+     *               array key for the grouping with a friendlier string from 
+     *               the fetched object. Will attempt to use several strings, 
+     *               in this order:
+     *                * fetched_object->$resolveGroupKey
+     *                * fetched_object->description
+     *                * fetched_object->name
+     *               Default: false 
+     * @param array $options['extFields'] List of property names that contain IDs 
+     *               referencing other tables, for resolving these IDs to 
+     *               human friendly names.  In the form {propname: table}
+     *               Default: [] 
+     * @param array $options['oclasses'] Array of css classes to add to <option>
+     *               Default: []
+     * @param array $options['gclasses'] Array of css classes to add to <optgroup>
+     *               Default: []
+     * @param array $options['selected'] Array of [k=>v] where if the option 
+     *               object->k === v, we'll add 'selected'
+     *               Default: []
+     * @return void
+     */
+    public function render_options($objs, $valueField, $displayField, $options = []) {
+        
+        $defoptions = array('group' => false, 
+                            'groupby' => false,
+                            'resolveGroupKey' => false,
+                            'sort' => false,
+                            'gsort' => true,
+                            'extFields' => [], 
+                            'oclasses' => [], 
+                            'gclasses' => [],
+                            'selected' => []
+                      );
+        $options = (object) array_merge($defoptions, $options);
+        
+        if ($options->group && $options->groupby) {
+            
+            // don't sort here since inside group_objects the keys are numeric IDs
+            $objs = Tools::group_objects($objs, $options->groupby, false);
+            
+            if ($options->resolveGroupKey) {
+                foreach(array_keys($objs) as $gid) {
+                    if (array_key_exists($options->groupby, $options->extFields)) {
+                        
+                        $gobj = $this->Tools->fetch_object($options->extFields[$options->groupby], 'id', $gid);
+                      
+                        if ($gobj) {
+                            // print "Got a group obj: ". $gobj->name . "\n";
+                            $r = false;
+                            
+                            // Sort object list on the property given in $options->sort or
+                            // just 'name' if $options->sort is true
+                            if ($options->sort) {
+                                $sk = (is_string($options->sort) ? $options->sort : 'name');
+                                usort($objs[$gid], Tools::sort_objs($sk));
+                            }
+                            
+                            if (!empty($gobj->{$options->resolveGroupKey})) {
+                                // Preference the field specified by $resolveGroupKey
+                                $objs[$gobj->{$options->resolveGroupKey}] = $objs[$gid];
+                                $r = true;
+                            } elseif (!empty($gobj->description)) {
+                                // Then 'description'
+                                $objs[$gobj->description] = $objs[$gid];
+                                $r = true;
+                            } elseif (!empty($gobj->name)) {
+                                // Lastly 'name'
+                                $objs[$gobj->name] = $objs[$gid];
+                                $r = true;
+                            }
+                            if ($r) { unset($objs[$gid]); }
+                          
+                        } 
+                    }
+                }
+            }
+            
+            if ($options->gsort) {
+                ksort($objs);
+            }
+            
+            // Render <optgroup>'s and <option>'s
+            $ogs = self::generate_option_groups($objs, 
+                                                $valueField, 
+                                                $displayField, 
+                                                $options->selected, 
+                                                $options->gclasses, 
+                                                $options->oclasses);
+            foreach ($ogs as $og=>$os) {
+                print "$og\n";
+                foreach ($os as $o) {
+                    print "    $o\n";
+                }
+                print "</optgroup>\n";
+            }
+        
+        // end $group && $groupby    
+        } else {
+            // Sort object list on the property given in $options->sort or
+            // just 'name' if $options->sort is true
+            if ($options->sort) {
+                $sk = (is_string($options->sort) ? $options->sort : 'name');
+                usort($objs, Tools::sort_objs($sk));
+            }
+            // render <option>'s
+            $opts = self::generate_options($objs, 
+                                           $valueField, 
+                                           $displayField, 
+                                           $options->selected);
+            foreach ($opts as $o) {
+                print "$o\n";
+            }
+        }
+    } // end render_options
     
 }

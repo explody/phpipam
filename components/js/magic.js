@@ -26,6 +26,40 @@ $(document).on("submit", ".searchFormClass", function() {
 
 $('.show_popover').popover();
 
+/* Select2 things */
+
+$(document).on("click", ".select2-container", function (event) {
+    var h = $( window ).height() - $(this).offset().top - 200;
+    var ddh = $('.select2-dropdown').height();
+
+    newh = ( ddh < h ? ddh : h );
+
+    $('.select2-results').css("height", newh);
+    
+    var cwidth = 0;
+    $('.s2cust-container').each( function() {
+        var mycwidth = 0;
+        $(this).children().each(function (){
+            // add span widths together since they are side-to-side
+            if ($(this).is('span')) {
+                mycwidth += $(this).width();
+            // or if they're divs, use the value of the widest       
+            } else if ($(this).is('div')) {
+                if ($(this).width() > mycwidth) {
+                    mycwidth = $(this).width();
+                }
+            }
+        });
+        if (mycwidth > cwidth) {
+            cwidth = Math.round(mycwidth);
+        }
+    });
+    
+    if ($(this).width() < cwidth) {
+        $('.select2-dropdown').css("width",cwidth+30);
+    }
+
+});
 
 /* this functions opens popup */
 /* -------------------------- */
@@ -215,30 +249,11 @@ $(function() {
 });
 
 //default row count
-if(readCookie('table-page-size')==null) { current_table_page_size = 50; }
-else                                    { current_table_page_size = readCookie('table-page-size'); }
-
-
-// table
-// $('table.sorted').bdt({
-//    pageRowCount: def_size,
-//    searchFormClass: 'form-inline pull-right searchFormClass',
-//    divClass: 'text-right'
-// });
-// $('table.sorted-left').bdt({
-//    pageRowCount: def_size,
-//    searchFormClass: 'form-inline pull-left searchFormClass clearfix',
-//    divClass: 'text-left clearfix'
-// });
-// $('table.sorted').stickyTableHeaders();
-// $("li.disabled a").click(function () {
-//    return false;
-// });
-// $('form.search-form').submit(function() {
-//    return false;
-// });
-
-
+if(readCookie('table-page-size')==null) { 
+    current_table_page_size = 50; 
+} else { 
+    current_table_page_size = readCookie('table-page-size'); 
+}
 
 
 /* @dashboard widgets ----------  */
@@ -1761,6 +1776,8 @@ $(document).on("change", ".checkMapping",(function () {
 
 // add network to zone
 $(document).on("click", ".editNetwork", function() {
+    // show spinner
+    showSpinner();
      var pData = $('form#zoneEdit').serializeArray();
      pData.push({name:'action',value:$(this).attr('data-action')});
      pData.push({name:'subnetId',value:$(this).attr('data-subnetId')});
@@ -1813,14 +1830,25 @@ $(document).on("click", "#editNetworkSubmit", function() {
 });
 
 // zone edit menu - ajax request to fetch all subnets for a specific section id
-$(document).on("change", ".firewallZoneSection",(function () {
+$(document).on("change", "#fw-zone-section-select",(function () {
     showSpinner();
     var pData = $(this).serializeArray();
     pData.push({name:'operation',value:'fetchSectionSubnets'});
     //load results
     $.post('app/admin/firewall-zones/ajax.php', pData, function(data) {
         $('div.sectionSubnets').html(data).slideDown('fast');
-
+        
+        // The embedded script in the HTML doesn't kick when the AJAX call 
+        // updates the content, so trigger select2 here.  This seems a bit 
+        // wonky. 
+        // TODO: find a better way. DRY
+        $('#master-select').select2({
+           theme: "bootstrap",
+           width: "",
+           minimumResultsForSearch: 15,
+           templateResult: $(this).s2oneLine,
+        });
+        
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
     hideSpinner();
     return false;
@@ -2307,7 +2335,7 @@ $(document).on("click", ".editFolderSubmitDelete", function() {
 /* ---- Devices ----- */
 //load edit form
 $(document).on("click", ".editSwitch", function() {
-	open_popup("500", "app/admin/devices/edit.php", {switchId:$(this).attr('data-switchid'), action:$(this).attr('data-action')} );
+	open_popup("600", "app/admin/devices/edit.php", {switchId:$(this).attr('data-switchid'), action:$(this).attr('data-action')} );
 });
 //submit form
 $(document).on("click", "#editSwitchsubmit", function() {
@@ -3178,8 +3206,6 @@ $(document).on('click', '.btn-tablefix', function() {
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
     return false;
 });
-
-
 
 return false;
 });

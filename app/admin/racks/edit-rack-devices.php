@@ -14,6 +14,7 @@ $Admin	 	= new Admin ($Database);
 $Tools	 	= new Tools ($Database);
 $Racks      = new phpipam_rack ($Database);
 $Result 	= new Result ();
+$Components = new Components ($Tools);
 
 # verify that user is logged in
 $User->check_user_session();
@@ -84,6 +85,12 @@ $(document).ready(function(){
 });
 </script>
 
+<!-- select2 -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+
+<!-- common jquery plugins -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
+
 <!-- header -->
 <div class="pHeader"><?php print ucwords(_("$_POST[action]")); ?> <?php print _('device to rack'); ?></div>
 
@@ -104,13 +111,28 @@ $(document).ready(function(){
         	<tr>
         		<td><?php print _('Device'); ?></td>
         		<td>
-        			<select name="deviceid" class="form-control input-sm input-w-auto">
+        			<select name="deviceid" id="r-device-select" class="form-control input-sm input-w-auto">
+                        <option></options>
         			<?php
-            			foreach($devices as $d) {
-                            print "<option value='$d->id' >$d->hostname</option>";
-                        }
+                    $Components->render_options($devices, 
+                          'id', 
+                          'hostname', 
+                           array(
+                               'group' => $User->settings->devicegrouping,
+                               'groupby' => $User->settings->devicegroupfield,
+                               'resolveGroupKey' => true,
+                               'gsort' => true,
+                               'extFields' => Devices::$extRefs,
+                               'selected' => array('id' => $prefix->deviceId)
+                           )
+                       );
         			?>
         			</select>
+                    <?php
+                    Components::render_select2_js('#r-device-select',
+                                                  ['templateResult' => '$(this).s2oneLine',
+                                                   'placeholder' => 'Select device']);
+                    ?>
         		</td>
         	</tr>
 

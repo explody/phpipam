@@ -7,12 +7,12 @@
 class Devices extends Tools {
     
     /**
-     * Result printing class
+     * Tools class
      *
      * @var mixed
      * @access public
      */
-    public $Result;
+    public $Tools;
 
     /**
      * Database class
@@ -63,10 +63,10 @@ class Devices extends Tools {
      * @access public
      */
     public static $extRefs = array(
-        'section' =>'sections',
-        'location'=>'locations',
-        'rack'    =>'racks',
-        'type'    =>'deviceTypes'
+        'sections' =>'sections',
+        'location' =>'locations',
+        'rack'     =>'racks',
+        'type'     =>'deviceTypes'
     );
       
     /**
@@ -77,8 +77,8 @@ class Devices extends Tools {
     public function __construct (Database_PDO $database) {
     	# Save database object
     	$this->Database = $database;
-    	# initialize Result
-    	$this->Result = new Result ();
+    	# initialize Tools
+    	$this->Tools = new Tools ($this->Database);
     	# Log object
     	$this->Log = new Logging ($this->Database);
     }
@@ -95,73 +95,19 @@ class Devices extends Tools {
     }
     
     /**
-	 * Arrange a list (array) of devices into a md array with object props 
-     * as the keys.  Objects with missing or empty props will be put under 
-     * a key called "No <property>"
-	 *
-	 * @access private
-     * @param array $dev a 2d array of device objects
-	 * @param string $groupby The obj property from the devices to use as array keys
-     * @param string|bool $sort Optional string corresponding to table column / object property
-     *                          on which to sort. Not used right now
-	 * @return array
-	 */
-    private function _group($devs, $groupby, $sort=false) {
-        
-        $grouped = array();
-        foreach ($devs as $did=>$dev) {
-            
-            if (property_exists($dev, $groupby)) {
-                // TODO: get rid of delimited fields in the DB
-                // Special case(s) 
-                // For sections, we have to split on ';' and add the device
-                // to the hash under each section id to which it is associated
-                if ($groupby === "sections") {
-                    $sections = explode(";", $dev->sections);
-                    if (!empty($sections[0])) {
-                        $gkeys = $sections;
-                    } else {
-                        $gkeys = ['No sections'];
-                    }
-                } else {
-                    $gkeys = (empty($dev->$groupby) ? ["No $groupby"] : [$dev->$groupby]);
-                }
-            } else {
-                $gkeys = ['No ' . $groupby];
-            }
-            
-            foreach ($gkeys as $gk) {
-                $grouped[$gk][] = $dev;
-            }
-        }
-        
-        // Neat but unnecessary right now as SQL sorting is working fine
-        // if ($sort) {
-        //     foreach ($grouped as $g=>&$ds) {
-        //         usort($ds, Tools::sort_objs($sort));
-        //     }
-        // }
-        
-        // Sort the keys
-        ksort($grouped);
-        
-        return $grouped;
-    }
-    
-    /**
 	 * Fetch objects with a specific db query
 	 *
 	 * @access private
 	 * @param string $query The SQL query in template form
      * @param array $values Values to inject into the sql query template
      * @param string $sort Optional column name on which to sort
-     * @param string $groupby Optional object property name to use for grouping the results (see _group())
+     * @param string $groupby Optional object property name to use for grouping the results (see Common:group_objects)
 	 * @return array|bool
 	 */
     private function _byquery($query, $values = [], $sort = false, $groupby = false) {
         $devs = $this->Database->getObjectsQuery($query,$values,$sort);
         if ($groupby) {
-            $devs = $this->_group($devs, $groupby, $sort);
+            $devs = Tools::group_objects($devs, $groupby, $sort);
         }
         return $devs;
     }

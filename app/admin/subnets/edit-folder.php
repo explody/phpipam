@@ -15,7 +15,7 @@ $Sections	= new Sections ($Database);
 $Subnets	= new Subnets ($Database);
 $Tools		= new Tools ($Database);
 $Result 	= new Result ();
-$Components = new Components ();
+$Components = new Components ($Tools);
 
 # verify that user is logged in
 $User->check_user_session();

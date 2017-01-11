@@ -15,6 +15,7 @@ $Subnets  = new Subnets ($Database);
 $Result   = new Result ();
 $Zones 	  = new FirewallZones($Database);
 $Tools	  = new Tools($Database);
+$Components = new Components ($Tools);
 
 # verify that user is logged in
 $User->check_user_session();
@@ -130,21 +131,30 @@ if ($_POST['operation'] == 'checkMapping') {
 					<?php print _('Firewall to map'); ?>
 				</td>
 				<td>
-					<select name="deviceId" class="form-control input-sm input-w-auto input-max-200" <?php print $readonly; ?>>
+					<select name="deviceId" id="fw-device-select" class="select2" <?php print $readonly; ?>>
 					<option value="0"><?php print _('Select firewall'); ?></option>
 					<?php
-					if ($devices!==false) {
-    					foreach ($devices as $device) {
-    						if ($device->id == $mapping->deviceId) 	{
-    							if($device->description) 	{	print '<option value="'.$device->id.'" selected>'.	$device->hostname.' ('.$device->description.')</option>'; }
-    							else 						{ 	print '<option value="'.$device->id.'" selected>'.	$device->hostname.'</option>'; }}
-    						else {
-    							if($device->description)	{	print '<option value="'.$device->id.'">'.			$device->hostname.' ('.$device->description.')</option>'; }
-    							else 						{	print '<option value="'.$device->id.'">'.			$device->hostname.'</option>'; }}
-    					}
+                    // DRY - repeat in mapping-edit.php
+					if ($devices) {
+                        $Components->render_options($devices, 
+                              'id', 
+                              ['name','description'], 
+                               array(
+                                   'sort' => true,
+                                   'group' => true,
+                                   'groupby' => 'sections',
+                                   'resolveGroupKey' => 'name',
+                                   'extFields' => Devices::$extRefs,
+                                   'selected' => array('id' => $mapping->deviceId),
+                               )
+                           );
 					}
 					?>
 					</select>
+                    <?php
+                    Components::render_select2_js('#fw-device-select',
+                                                  ['templateResult' => '$(this).s2boldDescTwoLine']);
+                    ?>
 				</td>
 			</tr>
 			<tr>

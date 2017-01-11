@@ -196,6 +196,11 @@ select, input[type="file"] {
 	padding-right: 0px !important;
 	width: auto;
 }
+
+td.actions div.actions {
+	width: 6em;
+}
+
 .table td.al-center {
 	text-align: center;
 }
@@ -919,31 +924,49 @@ table#subnetsMenu td#subnetsLeft .menu-tools {
 	padding-left: 10px;
 	padding-right: 10px;
 }
+
+
 /* tabela za strukturo */
 table#subnetsMenu {
 
 }
-table#subnetsMenu td#subnetsLeft {
-	vertical-align:top;
-	white-space:nowrap;
-	width:200px;
-	border-right: 1px solid #eee;
-	vertical-align: top !important;
+@media (min-width: 768px) {
+    table#subnetsMenu td#subnetsLeft {
+    	vertical-align:top;
+    	white-space:nowrap;
+    	width:200px;
+    	border-right: 1px solid #eee;
+    	vertical-align: top !important;
+    }
+    table#subnetsMenu td#subnetsLeft .menu-subnets {
+    	margin-top: 20px;
+    }
+    table#subnetsMenu td#subnetsContent {
+    	padding-top: 20px;
+    }
 }
-table#subnetsMenu td#subnetsLeft .menu-subnets {
-	margin-top: 20px;
-}
-table#subnetsMenu td#subnetsContent {
-	padding-top: 20px;
+@media (max-width: 768px) {
+    td#subnetsLeft {
+        visibility: hidden;
+    }
+    div#leftMenu {
+        width: 0;
+    }
+    div#list_search span.input-group-btn {
+        visibility: hidden;
+        width: 0;
+    }
+    button#listSearchSubmit {
+        visibility: hidden;
+        width: 0;
+    }
 }
 
+/* This prevents the subnetContents td from expanding beyond the viewport
+   while the elements inside will force it out to the viewport width */
 td#subnetsContent {
-	max-width: 1500px;
+	max-width: 300px;
 }
-
-
-
-
 
 
 /* @dashboard ---------- */
@@ -1898,7 +1921,7 @@ table#switchManagement tr.unspecified td {
 	border-top: double #ddd;
 }
 
-button.btn-xs.editSwitch {
+button.btn-xs.editSwitch, button.btn-xs.editSwitchSNMP {
     width: 23px;
     height: 23px;
 }
@@ -2642,4 +2665,57 @@ table.popover_table td {
 table.dataTable {
     margin-left: 0 !important;
     margin-right: 0 !important;
+}
+
+/* Select2 Things */
+/* the !importants are necessary because many of these are dynamically added */
+
+span.select2-container {
+    width: 100%;
+    color: #777;
+}
+/* Override height for select2 dropdowns to match the other elements */
+.select2-results__group {  
+    font-size: 14px!important;
+    line-height: 1!important;
+}
+.select2-container--bootstrap .select2-selection--single {
+    height: 30px!important;
+    line-height: 18px!important;
+}
+
+.select2-results__options {
+    /* set this to 100% to prevent elements overlapping inside the dropdown */
+    max-height: 100%!important;
+}
+
+li[role=group] .select2-results__option {
+    padding: 3px 10px !important;
+}
+
+.s2cust-container {
+    border-bottom: solid 1px rgba(195, 195, 195, 0.2);
+}
+
+li[role=group] div.s2cust-container {
+    padding-left: 1em;
+    white-space: nowrap;
+}
+
+div.s2cust-2lineB-cont, span.s2cust-1lineB-cont {
+    font-weight: bold;
+}
+
+div.s2cust-1line-cont {
+    font-weight: normal;
+}
+
+.select2-results__option--highlighted {
+    color: #fff!important;
+}
+
+div.s2cust-2line-extra, span.s2cust-1line-extra {
+    font-weight: lighter;
+    font-style: italic;
+    font-size: small;
 }

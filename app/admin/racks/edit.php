@@ -14,6 +14,7 @@ $Admin	 	= new Admin ($Database);
 $Tools	 	= new Tools ($Database);
 $Racks      = new phpipam_rack ($Database);
 $Result 	= new Result ();
+$Components = new Components ($Tools);
 
 # verify that user is logged in
 $User->check_user_session();
@@ -46,6 +47,12 @@ $locations = $Tools->fetch_all_objects ("locations", "name");
 # set readonly flag
 $readonly = $_POST['action']=="delete" ? "readonly" : "";
 ?>
+
+<!-- select2 -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+
+<!-- common jquery plugins -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -92,17 +99,26 @@ $(document).ready(function(){
 	<tr>
 		<td><?php print _('Location'); ?></td>
 		<td>
-			<select name="location" class="form-control input-sm input-w-auto">
+			<select name="location" id="r-location-select" class="select2">
     			<option value="0"><?php print _("None"); ?></option>
     			<?php
                 if($locations!==false) {
-        			foreach($locations as $l) {
-        				if($rack->location == $l->id)	{ print "<option value='$l->id' selected='selected'>$l->name</option>"; }
-        				else					{ print "<option value='$l->id'>$l->name</option>"; }
-        			}
+                    $Components->render_options($locations, 
+                          'id', 
+                          ['name','description'], 
+                           array(
+                               'sort' => true,
+                               'group' => false,
+                               'selected' => array('id' => $rack->location),
+                           )
+                       );
     			}
     			?>
 			</select>
+            <?php
+            Components::render_select2_js('#r-location-select',
+                                          ['templateResult' => '$(this).s2boldDescTwoLine']);
+            ?>
 		</td>
 	</tr>
 	<?php } ?>

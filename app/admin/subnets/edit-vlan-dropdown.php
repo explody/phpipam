@@ -40,14 +40,15 @@ foreach($permitted_domains as $k=>$d) {
 $permitted_domains = array_filter($out);
 ?>
 
-<select name="vlanId" class="form-control input-sm input-w-auto">
-	<option disabled="disabled"><?php print _('Select VLAN'); ?>:</option>
+<select name="vlanId" id="ip-vlan-select" class="select2">
+	<optgroup label="<?php print _('Select VLAN'); ?>:">
 	<option value="0"><?php print _('No VLAN'); ?></option>
+    </optgroup>
 	<?php
 	# print all available domains
 	foreach($permitted_domains as $d) {
 		//more than default
-			print "<optgroup label='".$d['domain']->name."'>";
+			print "<optgroup label='".$d['domain']->name." L2 domain'>";
 			//add
 			print "<option value='Add' data-domain='".$d['domain']->id."'>"._('+ Add new VLAN')."</option>";
 
@@ -55,7 +56,7 @@ $permitted_domains = array_filter($out);
 				foreach($d['vlans'] as $v) {
 					// set print
 					$printVLAN = $v->number;
-					if(!empty($v->name)) { $printVLAN .= " ($v->name)"; }
+					if(!empty($v->name)) { $printVLAN .= " | $v->name"; }
 
 					/* selected? */
 					if(@$subnet_old_details['vlanId']==$v->vlanId) 	{ print '<option value="'. $v->vlanId .'" selected>'. $printVLAN .'</option>'. "\n"; }
@@ -70,3 +71,7 @@ $permitted_domains = array_filter($out);
 	}
 	?>
 </select>
+<?php
+Components::render_select2_js('#ip-vlan-select',
+                              ['templateResult' => '$(this).s2boldDescOneLine']);
+?>

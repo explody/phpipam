@@ -13,6 +13,7 @@ $User 		= new User ($Database);
 $Admin	 	= new Admin ($Database);
 $Tools	 	= new Tools ($Database);
 $Result 	= new Result ();
+$Components = new Components ($Tools);
 
 # verify that user is logged in
 $User->check_user_session();
@@ -51,6 +52,11 @@ $locations = $Tools->fetch_all_objects ("locations", "name");
 if (is_null($device['rack']))   { $display='display:none'; }
 else                            { $display=''; }
 ?>
+<!-- select2 -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+
+<!-- common jquery plugins -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -97,15 +103,24 @@ $('#switchManagementEdit').change(function() {
 	<tr>
 		<td><?php print _('Device type'); ?></td>
 		<td>
-			<select name="type" class="form-control input-sm input-w-auto">
+			<select name="type" id="dtype-select" class="select2">
 			<?php
 			$types = $Admin->fetch_all_objects("deviceTypes", "id");
-			foreach($types as $name) {
-				if($device['type'] == $name->id)	{ print "<option value='$name->id' selected='selected'>$name->name</option>"; }
-				else								{ print "<option value='$name->id' >$name->name</option>"; }
-			}
+            $Components->render_options($types, 
+                  'id', 
+                  ['name','description'], 
+                   array(
+                       'sort' => true,
+                       'group' => false,
+                       'selected' => array('id' => $device['type']),
+                   )
+               );
 			?>
 			</select>
+            <?php 
+            Components::render_select2_js('#dtype-select',
+                                          ['templateResult' => '$(this).s2boldDescOneLine']);
+            ?>
 		</td>
 	</tr>
 
@@ -114,17 +129,26 @@ $('#switchManagementEdit').change(function() {
 	<tr>
 		<td><?php print _('Location'); ?></td>
 		<td>
-			<select name="location_item" class="form-control input-sm input-w-auto">
+			<select name="location_item" id="location-select" class="select2">
     			<option value="0"><?php print _("None"); ?></option>
-    			<?php
+                <?php
                 if($locations!==false) {
-        			foreach($locations as $l) {
-        				if($device['location'] == $l->id)	{ print "<option value='$l->id' selected='selected'>$l->name</option>"; }
-        				else					{ print "<option value='$l->id'>$l->name</option>"; }
-        			}
-    			}
-    			?>
+                    $Components->render_options($locations, 
+                          'id', 
+                          ['name','description'], 
+                           array(
+                               'sort' => true,
+                               'group' => false,
+                               'selected' => array('id' => $device['location']),
+                           )
+                       );
+                }
+                ?>
 			</select>
+            <?php 
+            Components::render_select2_js('#location-select',
+                                          ['templateResult' => '$(this).s2boldDescOneLine']);
+            ?>
 		</td>
 	</tr>
 	<?php } ?>
@@ -141,15 +165,24 @@ $('#switchManagementEdit').change(function() {
         ?>
         <td><?php print _('Rack'); ?></td>
         <td>
-            <select name="rack" class="form-control">
+            <select name="rack" id="rack-select" class="select2">
                 <option value=""><?php print _("None"); ?></option>
                 <?php
-                foreach ($Racks->all_racks as $r) {
-     				if($device['rack'] == $r->id)	{ print "<option value='$r->id' selected='selected'>$r->name</option>"; }
-    				else							{ print "<option value='$r->id' >$r->name</option>"; }
-                }
+                $Components->render_options((array) $Racks->all_racks, 
+                      'id', 
+                      ['name','description'], 
+                       array(
+                           'sort' => true,
+                           'group' => false,
+                           'selected' => array('id' => $device['rack']),
+                       )
+                   );
                 ?>
             </select>
+            <?php 
+            Components::render_select2_js('#rack-select',
+                                          ['templateResult' => '$(this).s2boldDescOneLine']);
+            ?>
         </td>
     </tr>
 
@@ -208,7 +241,7 @@ $('#switchManagementEdit').change(function() {
     		$timepicker_index = $timepicker_index + $custom_input['timepicker_index'];
             // print
 			print "<tr>";
-			print "	<td>".ucwords($field['name'])." ".$custom_input['required']."</td>";
+			print "	<td>".ucwords((empty($field['Comment']) ? $field['name'] : $field['Comment']))." ".$custom_input['required']."</td>";
 			print "	<td>".$custom_input['field']."</td>";
 			print "</tr>";
 		}

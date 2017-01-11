@@ -16,7 +16,8 @@ $Sections	= new Sections ($Database);
 $Subnets	= new Subnets ($Database);
 $Tools		= new Tools ($Database);
 $Result 	= new Result ();
-$Components = new Components ();
+$Devices    = new Devices ($Database);
+$Components = new Components ($Tools);
 
 # verify that user is logged in
 $User->check_user_session();
@@ -108,6 +109,12 @@ $locations = $Tools->fetch_all_objects ("locations", "name");
 $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : false;
 ?>
 
+<!-- select2 -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+
+<!-- common jquery plugins -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
+
 <script type="text/javascript">
 $(document).ready(function() {
 /* bootstrap switch */
@@ -157,24 +164,37 @@ $('.slider').slider().on('slide', function(ev){
     <tr>
         <td class="middle"><?php print _('Subnet'); ?></td>
         <td>
-        	<?php
-            if (($_POST['subnetId']||$_POST['subnet']) && $_POST['action'] == "add"){ $showDropMenuFull = 1; }
-        	# set CIDR
-        	if (isset($subnet_old_temp['subnet'])&&$subnet_old_temp['isFolder']!="1")	{ $cidr = $Subnets->transform_to_dotted($subnet_old_temp['subnet']).'/'.($subnet_old_temp['mask']+1);} 		//for nested
-        	if (isset($subnet_old_temp['subnet']) && ($showDropMenuFull)) 				{ $dropdown_menu = $Subnets->subnet_dropdown_print_available($_POST['sectionId'], $_POST['subnetId']);  }
+          <?php
+            if (($_POST['subnetId']||$_POST['subnet']) && $_POST['action'] == "add") {
+                $showDropMenuFull = 1;
+            }
+          # set CIDR
+          if (isset($subnet_old_temp['subnet'])&&$subnet_old_temp['isFolder']!="1") {
+                $cidr = $Subnets->transform_to_dotted($subnet_old_temp['subnet']).'/'.($subnet_old_temp['mask']+1);
+            } //for nested
 
-        	if (@$_POST['location'] == "ipcalc") 	{ $cidr = strlen($_POST['bitmask'])>0 ? $_POST['subnet'].'/'.$_POST['bitmask'] : $_POST['subnet']; }  														//from ipcalc
-            if ($_POST['action'] != "add") 			{ $cidr = $Subnets->transform_to_dotted($subnet_old_details['subnet']).'/'.$subnet_old_details['mask']; } 	//editing existing
+          if (isset($subnet_old_temp['subnet']) && ($showDropMenuFull)) {
+                $dropdown_menu = $Subnets->subnet_dropdown_print_available($_POST['sectionId'], $_POST['subnetId']);
+            }
 
-        	# reset CIDR if $showDropMenuFull
-        	// if ($showDropMenuFull && strlen(@$dropdown_menu)>2) {
-	        // 	$cidr = explode("\n",$dropdown_menu);
-	        // 	$cidr = substr(strip_tags($cidr[1]), 2);
-	        // 	//validate
-	        // 	if ($Subnets->verify_cidr_address($cidr)===false) { unset($cidr); };
-	        // }
-        	?>
+          if (@$_POST['location'] == "ipcalc") {
+                $cidr = strlen($_POST['bitmask'])>0 ? $_POST['subnet'].'/'.$_POST['bitmask'] : $_POST['subnet'];
+            } //from ipcalc
 
+            if ($_POST['action'] != "add") {
+                $cidr = $Subnets->transform_to_dotted($subnet_old_details['subnet']).'/'.$subnet_old_details['mask'];
+            } //editing existing
+
+          # reset CIDR if $showDropMenuFull
+          if ($showDropMenuFull && strlen(@$dropdown_menu)>2) {
+              $cidr = explode("\n",$dropdown_menu);
+              $cidr = substr(strip_tags($cidr[1]), 2);
+              //validate
+              if ($Subnets->verify_cidr_address($cidr)===false) {
+                    unset($cidr);
+                }
+          }
+          ?>
 
 			<?php  if (!$showDropMenuFull){ ?>
                 <input type="text" class="form-control input-sm input-w-200" name="subnet" placeholder="<?php print _('subnet in CIDR'); ?>"  value="<?php print @$cidr; ?>" <?php if ($readonly) print "readonly"; ?>>
@@ -219,17 +239,27 @@ $('.slider').slider().on('slide', function(ev){
     <tr>
         <td class="middle"><?php print _('Section'); ?></td>
         <td>
-        	<select name="sectionIdNew" class="form-control input-sm input-w-auto">
+        	<select name="sectionIdNew" id="sn-section-select" class="form-control input-sm input-w-auto">
+                <option value="0"><?php print _('None'); ?></option>
             	<?php
             	if($sections!==false) {
-	            	foreach($sections as $section) {
-	            		/* selected? */
-	            		if($_POST['sectionId'] == $section->id)  { print '<option value="'. $section->id .'" selected>'. $section->name .'</option>'. "\n"; }
-	            		else 									 { print '<option value="'. $section->id .'">'. $section->name .'</option>'. "\n"; }
-	            	}
+
+                    $Components->render_options($sections, 
+                          'id', 
+                          ['name','description'], 
+                           array(
+                               'sort' => true,
+                               'group' => false,
+                               'selected' => array('id' => $_POST['sectionId']),
+                           )
+                       );
             	}
             ?>
         	</select>
+            <?php
+            Components::render_select2_js('#sn-section-select',
+                                          ['templateResult' => '$(this).s2boldDescTwoLine']);
+            ?>
         </td>
         <td class="info2"><?php print _('Move to different section'); ?></td>
     </tr>
@@ -248,25 +278,38 @@ $('.slider').slider().on('slide', function(ev){
 	<tr>
 		<td class="middle"><?php print _('Device'); ?></td>
 		<td id="deviceDropdown">
-			<select name="device" class="form-control input-sm input-w-auto">
-				<option value="0"><?php print _('None'); ?></option>
-				<?php
-				// fetch all devices
-				$devices = $Admin->fetch_all_objects("devices", "hostname");
-				// loop
-				if ($devices!==false) {
-					foreach($devices as $device) {
-						//check if permitted in this section!
-						$sections = explode(";", $device->sections);
-						if(in_array($_POST['sectionId'], $sections)) {
-							//if same
-							if($device->id == @$subnet_old_details['device']) 	{ print '<option value="'. $device->id .'" selected>'. $device->hostname .'</option>'. "\n"; }
-							else 												{ print '<option value="'. $device->id .'">'. $device->hostname .'</option>'. "\n";			 }
-						}
-					}
-				}
-				?>
-			</select>
+            <select name="switch" id="sn-device-select" class="form-control input-sm input-w-auto" data-live-search="true" >
+            <option disabled selected hidden value="0"><?php print _('Select device'); ?></option>
+            <option value="0"><?php print _('None'); ?></option>
+    
+            <?php
+            
+            // fetch devices for the section
+            $devs = $Devices->for_section(
+                    $_POST['sectionId'],
+                    'hostname',
+                    false
+                );
+
+            $Components->render_options($devs, 
+                  'id', 
+                  'hostname', 
+                   array(
+                       'group' => $User->settings->devicegrouping,
+                       'groupby' => $User->settings->devicegroupfield,
+                       'resolveGroupKey' => true,
+                       'gsort' => true,
+                       'extFields' => Devices::$extRefs,
+                       'selected' => array('id' => $address['switch']),
+                   )
+               );
+
+            ?>
+            </select>
+            <?php
+            Components::render_select2_js('#sn-device-select',
+                                          ['templateResult' => '$(this).s2oneLine']);
+            ?>
 		</td>
 		<td class="info2"><?php print _('Select device where subnet is located'); ?></td>
     </tr>
@@ -285,8 +328,13 @@ $('.slider').slider().on('slide', function(ev){
         <td><?php print _('Master Subnet'); ?></td>
         <td>
 			<?php
-			if ($showDropMenuFull)	{ $Subnets->subnet_dropdown_master_only (@$subnet_old_details['masterSubnetId']); }
-			else 					{ $Subnets->print_mastersubnet_dropdown_menu ($_POST['sectionId'], @$subnet_old_details['masterSubnetId']);}
+			if ($showDropMenuFull) {
+                $Subnets->subnet_dropdown_master_only (@$subnet_old_details['masterSubnetId']); 
+            } else { 
+                $Subnets->print_mastersubnet_dropdown_menu ($_POST['sectionId'], @$subnet_old_details['masterSubnetId']);
+            }
+            Components::render_select2_js('#master-select',
+                                          ['templateResult' => '$(this).s2oneLine']);
 			?>
         </td>
         <td class="info2"><?php print _('Enter master subnet if you want to nest it under existing subnet, or select root to create root subnet'); ?>!</td>
@@ -305,7 +353,7 @@ $('.slider').slider().on('slide', function(ev){
 		print '<tr>' . "\n";
         print '	<td class="middle">'._('VRF').'</td>' . "\n";
         print '	<td>' . "\n";
-        print '	<select name="vrfId" class="form-control input-sm input-w-auto">'. "\n";
+        print '	<select name="vrfId" id="sn-vrf-select" class="select2">'. "\n";
 
         //blank
         print '<option disabled="disabled">'._('Select VRF').'</option>';
@@ -327,8 +375,12 @@ $('.slider').slider().on('slide', function(ev){
     	        }
 	        }
         }
-
+    
         print ' </select>'. "\n";
+        
+        Components::render_select2_js('#sn-vrf-select',
+                                      ['templateResult' => '$(this).s2oneLine']);
+                                      
         print '	</td>' . "\n";
         print '	<td class="info2">'._('Add this subnet to VRF').'</td>' . "\n";
     	print '</tr>' . "\n";
@@ -345,17 +397,24 @@ $('.slider').slider().on('slide', function(ev){
 	<tr>
 		<td><?php print _('Location'); ?></td>
 		<td>
-			<select name="location_item" class="form-control input-sm input-w-auto">
+			<select name="location_item" id="sn-location-select" class="select2">
     			<option value="0"><?php print _("None"); ?></option>
     			<?php
-                if($locations!==false) {
-        			foreach($locations as $l) {
-        				if($subnet_old_details['location'] == $l->id)	{ print "<option value='$l->id' selected='selected'>$l->name</option>"; }
-        				else					{ print "<option value='$l->id'>$l->name</option>"; }
-        			}
-    			}
+                $Components->render_options($locations, 
+                      'id', 
+                      ['name','description'], 
+                       array(
+                           'sort' => true,
+                           'group' => false,
+                           'selected' => array('id' => $subnet_old_details['location']),
+                       )
+                   );
     			?>
 			</select>
+            <?php
+            Components::render_select2_js('#sn-location-select',
+                                          ['templateResult' => '$(this).s2boldDescOneLine']);
+            ?>
 		</td>
 	</tr>
 	<?php } ?>
@@ -566,8 +625,8 @@ $('.slider').slider().on('slide', function(ev){
 				elseif($field['type'] == "date" || $field['type'] == "datetime") {
 					// just for first
 					if($timeP==0) {
-                        $Components->css('bootstrap.datetimepicker');
-                        $Components->js('bootstrap.datetimepicker');
+                        print '<link rel="stylesheet" type="text/css" href="' . MEDIA . '/css/bootstrap.datetimepicker.css">';
+                        print '<script type="text/javascript" src="' . MEDIA . '/js/bootstrap.datetimepicker.js"></script>';
 						print '<script type="text/javascript">';
 						print '$(document).ready(function() {';
 						//date only

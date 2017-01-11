@@ -44,7 +44,7 @@ if($permitted_nameservers != false) {
 
 ?>
 
-<select name="nameserverId" class="form-control input-sm input-w-auto">
+<select name="nameserverId" id="nameserver-select" class="select2">
 	<optgroup label='<?php print _('Select nameserver set'); ?>'>
 
 	<option value="0"><?php print _('No nameservers'); ?></option>
@@ -72,3 +72,7 @@ if($permitted_nameservers != false) {
 
 
 </select>
+<?php
+Components::render_select2_js('#nameserver-select',
+                              ['templateResult' => '$(this).s2oneLine']);
+?>

@@ -1,4 +1,5 @@
 db/bkp
+db/*dump
 app/subnets/import-subnet/upload/
 config.php
 config/config.php
@@ -12,3 +13,4 @@ api/_lock.txt
 bower_components
 node_modules
 commit-message
+*.swp

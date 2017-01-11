@@ -31,6 +31,10 @@ if ($s->count() > 0) {
     # get hidden fields
     $hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
     $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
+    
+    # rack object
+    $Racks      = new phpipam_rack ($Database);
+    
 }
 
 # title
@@ -112,7 +116,7 @@ $(document).ready(function() {
     $('#switchManagement').dataTable( {
         "paging": false,
         "searching": false,
-        "scrollX": "5em",
+        "scrollX": true,
         "scrollCollapse": true,
         "language": {
             "info": "Showing page <?php print $s->page; ?>  of <?php print ($s->pages > 0 ? $s->pages : "1"); ?>"
@@ -192,6 +196,32 @@ else {
         print '	<td class="description">'. $device['description'] .'</td>'. "\n";
     	print '	<td class="hidden-sm">'. $device_types_indexed[$device['type']]->name .'</td>'. "\n";
         print '	<td>'. $device['version'] .'</td>'. "\n";
+        
+        // SNMP
+        if($User->settings->enableSNMP=="1") {
+            print "<td>";
+            // not set
+            if ($device['snmp_version']==0 || strlen($device['snmp_version'])==0) {
+                print "<span class='text-muted'>"._("Disabled")."</span>";
+            }
+            else {
+                print _("Version").": $device[snmp_version]<br>";
+                print _("Community").": $device[snmp_community]<br>";
+            }
+            print "</td>";
+        }
+
+        // rack
+        if($User->settings->enableRACK=="1") {
+            print "<td>";
+            # rack
+            $rack = $Racks->fetch_rack_details ($device['rack']);
+            if ($rack!==false) {
+                print "<a href='".create_link("administration", "racks", $rack->id)."'>".$rack->name."</a><br>";
+                print "<span class='badge badge1 badge5'>"._('Position').": $device[rack_start], "._("Size").": $device[rack_size] U</span>";
+            }
+            print "</td>";
+        }
         
         //custom
 		if(sizeof($s->custom) > 0) {

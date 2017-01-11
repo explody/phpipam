@@ -74,7 +74,7 @@ else {
 	<base href="<?php print $url.BASE; ?>">
 
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+	<meta http-equiv="Cache-Control" content="Public">
 
 	<meta name="Description" content="">
 	<meta name="title" content="<?php print $title = $User->get_site_title ($_GET); ?>">
@@ -103,7 +103,10 @@ else {
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/font-awesome.css" />
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/jquery.datatables.css" />
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/multi-select.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/select2.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/select2.bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.custom.css" />
+
 
     <!-- js -->
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
@@ -140,13 +143,11 @@ else {
     <?php 
     if ($User->settings->enableLocations=="1") { 
         # API key check
-        if(isset($gmaps_api_key)) {
+        if(!empty($gmaps_api_key)) {
             $key = strlen($gmaps_api_key)>0 ? "?key=".$gmaps_api_key : "";
+            print '<script type="text/javascript" src="https://maps.google.com/maps/api/js' . $key . '"></script>';
+            print '<script type="text/javascript" src="' . MEDIA . '/js/gmaps.js"></script>';
         }
-    
-        // TODO: add http support to the Components class
-        print '<script type="text/javascript" src="https://maps.google.com/maps/api/js' . $key . '"></script>';
-        print '<script type="text/javascript" src="' . MEDIA . '/js/gmaps.js"></script>';
     }	
     ?>
 </head>

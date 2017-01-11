@@ -3146,7 +3146,7 @@ class Subnets extends Common_functions {
 		$parent_stack_subnet = array();
 
 		# structure
-		$html[] = "<select name='masterSubnetId' class='form-control input-sm input-w-auto input-max-200'>";
+		$html[] = "<select name='masterSubnetId' class='select2' id='master-select'>";
 
 		# folders
 		if(sizeof(@$children_folders)>0 || $isFolder) {
@@ -3235,12 +3235,10 @@ class Subnets extends Common_functions {
                 }
 			}
 			// folder - disabled
-			elseif ($option['value']['isFolder']==1) {
-					 if(strlen($option['value']['description'])>34) { $option['value']['description'] = substr($option['value']['description'],0,31) . "..."; }
-                     $html[] = "<option value=''	 disabled>$repeat ".$option['value']['description']."</option>";
-				//if($option['value']['id'] == $current_master) { $html[] = "<option value='' selected='selected' disabled>$repeat ".$option['value']['description']."</option>"; }
-				//else 											{ $html[] = "<option value=''					    disabled>$repeat ".$option['value']['description']."</option>"; }
-			}
+			// elseif ($option['value']['isFolder']==1) {
+			// 		 if(strlen($option['value']['description'])>34) { $option['value']['description'] = substr($option['value']['description'],0,31) . "..."; }
+            //          $html[] = "<option disabled><i class=\"fa fa-gray fa-folder-open-o\"></i>$repeat  ".$option['value']['description']."</option>";
+			// }
 
 			if ( $option === false ) { $parent = array_pop( $parent_stack_subnet ); }
 			# Has slave subnets
