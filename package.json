@@ -13,13 +13,14 @@
     "grunt-contrib-uglify": "latest",
     "grunt-contrib-watch": "latest",
     "grunt-css-url-replace": "^0.2.7",
+    "grunt-exec": "^1.0.1",
     "grunt-font-awesome-vars": "^1.0.1",
+    "grunt-text-replace": "^0.4.0",
     "jshint-stylish": "latest",
     "less-plugin-clean-css": "^1.5.1"
   },
   "dependencies": {
-    "grunt": "^1.0.1",
-    "grunt-text-replace": "^0.4.0"
+    "grunt": "^1.0.1"
   },
   "main": "index.js",
   "scripts": {
