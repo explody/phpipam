@@ -1,8 +1,8 @@
 <?php
-ob_start();
+//ob_start();
 
 // Critical, do not change
-require dirname(__FILE__) . "/paths.php";
+require dirname(__FILE__) . "/../paths.php";
 
 /* config */
 if (!file_exists(CONFIG))	{ 
@@ -12,7 +12,7 @@ if (!file_exists(CONFIG))	{
 }
 
 /* site functions */
-require 'functions/functions.php';
+require APP_ROOT . '/functions/functions.php';
 
 /* composer */
 require_once VENDOR . '/autoload.php';

@@ -20,7 +20,7 @@ RewriteRule ^saml/.*$ - [L]
 RewriteRule ^index.php$ - [L]
 RewriteRule ^env.php$ - [L]
 RewriteRule ^(css|js|site|test)/.*$ - [L]
-RewriteRule app/login/captcha/captchashow.php - [L]
+RewriteRule login/captcha/captchashow.php - [L]
 
 
 # redirect errors

@@ -9,15 +9,15 @@
  ******************************/
 
 /**
- *  Full path to the application root, or where the index.php lives
+ *  Full path to the application root, or where this file lives
  **/
-define('APP_ROOT', realpath(dirname(__FILE__)));
+define('APP_ROOT', realpath(dirname(__FILE__) . "/../"));
 
 /**
  *  Full path to web server document root. Generally the same as $_SERVER['DOCUMENT_ROOT'].
- *  Default: APP_ROOT
+ *  Default: APP_ROOT/app
  **/
-define('SERVER_ROOT', APP_ROOT);
+define('SERVER_ROOT', APP_ROOT . "/app");
 
 /**
  *  Path to our composer vendor directory
@@ -30,5 +30,31 @@ define('VENDOR', APP_ROOT . '/vendor');
  *  Default: APP_ROOT/config
  **/
 define('CONFIG', APP_ROOT . '/config/config.php');
+
+/******************************
+ *
+ * Define web server paths
+ * 
+ ******************************/
+ 
+/**
+ *  BASE definition if phpipam is not at the root of your web server
+ *  (e.g. domain.com/phpipam/). Include trailing slash.
+ *
+ *  Also change
+ *  RewriteBase / in .htaccess
+ **/
+define('BASE', "/");
+
+/**
+ *  Static media server path, relative to BASE
+ **/
+define('STATIC_PATH', BASE . "static/");
+
+/**
+ * Define the active media path
+ * e.g. /base/static/1.0.0/
+ **/
+define('MEDIA', STATIC_PATH . MEDIA_VERSION);
 
 ?>
