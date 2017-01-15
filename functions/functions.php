@@ -4,7 +4,7 @@
 require_once dirname(__FILE__) . "/../paths.php";
 
 /* @config file ------------------ */
-require CONFIG;
+$c = require CONFIG;
 
 /* @composer autoload ------------------ */
 require_once VENDOR . '/autoload.php';
@@ -14,7 +14,7 @@ ini_set('session.cookie_httponly', 1);
 
 /* @debugging functions ------------------- */
 ini_set('display_errors', 1);
-if (!$debugging) { 
+if (!$c->debugging) { 
     error_reporting(E_ERROR ^ E_WARNING); 
 } else { 
     error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT); 
@@ -59,7 +59,6 @@ require( dirname(__FILE__) . '/classes/class.PaginationLinks.php' );	    //Class
 require( dirname(__FILE__) . '/classes/class.PagedSearch.php' );
 require( dirname(__FILE__) . '/classes/class.Components.php' );
 require( dirname(__FILE__) . '/classes/class.Devices.php' );
-require( dirname(__FILE__) . '/classes/class.Config.php' );
 
 # save settings to constant
 if(@$_GET['page']!="install" ) {

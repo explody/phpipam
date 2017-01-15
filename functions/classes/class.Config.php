@@ -4,11 +4,9 @@ class IpamConfig extends MostlyImmutableConfig {
     # This is nothing more than a wrapper to use a nicer name in the app
 }
 
-class ImmutableConfigException extends Exception {
-    public function __construct($message, $code = 0, Exception $previous = null) {
-        parent::__construct($message, $code, $previous);
-    }
-}
+class ImmutableConfigException extends Exception { }
+class IpamConfigNotFound extends Exception { }
+class IpamEnvironmentNotFound extends Exception { }
 
 /* 
  * This class is intended as a container for config data
