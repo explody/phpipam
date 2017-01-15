@@ -1,0 +1,25 @@
+environment: development
+
+debugging: false
+phpsessname: phpipam
+private_subpages: []
+gmaps_api_key: ""
+mcunique: section
+
+proxy:
+    proxy_enabled: false
+    proxy_server: host.domain.com
+    proxy_port: 8080
+    proxy_user: username
+    proxy_pass: password
+    proxy_use_auth: false
+
+migrations:    
+    paths:
+        migrations: db/migrations  # Relative to APP_ROOT
+        seeds: db/seeds            # Relative to APP_ROOT
+    environments:
+        default_migration_table: migrations
+    env_defaults:
+        charset: utf8
+        collation: utf8_unicode_ci

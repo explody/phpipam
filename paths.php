@@ -11,7 +11,7 @@
 /**
  *  Full path to the application root, or where this file lives
  **/
-define('APP_ROOT', realpath(dirname(__FILE__) . "/../"));
+define('APP_ROOT', realpath(dirname(__FILE__)));
 
 /**
  *  Full path to web server document root. Generally the same as $_SERVER['DOCUMENT_ROOT'].
@@ -26,10 +26,25 @@ define('SERVER_ROOT', APP_ROOT . "/app");
 define('VENDOR', APP_ROOT . '/vendor');
 
 /**
+ *  Full path to the config directory
+ *  Default: APP_ROOT/config
+ **/
+ define('CONFIG_DIR', APP_ROOT . '/config');
+
+/**
  *  Full path to the main config file
  *  Default: APP_ROOT/config
  **/
-define('CONFIG', APP_ROOT . '/config/config.php');
+ define('CONFIG', CONFIG_DIR . '/loader.php');
+ 
+ /**
+  *  Full path to the environments config directory
+  *  Default: CONFIG_DIR/environments
+  **/
+  define('ENV_DIR', CONFIG_DIR . '/environments');
+
+# With basic paths set, we can require our version info 
+require_once CONFIG_DIR . '/version.php';
 
 /******************************
  *

@@ -16,11 +16,13 @@
     "grunt-exec": "^1.0.1",
     "grunt-font-awesome-vars": "^1.0.1",
     "grunt-text-replace": "^0.4.0",
+    "js-yaml": "^3.7.0",
     "jshint-stylish": "latest",
     "less-plugin-clean-css": "^1.5.1"
   },
   "dependencies": {
-    "grunt": "^1.0.1"
+    "grunt": "^1.0.1",
+    "js-yaml": "^3.7.0"
   },
   "main": "index.js",
   "scripts": {

@@ -59,6 +59,7 @@ require( dirname(__FILE__) . '/classes/class.PaginationLinks.php' );	    //Class
 require( dirname(__FILE__) . '/classes/class.PagedSearch.php' );
 require( dirname(__FILE__) . '/classes/class.Components.php' );
 require( dirname(__FILE__) . '/classes/class.Devices.php' );
+require( dirname(__FILE__) . '/classes/class.Config.php' );
 
 # save settings to constant
 if(@$_GET['page']!="install" ) {

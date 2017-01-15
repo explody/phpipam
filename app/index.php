@@ -1,12 +1,21 @@
 <?php
-//ob_start();
+ob_start();
 
-// Critical, do not change
+/*
+|--------------------------------------------------------------------------
+| Include the paths config
+|--------------------------------------------------------------------------
+|
+| If you need to move files and directories of the app around, this can be 
+| done in paths.php.  But, this file must always be able to find paths.php
+| so if you reorganize the structure, update the next line.
+|
+*/
 require dirname(__FILE__) . "/../paths.php";
 
 /* config */
 if (!file_exists(CONFIG))	{ 
-    die("<br><hr>-- config.php file missing! Please copy default config file `config.dist.php` to `config.php` and set configuration! --<hr><br>phpipam installation documentation: <a href='http://phpipam.net/documents/installation/'>http://phpipam.net/documents/installation/</a>"); 
+    die("<br><hr>-- " . CONFIG . " file missing! Please copy default config file `config.dist.php` to `config.php` and set configuration! --<hr><br>phpipam installation documentation: <a href='http://phpipam.net/documents/installation/'>http://phpipam.net/documents/installation/</a>"); 
 } else { 
     require CONFIG; 
 }
