@@ -86,20 +86,18 @@ abstract class DB {
 	 * __construct function.
 	 *
 	 * @access public
-	 * @param mixed $username (default: null)
-	 * @param mixed $password (default: null)
-	 * @param mixed $charset (default: null)
-	 * @param mixed $ssl (default: null)
+     * @param string $dsn DSN 
+	 * @param string $username (default: null)
+	 * @param string $password (default: null)
+	 * @param array  $pdo_mysql_options  (default: [])
 	 * @return void
 	 */
-	public function __construct($username = null, $password = null, $charset = null, $ssl = null) {
-		if (isset($username)) $this->username = $username;
-		if (isset($password)) $this->password = $password;
-		if (isset($charset))  $this->charset = $charset;
-		# ssl
-		if ($ssl) {
-			$this->ssl = $ssl;
-		}
+     public function __construct($dsn, $username = null, $password = null, $pdo_mysql_options = []) {
+		
+        $this->username = $username;
+		$this->password = $password;
+        $this->pdo_mysql_options = $pdo_mysql_options;
+        
 	}
 
 	/**
@@ -197,34 +195,16 @@ abstract class DB {
 	 * @return void
 	 */
 	public function connect() {
-		$dsn = $this->makeDsn();
 
 		try {
-			# ssl?
-			if ($this->ssl) {
-				$this->pdo = new \PDO($dsn, $this->username, $this->password, $this->ssl);
-			}
-			else {
-				$this->pdo = new \PDO($dsn, $this->username, $this->password);
-			}
-
+            $this->pdo = new \PDO($this->dsn, $this->username, $this->password, $this->pdo_mysql_options);
 			$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
 		} catch (\PDOException $e) {
 			throw new Exception ("Could not connect to database! ".$e->getMessage());
 		}
 
-		@$this->pdo->query('SET NAMES \'' . $this->charset . '\';');
-	}
-
-	/**
-	 * makeDsn function.
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function makeDsn() {
-		return ':charset=' . $this->charset;
+        // We've introduced depency on php >= 5.6. charset is in the DSN now, this was only required for < 5.3
+		// @$this->pdo->query('SET NAMES \'' . $this->charset . '\';');
 	}
 
 	/**
@@ -240,6 +220,7 @@ abstract class DB {
 
 	/**
 	 * logs queries to file
+     * TODO: make log dir configurable
 	 *
 	 * @access private
 	 * @param mixed $query
@@ -954,34 +935,83 @@ class Database_PDO extends DB {
 	 */
 	protected $debug = false;
 
+    /**
+	 * Will contain connection options mapped with pdo constants
+	 *
+	 * @var array
+	 * @access protected
+	 */
+    protected $pdo_options = [];
 
-
-
-
+    /**
+	 * Map of option names to PDO option constants
+	 *
+	 * @var array
+	 * @access protected
+	 */
+    protected $pdo_constants = [
+        'use_buffered_query'     => PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,
+        'local_infile'           => PDO::MYSQL_ATTR_LOCAL_INFILE,
+        'direct_query'           => PDO::MYSQL_ATTR_DIRECT_QUERY,
+        'found_rows'             => PDO::MYSQL_ATTR_FOUND_ROWS,		
+        'ignore_space'           => PDO::MYSQL_ATTR_IGNORE_SPACE,	
+        'init_command'           => PDO::MYSQL_ATTR_INIT_COMMAND,
+        'ssl_key'                => PDO::MYSQL_ATTR_SSL_KEY,
+        'ssl_cert'               => PDO::MYSQL_ATTR_SSL_CERT,
+        'ssl_ca'                 => PDO::MYSQL_ATTR_SSL_CA,
+        'ssl_cipher'             => PDO::MYSQL_ATTR_SSL_CIPHER,
+        'ssl_capath'             => PDO::MYSQL_ATTR_SSL_CAPATH,
+        'compress'               => PDO::MYSQL_ATTR_COMPRESS,
+    ];
 
 	/**
 	 * __construct function.
 	 *
 	 * @access public
-	 * @param mixed $host (default: null)
-	 * @param mixed $port (default: null)
-	 * @param mixed $dbname (default: null)
-	 * @param mixed $username (default: null)
-	 * @param mixed $password (default: null)
+	 * @param string|null $host (default: null)
+	 * @param string|null $port (default: null)
+	 * @param string|null $dbname (default: null)
+	 * @param string|null $username (default: null)
+	 * @param string|null $password (default: null)
+     * @param string|null $socket (default: null)
+     * @param string|null $ssl (default: null) Boolean, enable SSL if true.
+     * @param array|null  $attrs (default: null) Array of mysql connection attributes to set
 	 * @param mixed $charset (default: null)
 	 */
-	public function __construct($username=null, $password=null, $host=null, $port=null, $dbname=null, $charset=null) {
-		# set parameters
-		$this->set_db_params ();
-		# rewrite user/pass if requested - for installation
-		$username==null ? : $this->username = $username;
-		$password==null ? : $this->password = $password;
-		$host==null 	? : $this->host = $host;
-		$port==null 	? : $this->port = $port;
-		$dbname==null 	? : $this->dbname = $dbname;
-
+	public function __construct($username = null, 
+                                $password = null, 
+                                $host = null, 
+                                $port = null, 
+                                $dbname = null,
+                                $charset = null,
+                                $socket = null,
+                                $ssl = null,
+                                $options = []) {
+		
+        $this->c = IpamConfig::config();
+        
+		# Use passed parameters if they have been given, otherwise try config values
+        # Note: IpamConfig returns null if one tries to reference a nonexistent property
+		$this->username = ($username ? $username : $this->c->db->user);
+        $this->password = ($pass     ? $password : $this->c->db->pass);
+        $this->host     = ($host     ? $host     : $this->c->db->host);
+        $this->port     = ($port     ? $port     : $this->c->db->port);
+        $this->dbname   = ($dbname   ? $dbname   : $this->c->db->name);
+        $this->ssl      = ($ssl      ? $ssl      : $this->c->db->ssl);
+        $this->charset  = ($charset  ? $charset  : $this->c->db->charset);
+        $this->socket   = ($socket   ? $socket   : $this->c->db->socket);
+        
+        // Options are slightly different. If not set in the config, referencing 'mysql_attr' would return null but we
+        // want an empty array if there is no value. So, here's a nested ternary.  Sorry, I like one-liners.
+        $this->options  = ($options  ? $options  : (is_null($this->c->db->mysql_attr) ? [] : $this->c->db->mysql_attr->as_array() ));        
+        
+        # Translate options array into PDO options
+        $this->set_pdo_options();
+        
+        $this->dsn = $this->makeDsn();
+        
 		# construct
-		parent::__construct($this->username, $this->password, $this->charset, $this->ssl);
+		parent::__construct($this->dsn, $this->username, $this->password, $this->pdo_options);
 	}
 
 
@@ -991,48 +1021,15 @@ class Database_PDO extends DB {
 	 * @access private
 	 * @return void
 	 */
-	private function set_db_params () {
-		# use config file
-		require CONFIG;
-		# set
-		$this->host 	= $db['host'];
-		$this->port 	= $db['port'];
-		$this->username = $db['user'];
-		$this->password = $db['pass'];
-		$this->dbname 	= $db['name'];
+	private function set_pdo_options () {
 
-		$this->ssl = false;
-		if ($db['ssl']===true) {
-
-			$this->pdo_ssl_opts = array (
-				'ssl_key'    => PDO::MYSQL_ATTR_SSL_KEY,
-				'ssl_cert'   => PDO::MYSQL_ATTR_SSL_CERT,
-				'ssl_ca'     => PDO::MYSQL_ATTR_SSL_CA,
-				'ssl_cipher' => PDO::MYSQL_ATTR_SSL_CIPHER,
-				'ssl_capath' => PDO::MYSQL_ATTR_SSL_CAPATH
-			);
-
-			$this->ssl = array();
-
-			foreach ($this->pdo_ssl_opts as $key => $pdoopt) {
-				if ($db[$key]) {
-					$this->ssl[$pdoopt] = $db[$key];
-				}
-			}
-
+        // Convert our options key->val to the constant keys required for PDO
+		foreach ($this->options as $opt => $val) {
+            if (array_key_exists($opt, $this->pdo_constants)) {
+                $this->pdo_options[$this->pdo_constants[$opt]] = $val;
+            }
 		}
 
-	}
-
-	/**
-	 * connect function.
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function connect() {
-		parent::connect();
-		//@$this->pdo->query('SET NAMES \'' . $this->charset . '\';');
 	}
     
     /**
@@ -1055,9 +1052,23 @@ class Database_PDO extends DB {
 	 * @return void
 	 */
 	protected function makeDsn() {
-		# for installation
-		if($this->install)	{ return 'mysql:host=' . $this->host . ';port=' . $this->port . ';charset=' . $this->charset; }
-		else				{ return 'mysql:host=' . $this->host . ';port=' . $this->port . ';dbname=' . $this->dbname . ';charset=' . $this->charset; }
+        $dsn = 'mysql:';
+
+        if ($this->socket) {
+            $dsn .= 'unix_socket=' . $this->socket;
+        } else {
+            $dsn .= 'host=' . $this->host . ';port=' . $this->port;
+        }
+        
+        if ($this->charset) {
+            $dsn .= ';charset=' . $this->charset;
+        }
+        
+		if (!$this->install) { 
+            $dsn .= ';dbname=' . $this->dbname; 
+        }
+        
+        return $dsn;
 	}
 
 	/**

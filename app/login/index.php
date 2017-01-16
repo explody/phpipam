@@ -1,7 +1,9 @@
 <?php
+
 header('X-XSS-Protection:1; mode=block');
+
 # verify php build
-include 'functions/checks/check_php_build.php';        # check for support for PHP modules and database connection
+include FUNCTIONS . '/checks/check_php_build.php';        # check for support for PHP modules and database connection
 
 $http_auth = $User->fetch_object('usersAuthMethod', 'type', 'HTTP');
 $http_auth_settings = json_decode($http_auth->params);
@@ -238,7 +240,7 @@ if (!empty($_SERVER[$user_variable])) {
 <div id="prettyLinks" style="display:none"><?php echo $User->settings->prettyLinks; ?></div>
 
 <!-- Page footer -->
-<div class="footer"><?php include 'app/footer.php'; ?></div>
+<div class="footer"><?php include APP . '/footer.php'; ?></div>
 
 <!-- end body -->
 </body>

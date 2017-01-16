@@ -76,17 +76,16 @@ class Install extends Common_functions {
 	 * @param Database_PDO $Database
 	 */
 	public function __construct (Database_PDO $Database) {
+        
+        $this->c = IpamConfig::config();
+        
 		# initialize Result
 		$this->Result = new Result ();
 		# initialize object
 		$this->Database = $Database;
-		# set debugging
-		$this->set_debugging ();
-		# set debugging
-		$this->set_db_params ();
+
 		# Log object
-		try { $this->Database->connect(); }
-		catch ( Exception $e ) {}
+		try { $this->Database->connect(); } catch ( Exception $e ) {}
 	}
 
 
@@ -151,7 +150,7 @@ class Install extends Common_functions {
 	 */
 	private function drop_database () {
 	 	# set query
-	    $query = "drop database if exists `". $this->db['name'] ."`;";
+	    $query = "drop database if exists `". $this->c->db->name ."`;";
 		# execute
 		try { $this->Database_root->runQuery($query); }
 		catch (Exception $e) {	$this->Result->show("danger", $e->getMessage(), true);}
@@ -165,7 +164,7 @@ class Install extends Common_functions {
 	 */
 	private function create_database () {
 	 	# set query
-	    $query = "create database `". $this->db['name'] ."`;";
+	    $query = "create database `". $this->c->db->name ."`;";
 		# execute
 		try { $this->Database_root->runQuery($query); }
 		catch (Exception $e) {	$this->Result->show("danger", $e->getMessage(), true);}
@@ -179,7 +178,7 @@ class Install extends Common_functions {
 	 */
 	private function create_grants () {
 	 	# set query
-	    $query = 'grant ALL on `'. $this->db['name'] .'`.* to '. $this->db['user'] .'@localhost identified by "'. $this->db['pass'] .'";';
+	    $query = 'grant ALL on `'. $this->c->db->name .'`.* to '. $this->c->db->user .'@localhost identified by "'. $this->c->db->pass .'";';
 		# execute
 		try { $this->Database_root->runQuery($query); }
 		catch (Exception $e) {	$this->Result->show("danger", $e->getMessage(), true);}
@@ -208,7 +207,7 @@ class Install extends Common_functions {
 					try { $this->Database_root->runQuery("UNLOCK TABLES;"); }
 					catch (Exception $e) {}
 					//drop database
-					try { $this->Database_root->runQuery("drop database if exists `". $this->db['name'] ."`;"); }
+					try { $this->Database_root->runQuery("drop database if exists `". $this->c->db->name ."`;"); }
 					catch (Exception $e) {
 						$this->Result->show("danger", 'Cannot drop database: '.$e->getMessage(), true);
 					}
@@ -265,7 +264,7 @@ class Install extends Common_functions {
 	 */
 	public function check_table ($table, $redirect = false) {
 		# set query
-		$query = "SELECT COUNT(*) AS `cnt` FROM information_schema.tables WHERE table_schema = '".$this->db['name']."' AND table_name = '$table';";
+		$query = "SELECT COUNT(*) AS `cnt` FROM information_schema.tables WHERE table_schema = '".$this->c->db->name."' AND table_name = '$table';";
 		# try to fetch count
 		try { $table = $this->Database->getObjectQuery($query); }
 		catch (Exception $e) 	{ if($redirect === true) $this->redirect_to_install ();	else return false; }
@@ -284,28 +283,6 @@ class Install extends Common_functions {
 	private function redirect_to_install () {
 		# redirect to install
 		header("Location: ".create_link("install"));
-	}
-
-	/**
-	 * sets debugging if set in config.php file
-	 *
-	 * @access private
-	 * @return void
-	 */
-	public function set_debugging () {
-		require CONFIG;
-		if($debugging==true) { $this->debugging = true; }
-	}
-
-	/**
-	 * Sets DB parmaeters
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function set_db_params () {
-		require CONFIG;
-		$this->db = $db;
 	}
 
 

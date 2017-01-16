@@ -4,7 +4,7 @@
  *	phpipam installation page!
  */
 # check if php is built properly
-include('functions/checks/check_php_build.php');		# check for support for PHP modules and database connection
+include(FUNCTIONS . '/checks/check_php_build.php');		# check for support for PHP modules and database connection
 
 # initialize install class
 $Database 	= new Database_PDO;
@@ -138,7 +138,7 @@ else {
 </div>
 
 <!-- Page footer -->
-<div class="footer"><?php include('app/footer.php'); ?></div>
+<div class="footer"><?php include('footer.php'); ?></div>
 
 <!-- end body -->
 </body>

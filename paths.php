@@ -11,19 +11,36 @@
 /**
  *  Full path to the application root, or where this file lives
  **/
-define('APP_ROOT', realpath(dirname(__FILE__)));
+define('IPAM_ROOT', realpath(dirname(__FILE__)));
 
 /**
  *  Full path to web server document root. Generally the same as $_SERVER['DOCUMENT_ROOT'].
- *  Default: APP_ROOT/app
+ *  Default: IPAM_ROOT/public
  **/
-define('SERVER_ROOT', APP_ROOT . "/app");
+define('PUBLIC', IPAM_ROOT . '/public');
+
+/**
+ *  Full path to the application root, or where this file lives
+ **/
+define('APP', IPAM_ROOT . '/app');
+
+/**
+ *  Path to our primary functions/classes directory
+ *  Default: IPAM_ROOT/vendor
+ **/
+define('FUNCTIONS', IPAM_ROOT . '/functions');
 
 /**
  *  Path to our composer vendor directory
- *  Default: APP_ROOT/vendor
+ *  Default: IPAM_ROOT/vendor
  **/
-define('VENDOR', APP_ROOT . '/vendor');
+define('VENDOR', IPAM_ROOT . '/vendor');
+
+/**
+ *  Full path to the config directory
+ *  Default: IPAM_ROOT/config
+ **/
+define('CONFIG_DIR', IPAM_ROOT . '/config');
 
 /**
  *  Full path to the config directory
@@ -33,15 +50,15 @@ define('VENDOR', APP_ROOT . '/vendor');
 
 /**
  *  Full path to the main config file
- *  Default: APP_ROOT/config
+ *  Default: IPAM_ROOT/config
  **/
- define('CONFIG', CONFIG_DIR . '/loader.php');
+define('CONFIG', CONFIG_DIR . '/loader.php');
  
  /**
   *  Full path to the environments config directory
   *  Default: CONFIG_DIR/environments
   **/
-  define('ENV_DIR', CONFIG_DIR . '/environments');
+ define('ENV_DIR', CONFIG_DIR . '/environments');
 
 # With basic paths set, we can require our version info 
 require_once CONFIG_DIR . '/version.php';
@@ -64,12 +81,12 @@ define('BASE', "/");
 /**
  *  Static media server path, relative to BASE
  **/
-define('STATIC_PATH', BASE . "static/");
+define('STATIC_PATH', BASE . "static");
 
 /**
  * Define the active media path
  * e.g. /base/static/1.0.0/
  **/
-define('MEDIA', STATIC_PATH . MEDIA_VERSION);
+define('MEDIA', STATIC_PATH . '/' . MEDIA_VERSION);
 
 ?>
