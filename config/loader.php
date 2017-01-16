@@ -5,8 +5,7 @@
  * paths.php must be required first (and should be normally)
  */
 require_once(VENDOR   . '/autoload.php');
-require_once(APP_ROOT . '/functions/classes/class.Config.php');
-
+require_once(FUNCTIONS . '/classes/class.Config.php');
 
 /* 
  * If a config instance exists, simply return it
@@ -34,8 +33,13 @@ if (!file_exists($env_config)) {
 }
 $env      = Yaml::parse(file_get_contents($env_config));
 
-// Merge environment over primary
-$config = array_merge($defaults, $env);
+$config = [];
+
+// First copy the db defaults into place
+$defaults['db'] = $defaults['db_defaults'];
+
+// Recursively merge environment config over primary config
+$config = IpamConfig::config_merge_recursive($defaults, $env);
 
 // Initalize the config pseudo-singleton with the config array
 IpamConfig::init($config);

@@ -14,12 +14,13 @@ proxy:
     proxy_pass: password
     proxy_use_auth: false
 
+db_defaults:
+    charset: utf8
+    collation: utf8_unicode_ci
+
 migrations:    
     paths:
-        migrations: db/migrations  # Relative to APP_ROOT
-        seeds: db/seeds            # Relative to APP_ROOT
+        migrations: db/migrations  # Relative to IPAM_ROOT
+        seeds: db/seeds            # Relative to IPAM_ROOT
     environments:
         default_migration_table: migrations
-    env_defaults:
-        charset: utf8
-        collation: utf8_unicode_ci

@@ -1,9 +1,5 @@
 <?php 
 
-class IpamConfig extends MostlyImmutableConfig {
-    # This is nothing more than a wrapper to use a nicer name in the app
-}
-
 class ImmutableConfigException extends Exception { }
 class IpamConfigNotFound extends Exception { }
 class IpamEnvironmentNotFound extends Exception { }
@@ -72,6 +68,36 @@ class MostlyImmutableConfig {
     }
     
     /* 
+     * Recursively merges two arrays. Unlike the bulitin array_merge_recursive, this behaves like array_merge
+     * all the way down the hierarchy.
+     * 
+     * @param array $array1 
+     * @param array $array2 
+     *
+     * @return array 
+     */
+    public static function config_merge_recursive($array1, $array2)
+    {
+        $merged = $array1;
+
+        foreach ($array2 as $key => $value) {
+            
+            if (array_key_exists($key, $array1)) {
+                if (is_array($value) && is_array($array1[$key])) {
+                    $nval = self::config_merge_recursive($array1[$key], $value);
+                } else {
+                    $nval = $value;
+                }
+            } else {
+                $nval = $value;
+            }
+            $merged[$key] = $nval;
+        }
+        
+        return $merged;
+    }
+    
+    /* 
      * If we've been intialized, return true. Otherwise, false.
      *
      * @return bool
@@ -113,7 +139,7 @@ class MostlyImmutableConfig {
      * @return mixed
      */
     public function __get($name) {
-        return array_key_exists($name, $this->properties) ? $this->properties[$name] : null;
+        return (array_key_exists($name, $this->properties) ? $this->properties[$name] : null);
     }
     
     /* 
@@ -129,8 +155,26 @@ class MostlyImmutableConfig {
         throw new ImmutableConfigException("Values may only be set during init()");
     }
     
+    /* 
+     * Return the hierarchy of properties as an array, for iterating.
+     * 
+     * @return array
+     */
+    public function as_array() {
+        $a = [];
+        foreach ($this->properties as $k=>$v) {
+            if ($v instanceof MostlyImmutableConfig) {
+                $a[$k] = $v->as_array();
+            } else {
+                $a[$k] = $v;
+            }
+        }
+        return $a;
+    }
+    
 }
 
-
+// This is nothing more than a wrapper to use a nicer name in the app
+class IpamConfig extends MostlyImmutableConfig { }
 
 ?>
