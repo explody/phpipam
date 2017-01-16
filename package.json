@@ -2,7 +2,10 @@
   "name": "phpipam",
   "version": "1.3.0",
   "config": {
-    "static": "public/static"
+    "static": {
+        "dir": "public/static",
+        "path": "static"
+    }
   },
   "devDependencies": {
     "grunt": "^1.0.1",

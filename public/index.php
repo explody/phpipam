@@ -31,7 +31,7 @@ require_once VENDOR . '/autoload.php';
 if(!isset($_GET['page'])) { $_GET['page'] = "dashboard"; }
 
 # if not install fetch settings etc
-if($_GET['page']!="install" ) {
+if($_GET['page'] !="install" ) {
 	# database object
 	$Database 	= new Database_PDO;
 
@@ -201,7 +201,7 @@ else {
     <!-- logo -->
 	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
     <?php
-	if(file_exists( dirname(__FILE__) . MEDIA . "/images/logo/logo.png")) {
+	if(file_exists( MEDIA . "/images/logo/logo.png")) {
     	print '<img style="width:220px;margin:10px;margin-top:20px;" alt="phpipam" src="' . MEDIA . '/images/logo/logo.png">';
 	}
     ?>
@@ -244,7 +244,7 @@ else {
 		/* error */
 		if($_GET['page'] == "error") {
 			print "<div id='error' class='container'>";
-			include_once(APP . 'error.php');
+			include_once(APP . '/error.php');
 			print "</div>";
 		}
 		/* password reset required */
@@ -288,9 +288,9 @@ else {
 				print '<td id="subnetsLeft">';
 				print '<div id="leftMenu" class="' . menu-$_GET[page] . '">';
 					if($_GET['page'] == 'subnets' || $_GET['page'] == 'vlan' ||
-					   $_GET['page'] == 'vrf' 	  || $_GET['page'] == 'folder')			{ include('subnets/subnets-menu.php'); }
-					else if ($_GET['page'] == 'tools')									{ include('tools/tools-menu.php'); }
-					else if ($_GET['page'] == 'administration')							{ include('admin/admin-menu.php'); }
+					   $_GET['page'] == 'vrf' 	  || $_GET['page'] == 'folder')			{ include(APP . '/subnets/subnets-menu.php'); }
+					else if ($_GET['page'] == 'tools')									{ include(APP . '/tools/tools-menu.php'); }
+					else if ($_GET['page'] == 'administration')							{ include(APP . '/admin/admin-menu.php'); }
 				print '</div>';
 				print '</td>';
 
@@ -300,29 +300,29 @@ else {
 			print '<div class="row menu-' . $_GET[page] . ' id="content">';
 				# subnets
 				if ($_GET['page']=='subnets') {
-					if(@$_GET['sPage'] == 'address-details')							{ include('subnets/addresses/address-details-index.php'); }
-					elseif(!isset($_GET['subnetId']))									{ include('sections/section-subnets.php'); }
-					else																{ include('subnets/index.php'); }
+					if(@$_GET['sPage'] == 'address-details')							{ include(APP . '/subnets/addresses/address-details-index.php'); }
+					elseif(!isset($_GET['subnetId']))									{ include(APP . '/sections/section-subnets.php'); }
+					else																{ include(APP . '/subnets/index.php'); }
 				}
 				# vrf
-				elseif ($_GET['page']=='vrf') 											{ include('vrf/index.php'); }
+				elseif ($_GET['page']=='vrf') 											{ include(APP . '/vrf/index.php'); }
 				# vlan
-				elseif ($_GET['page']=='vlan') 											{ include('vlan/index.php'); }
+				elseif ($_GET['page']=='vlan') 											{ include(APP . '/vlan/index.php'); }
 				# folder
-				elseif ($_GET['page']=='folder') 										{ include('folder/index.php'); }
+				elseif ($_GET['page']=='folder') 										{ include(APP . '/folder/index.php'); }
 				# tools
 				elseif ($_GET['page']=='tools') {
-					if (!isset($_GET['section']))										{ include('tools/index.php'); }
+					if (!isset($_GET['section']))										{ include(APP . '/tools/index.php'); }
 					else {
                         if (!in_array($_GET['section'], $tools_menu_items))             { header('Location: '.create_link('error','400')); die(); }
-						elseif (!file_exists("tools/$_GET[section]/index.php") && !file_exists("tools/custom/$_GET[section]/index.php"))
+						elseif (!file_exists(APP . "/tools/$_GET[section]/index.php") && !file_exists(APP . "/tools/custom/$_GET[section]/index.php"))
 						                                                                { header('Location: '.create_link('error','404')); die(); }
 						else 															{
-    						if(file_exists("tools/$_GET[section]/index.php")) {
-        						include("tools/$_GET[section]/index.php");
+    						if(file_exists(APP . "/tools/$_GET[section]/index.php")) {
+        						include(APP . "/tools/$_GET[section]/index.php");
     						}
     						else {
-        					    include("tools/custom/$_GET[section]/index.php");
+        					    include(APP . "/tools/custom/$_GET[section]/index.php");
     						}
                         }
 					}
@@ -332,12 +332,12 @@ else {
 					# Admin object
 					$Admin = new Admin ($Database);
 
-					if (!isset($_GET['section']))										{ include('admin/index.php'); }
-					elseif (@$_GET['subnetId']=='section-changelog')					{ include('sections/section-changelog.php'); }
+					if (!isset($_GET['section']))										{ include(APP . '/admin/index.php'); }
+					elseif (@$_GET['subnetId']=='section-changelog')					{ include(APP . '/sections/section-changelog.php'); }
 					else {
                         if (!in_array($_GET['section'], $admin_menu_items))             { header('Location: '.create_link('error','400')); die(); }
-						elseif(!file_exists("admin/$_GET[section]/index.php")) 		{ header('Location: '.create_link('error','404')); die(); }
-						else 															{ include("admin/$_GET[section]/index.php"); }
+						elseif(!file_exists(APP . "/admin/$_GET[section]/index.php")) 		{ header('Location: '.create_link('error','404')); die(); }
+						else 															{ include(APP . "/admin/$_GET[section]/index.php"); }
 					}
 				}
 				# default - error

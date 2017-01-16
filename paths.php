@@ -17,7 +17,7 @@ define('IPAM_ROOT', realpath(dirname(__FILE__)));
  *  Full path to web server document root. Generally the same as $_SERVER['DOCUMENT_ROOT'].
  *  Default: IPAM_ROOT/public
  **/
-define('PUBLIC', IPAM_ROOT . '/public');
+define('WEB', IPAM_ROOT . '/public');
 
 /**
  *  Full path to the application root, or where this file lives
