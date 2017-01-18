@@ -4,19 +4,6 @@
  * Section ordering
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Sections	= new Sections ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # fetch all sections
 $sections = $Sections->fetch_all_sections();
 ?>

@@ -7,27 +7,8 @@
  *************************************************/
 
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools	    = new Tools ($Database);
-$Addresses	= new Addresses ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "address");
-
-# validate action
-$Tools->validate_action ($_POST['action']);
 
 # validate post
 is_numeric($_POST['subnetId']) ?:						$Result->show("danger", _("Invalid ID"), true);

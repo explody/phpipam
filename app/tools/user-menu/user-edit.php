@@ -7,17 +7,6 @@
  */
 
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # verify email
 if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))							{ $Result->show("danger alert-absolute",  _('Email not valid!'), true); }
 
@@ -39,3 +28,5 @@ else 																			{ $Result->show("success alert-absolute", _('Account upd
 
 # update language
 $User->update_session_language ();
+
+?>

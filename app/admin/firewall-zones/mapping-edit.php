@@ -4,20 +4,7 @@
  * add, edit and delete firewall zones mappings
  **************************************************/
 
-# functions
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize classes
-$Database = new Database_PDO;
-$User 	  = new User ($Database);
-$Subnets  = new Subnets ($Database);
-$Tools 	  = new Tools ($Database);
-$Result   = new Result ();
 $Zones 	  = new FirewallZones($Database);
-$Components = new Components ($Tools);
-
-# validate session parameters
-$User->check_user_session();
 
 # validate $_POST['id'] values
 if (!preg_match('/^[0-9]+$/i', $_POST['id'])) {

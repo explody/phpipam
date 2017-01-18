@@ -4,22 +4,6 @@
  * Print select vlan in subnets
  *******************************/
 
-/* required functions */
-if(!is_object($User)) {
-	/* functions */
-	require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-	# initialize user object
-	$Database 	= new Database_PDO;
-	$User 		= new User ($Database);
-	$Tools	 	= new Tools ($Database);
-	$Sections	= new Sections ($Database);
-	$Result 	= new Result ();
-}
-
-# verify that user is logged in
-$User->check_user_session();
-
 # fetch all permitted domains
 $permitted_nameservers = $Sections->fetch_section_nameserver_sets ($_POST['sectionId']);
 

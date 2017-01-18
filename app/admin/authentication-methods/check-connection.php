@@ -5,19 +5,6 @@
  *
  */
 
-
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # feth settings
 $auth_settings = $Admin->fetch_object ("usersAuthMethod", "id", $_POST['id']);
 if($auth_settings===false)	{ $Result->show("danger", _("Invalid ID"), true, true); }

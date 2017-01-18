@@ -4,20 +4,6 @@
  *	Print all available locations
  ************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Tools	 	= new Tools ($Database);
-$Result 	= new Result ();
-$Components = new Components ($Tools);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "pstn");
 

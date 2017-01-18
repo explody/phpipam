@@ -3,23 +3,6 @@
  * insert new hosts to database
  *******************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Subnets	= new Subnets ($Database);
-$Addresses	= new Addresses ($Database);
-$Tools      = new Tools ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 # check for number of input values
 $max = ini_get("max_input_vars");
 if(sizeof($_POST)>=ini_get("max_input_vars")) 							{ $Result->show("danger", _("Number of discovered hosts exceed maximum possible defined by php.ini - set to ")." $max <hr>"._("Please adjust your php.ini settings for value `max_input_vars`"), true); }

@@ -5,19 +5,6 @@
  *	modify firewall zone module settings like zone indicator, max. chars, ...
  ********************************************************************************/
 
-
-# functions
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize objects
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # validations
 
 # check for the maximum length of the zone name, it has to be between 3 and 31. also be sure that this value is decimal.

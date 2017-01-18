@@ -3,17 +3,6 @@
  * Data import load
  *************************************************/
 
-# include required scripts
-require_once( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize user object, if not already set
-if (!isset($Database)) { $Database 	= new Database_PDO; }
-if (!isset($User)) { $User = new User ($Database); }
-if (!isset($Result)) { $Result = new Result; }
-
-# verify that user is logged in, to guard against direct access of page and possible exploits
-$User->check_user_session();
-
 $expfields = explode("|",$_GET['expfields']);
 $reqfields = explode("|",$_GET['reqfields']);
 if (isset($_GET['filetype'])) {

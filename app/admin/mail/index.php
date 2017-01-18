@@ -35,6 +35,7 @@ $csrf = $User->csrf_cookie ("create", "mail");
 				<option value="smtp" <?php if($mail_settings->mtype=="smtp") print "selected='selected'"; ?>><?php print _("SMTP"); ?></option>
 			</select>
 			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+            <input type="hidden" name="action" id="formAction" value="none" />
 		</td>
 		<td class="info2"><?php print _('Select server type for sending mail messages'); ?></td>
 	</tr>

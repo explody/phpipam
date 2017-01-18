@@ -3,25 +3,8 @@
 /*
  * truncate subnet result
  *********************/
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Subnets	= new Subnets ($Database);
-$Addresses	= new Addresses ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 # validate csrf cookie
 $User->csrf_cookie ("validate", "truncate", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
-
 
 # id must be numeric
 if(!is_numeric($_POST['subnetId']))			{ $Result->show("danger", _("Invalid ID"), true); }

@@ -5,17 +5,7 @@
  *	verify and update mapping informations
  **********************************************/
 
-# functions
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize classes
-$Database = new Database_PDO;
-$User = new User ($Database);
-$Result = new Result ();
 $Zones = new FirewallZones($Database);
-
-# validate session parameters
-$User->check_user_session();
 
 # validate the action type
 if($_POST['action'] != 'add' && $_POST['action'] != 'delete' && $_POST['action'] != 'edit'){

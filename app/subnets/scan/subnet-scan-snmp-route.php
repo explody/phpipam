@@ -7,21 +7,6 @@
  *
  ******************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Tools	 	= new Tools ($Database);
-$Sections	= new Sections ($Database);
-$Subnets	= new Subnets ($Database);
-$Snmp       = new phpipamSNMP ();
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # scan disabled
 if ($User->settings->enableSNMP!="1")           { $Result->show("danger", "SNMP module disbled", true, true, false, true); }
 

@@ -4,26 +4,10 @@
  *	Edit rack details
  ************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Tools	 	= new Tools ($Database);
 $Racks      = new phpipam_rack ($Database);
-$Result 	= new Result ();
-$Components = new Components ($Tools);
-
-# verify that user is logged in
-$User->check_user_session();
 
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "rack");
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # fetch custom fields
 $custom = $Tools->fetch_custom_fields('racks');

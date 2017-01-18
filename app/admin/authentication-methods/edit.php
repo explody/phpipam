@@ -1,18 +1,5 @@
 <?php
 
-/* functions */
-require dirname(__FILE__).'/../../../functions/functions.php';
-
-# initialize user object
-$Database = new Database_PDO();
-$User = new User($Database);
-$Admin = new Admin($Database);
-$Result = new Result();
-$Log = new Logging($Database, $User->settings);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie('create', 'authmethods');
 

@@ -4,28 +4,8 @@
  * Script to print add / edit / delete users
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools	 	= new Tools ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "user");
-
-# strip tags - XSS
-$_POST = $User->strip_input_tags ($_POST);
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # fetch custom fields
 $custom 	= $Tools->fetch_custom_fields('users');

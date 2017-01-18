@@ -4,19 +4,6 @@
  * Print log details popup
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
-
 # fetch log
 $log = $Admin->fetch_object("logs", "id", $_POST['id']);
 if($log==false)	{ $Result->show("danger", _("Invalid ID"), true, true); }

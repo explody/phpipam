@@ -4,34 +4,18 @@
  * Print edit sections form
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Sections	= new Sections ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "section");
 
-# strip tags - XSS
-$_POST = $User->strip_input_tags ($_POST);
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
-
 # fetch all sections for master section
 $sections = $Sections->fetch_all_sections ();
+
 # fetch groups
 $groups   = $Admin->fetch_all_objects("userGroups", "g_id");
+
 # fetch section
 $section  = (array) $Sections->fetch_section (null, @$_POST['sectionId']);
+
 ?>
 
 <!-- header -->

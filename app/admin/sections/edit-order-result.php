@@ -4,21 +4,6 @@
  * Function to add / edit / delete section
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Sections	= new Sections ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 # create array of ordering
 $otmp = explode(";", $_POST['position']);
 foreach($otmp as $ot) {

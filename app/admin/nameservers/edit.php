@@ -4,28 +4,8 @@
  *	Print all available nameserver sets and configurations
  ************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Tools	 	= new Tools ($Database);
-$Sections	= new Sections ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "ns");
-
-# strip tags - XSS
-$_POST = $User->strip_input_tags ($_POST);
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # get Nameserver sets
 if($_POST['action']!="add") {

@@ -5,17 +5,7 @@
  *	save subnet to zone binding
  *********************************/
 
-# functions
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize classes
-$Database = new Database_PDO;
-$User 	  = new User ($Database);
-$Result   = new Result ();
 $Zones    = new FirewallZones($Database);
-
-# validate session parameters
-$User->check_user_session();
 
 # validate $_POST['subnetId'] values
 if (!preg_match('/^[0-9]+$/i', $_POST['subnetId']))  						{ $Result->show("danger", _("Invalid subnet ID. Do not manipulate the POST values!"), true); }

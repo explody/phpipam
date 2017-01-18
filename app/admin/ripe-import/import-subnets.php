@@ -4,22 +4,6 @@
  * Script to manage sections
  *************************************************/
 
-
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Subnets	= new Subnets ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 //get size of subnets - $_POST/4
 $size = sizeof($_POST) / 4;
 

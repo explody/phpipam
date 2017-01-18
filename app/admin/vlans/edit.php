@@ -4,19 +4,6 @@
  *	Print all available VRFs and configurations
  ************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Tools	 	= new Tools ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # make sue user can edit
 if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
     $Result->show("danger", _("Not allowed to change VLANs"), true, true);
@@ -24,12 +11,6 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
 
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "vlan");
-
-# strip tags - XSS
-$_POST = $User->strip_input_tags ($_POST);
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # fetch vlan details
 $vlan = $Admin->fetch_object ("vlans", "vlanId", @$_POST['vlanId']);

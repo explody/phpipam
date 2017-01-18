@@ -3,17 +3,6 @@
  * Data import verify and load header row
  *************************************************/
 
-# include required scripts
-require_once( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize user object, if not already set
-if (!isset($Database)) { $Database 	= new Database_PDO; }
-if (!isset($User)) { $User = new User ($Database); }
-if (!isset($Tools)) { $Tools = new Tools ($Database); }
-
-# verify that user is logged in, to guard against direct access of page and possible exploits
-$User->check_user_session();
-
 /* get extension */
 $filename = $_FILES['file']['name'];
 $expfields = explode("|",$_POST['expfields']);

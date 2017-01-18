@@ -3,6 +3,7 @@
  * Print list of inactive hosts
  **********************************************/
 
+# TODO: wat
 # required functions
 if(!is_object(@$User)) {
 	require( dirname(__FILE__) . '/../../../functions/functions.php' );

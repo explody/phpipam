@@ -4,17 +4,6 @@
  *	Preview data IP Addresses import data
  ************************************/
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # load data from uploaded file
 include 'import-load-data.php';
 # check data and mark the entries to import/update

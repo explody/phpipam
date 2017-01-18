@@ -4,19 +4,7 @@
  *	Edit powerDNS record
  ************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Tools	 	= new Tools ($Database);
-$Result 	= new Result ();
 $PowerDNS 	= new PowerDNS ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
 
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "record");
@@ -26,9 +14,6 @@ $pdns = $PowerDNS->db_settings;
 
 # default post
 $post = $_POST;
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # get record
 if($_POST['action']!="add") {

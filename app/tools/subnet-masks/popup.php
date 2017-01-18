@@ -4,21 +4,6 @@
  * print subnet masks popup
  */
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# database object
-$Database 	= new Database_PDO;
-# initialize objects
-$Result		= new Result;
-$User		= new User ($Database);
-$Subnets	= new Subnets ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
-# strip tags - XSS
-$_POST = $User->strip_input_tags ($_POST);
 ?>
 
 <!-- header -->

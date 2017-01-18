@@ -3,16 +3,6 @@
  * L2 Domain Import
  ************************************************/
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User = new User ($Database);
-
-# verify that user is logged in, to guard against direct access of page and possible exploits
-$User->check_user_session();
-
 # load data from uploaded file
 include 'import-load-data.php';
 # check data and mark the entries to import/update

@@ -4,23 +4,8 @@
  * Script to print add / edit / delete API
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "apiedit");
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['appid'])) { $Result->show("danger", _("Invalid ID"), true, true); }
@@ -67,8 +52,19 @@ if($_POST['action']!="add") {
 	<!-- code -->
 	<tr>
 	    <td><?php print _('App code'); ?></td>
-	    <td><input type="text" id="appcode" name="app_code" class="form-control input-sm"  value="<?php print @$api->app_code; ?>"  maxlength='32' <?php if($_POST['action'] == "delete") print "readonly"; ?>></td>
-       	<td class="info2"><?php print _('Application code'); ?> <button class="btn btn-xs btn-default" id="regApiKey"><i class="fa fa-random"></i> <?php print _('Regenerate'); ?></button></td>
+	    <td>
+            <input type="text" id="md5string" name="app_code" class="form-control input-sm"  value="<?php print @$api->app_code; ?>"  maxlength='32' <?php if($_POST['action'] == "delete") print "readonly"; ?>>
+        </td>
+       	<td class="info2">
+            <?php print _('Application code'); ?> 
+            <button class="btn btn-xs btn-default" id="genMD5String">
+                <i class="fa fa-random"></i> 
+                <?php print _('Regenerate'); ?>
+            </button>
+            <script>
+                $.getScript("<?php print MEDIA; ?>/js/jquery.md5.js");
+            </script>
+        </td>
     </tr>
 
 	<!-- permissions -->

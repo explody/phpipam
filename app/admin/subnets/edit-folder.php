@@ -4,30 +4,8 @@
  * Print edit folder
  *********************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Sections	= new Sections ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools		= new Tools ($Database);
-$Result 	= new Result ();
-$Components = new Components ($Tools);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "folder");
-
-# strip tags - XSS
-$_POST = $User->strip_input_tags ($_POST);
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # ID must be numeric
 if($_POST['action']!="add") {

@@ -4,25 +4,8 @@
  *	Print all available nameserver sets and configurations
  ************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Tools	 	= new Tools ($Database);
-$Result 	= new Result ();
-$Components = new Components ($Tools);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "nat");
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # get NAT object
 if($_POST['action']!="add") {
@@ -106,7 +89,7 @@ $link = $readonly ? false : true;
                                'resolveGroupKey' => true,
                                'gsort' => true,
                                'extFields' => Devices::$extRefs,
-                               'selected' => array('id' => $prefix->deviceId)
+                               'selected' => array('id' => $nat->device)
                            )
                        );
                 }

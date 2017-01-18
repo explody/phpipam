@@ -4,21 +4,6 @@
  *	Generate XLS file for Subnets
  ************************************/
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-require( dirname(__FILE__) . '/../../../functions/PEAR/Spreadsheet/Excel/Writer.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin 		= new Admin ($Database);
-$Tools	    = new Tools ($Database);
-$Subnets	= new Subnets ($Database);
-$Sections	= new Sections ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 
 # fetch all sections

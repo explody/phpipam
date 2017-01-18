@@ -16,7 +16,8 @@ $hidden_custom_fields = is_array(@$hidden_custom_fields['racks']) ? $hidden_cust
 
 
 # all racks or one ?
-if (isset($_GET['subnetId']))   { include("print-single-rack.php"); }
-else                            { include("print-racks.php"); }
-
-?>
+if (isset($_GET['subnetId'])) {
+    include(APP . "/tools/racks/print-single-rack.php");
+} else {
+    include(APP . "/tools/racks/print-racks.php");
+}

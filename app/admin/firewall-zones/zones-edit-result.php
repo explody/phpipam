@@ -4,18 +4,7 @@
  *	verify and update zone informations
  *****************************************/
 
-# functions
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize classes
-$Database = new Database_PDO;
-$User 	  = new User ($Database);
-$Admin 	  = new Admin ($Database);
-$Result   = new Result ();
 $Zones 	  = new FirewallZones($Database);
-
-# validate session parameters
-$User->check_user_session();
 
 # fetch module settings
 $firewallZoneSettings = json_decode($User->settings->firewallZoneSettings,true);

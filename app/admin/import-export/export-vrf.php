@@ -4,19 +4,6 @@
  *	Generate XLS file for VRFs
  *********************************/
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-require( dirname(__FILE__) . '/../../../functions/PEAR/Spreadsheet/Excel/Writer.php');
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # fetch all vrfs
 $all_vrfs = $Admin->fetch_all_objects("vrf", "vrfId");
 if (!$all_vrfs) { $all_vrfs = array(); }

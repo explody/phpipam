@@ -4,20 +4,6 @@
  * Search IRPE databse for AS imports
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Subnets	= new Subnets ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
-
 //strip AS if provided, to get just the number
 if(substr($_POST['as'], 0,2)=="AS" || substr($_POST['as'], 0,2)=="as") {
 	$_POST['as'] = substr($_POST['as'], 2);

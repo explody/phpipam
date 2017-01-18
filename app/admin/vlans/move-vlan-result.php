@@ -4,21 +4,6 @@
  * Move VLAN to new domain
  *******************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Tools	 	= new Tools ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 // checks
 if(!is_numeric($_POST['newDomainId']))			$Result->show("danger", _("Invalid ID"), true);
 if(!is_numeric($_POST['vlanId']))				$Result->show("danger", _("Invalid ID"), true);

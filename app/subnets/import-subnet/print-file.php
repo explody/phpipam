@@ -4,20 +4,6 @@
  *	Script to parse imported file!
  ********************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# classes
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Tools	 	= new Tools ($Database);
-$Subnets	= new Subnets ($Database);
-$Addresses	= new Addresses ($Database);
-$Result 	= new Result;
-
-# verify that user is logged in
-$User->check_user_session();
-
 # set filetype
 $filetype = explode(".", $_POST['filetype']);
 $filetype = end($filetype);

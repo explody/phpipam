@@ -4,22 +4,7 @@
  *	Script that checks if IP is alive
  */
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools	    = new Tools ($Database);
-$Addresses	= new Addresses ($Database);
 $Ping		= new Scan ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode (true);
 
 # set address types array
 $Tools->get_addresses_types ();

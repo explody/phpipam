@@ -4,19 +4,6 @@
  *	Subnets master/nested recompute select form
  */
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin 		= new Admin ($Database);
-$Tools	    = new Tools ($Database);
-$Sections	= new Sections ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 $mtable = "subnets"; # main table where to check the fields
 # predefine field list
 $expfields = array ("section","subnet","mask","description","vrf");

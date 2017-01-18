@@ -3,17 +3,6 @@
  * Subnets Master/Nested recompute save
  ****************************************/
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User = new User ($Database);
-$Admin 		= new Admin ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # Load subnets and recompute the master/nested relations
 include 'import-recompute-logic.php';
 

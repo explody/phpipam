@@ -5,30 +5,13 @@
  * If all is ok write to database
  *************************************************/
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools	    = new Tools ($Database);
-$Addresses	= new Addresses ($Database);
 $Log 		= new Logging ($Database, $User->settings);
 $Zones 		= new FirewallZones($Database);
 $Ping		= new Scan ($Database);
 
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 # validate csrf cookie
 $User->csrf_cookie ("validate", "address", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
-# validate action
-$Tools->validate_action ($_POST['action']);
 $action = $_POST['action'];
 //reset delete action form visual visual
 if(isset($_POST['action-visual'])) {

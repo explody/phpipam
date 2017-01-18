@@ -4,26 +4,8 @@
  * Script to print add / edit / delete scanAgent
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "agent");
-
-# strip tags - XSS
-$_POST = $User->strip_input_tags ($_POST);
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['id'])) { $Result->show("danger", _("Invalid ID"), true, true); }
@@ -75,7 +57,9 @@ if (@$agent->type=="direct" && $_POST['action']=="delete") {
 	<!-- description -->
 	<tr>
 	    <td><?php print _('Description'); ?></td>
-	    <td><input type="text" id="description" name="description" class="form-control input-sm"  value="<?php print @$agent->description; ?>"  <?php if($_POST['action'] == "delete") print "readonly"; ?>></td>
+	    <td>
+            <input type="text" id="description" name="description" class="form-control input-sm"  value="<?php print @$agent->description; ?>"  <?php if($_POST['action'] == "delete") print "readonly"; ?>>
+        </td>
        	<td class="info2"><?php print _('Agent description'); ?></td>
     </tr>
 
@@ -83,8 +67,17 @@ if (@$agent->type=="direct" && $_POST['action']=="delete") {
 	<!-- code -->
 	<tr>
 	    <td><?php print _('Code'); ?></td>
-	    <td><input type="text" id="code" name="code" class="form-control input-sm"  value="<?php print @$agent->code; ?>"  maxlength='32' <?php if(@$agent->type=="direct"||$_POST['action'] == "delete") print "readonly"; ?>></td>
-       	<td class="info2"><?php print _('Agent code'); ?><?php if(@$agent->type!="direct") { ?> <button class="btn btn-xs btn-default" id="regAgentKey"><i class="fa fa-random"></i> <?php print _('Regenerate'); ?></button><?php } ?></td>
+	    <td>
+            <input type="text" id="md5string" name="code" class="form-control input-sm"  value="<?php print @$agent->code; ?>"  maxlength='32' <?php if(@$agent->type=="direct"||$_POST['action'] == "delete") print "readonly"; ?>>
+        </td>
+       	<td class="info2"><?php print _('Agent code'); ?><?php if(@$agent->type!="direct") { ?> 
+            <button class="btn btn-xs btn-default" id="genMD5String">
+                <i class="fa fa-random"></i> <?php print _('Regenerate'); ?>
+            </button><?php } ?>
+            <script>
+                $.getScript("<?php print MEDIA; ?>/js/jquery.md5.js");
+            </script>
+        </td>
     </tr>
 
 	<!-- type -->

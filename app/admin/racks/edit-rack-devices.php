@@ -1,29 +1,10 @@
 <?php
 
+$Racks = new phpipam_rack ($Database);
+
 /**
  *	Edit rack devices script
  ************************/
-
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Tools	 	= new Tools ($Database);
-$Racks      = new phpipam_rack ($Database);
-$Result 	= new Result ();
-$Components = new Components ($Tools);
-
-# verify that user is logged in
-$User->check_user_session();
-
-# strip input tags
-$_POST = $Admin->strip_input_tags($_POST);
-
-# validate action
-$Admin->validate_action ($_POST['action'], true);
 
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['rackid']))		{ $Result->show("danger", _("Invalid ID"), true, true); }
@@ -171,6 +152,7 @@ $(document).ready(function(){
         		<td>
         			<input type="text" name="rack_size" class="form-control input-sm" placeholder="<?php print _('Rack size in U'); ?>">
         			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+                    <input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
         			<input type="hidden" name="rackid" value="<?php print $_POST['rackid']; ?>">
         		</td>
         	</tr>

@@ -4,18 +4,6 @@
  *	Preview Subnets master/nested recompute data
  ************************************/
 
-# include required scripts
-require_once( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-$Admin 		= new Admin ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # Load subnets and recompute the master/nested relations
 include 'import-recompute-logic.php';
 

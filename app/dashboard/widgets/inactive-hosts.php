@@ -3,20 +3,8 @@
  * Print list of inactive hosts
  **********************************************/
 
-# required functions
-if(!is_object(@$User)) {
-	require( dirname(__FILE__) . '/../../../functions/functions.php' );
-	# classes
-	$Database	= new Database_PDO;
-	$User 		= new User ($Database);
-	$Tools 		= new Tools ($Database);
-	$Subnets 	= new Subnets ($Database);
-	$Addresses 	= new Addresses ($Database);
-	$Result		= new Result ();
-}
-else {
-    header("Location: ".create_link('tools', 'inactive-hosts'));
-}
+// TODO: wat
+header("Location: ".create_link('tools', 'inactive-hosts'));
 
 # user must be authenticated
 $User->check_user_session ();

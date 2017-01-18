@@ -869,7 +869,7 @@ class Tools extends Common_functions {
 	 * @return bool
 	 */
 	public function verify_widget ($file) {
-		return file_exists("app/dashboard/widgets/$file.php")==false ? false : true;
+		return file_exists(APP . "/dashboard/widgets/$file.php")==false ? false : true;
 	}
 
 
@@ -2934,7 +2934,7 @@ class Tools extends Common_functions {
 	 */
 	public function verify_translation ($code) {
 		//verify that proper files exist
-		return !file_exists("functions/locale/$code/LC_MESSAGES/phpipam.mo") ? false : true;
+		return !file_exists(FUNCTIONS . "/locale/$code/LC_MESSAGES/phpipam.mo") ? false : true;
 	}
 
 	/**
@@ -2946,7 +2946,7 @@ class Tools extends Common_functions {
 	 */
 	public function get_translation_version ($code) {
 		//check for version
-		$ver = shell_exec("grep 'Project-Id-Version:' ".dirname(__FILE__)."/../locale/$code/LC_MESSAGES/phpipam.po");
+		$ver = shell_exec("grep 'Project-Id-Version:' " . FUNCTIONS . "/locale/$code/LC_MESSAGES/phpipam.po");
 		//parse
 		$ver = str_replace(array("Project-Id-Version:", " ", '"', "#",'\n', ":"), "", $ver);
 		//return version

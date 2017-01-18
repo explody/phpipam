@@ -4,19 +4,6 @@
  *	Recompute Subnets master/nested logic
  ******************************************/
 
-# include required scripts
-require_once( dirname(__FILE__) . '/../../../functions/functions.php' );
-require_once( dirname(__FILE__) . '/../../../functions/PEAR/Net/IPv4.php' );
-require_once( dirname(__FILE__) . '/../../../functions/PEAR/Net/IPv6.php' );
-
-# initialize user object, if not already set
-if (!isset($Database)) { $Database 	= new Database_PDO; }
-if (!isset($User)) { $User = new User ($Database); }
-if (!isset($Admin)) { $Admin = new Admin ($Database); }
-if (!isset($Tools)) { $Tools = new Tools ($Database); }
-if (!isset($Sections)) { $Sections	= new Sections ($Database); }
-if (!isset($Subnets)) { $Subnets	= new Subnets ($Database); }
-
 # Load colors and icons
 include 'import-constants.php';
 

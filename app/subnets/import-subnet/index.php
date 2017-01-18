@@ -4,20 +4,6 @@
  * CSV import form + guide
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# classes
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Tools	 	= new Tools ($Database);
-$Addresses	= new Addresses ($Database);
-$Subnets	= new Subnets ($Database);
-$Result 	= new Result;
-
-# verify that user is logged in
-$User->check_user_session();
-
 # permissions
 $permission = $Subnets->check_permission ($User->user, $_POST['subnetId']);
 

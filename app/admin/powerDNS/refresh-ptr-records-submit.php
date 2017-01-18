@@ -6,21 +6,7 @@
  *
  */
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Result 	= new Result ();
-$Subnets 	= new Subnets ($Database);
-$Addresses 	= new Addresses ($Database);
 $PowerDNS 	= new PowerDNS ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
 
 # fetch subnet
 $subnet = $Subnets->fetch_subnet ("id", $_POST['subnetId']);

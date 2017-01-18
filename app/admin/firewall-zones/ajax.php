@@ -4,21 +4,7 @@
  *	deliver content for ajax requests
  **************************************/
 
-# functions
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database = new Database_PDO;
-$User 	  = new User ($Database);
-$Admin 	  = new Admin ($Database);
-$Subnets  = new Subnets ($Database);
-$Result   = new Result ();
 $Zones 	  = new FirewallZones($Database);
-$Tools	  = new Tools($Database);
-$Components = new Components ($Tools);
-
-# verify that user is logged in
-$User->check_user_session();
 
 # generate a dropdown list for all subnets within a section
 if ($_POST['operation'] == 'fetchSectionSubnets') {

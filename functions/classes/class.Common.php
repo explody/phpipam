@@ -976,34 +976,69 @@ class Common_functions  {
      * @access private
      * @return string[]
      */
-    private function get_valid_actions () {
+    private function get_valid_actions() {
         return array(
-                "add",
-                "all-add",
-                "edit",
-                "all-edit",
-                "delete",
-                "truncate",
-                "split",
-                "resize",
-                "move",
-                "remove"
+                "add"      => ["POST"],
+                "all-add"  => ["POST"],
+                "edit"     => ["POST"],
+                "all-edit" => ["POST"],
+                "delete"   => ["POST"],
+                "truncate" => ["POST"],
+                "split"    => ["POST"],
+                "resize"   => ["POST"],
+                "move"     => ["POST"],
+                "remove"   => ["POST"],
+                "read"     => ["POST","GET"], # For consolidating all ajax calls through ajax.php we need more actions
+                "test"     => ["POST","GET"], #
+                "save"     => ["POST","GET"], #
+                "regen"    => ["POST","GET"], #
+                "scan"     => ["POST","GET"], #
+                "search"   => ["POST","GET"]  #
               );
+    }
+    
+    /**
+     * Validate the HTTP method
+     *
+     * @access public
+     * @param string $method
+     * @param bool $popup
+     * @return bool|void
+     */
+    public function validate_method($method, $popup = false) {
+        
+        $methods = ['GET','POST','PUT','PATCH','DELETE'];
+        
+        if (in_array($method, $methods)) {
+            return true;
+        } else { 
+            $this->Result->show("danger", _("Invalid HTTP method"), true, $popup);
+        }
+        
     }
 
     /**
-     * Validate posted action on scripts
+     * Validate posted action on scripts. Actually validates 'action' + HTTP method
      *
      * @access public
      * @param mixed $action
      * @param bool $popup
      * @return mixed|bool
      */
-    public function validate_action ($action, $popup = false) {
-        # get valid actions
-        $valid_actions = $this->get_valid_actions ();
-        # check
-        in_array($action, $valid_actions) ?: $this->Result->show("danger", _("Invalid action!"), true, $popup);
+    public function validate_action($action, $method, $popup = false) {
+
+        $valid_actions = $this->get_valid_actions();
+
+        if (array_key_exists($action, $valid_actions)) {
+            if (in_array($method, $valid_actions[$action])) {
+                return true;
+            } else {
+                $this->Result->show("danger", _("Invalid HTTP method"), true, $popup);
+            }
+        } else {
+            $this->Result->show("danger", _("Invalid action!"), true, $popup);
+        }
+    
     }
 
     /**
@@ -1380,16 +1415,16 @@ class Common_functions  {
      * @return mixed|bool
      */
     public function create_rack_link ($rackId = false, $deviceId = false) {
-        if($rackId===false) {
-                return false;
+        if(!$rackId) {
+            return false;
         }
         else {
             //device ?
-            if ($deviceId!==false) {
-                return $this->createURL ().BASE."app/tools/racks/draw_rack.php?rackId=$rackId&deviceId=$deviceId";
+            if ($deviceId) {
+                return $this->createURL ().BASE."ajx/tools/racks/draw_rack/?action=read&rackId=$rackId&deviceId=$deviceId";
             }
             else {
-                return $this->createURL ().BASE."app/tools/racks/draw_rack.php?rackId=$rackId";
+                return $this->createURL ().BASE."ajx/tools/racks/draw_rack/?action=read&rackId=$rackId";
             }
         }
     }

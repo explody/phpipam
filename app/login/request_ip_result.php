@@ -1,15 +1,5 @@
 <?php
 
-/* functions */
-require( dirname(__FILE__) . '/../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$Subnets 	= new Subnets ($Database);
-$Tools	 	= new Tools ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Result 	= new Result ();
-
 # fetch settings, user is not authenticated !
 $Tools->get_settings();
 

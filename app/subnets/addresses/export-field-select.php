@@ -4,21 +4,6 @@
  *	select which fields to export
  */
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools	    = new Tools ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 # set and check permissions
 $subnet_permission = $Subnets->check_permission($User->user, $_POST['subnetId']);
 $subnet_permission > 0 ? :		$Result->show("danger", _('You do not have access to this network'), true);

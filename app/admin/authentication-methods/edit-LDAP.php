@@ -8,7 +8,7 @@
 $User->check_user_session();
 
 # validate action
-$Admin->validate_action ($_POST['action'], true);
+$Admin->validate_action ($_POST['action'], $_SERVER['REQUEST_METHOD'], true);
 
 # ID must be numeric */
 if($_POST['action']!="add") {

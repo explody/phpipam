@@ -6,28 +6,8 @@
  * Fetches info from database
  *************************************************/
 
-
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize required objects
-$Database 	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools	    = new Tools ($Database);
-$Addresses	= new Addresses ($Database);
-$Devices    = new Devices ($Database);
-$Components = new Components ($Tools);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "address");
-
-# validate action
-$Tools->validate_action ($_POST['action']);
 
 # validate post
 is_numeric($_POST['subnetId']) ?:						$Result->show("danger", _("Invalid subnet ID"), true, true);

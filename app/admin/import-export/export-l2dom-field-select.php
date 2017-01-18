@@ -4,18 +4,6 @@
  *	L2 Domain export
  */
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize user object
-$Database	= new Database_PDO;
-$User		= new User ($Database);
-$Admin		= new Admin ($Database);
-$Tools		= new Tools ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # prepare HTML variables
 $custom_fields_names = "";
 $custom_fields_boxes = "";

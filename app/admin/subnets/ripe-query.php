@@ -4,19 +4,6 @@
  * Function to get RIPe info for network
  ********************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools		= new Tools ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # try to fetch
 $res = $Subnets->resolve_ripe_arin ($_POST['subnet']);
 ?>

@@ -17,6 +17,7 @@ $all_apis = $Admin->fetch_all_objects("api");
 
 <!-- only IF aPI enabled -->
 <?php if($User->settings->api==1) { ?>
+    
 	<!-- Add new -->
 	<button class='btn btn-sm btn-default editAPI' style="margin-bottom:10px;" data-action='add'><i class='fa fa-plus'></i> <?php print _('Create API key'); ?></button>
 

@@ -5,20 +5,7 @@
  *	add, edit and delete firewall zones
  ******************************************/
 
-# functions
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize classes
-$Database   = new Database_PDO;
-$User 	    = new User ($Database);
-$Subnets    = new Subnets ($Database);
-$Sections   = new Sections ($Database);
-$Result     = new Result ();
 $Zones      = new FirewallZones($Database);
-$Components = new Components ($Tools);
-
-# validate session parameters
-$User->check_user_session();
 
 # validate $_POST['action'] values
 if ($_POST['action'] != 'add' && $_POST['action'] != 'delete') 	{ $Result->show("danger", _("Invalid action. Do not manipulate the POST values!").'<button class="btn btn-sm btn-default hidePopup2">'._('Cancel').'</button>', true); }
@@ -133,7 +120,7 @@ $(document).ready(function() {
 			}
             
             Components::render_select2_js('#master-select',
-                                          ['templateResult' => '$(this).s2oneLine']);
+                                          ['placeholder' => "BLAH", 'templateResult' => '$(this).s2oneLine']);
 			?>
         </td>
 	</tr>

@@ -4,25 +4,8 @@
  * Function to set subnet permissions
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Sections	= new Sections ($Database);
-$Subnets	= new Subnets ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
 # validate csrf cookie
 $User->csrf_cookie ("validate", "permissions", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
-
 
 // init
 $new_permissions = array();             // permissions posted

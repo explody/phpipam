@@ -4,25 +4,8 @@
  * Discover new hosts with ping
  *******************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Tools	 	= new Tools ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Sections	= new Sections ($Database);
-$Subnets	= new Subnets ($Database);
-$Addresses	= new Addresses ($Database);
 $Scan	 	= new Scan ($Database, $User->settings);
 $DNS	 	= new DNS ($Database, $User->settings);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
 
 # subnet Id must be a integer
 if(!is_numeric($_POST['subnetId']))	{ $Result->show("danger", _("Invalid ID"), true); }

@@ -7,6 +7,7 @@
  *
  *******************************/
 
+# TODO: handle ajax+non-ajax better
 # flag for ajax-loaded
 $ajax_loaded = false;
 

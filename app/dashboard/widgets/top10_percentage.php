@@ -3,20 +3,6 @@
  * Print graph of Top IPv4 hosts by percentage
  **********************************************/
 
-# required functions
-if(!is_object(@$User)) {
-	require( dirname(__FILE__) . '/../../../functions/functions.php' );
-	# classes
-	$Database	= new Database_PDO;
-	$User 		= new User ($Database);
-	$Tools 		= new Tools ($Database);
-	$Subnets 	= new Subnets ($Database);
-	$Result		= new Result ();
-}
-
-# user must be authenticated
-$User->check_user_session ();
-
 # set size parameters
 $height = 200;
 $slimit = 10;

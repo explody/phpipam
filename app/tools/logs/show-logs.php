@@ -15,23 +15,6 @@ $(document).ready(function() {
  * Script to print selected logs
  **********************************/
 
-/* required functions */
-if(!is_object($User)) {
-
-	/* functions */
-	require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-	# initialize user object
-	$Database 	= new Database_PDO;
-	$User 		= new User ($Database);
-	$Tools	 	= new Tools ($Database);
-	$Result 	= new Result ();
-	$Log		= new Logging ($Database);
-
-	# verify that user is logged in
-	$User->check_user_session();
-}
-
 # if nothing is provided display all
 if ( empty($_POST['Informational']) && empty($_POST['Notice']) && empty($_POST['Warning']) ) {
     $_POST['Informational'] = "Informational";

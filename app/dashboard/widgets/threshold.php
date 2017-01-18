@@ -5,6 +5,7 @@
  * 		Inout must be IPv4 or IPv6!
  **********************************************/
 
+# TODO: wat
 # required functions
 if(!is_object(@$User)) {
 	require( dirname(__FILE__) . '/../../../functions/functions.php' );

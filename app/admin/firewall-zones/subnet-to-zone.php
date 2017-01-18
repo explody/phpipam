@@ -5,17 +5,7 @@
  *	add subnet (from detail view) to existing firewall zone
  *************************************************************/
 
-# functions
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize classes
-$Database = new Database_PDO;
-$User 	  = new User ($Database);
-$Result   = new Result ();
 $Zones    = new FirewallZones($Database);
-
-# validate session parameters
-$User->check_user_session();
 
 # validate $_POST['operation'] values
 if ($_POST['operation'] != 'subnet2zone') 				{ $Result->show("danger", _("Invalid operation. Do not manipulate the POST values!"), true); }

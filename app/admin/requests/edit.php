@@ -4,22 +4,6 @@
  * Script to confirm / reject IP address request
  ***********************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Addresses	= new Addresses ($Database);
-$Subnets	= new Subnets ($Database);
-$Tools		= new Tools ($Database);
-$Result 	= new Result ();
-$Components = new Components ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # create csrf token
 $csrf = $User->csrf_cookie ("create", "requests");
 

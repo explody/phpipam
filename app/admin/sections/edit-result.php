@@ -4,30 +4,8 @@
  * Function to add / edit / delete section
  *************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Sections	= new Sections ($Database);
-$Subnets	= new Subnets ($Database);
-$Addresses	= new Addresses ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-# check maintaneance mode
-$User->check_maintaneance_mode ();
-
-# strip input tags
-$_POST = $Admin->strip_input_tags($_POST);
-
 # validate csrf cookie
 $User->csrf_cookie ("validate", "section", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
-
-
 
 # If confirm is not set print delete warning
 if ($_POST['action']=="delete" && !isset($_POST['deleteconfirm'])) {

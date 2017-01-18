@@ -4,23 +4,6 @@
  *	Generate hostfile dump for /etc/hosts
  *********************************/
 
-
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Sections	= new Sections ($Database);
-$Subnets	= new Subnets ($Database);
-$Addresses	= new Addresses ($Database);
-$Tools		= new Tools ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
-
 //set filename
 $filename = "phpipam_hosts_". date("Y-m-d");
 

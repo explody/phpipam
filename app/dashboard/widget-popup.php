@@ -1,17 +1,5 @@
 <?php
 
-# show available widgets
-require(dirname(__FILE__) . '../../../functions/functions.php');
-
-# Classes
-$Database	= new Database_PDO;
-$User 		= new User ($Database);
-$Tools 		= new Tools ($Database);
-$Result 	= new Result ();
-
-# user must be authenticated
-$User->check_user_session (false);
-
 # user widgets form database
 $uwidgets = explode(";",$User->user->widgets);	//selected
 $uwidgets = array_filter((array) $uwidgets);

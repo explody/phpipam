@@ -4,19 +4,6 @@
  *	remove item from nat
  ************************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Admin	 	= new Admin ($Database);
-$Tools	 	= new Tools ($Database);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 # validate id
 if(!is_numeric($_POST['id']))                           { $Result->show("danger", _("Invalid ID"), true, true); }
 # validate type
@@ -41,6 +28,7 @@ $csrf_cookie = $User->csrf_cookie ("create", "nat_add");
 
     <form id="search_nats" style="margin-bottom: 10px;" class="form-inline">
             <input type="hidden" name="csrf_cookie" value="<?php print $csrf_cookie; ?>">
+            <input type="hidden" name="action" value="search">
             <input type="hidden" name="id" value="<?php print $nat->id; ?>">
             <input type="hidden" name="type" value="<?php print $_POST['type']; ?>">
             <input type="text" class='form-control input-sm' name="ip" placeholder="<?php print _('Enter subnet/IP'); ?>" style='width:60%;margin:0px;'>
@@ -63,7 +51,7 @@ $csrf_cookie = $User->csrf_cookie ("create", "nat_add");
 <script type="text/javascript">
 $(document).ready(function() {
     $('form#search_nats').submit(function() {
-        $.post("app/admin/nat/item-add-search.php", $(this).serialize(), function(data) {
+        $.post("ajx/admin/nat/item-add-search", $(this).serialize(), function(data) {
             $('#nat_search_results').html(data);
         });
     });

@@ -5,20 +5,6 @@
  * 		Inout must be IPv4 or IPv6!
  **********************************************/
 
-# required functions
-if(!is_object(@$User)) {
-	require( dirname(__FILE__) . '/../../../functions/functions.php' );
-	# classes
-	$Database	= new Database_PDO;
-	$User 		= new User ($Database);
-	$Tools 		= new Tools ($Database);
-	$Subnets 	= new Subnets ($Database);
-	$Result		= new Result ();
-}
-
-# user must be authenticated
-$User->check_user_session ();
-
 # no errors!
 //ini_set('display_errors', 0);
 

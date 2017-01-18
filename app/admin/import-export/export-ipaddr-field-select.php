@@ -4,19 +4,6 @@
  *	IP Addresses export
  */
 
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize user object
-$Database	= new Database_PDO;
-$User		= new User ($Database);
-$Admin		= new Admin ($Database);
-$Tools		= new Tools ($Database);
-$Sections	= new Sections ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
-
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 
 # fetch all sections

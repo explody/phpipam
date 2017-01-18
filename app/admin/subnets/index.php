@@ -4,9 +4,6 @@
  * Script to print subnets
  ***************************/
 
-# verify that user is logged in
-$User->check_user_session();
-
 # fetch custom fields
 $custom_fields = $Tools->fetch_custom_fields('subnets');
 

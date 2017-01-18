@@ -4,19 +4,6 @@
  * Script to disaply api edit result
  *************************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Subnets 	= new Subnets ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Result 	= new Result ();
-
-# verify that user is logged in
-$User->check_user_session();
-
 /* checks */
 if($User->settings->tempShare!=1)									{ $Result->show("danger", _("Temporary sharing disabled"), true); }
 if($_POST['type']!="subnets"&&$_POST['type']!="ipaddresses") 		{ $Result->show("danger", _("Invalid type"), true); }

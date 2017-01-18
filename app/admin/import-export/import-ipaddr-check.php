@@ -4,21 +4,6 @@
  * Data import load
  *************************************************/
 
-# include required scripts
-require_once( dirname(__FILE__) . '/../../../functions/functions.php' );
-
-# initialize user object, if not already set
-if (!isset($Database)) { $Database 	= new Database_PDO; }
-if (!isset($User)) { $User = new User ($Database); }
-if (!isset($Admin)) { $Admin = new Admin ($Database); }
-if (!isset($Tools)) { $Tools = new Tools ($Database); }
-if (!isset($Sections)) { $Sections	= new Sections ($Database); }
-if (!isset($Addresses)) { $Addresses = new Addresses ($Database); }
-if (!isset($Subnets)) { $Subnets = new Subnets ($Database); }
-
-# verify that user is logged in, to guard against direct access of page and possible exploits
-$User->check_user_session();
-
 # read again the custom fields, if any
 if (!isset($custom_fields)) { $custom_fields = $Tools->fetch_custom_fields("ipaddresses"); }
 
