@@ -5,6 +5,9 @@
  *	modify firewall zone module settings like zone indicator, max. chars, ...
  ********************************************************************************/
 
+ # validate csrf cookie
+ $User->csrf_cookie ("validate", "firewall-zones", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+
 # validations
 
 # check for the maximum length of the zone name, it has to be between 3 and 31. also be sure that this value is decimal.

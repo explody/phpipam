@@ -5,9 +5,6 @@
  *	modify firewall zone module settings like zone indicator, max. chars, ...
  *******************************************************************************/
 
-# validate session parameters
-$User->check_user_session();
-
 # default settings for firewall zones and firewall address objects: (JSON)
 # {
 #	/* zoneLength defines the maximum padding length of the unique generated or free text zone name */
@@ -44,9 +41,8 @@ $User->check_user_session();
 # 	"subnetPattern":"0"
 # }
 
-# initialize classes
-$Database = new Database_PDO;
-$Tools = new Tools($Database);
+# create csrf token
+$csrf = $User->csrf_cookie ("create", "firewall-zones");
 
 # fetch module settings
 $firewallZoneSettings = json_decode($User->settings->firewallZoneSettings,true);
@@ -331,6 +327,8 @@ $(function() {
 			} ?>
 		</td>
 		<td style="text-align: right">
+            <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+            <input type="hidden" name="action" value="save">
 			<input type="submit" class="btn btn-default btn-sm" value="<?php print _("Save"); ?>">
 		</td>
 	</tr>
