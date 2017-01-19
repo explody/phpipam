@@ -269,7 +269,7 @@ if($('#dashboard').length>0) {
 		var w = $(this).attr('id');
 		//remove w-
 		w = w.replace("w-", "");
-		$.post('/ajx/dashboard/widgets/' + w, function(data) {
+		$.post('/ajx/dashboard/widgets/' + w, {action: 'read'}, function(data) {
 			$("#w-"+w+' .hContent').html(data);
 		}).fail(function(xhr, textStatus, errorThrown) {
 			$("#w-"+w+' .hContent').html('<blockquote style="margin-top:20px;margin-left:20px;">File not found!</blockquote>');
@@ -280,7 +280,7 @@ if($('#dashboard').length>0) {
 $(document).on('click','.add-new-widget',function() {
     showSpinner();
 
-    $.post('/ajx/dashboard/widget-popup', function(data) {
+    $.post('/ajx/dashboard/widget-popup', {action: 'edit'}, function(data) {
 	    $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -302,7 +302,7 @@ $(document).on('click', '#sortablePopup li a.widget-add', function() {
 	$('#dashboard').append(data);
 	//load
 	w = wid.replace("w-", "");
-	$.post('/ajx/dashboard/widgets/' + w, function(data) {
+	$.post('/ajx/dashboard/widgets/' + w, {action: 'read'}, function(data) {
 		$("#"+wid+' .hContent').html(data);
 	}).fail(function(xhr, textStatus, errorThrown) {
 		$("#"+wid+' .hContent').html('<blockquote style="margin-top:20px;margin-left:20px;">File not found!</blockquote>');
@@ -539,7 +539,7 @@ $(document).on("click", "#mailIPAddressSubmit", function() {
 $(document).on("click", "a.mail_subnet", function() {
     //get IP address id
     var id = $(this).attr('data-id');
-    $.post('/ajx/subnets/mail-notify-subnet', { id:id }, function(data) {
+    $.post('/ajx/subnets/mail-notify-subnet', { id:id, action:'test' }, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -549,7 +549,9 @@ $(document).on("click", "a.mail_subnet", function() {
 //send mail with IP details!
 $(document).on("click", "#mailSubnetSubmit", function() {
     showSpinner();
-    var mailData = $('form#mailNotifySubnet').serialize();
+    var mailData = $('form#mailNotifySubnet').serializeArray();
+    mailData.push({name:'action',value:'test'});
+    
     //post to check script
     $.post('/ajx/subnets/mail-notify-subnet-check', mailData, function(data) {
         $('div.sendmail_check').html(data).slideDown('fast');
@@ -1686,7 +1688,7 @@ $(document).on("click", ".subnet_to_zone", function() {
     var subnetId  = $(this).attr('data-subnetId');
     var operation = $(this).attr('data-operation');
     //format posted values
-    var postdata = "operation="+operation+"&subnetId="+subnetId;
+    var postdata = "operation="+operation+"&subnetId="+subnetId+"&action=edit";
     $.post('/ajx/admin/firewall-zones/subnet-to-zone', postdata, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
@@ -1697,7 +1699,7 @@ $(document).on("click", ".subnet_to_zone", function() {
 
 //submit form
 $(document).on("click", "#subnet-to-zone-submit", function() {
-    submit_popup_data (".subnet-to-zone-result", "ajx/admin/firewall-zones/subnet-to-zone-save", $('form#subnet-to-zone-edit').serialize());
+    submit_popup_data (".subnet-to-zone-result", "/ajx/admin/firewall-zones/subnet-to-zone-save", $('form#subnet-to-zone-edit').serialize());
 });
 
 // trigger the check for any mapping of the selected zone
@@ -1705,6 +1707,7 @@ $(document).on("change", ".checkMapping",(function () {
     showSpinner();
     var pData = $(this).serializeArray();
     pData.push({name:'operation',value:'checkMapping'});
+    pData.push({name:'action',value:'read'});
 
     //load results
     $.post('/ajx/admin/firewall-zones/ajax', pData, function(data) {
@@ -2050,7 +2053,7 @@ $('.showSubnetPerm').click(function() {
 	var subnetId  = $(this).attr('data-subnetId');
 	var sectionId = $(this).attr('data-sectionId');
 
-	$.post("ajx/admin/subnets/permissions-show", {subnetId:subnetId, sectionId:sectionId}, function(data) {
+	$.post("ajx/admin/subnets/permissions-show", {subnetId:subnetId, sectionId:sectionId, action: 'read'}, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
 		hideSpinner();

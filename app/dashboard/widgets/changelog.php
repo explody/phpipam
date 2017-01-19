@@ -4,6 +4,8 @@
  * Script to print some stats on home page....
  *********************************************/
 
+$Log    = new Logging ($Database);
+
 # if direct request that redirect to tools page
 if($_SERVER['HTTP_X_REQUESTED_WITH']!="XMLHttpRequest")	{
 	header("Location: ".create_link("tools","changelog"));

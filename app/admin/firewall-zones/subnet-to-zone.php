@@ -5,6 +5,8 @@
  *	add subnet (from detail view) to existing firewall zone
  *************************************************************/
 
+$csrf = $User->csrf_cookie ("create", "subnet-zone");
+
 $Zones    = new FirewallZones($Database);
 
 # validate $_POST['operation'] values
@@ -25,6 +27,8 @@ if($firewallZones===false)                              { $Result->show("danger"
 <div class="pContent">
 <!-- form -->
 <form id="subnet-to-zone-edit">
+<input type="hidden" name="action" value="edit">
+<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 <input type="hidden" name="subnetId" value="<?php print $_POST['subnetId']; ?>">
 <!-- table -->
 <table class="table table-noborder table-condensed">
@@ -53,7 +57,7 @@ if($firewallZones===false)                              { $Result->show("danger"
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-default btn-success" id="subnet-to-zone-submit"><i class="fa fa-plus"></i> <?php print _('Add this subnet to a firewall zone'); ?></button>
+		<button class="btn btn-sm btn-default btn-success" id="subnet-to-zone-submit" data-action="edit"><i class="fa fa-plus"></i> <?php print _('Add this subnet to a firewall zone'); ?></button>
 	</div>
 	<!-- result -->
 	<div class="subnet-to-zone-result"></div>

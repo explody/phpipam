@@ -61,7 +61,7 @@ $(document).ready(function() {
 		}).get().join(';');
 
 		//save user widgets
-		$.post('/ajx/tools/user-menu/user-widgets-set', {widgets: widgets, action: 'read'}, function(data) {});
+		$.post('/ajx/tools/user-menu/user-widgets-set', {widgets: widgets, action: 'save'}, function(data) {});
 
 		//remove sortable class
 		$('#dashboard .row-fluid').sortable("destroy");

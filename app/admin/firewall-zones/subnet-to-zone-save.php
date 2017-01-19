@@ -4,6 +4,8 @@
  *	subnet-to-zone-save.php
  *	save subnet to zone binding
  *********************************/
+ 
+$User->csrf_cookie ("validate", "subnet-zone", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
 $Zones    = new FirewallZones($Database);
 
