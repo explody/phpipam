@@ -119,7 +119,6 @@ else {
 
 	print '</table>'. "\n";
     print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
-    print '<input type="hidden" name="action" value="read">';
 	print '</form>'. "\n";
 }
 ?>

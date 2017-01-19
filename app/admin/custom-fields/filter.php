@@ -60,7 +60,6 @@ $(".input-switch").bootstrapSwitch(switch_options);
 
 	?>
 	</table>
-    <input type="hidden" name="action" value="edit">
     <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 	</form>
 

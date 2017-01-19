@@ -65,7 +65,6 @@ foreach($standard_fields as $field) {
 </table>
 
 <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
-<input type="hidden" name="action" value="read">
 </form>
 
 

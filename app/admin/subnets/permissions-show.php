@@ -95,7 +95,6 @@ $('.input-switch').on('switchChange.bootstrapSwitch', function (e, data) {
 	}
 	?>
 	<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
-    <input type="hidden" name="action" value="save">
 
     <!-- set parameters to slave subnets -->
     <?php if($Subnets->has_slaves($_POST['subnetId'])) { ?>

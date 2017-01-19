@@ -88,7 +88,6 @@ print '</table>';
 print '<div class="checkbox"><label><input type="checkbox" name="exportVLANDomains" checked>'._("Include the L2 domains in a separate sheet.").'</label></div>';
 
 print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
-print '<input type="hidden" name="action" value="export">';
 print '</form>';
 
 ?>

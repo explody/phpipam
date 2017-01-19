@@ -23,7 +23,6 @@ $User->check_user_session();
 	</div>
 	<div class="form-group">
         <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
-        <input type="hidden" name="action" value="read">
 		<button type="submit" class="btn btn-sm btn-default"><?php print _('Search'); ?></button>
 	</div>
 </form>

@@ -27,7 +27,7 @@ if($firewallZones===false)                              { $Result->show("danger"
 <div class="pContent">
 <!-- form -->
 <form id="subnet-to-zone-edit">
-<input type="hidden" name="action" value="edit">
+
 <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 <input type="hidden" name="subnetId" value="<?php print $_POST['subnetId']; ?>">
 <!-- table -->

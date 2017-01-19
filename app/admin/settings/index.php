@@ -46,7 +46,6 @@ $(document).ready(function() {
 	<td><?php print _('Site title'); ?></th>
 	<td>
 		<input type="text" class="form-control input-sm" name="siteTitle" value="<?php print $settings['siteTitle']; ?>">
-		<input type="hidden" name="action" value="save">
         <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 	</td>
 	<td class="info2"><?php print _('Set site title'); ?></td>

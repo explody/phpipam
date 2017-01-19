@@ -328,7 +328,6 @@ $(function() {
 		</td>
 		<td style="text-align: right">
             <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
-            <input type="hidden" name="action" value="save">
 			<input type="submit" class="btn btn-default btn-sm" value="<?php print _("Save"); ?>">
 		</td>
 	</tr>

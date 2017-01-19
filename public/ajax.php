@@ -40,9 +40,6 @@ $Tools		= new Tools ($Database);
 $method = $_SERVER['REQUEST_METHOD'];
 $Tools->validate_method($method, true);
 
-$action = ${'_' . $method}['action'];
-$Tools->validate_action($action, $method, true);
-
 $User 		= new User ($Database);
 $Addresses  = new Addresses ($Database);
 $Admin	 	= new Admin ($Database, false);

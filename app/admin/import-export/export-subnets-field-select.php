@@ -129,7 +129,6 @@ if($all_sections!==false) {
 
 }
 print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
-print '<input type="hidden" name="action" value="export">';
 print '</form>';
 ?>
 

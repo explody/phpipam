@@ -36,7 +36,6 @@ print "<input name='expfields' type='hidden' value='".implode('|',$expfields)."'
 print "<input name='reqfields' type='hidden' value='".implode('|',$reqfields)."' style='display:none;'>";
 print $hiddenfields;
 print "<input name='filetype' id='filetype' type='hidden' value='".$filetype."' style='display:none;'>";
-print "<input name='action' type='hidden' value='import' style='display:none;'>";
 print "<input name='csrf_cookie' type='hidden' value='" . $_POST['csrf_cookie'] . "' style='display:none;'>";
 print "</form>";
 print "<table class='table table-condensed table-hover' id='previewtable'><tbody>";

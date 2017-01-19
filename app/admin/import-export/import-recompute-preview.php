@@ -24,7 +24,6 @@ print _("The entries marked with ")."<i class='fa ".$icons['edit']."'></i>, "._(
 
 print "<form id='selectImportFields'>";
 print $pass_inputs;
-print "<input name='action' type='hidden' value='export' style='display:none;'>";
 print "<input name='csrf_cookie' type='hidden' value='" . $_POST['csrf_cookie'] . "' style='display:none;'>";
 print "</form>";
 print "<table class='table table-condensed table-hover' id='previewtable'><tbody>";

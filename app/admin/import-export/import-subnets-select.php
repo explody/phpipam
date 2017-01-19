@@ -103,7 +103,6 @@ print "<div id='bottommsg'>"._("The fields marked with * are mandatory.")."
 #TODO# add option to hide php fields
 #print "<div class='checkbox'><label><input name='showspecific' id='showspecific' type='checkbox' unchecked>"._("Show PHPIPAM specific columns.")."</label></div>";
 print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
-print '<input type="hidden" name="action" value="import">';
 print "</form>";
 
 $templatetype = 'subnets';
