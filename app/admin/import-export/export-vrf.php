@@ -5,7 +5,7 @@
  *********************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "export-vrf", $_GET['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("export-vrf", $_GET['csrf_cookie'], $Result);
 
 # fetch all vrfs
 $all_vrfs = $Admin->fetch_all_objects("vrf", "vrfId");

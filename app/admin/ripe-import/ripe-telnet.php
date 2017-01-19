@@ -4,7 +4,7 @@
  * Search IRPE databse for AS imports
  *************************************************/
 
-$User->csrf_cookie ("validate", "ripe-import", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("ripe-import", $_POST['csrf_cookie'], $Result);
 
 //strip AS if provided, to get just the number
 if(substr($_POST['as'], 0,2)=="AS" || substr($_POST['as'], 0,2)=="as") {

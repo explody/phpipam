@@ -5,7 +5,7 @@
  *******************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "scan_all", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("scan_all", $_POST['csrf_cookie'], $Result);
 
 # section
 $section_search = false;
@@ -58,7 +58,7 @@ if (isset($subnets_all)) {
         # set new POST
         $_POST = $s;
         # create csrf token
-        $_POST['csrf_cookie'] = $User->csrf_cookie ("create", "subnet");
+        $_POST['csrf_cookie'] = $User->csrf_create('subnet');
         # permissions
         $subnet['permissions'] = $section->permissions;
         # check for master

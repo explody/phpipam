@@ -8,7 +8,7 @@
 $User->check_user_session();
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "settings");
+$csrf = $User->csrf_create('settings');
 
 # fetch all languages
 $languages = $Admin->fetch_all_objects("lang", "l_id");

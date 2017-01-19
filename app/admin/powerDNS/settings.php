@@ -8,7 +8,7 @@
 $User->check_user_session();
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "pdns_settings");
+$csrf = $User->csrf_create('pdns_settings');
 ?>
 
 <script type="text/javascript">

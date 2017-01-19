@@ -4,7 +4,7 @@
  *	Subnets export
  */
 
-$csrf = $User->csrf_cookie ("create", "export-subnets");
+$csrf = $User->csrf_create('export-subnets');
 
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 

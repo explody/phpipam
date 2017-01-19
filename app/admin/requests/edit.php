@@ -5,7 +5,7 @@
  ***********************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "requests");
+$csrf = $User->csrf_create('requests');
 
 # fetch request
 $request = $Admin->fetch_object("requests", "id", $_POST['requestId']);

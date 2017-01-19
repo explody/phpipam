@@ -7,7 +7,7 @@
 $PowerDNS 	= new PowerDNS ($Database);
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "domain");
+$csrf = $User->csrf_create('domain');
 
 # save settings for powerDNS default
 $pdns = $PowerDNS->db_settings;

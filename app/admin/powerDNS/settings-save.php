@@ -5,7 +5,7 @@
  **************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "pdns_settings", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("pdns_settings", $_POST['csrf_cookie'], $Result);
 
 // validations
 if(strlen($_POST['name'])==0)			{ $Result->show("danger", "Invalid database name", true); }

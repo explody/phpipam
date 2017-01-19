@@ -5,7 +5,7 @@
  ************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "device_snmp");
+$csrf = $User->csrf_create('device_snmp');
 
 # fetch custom fields
 $custom = $Tools->fetch_custom_fields('devices');

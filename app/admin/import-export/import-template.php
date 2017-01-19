@@ -5,7 +5,7 @@
 
 $type = $_GET['type'];
 
-$User->csrf_cookie ("validate", "import-$type", $_GET['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("import-$type", $_GET['csrf_cookie'], $Result);
 
 // Create a workbook
 $filename = "phpipam_template_" . $type . ".xls";

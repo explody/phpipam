@@ -7,7 +7,7 @@
 $Racks      = new phpipam_rack ($Database);
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "rack");
+$csrf = $User->csrf_create('rack');
 
 # fetch custom fields
 $custom = $Tools->fetch_custom_fields('racks');

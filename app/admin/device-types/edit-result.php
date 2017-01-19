@@ -8,7 +8,7 @@
 $_POST = $Admin->strip_input_tags($_POST);
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "device_types", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("device_types", $_POST['csrf_cookie'], $Result);
 
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['id'])) 	{ $Result->show("danger", _("Invalid ID"), true); }

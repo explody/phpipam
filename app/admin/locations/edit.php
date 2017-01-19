@@ -5,7 +5,7 @@
  ************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "location");
+$csrf = $User->csrf_create('location');
 
 # get Location object
 if($_POST['action']!="add") {

@@ -5,7 +5,7 @@
  *************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "user");
+$csrf = $User->csrf_create('user');
 
 # fetch custom fields
 $custom 	= $Tools->fetch_custom_fields('users');

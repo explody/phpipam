@@ -8,7 +8,7 @@
 
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "address");
+$csrf = $User->csrf_create('address');
 
 # validate post
 is_numeric($_POST['subnetId']) ?:						$Result->show("danger", _("Invalid ID"), true);

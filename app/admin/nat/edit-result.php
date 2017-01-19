@@ -1,7 +1,7 @@
 <?php
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "nat", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("nat", $_POST['csrf_cookie'], $Result);
 
 # validations
 if($_POST['action']=="delete" || $_POST['action']=="edit") {

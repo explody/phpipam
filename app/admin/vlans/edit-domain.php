@@ -5,7 +5,7 @@
  ************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "vlan_domain");
+$csrf = $User->csrf_create('vlan_domain');
 
 # fetch vlan details
 $l2_domain = $Admin->fetch_object ("vlanDomains", "id", @$_POST['id']);

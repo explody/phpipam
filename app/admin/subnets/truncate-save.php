@@ -4,7 +4,7 @@
  * truncate subnet result
  *********************/
 # validate csrf cookie
-$User->csrf_cookie ("validate", "truncate", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("truncate", $_POST['csrf_cookie'], $Result);
 
 # id must be numeric
 if(!is_numeric($_POST['subnetId']))			{ $Result->show("danger", _("Invalid ID"), true); }

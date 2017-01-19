@@ -3,7 +3,7 @@
  * VLAN Import
  ************************************************/
 
-$User->csrf_cookie ("validate", "import-vlans", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("import-vlans", $_POST['csrf_cookie'], $Result);
 
 # load data from uploaded file
 include FUNCTIONS . '/ajax/import-load-data.php';

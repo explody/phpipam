@@ -5,7 +5,7 @@
  ************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "pstn");
+$csrf = $User->csrf_create('pstn');
 
 # check permissions
 if($Tools->check_prefix_permission ($User->user) < 3)   { $Result->show("danger", _('You do not have permission to manage PSTN prefixes'), true, true); }

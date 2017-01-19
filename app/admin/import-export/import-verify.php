@@ -3,7 +3,7 @@
  * Data import verify and load header row
  *************************************************/
  
- $User->csrf_cookie ("validate", "import-" . $_POST['type'], $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+ $User->csrf_validate("import-" . $_POST['type'], $_POST['csrf_cookie'], $Result);
 
 /* get extension */
 $filename = $_FILES['file']['name'];

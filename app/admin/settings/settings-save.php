@@ -5,7 +5,7 @@
  **************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "settings", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("settings", $_POST['csrf_cookie'], $Result);
 
 
 //check for http/https

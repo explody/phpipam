@@ -5,7 +5,7 @@
  *********************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "folder");
+$csrf = $User->csrf_create('folder');
 
 # ID must be numeric
 if($_POST['action']!="add") {

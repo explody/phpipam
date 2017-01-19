@@ -4,7 +4,7 @@
  *	VLAN import form + upload
  */
 
-$csrf = $User->csrf_cookie ("create", "import-vlans");
+$csrf = $User->csrf_create('import-vlans');
 
 $tpl_field_names = "";
 $tpl_field_types = "";

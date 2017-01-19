@@ -4,7 +4,7 @@
  *	VRF import form + upload
  */
 
-$csrf = $User->csrf_cookie ("create", "import-vrf");
+$csrf = $User->csrf_create('import-vrf');
 
 $tpl_field_names = "";
 $tpl_field_types = "";

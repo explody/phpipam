@@ -5,7 +5,7 @@
  *	add subnet (from detail view) to existing firewall zone
  *************************************************************/
 
-$csrf = $User->csrf_cookie ("create", "subnet-zone");
+$csrf = $User->csrf_create('subnet-zone');
 
 $Zones    = new FirewallZones($Database);
 

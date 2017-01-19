@@ -5,7 +5,7 @@
  *************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "languages");
+$csrf = $User->csrf_create('languages');
 
 # get lang details
 if($_POST['action']=="edit" || $_POST['action']=="delete")

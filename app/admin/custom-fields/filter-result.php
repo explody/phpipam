@@ -4,7 +4,7 @@
  * set which custom field to display
  ************************/
 
-$User->csrf_cookie ("validate", "filter_fields", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("filter_fields", $_POST['csrf_cookie'], $Result);
 
 # set table name
 $table = $_POST['table'];

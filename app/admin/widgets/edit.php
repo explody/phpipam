@@ -5,7 +5,7 @@
  *************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "widget");
+$csrf = $User->csrf_create('widget');
 
 # fetch widget
 if($_POST['action']!="add") {

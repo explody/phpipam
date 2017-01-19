@@ -4,7 +4,7 @@
  *	IP Addresses import form + upload
  */
  
-$csrf = $User->csrf_cookie ("create", "import-ipaddr");
+$csrf = $User->csrf_create('import-ipaddr');
 
 $tpl_field_names = "";
 $tpl_field_types = "";

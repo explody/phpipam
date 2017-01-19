@@ -5,7 +5,7 @@
  *********************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "linkedsubnet", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("linkedsubnet", $_POST['csrf_cookie'], $Result);
 
 # check subnet permissions
 if($Subnets->check_permission ($User->user, $_POST['subnetId']) != 3) 	{ $Result->show("danger", _('You do not have permissions to add edit/delete this subnet')."!", true); }

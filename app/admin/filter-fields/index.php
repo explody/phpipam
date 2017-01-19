@@ -4,7 +4,7 @@
  * Script to get all active IP requests
  ****************************************/
 
-$csrf = $User->csrf_cookie ("create", "filter-fields");
+$csrf = $User->csrf_create('filter-fields');
 
 # get all fields in IP table
 foreach($Tools->fetch_standard_fields("ipaddresses") as $s) {

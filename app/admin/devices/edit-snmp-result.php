@@ -5,7 +5,7 @@
  ***************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "device_snmp", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("device_snmp", $_POST['csrf_cookie'], $Result);
 
 # get modified details
 $device = $Admin->strip_input_tags($_POST);

@@ -10,7 +10,7 @@ $Zones 		= new FirewallZones($Database);
 $Ping		= new Scan ($Database);
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "address", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("address", $_POST['csrf_cookie'], $Result);
 
 $action = $_POST['action'];
 //reset delete action form visual visual

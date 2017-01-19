@@ -5,7 +5,7 @@
  *********************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "subnet");
+$csrf = $User->csrf_create('subnet');
 
 # verify that user has permissions to add subnet
 if($_POST['action'] == "add") {

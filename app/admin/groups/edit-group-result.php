@@ -5,7 +5,7 @@
  *************************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "group", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("group", $_POST['csrf_cookie'], $Result);
 
 
 # remove users from this group if delete and remove group from sections

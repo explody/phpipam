@@ -6,7 +6,7 @@
  ********************************************************************************/
 
  # validate csrf cookie
- $User->csrf_cookie ("validate", "firewall-zones", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+ $User->csrf_validate("firewall-zones", $_POST['csrf_cookie'], $Result);
 
 # validations
 

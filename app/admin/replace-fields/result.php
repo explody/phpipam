@@ -5,7 +5,7 @@
  ***********************************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "replace_fields", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("replace_fields", $_POST['csrf_cookie'], $Result);
 
 # strip tags - XSS
 $_POST = $User->strip_input_tags ($_POST);

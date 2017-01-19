@@ -7,7 +7,7 @@
 $Racks      = new phpipam_rack ($Database);
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "rack", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("rack", $_POST['csrf_cookie'], $Result);
 
 # get modified details
 $rack = $Tools->strip_input_tags($_POST);

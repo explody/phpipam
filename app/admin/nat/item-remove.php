@@ -5,7 +5,7 @@
  ************************************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "nat", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true, true) : "";
+$User->csrf_validate("nat", $_POST['csrf_cookie'], $Result);
 
 # get NAT object
 $nat = $Admin->fetch_object ("nat", "id", $_POST['id']);

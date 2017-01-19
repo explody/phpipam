@@ -5,7 +5,7 @@
  ********************************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "subnet", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("subnet", $_POST['csrf_cookie'], $Result);
 
 # if show name than description must be set
 if(@$_POST['showName']==1 && strlen($_POST['description'])==0) 	{ $Result->show("danger", _("Please enter subnet description to show as name!"), true); }
@@ -367,7 +367,7 @@ else {
 		if (!isset($_POST['DNSrecursive']) && @$old_subnet_details['DNSrecursive']==0) { $_POST['DNSrecursive'] = 0; }
 
 		// recreate csrf cookie
-        $csrf = $User->csrf_cookie ("create", "domain");
+        $csrf = $User->csrf_create('domain');
 
 		//delete
 		if ($_POST['action']=="delete") {

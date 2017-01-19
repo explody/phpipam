@@ -5,7 +5,7 @@
  *************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "group");
+$csrf = $User->csrf_create('group');
 
 # fetch group and set title
 if($_POST['action']=="add") {

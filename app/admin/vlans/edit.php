@@ -10,7 +10,7 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
 }
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "vlan");
+$csrf = $User->csrf_create('vlan');
 
 # fetch vlan details
 $vlan = $Admin->fetch_object ("vlans", "vlanId", @$_POST['vlanId']);

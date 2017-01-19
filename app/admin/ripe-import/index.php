@@ -4,7 +4,7 @@
  * Script to manage sections
  *************************************************/
  
-$csrf = $User->csrf_cookie ("create", "ripe-import");
+$csrf = $User->csrf_create('ripe-import');
 
 # verify that user is logged in
 $User->check_user_session();

@@ -4,7 +4,7 @@
  *	L2 Domain export
  */
  
- $csrf = $User->csrf_cookie ("create", "export-l2domains");
+ $csrf = $User->csrf_create('export-l2domains');
 
 # prepare HTML variables
 $custom_fields_names = "";

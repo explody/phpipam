@@ -4,7 +4,7 @@
  *******************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "scan", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("scan", $_POST['csrf_cookie'], $Result);
 
 # check for number of input values
 $max = ini_get("max_input_vars");

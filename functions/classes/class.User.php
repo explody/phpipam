@@ -498,65 +498,35 @@ class User extends Common_functions {
      * CSRF cookie creation / validation.
      *
      * @access public
-     * @param string $action (default: "create")
-     * @param mixed $index (default: null)
-     * @param mixed $value (default: null)
+     * @param string|null $index (default: null)
+     * @param string|null $value (default: null)
      * @return string
      */
-    public function csrf_cookie ($action = "create", $index = null, $value = null) {
-        // validate action
-        $this->csrf_validate_action ($action);
-        // execute
-        return $action == "create" ? $this->csrf_cookie_create ($index) : $this->csrf_cookie_validate ($index, $value);
-    }
-
-
-    /**
-     * Validates csrf cookie action..
-     *
-     * @access private
-     * @param mixed $action
-     * @return bool
-     */
-    private function csrf_validate_action ($action) {
-        if ($action=="create" || $action=="validate") { return true; }
-        else                                          { $this->Result->show("danger", "Invalid CSRF cookie action", true); }
-    }
-
-    /**
-     * Creates cookie to prevent csrf
-     *
-     * @access private
-     * @param mixed $index
-     * @return string
-     */
-    private function csrf_cookie_create ($index) {
-        // set cookie suffix
+    public function csrf_create ($index = null, $value = null) {
         $name = is_null($index) ? "csrf_cookie" : "csrf_cookie_".$index;
-        // save cookie
-        $_SESSION[$name] = md5(uniqid(mt_rand(), true));
-        // return
+        $_SESSION[$name] = ($value ? $value : md5(uniqid(mt_rand(), true)));
         return $_SESSION[$name];
     }
 
     /**
      * Validate provided csrf cookie
      *
-     * @access private
+     * @access public
      * @param mixed $index
      * @return bool
      */
-    private function csrf_cookie_validate ($index, $value) {
+    public function csrf_validate ($index, $value, $Result = false, $die = true) {
         // set cookie suffix
         $name = is_null($index) ? "csrf_cookie" : "csrf_cookie_".$index;
         // check and return
-        return $_SESSION[$name] == $value ? true : false;
+        if ($_SESSION[$name] != $value) {
+            if ($Result) {
+                $Result->show("danger", _("Invalid CSRF cookie"), $die);
+            }
+            return false;
+        }
+        return true;
     }
-
-
-
-
-
 
 
 

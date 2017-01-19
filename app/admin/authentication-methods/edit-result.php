@@ -6,7 +6,7 @@
  */
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "authmethods", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("authmethods", $_POST['csrf_cookie'], $Result);
 
 # get action
 $action = $_POST['action'];

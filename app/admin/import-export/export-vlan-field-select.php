@@ -4,7 +4,7 @@
  *	VLAN export
  */
  
- $csrf = $User->csrf_cookie ("create", "export-vlans");
+ $csrf = $User->csrf_create('export-vlans');
 
 # fetch all l2 domains
 $vlan_domains = $Admin->fetch_all_objects("vlanDomains", "id");

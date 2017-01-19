@@ -5,7 +5,7 @@
  **************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "mail", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("mail", $_POST['csrf_cookie'], $Result);
 
 # set update query
 $values = array("id"=>1,

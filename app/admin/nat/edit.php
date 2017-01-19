@@ -5,7 +5,7 @@
  ************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "nat");
+$csrf = $User->csrf_create('nat');
 
 # get NAT object
 if($_POST['action']!="add") {

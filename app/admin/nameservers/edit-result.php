@@ -5,7 +5,7 @@
  ***************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "ns", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("ns", $_POST['csrf_cookie'], $Result);
 
 
 # Name and primary nameserver must be present!

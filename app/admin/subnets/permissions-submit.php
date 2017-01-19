@@ -5,7 +5,7 @@
  *************************************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "permissions", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("permissions", $_POST['csrf_cookie'], $Result);
 
 // init
 $new_permissions = array();             // permissions posted

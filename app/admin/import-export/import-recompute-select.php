@@ -4,7 +4,7 @@
  *	Subnets master/nested recompute select form
  */
 
-$csrf = $User->csrf_cookie ("create", "recompute");
+$csrf = $User->csrf_create('recompute');
 
 $mtable = "subnets"; # main table where to check the fields
 # predefine field list

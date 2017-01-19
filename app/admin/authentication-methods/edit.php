@@ -1,7 +1,7 @@
 <?php
 
 # create csrf token
-$csrf = $User->csrf_cookie('create', 'authmethods');
+$csrf = $User->csrf_create('authmethods');
 
 # Check if the method is protected
 if ($_POST['action'] == 'delete') {

@@ -4,7 +4,7 @@
  * Script to export Data
  *************************************************/
 
-$csrf = $User->csrf_cookie ("create", "import-export");
+$csrf = $User->csrf_create('import-export');
 
 ?>
 

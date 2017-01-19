@@ -4,7 +4,7 @@
  * Script to manage sections
  *************************************************/
  
- $User->csrf_cookie ("validate", "ripe-import", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+ $User->csrf_validate("ripe-import", $_POST['csrf_cookie'], $Result);
 
 //get size of subnets - $_POST/4
 $size = sizeof($_POST) / 4;

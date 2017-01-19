@@ -4,7 +4,7 @@
 if($Tools->check_prefix_permission ($User->user) <3)   { $Result->show("danger", _('You do not have permission to manage PSTN prefixes'), true); }
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "pstn", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("pstn", $_POST['csrf_cookie'], $Result);
 
 # validations
 if($_POST['action']=="delete" || $_POST['action']=="edit") {

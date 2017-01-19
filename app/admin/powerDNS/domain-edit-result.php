@@ -7,7 +7,7 @@
 $PowerDNS 	= new PowerDNS ($Database);
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "domain", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("domain", $_POST['csrf_cookie'], $Result);
 
 
 # checks / validation

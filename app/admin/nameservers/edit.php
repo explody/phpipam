@@ -5,7 +5,7 @@
  ************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "ns");
+$csrf = $User->csrf_create('ns');
 
 # get Nameserver sets
 if($_POST['action']!="add") {

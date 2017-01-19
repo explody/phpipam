@@ -5,7 +5,7 @@
  ************************************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "nat_add", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("nat_add", $_POST['csrf_cookie'], $Result);
 
 # length
 if(strlen($_POST['ip'])==0)   { $Result->show("danger", _("Please enter IP address"), true); }

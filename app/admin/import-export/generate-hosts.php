@@ -4,7 +4,7 @@
  *	Generate hostfile dump for /etc/hosts
  *********************************/
 
-$User->csrf_cookie("validate", "import-export", $_GET['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("import-export", $_GET['csrf_cookie'], $Result);
 
 //set filename
 $filename = "phpipam_hosts_". date("Y-m-d");

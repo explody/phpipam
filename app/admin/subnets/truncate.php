@@ -5,7 +5,7 @@
  *********************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "truncate");
+$csrf = $User->csrf_create('truncate');
 
 # id must be numeric
 if(!is_numeric($_POST['subnetId']))			{ $Result->show("danger", _("Invalid ID"), true, true); }

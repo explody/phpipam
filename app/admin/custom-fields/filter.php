@@ -4,7 +4,7 @@
  * set which custom field to display
  ************************/
 
-$csrf = $User->csrf_cookie ("create", "filter_fields");
+$csrf = $User->csrf_create('filter_fields');
 /*
 	provided values are:
 		table		= name of the table

@@ -42,7 +42,7 @@
 # }
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "firewall-zones");
+$csrf = $User->csrf_create('firewall-zones');
 
 # fetch module settings
 $firewallZoneSettings = json_decode($User->settings->firewallZoneSettings,true);

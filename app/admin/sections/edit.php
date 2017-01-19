@@ -5,7 +5,7 @@
  *************************************************/
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "section");
+$csrf = $User->csrf_create('section');
 
 # fetch all sections for master section
 $sections = $Sections->fetch_all_sections ();

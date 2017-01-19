@@ -10,7 +10,7 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
 }
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "vrf");
+$csrf = $User->csrf_create('vrf');
 
 # get VRF
 if($_POST['action']!="add") {

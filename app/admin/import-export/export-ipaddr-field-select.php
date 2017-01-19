@@ -5,7 +5,7 @@
  */
 
  # create csrf token
- $csrf = $User->csrf_cookie ("create", "export-ipaddresses");
+ $csrf = $User->csrf_create('export-ipaddresses');
 
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 

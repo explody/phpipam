@@ -13,7 +13,7 @@
  */
 
 # create csrf token
-$csrf = $User->csrf_cookie ("create", "custom_field");
+$csrf = $User->csrf_create('custom_field');
 
 /* reset field name for add! */
 if($_POST['action'] == "add") 	{ $_POST['fieldName'] = ""; }

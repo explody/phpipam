@@ -5,7 +5,7 @@
  *************************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "tags", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("tags", $_POST['csrf_cookie'], $Result);
 
 # fetch old values
 if($_POST['action']=="delete") {

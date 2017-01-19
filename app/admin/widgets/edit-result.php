@@ -5,7 +5,7 @@
  *************************************/
 
 # validate csrf cookie
-$User->csrf_cookie ("validate", "widget", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("widget", $_POST['csrf_cookie'], $Result);
 
 
 # ID must be numeric */

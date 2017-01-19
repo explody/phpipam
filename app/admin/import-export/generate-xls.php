@@ -3,7 +3,7 @@
 /**
  *	Generate XLS file
  *********************************/
-$User->csrf_cookie("validate", "import-export", $_GET['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+$User->csrf_validate("import-export", $_GET['csrf_cookie'], $Result);
 
 // Create a workbook
 $filename = "phpipam_IP_adress_export_". date("Y-m-d") .".xls";
