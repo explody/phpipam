@@ -44,7 +44,7 @@
 		<input id="validate_captcha" type="text" name="captcha" class="login form-control input-sm col-xs-12">
 	</div>
 	<div class="col-xs-6">
-		<img src="<?php print $url.BASE; ?>app/login/captcha/captchashow.php" class="imgcaptcha" align="captcha">
+		<img src="<?php print $url.BASE; ?>/login/captcha/captchashow" class="imgcaptcha" align="captcha">
 	</div>
 	<?php } ?>
 
@@ -54,7 +54,7 @@
 	</div>
 
 </div>
-
+<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 </form>
 
 <?php

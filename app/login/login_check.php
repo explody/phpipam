@@ -8,15 +8,7 @@
  *
  */
 
-
-/* functions */
-require( FUNCTIONS . '/functions.php');
-
-# initialize user object
-$Database 	= new Database_PDO;
-$User 		= new User ($Database);
-$Result 	= new Result ();
-$Log 		= new Logging ($Database);
+$User->csrf_validate("login", $_POST['csrf_cookie'], $Result);
 
 # strip input tags form username only - password stip later because od LDAP
 $_POST['ipamusername'] = $User->strip_input_tags ($_POST['ipamusername']);

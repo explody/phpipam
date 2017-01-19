@@ -2,8 +2,7 @@
 
 header('X-XSS-Protection:1; mode=block');
 
-# verify php build
-include FUNCTIONS . '/checks/check_php_build.php';        # check for support for PHP modules and database connection
+$csrf = $User->csrf_create('login');
 
 $http_auth = $User->fetch_object('usersAuthMethod', 'type', 'HTTP');
 $http_auth_settings = json_decode($http_auth->params);
