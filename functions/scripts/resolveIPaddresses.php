@@ -21,7 +21,7 @@ $resolve_config['subnets']	 = array();			# which subnets to check - by id
 $resolve_config['verbose']  = true;				# verbose response - prints results, cron will email it to you!
 
 # include required scripts
-require( dirname(__FILE__) . '/../functions.php' );
+require( FUNCTIONS . '/functions.php' );
 
 # initialize objects
 $Database 	= new Database_PDO;

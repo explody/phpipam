@@ -646,7 +646,7 @@ class Common_functions  {
     public function initialize_pear_net_IPv4 () {
         //initialize NET object
         if(!is_object($this->Net_IPv4)) {
-            require_once( dirname(__FILE__) . '/../../functions/PEAR/Net/IPv4.php' );
+            require_once( FUNCTIONS . '/PEAR/Net/IPv4.php' );
             //initialize object
             $this->Net_IPv4 = new Net_IPv4();
         }
@@ -661,7 +661,7 @@ class Common_functions  {
     public function initialize_pear_net_IPv6 () {
         //initialize NET object
         if(!is_object($this->Net_IPv6)) {
-            require_once( dirname(__FILE__) . '/../../functions/PEAR/Net/IPv6.php' );
+            require_once( FUNCTIONS . '/PEAR/Net/IPv6.php' );
             //initialize object
             $this->Net_IPv6 = new Net_IPv6();
         }
@@ -676,7 +676,7 @@ class Common_functions  {
     public function initialize_pear_net_DNS2 () {
         //initialize NET object
         if(!is_object($this->DNS2)) {
-            require_once( dirname(__FILE__) . '/../../functions/PEAR/Net/DNS2.php' );
+            require_once( FUNCTIONS . '/PEAR/Net/DNS2.php' );
             //initialize object
             $this->DNS2 = new Net_DNS2_Resolver();
         }

@@ -8,7 +8,7 @@
  ****************************************/
 
 # functions
-require_once( dirname(__FILE__) . '/../functions.php' );
+require_once( FUNCTIONS . '/functions.php' );
 
 # Classes
 $Database = new Database_PDO;

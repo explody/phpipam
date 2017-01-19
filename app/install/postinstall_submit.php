@@ -5,7 +5,7 @@
  */
 
 # functions
-require( dirname(__FILE__) . '/../../functions/functions.php' );
+require( FUNCTIONS . '/functions.php' );
 
 # objects
 $Database 	= new Database_PDO;

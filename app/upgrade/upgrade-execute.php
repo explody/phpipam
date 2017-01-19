@@ -3,7 +3,7 @@
 /* ---------- Upgrade database ---------- */
 
 /* functions */
-require( dirname(__FILE__) . '/../../functions/functions.php');
+require( FUNCTIONS . '/functions.php');
 
 # initialize user object
 $Database 	= new Database_PDO;

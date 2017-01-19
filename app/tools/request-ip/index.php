@@ -18,7 +18,7 @@
 		<td><?php print _('IP address');?> *</td>
 		<td>
 			<?php
-			require_once('../../../functions/functions.php');
+			require_once(FUNCTIONS . '/functions.php');
 			if(isset($_POST['ip_addr'])){
 				$first = $_POST['ip_addr'];
 			}else{

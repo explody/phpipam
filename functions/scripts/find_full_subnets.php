@@ -1,7 +1,7 @@
 <?php
 
 # include required scripts
-require( dirname(__FILE__) . '/../functions.php' );
+require( FUNCTIONS . '/functions.php' );
 
 # limit
 $limit = 80;    // 80 percent threshold

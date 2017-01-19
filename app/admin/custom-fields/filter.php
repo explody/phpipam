@@ -4,7 +4,7 @@
  * set which custom field to display
  ************************/
 
-
+$csrf = $User->csrf_cookie ("create", "filter_fields");
 /*
 	provided values are:
 		table		= name of the table
@@ -60,6 +60,8 @@ $(".input-switch").bootstrapSwitch(switch_options);
 
 	?>
 	</table>
+    <input type="hidden" name="action" value="edit">
+    <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 	</form>
 
 	<hr>

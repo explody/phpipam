@@ -219,8 +219,8 @@ class Subnets_controller extends Common_api_functions {
                 $ipv6 = false;
                 $ipv4 = false;
                 
-                require_once( dirname(__FILE__) . '/../../functions/PEAR/Net/IPv6.php' );
-                require_once( dirname(__FILE__) . '/../../functions/PEAR/Net/IPv4.php' );
+                require_once( FUNCTIONS . '/PEAR/Net/IPv6.php' );
+                require_once( FUNCTIONS . '/PEAR/Net/IPv4.php' );
                 $this->Net_IPv6 = new Net_IPv6();
                 $this->Net_IPv4 = new Net_IPv4();
                 

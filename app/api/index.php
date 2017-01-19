@@ -18,7 +18,7 @@
  */
 
 # include funtions
-require( dirname(__FILE__) . '/../functions/functions.php');		// functions and objects from phpipam
+require( FUNCTIONS . '/functions.php');		// functions and objects from phpipam
 require( dirname(__FILE__) . '/controllers/Common.php');			// common methods
 require( dirname(__FILE__) . '/controllers/Responses.php');			// exception, header and response handling
 

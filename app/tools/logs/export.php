@@ -5,7 +5,7 @@
  *********************************/
 
 /* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
+require( FUNCTIONS . '/functions.php');
 require( dirname(__FILE__) . '/../../../functions/PEAR/Spreadsheet/Excel/Writer.php');
 
 # initialize user object

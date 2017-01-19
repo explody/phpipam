@@ -5,7 +5,7 @@
  */
 
 # include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
+require( FUNCTIONS . '/functions.php' );
 
 # initialize required objects
 $Database 	= new Database_PDO;

@@ -5,7 +5,7 @@
  *************************************/
 
 /* functions */
-require( dirname(__FILE__) . "/../../../functions/adLDAP/src/adLDAP.php");
+require( FUNCTIONS . "/adLDAP/src/adLDAP.php");
 
 # fetch server
 $server = $Admin->fetch_object("usersAuthMethod", "id", $_POST['server']);

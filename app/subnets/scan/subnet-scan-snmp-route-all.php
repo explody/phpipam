@@ -14,7 +14,7 @@ $ajax_loaded = false;
 # ajax check
 if (!function_exists("create_link")) {
     /* functions */
-    require( dirname(__FILE__) . '/../../../functions/functions.php');
+    require( FUNCTIONS . '/functions.php');
 
     # initialize user object
     $Database 	= new Database_PDO;

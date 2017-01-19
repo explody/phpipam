@@ -8,7 +8,7 @@
 # TODO: wat
 # required functions
 if(!is_object(@$User)) {
-	require( dirname(__FILE__) . '/../../../functions/functions.php' );
+	require( FUNCTIONS . '/functions.php' );
 	# classes
 	$Database	= new Database_PDO;
 	$User 		= new User ($Database);
