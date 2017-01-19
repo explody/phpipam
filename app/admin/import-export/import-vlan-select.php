@@ -4,6 +4,8 @@
  *	VLAN import form + upload
  */
 
+$csrf = $User->csrf_cookie ("create", "import-vlans");
+
 $tpl_field_names = "";
 $tpl_field_types = "";
 
@@ -82,6 +84,8 @@ print "<tr>" . $tpl_field_types . "</tr>";
 print "</tbody></table>";
 print "<div id='bottommsg'>"._("The fields marked with * are mandatory.")."<br>"._("If no VLAN domain is specified the VLAN is added/changed in the default domain.")."</div>";
 ##print "<div class='checkbox'><label><input name='adddomain' type='checkbox' checked>"._("Add missing VLAN domains")."</label></div>";
+print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
+print '<input type="hidden" name="action" value="import">';
 print "</form>";
 
 $templatetype = 'vlans';

@@ -3,6 +3,8 @@
  * IP Addresses Import
  ************************************************/
 
+$User->csrf_cookie ("validate", "import-ipaddr", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+
 # load data from uploaded file
 include 'import-load-data.php';
 # check data and mark the entries to import/update

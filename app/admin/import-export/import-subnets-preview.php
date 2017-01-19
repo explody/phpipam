@@ -4,6 +4,8 @@
  *	Preview data Subnets import data
  ************************************/
 
+$User->csrf_cookie ("validate", "import-subnets", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+
 # load data from uploaded file
 include 'import-load-data.php';
 # check data and mark the entries to import/update
@@ -35,6 +37,8 @@ print "<input name='reqfields' type='hidden' value='".implode('|',$reqfields)."'
 print $hiddenfields;
 print "<input name='filetype' id='filetype' type='hidden' value='".$filetype."' style='display:none;'>";
 #print "<input name='rebuildmnr' id='rebuildmnr' type='hidden' value='".$rebuildmnr."' style='display:none;'>";
+print "<input name='action' type='hidden' value='import' style='display:none;'>";
+print "<input name='csrf_cookie' type='hidden' value='" . $_POST['csrf_cookie'] . "' style='display:none;'>";
 print "</form>";
 print "<table class='table table-condensed table-hover' id='previewtable'><tbody>";
 print "<tr class='active'>".$hrow."<th>Action</th></tr>";

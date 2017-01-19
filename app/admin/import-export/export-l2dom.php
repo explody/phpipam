@@ -3,20 +3,8 @@
 /***
  *	Generate XLS file for L2 domains
  *********************************/
-
-# include required scripts
-require( dirname(__FILE__) . '/../../../functions/functions.php' );
-require( dirname(__FILE__) . '/../../../functions/PEAR/Spreadsheet/Excel/Writer.php');
-
-# initialize required objects
-$Database	= new Database_PDO;
-$Result		= new Result;
-$User		= new User ($Database);
-$Admin		= new Admin ($Database);
-$Tools		= new Tools ($Database);
-
-# verify that user is logged in
-$User->check_user_session();
+ 
+$User->csrf_cookie ("validate", "export-l2domains", $_GET['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
 # fetch all l2 domains
 $vlan_domains = $Admin->fetch_all_objects("vlanDomains", "id");

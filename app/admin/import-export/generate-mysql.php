@@ -3,6 +3,7 @@
 /**
  *	Generate XLS file
  *********************************/
+$User->csrf_cookie("validate", "import-export", $_GET['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
 //set filename
 $filename = "phpipam_MySQL_dump_". date("Y-m-d") .".sql";

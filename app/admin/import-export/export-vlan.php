@@ -3,6 +3,8 @@
 /***
  *	Generate XLS file for VLANs
  *********************************/
+ 
+$User->csrf_cookie ("validate", "export-vlans", $_GET['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
 # fetch all l2 domains
 $vlan_domains = $Admin->fetch_all_objects("vlanDomains", "id");

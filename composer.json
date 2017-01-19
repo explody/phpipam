@@ -1,21 +1,36 @@
 {
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "repositories": [
         {
             "type": "vcs",
             "url": "https://github.com/explody/Zebra_Session"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/explody/Spreadsheet_Excel_Writer"
+        },
+        {
+            "type": "pear",
+            "url": "https://pear.php.net"
         }
     ],
+    "require-dev": {
+        "phpunit/phpunit": "5.7.5"
+    },
     "require": {
         "twig/twig": "~1.0",
         "phpmailer/phpmailer": "^5.2",
-        "stefangabos/zebra_session": "dev-master",
-        "adldap/adldap": "5.0.0.x-dev",
-        "php-excel-reader/spreadsheet-reader": "dev-master",
         "onelogin/php-saml": "^2.10",
         "robmorgan/phinx": "^0.6.5",
-        "symfony/yaml": "^3.2",
-        "symfony/finder": "^3.2",
-        "phpunit/phpunit": "^5.7"
+        "symfony/yaml": "~3.2",
+        "symfony/finder": "~3.2",
+        "pear/pear-core-minimal": "~1.10",
+        "stefangabos/zebra_session": "dev-master",
+        "php-excel-reader/spreadsheet-reader": "dev-master",
+        "pear/spreadsheet_excel_writer": "dev-master",
+        "pear/net_ipv4": "dev-trunk",
+        "pear-pear.php.net/Net_IPv6": "^1.2",
+        "pear-pear.php.net/Net_DNS2": "^1.4"
     }
 }

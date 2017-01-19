@@ -4,8 +4,8 @@
  * Script to export Data
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+$csrf = $User->csrf_cookie ("create", "import-export");
+
 ?>
 
 <script type="text/javascript">
@@ -47,8 +47,8 @@ $(document).on('change', "select#dataType", function() {
 		<td>Action</td>
 		<td colspan="2">
 			<div class="btn-group">
-				<button class='dataImport btn btn-sm btn-default' rel='tooltip' data-placement='bottom' title='<?php print _('Import data entries for the selected type'); ?>'><i class='fa fa-download'></i> <?php print _('Import'); ?></button>
-				<button class='dataExport btn btn-sm btn-default' rel='tooltip' data-placement='bottom' title='<?php print _('Export data entries for the selected type'); ?>'><i class='fa fa-upload'></i> <?php print _('Export'); ?></button>
+				<button class='dataImport btn btn-sm btn-default' rel='tooltip' data-action='import' data-placement='bottom' title='<?php print _('Import data entries for the selected type'); ?>'><i class='fa fa-download'></i> <?php print _('Import'); ?></button>
+				<button class='dataExport btn btn-sm btn-default' rel='tooltip' data-action='export' data-placement='bottom' title='<?php print _('Export data entries for the selected type'); ?>'><i class='fa fa-upload'></i> <?php print _('Export'); ?></button>
 			</div>
 			<button class="dataRecompute btn btn-sm btn-default" id="dataRecompute" style="display: none;" rel='tooltip' data-placement='bottom' title='<?php print _('Recompute master/nested subnet relations.'); ?>'><i class="fa fa-magic"></i> <?php print _('Recompute'); ?></button>
 		</td>
@@ -66,12 +66,12 @@ $(document).on('change', "select#dataType", function() {
 <!-- MySQL dump -->
 <hr style="margin-top:50px;">
 <h4><?php print _('Create MySQL database dump'); ?></h4>
-<button class="btn btn-sm btn-default" id="MySQLdump"><i class="fa fa-upload"></i> <?php print _('Prepare MySQL dump'); ?></button>
+<button class="btn btn-sm btn-default dataDump" id="MySQLdump" data-type="mysql" data-action="export" data-csrf="<?php print $csrf; ?>"><i class="fa fa-upload"></i> <?php print _('Prepare MySQL dump'); ?></button>
 
 <!-- XLS dump -->
 <h4><?php print _('Create XLS file of IP addresses'); ?></h4>
-<button class="btn btn-sm btn-default" id="XLSdump"><i class="fa fa-upload"></i> <?php print _('Prepare XLS dump'); ?></button>
+<button class="btn btn-sm btn-default dataDump" id="XLSdump" data-type="xls" data-action="export" data-csrf="<?php print $csrf; ?>"><i class="fa fa-upload"></i> <?php print _('Prepare XLS dump'); ?></button>
 
 <!-- XLS dump -->
 <h4><?php print _('Create hostfile dump'); ?></h4>
-<button class="btn btn-sm btn-default" id="hostfileDump"><i class="fa fa-upload"></i> <?php print _('Prepare hostfile dump'); ?></button>
+<button class="btn btn-sm btn-default dataDump" id="hostfileDump" data-type="hosts" data-action="export" data-csrf="<?php print $csrf; ?>"><i class="fa fa-upload"></i> <?php print _('Prepare hostfile dump'); ?></button>

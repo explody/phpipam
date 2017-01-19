@@ -4,8 +4,10 @@
  *	Preview Subnets master/nested recompute data
  ************************************/
 
+$User->csrf_cookie ("validate", "recompute", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+
 # Load subnets and recompute the master/nested relations
-include 'import-recompute-logic.php';
+include dirname(__FILE__) . '/import-recompute-logic.php';
 
 ?>
 
@@ -20,7 +22,11 @@ print '<h4>'._("Recomputed data").'</h4><hr>';
 print _("The entries marked with ")."<i class='fa ".$icons['edit']."'></i>, "._("have new masters and will be updated,
 	the ones marked with ")."<i class='fa ".$icons['skip']."'></i>, "._("didn't change the master.");
 
-print "<form id='selectImportFields'>".$pass_inputs."</form>";
+print "<form id='selectImportFields'>";
+print $pass_inputs;
+print "<input name='action' type='hidden' value='export' style='display:none;'>";
+print "<input name='csrf_cookie' type='hidden' value='" . $_POST['csrf_cookie'] . "' style='display:none;'>";
+print "</form>";
 print "<table class='table table-condensed table-hover' id='previewtable'><tbody>";
 print "<tr class='active'><th></th><th>Section</th><th>Subnet</th><th>Description</th><th>VRF</th><th>Master</th><th>Action</th></tr>";
 print $rows;

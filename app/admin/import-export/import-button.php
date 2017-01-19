@@ -1,14 +1,19 @@
-<form id="dataimport" method="post" action="app/admin/import-export/import-verify.php" enctype="multipart/form-data">
+<?php $verify_action = '/ajx/admin/import-export/import-verify'; ?>
+
+<form id="dataimport" method="post" action="<?php print $verify_action; ?>" enctype="multipart/form-data">
 	<table><tr><td align="left">
 	<div id="drop">
 		<input type="file" name="file" id="csvfile" style="display:none;">
 		<input type="hidden" name="expfields" value="<?php print implode('|',$expfields); ?>" style="display:none;">
+        <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>" style="display:none;">
+        <input type="hidden" name="type" value="<?php print $templatetype; ?>" style="display:none;">
+        <input type="hidden" name="action" value="import" style="display:none;">
 
 		<?php print _('Select file'); ?>: <a class="btn btn-sm btn-default"><i class="fa fa-folder-open"></i> <?php print _("Browse / Drag & Drop"); ?></a>
 	</div>
 	</td><td>&nbsp;</td><td align="right">
 	<!-- Download template -->
-	<?php print "<a class=\"csvtemplate btn btn-sm btn-default\" id=\"". $templatetype . "template\">Download template</a>"; ?>
+	<?php print "<a class=\"csvtemplate btn btn-sm btn-default\" id=\"downloadTemplate\" data-csrf=\"" . $csrf . "\" data-tpl=\"". $templatetype . "\">Download template</a>"; ?>
 	</td></tr></table>
 	<span class="fname" style="display:none"></span>
 	<br>
@@ -34,7 +39,7 @@ $(function(){
 
 		// This element will accept file drag/drop uploading
 		dropZone: $('#drop'),
-
+        url: '<?php print $verify_action; ?>',
 		// This function is called when a file is added to the queue;
 		// either via the browse button, or via drag/drop:
 		add: function (e, data) {
@@ -67,19 +72,23 @@ $(function(){
 
 			// Automatically upload the file once it is added to the queue
 			var jqXHR = data.submit();
+            
 		},
 
 		fail:function(e, data){
+            console.log('1');
 			// Something has gone wrong!
 			$('#uploadResult').addClass('alert alert-danger');
 		},
 		success:function(e, data){
+            console.log('1');
 			// All good, check for response!
 			var resp = jQuery.parseJSON(e);
 			//get status
 			var respStat = resp['status'];
 			//success
 			if(respStat == "success") {
+                console.log('3');
 				$('#uploadResult').addClass('alert alert-success');		//add success class
 				$('#uploadResult').append('<br><strong>Upload successfull</strong>');	//add ok sign
 				$('#uploadResult').find('span').remove(); // remove cancel upload button

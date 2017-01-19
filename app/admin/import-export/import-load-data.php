@@ -3,10 +3,10 @@
  * Data import load
  *************************************************/
 
-$expfields = explode("|",$_GET['expfields']);
-$reqfields = explode("|",$_GET['reqfields']);
-if (isset($_GET['filetype'])) {
-	$filetype = $_GET['filetype'];
+$expfields = explode("|",$_POST['expfields']);
+$reqfields = explode("|",$_POST['reqfields']);
+if (isset($_POST['filetype'])) {
+	$filetype = $_POST['filetype'];
 } else {
 	$Result->show('danger', _("Error: could not read the uploaded file type!"), true, true);
 }
@@ -19,8 +19,8 @@ $hiddenfields="";
 
 # read field mapping from previous window
 foreach ($expfields as $expfield) {
-	if (isset($_GET['importFields__'.str_replace(" ", "_",$expfield)])) {
-		$impfield = $_GET['importFields__'.str_replace(" ", "_",$expfield)];
+	if (isset($_POST['importFields__'.str_replace(" ", "_",$expfield)])) {
+		$impfield = $_POST['importFields__'.str_replace(" ", "_",$expfield)];
 		if (in_array($expfield,$reqfields) && ($impfield == "-")) {
 			$Result->show('danger', _("Error: missing required field mapping for expected field")." <b>".$expfield."</b>."._("Please check field matching in previous window."), true, true);
 		} else {
@@ -40,7 +40,7 @@ $data = array();
 # read first row from CSV
 if (strtolower($filetype) == "csv") {
 	# open CSV file
-	$filehdl = fopen('upload/data_import.csv', 'r');
+	$filehdl = fopen(IPAM_ROOT . '/upload/data_import.csv', 'r');
 
 	# read header row
 	$row = 0;$col = 0;
@@ -77,7 +77,7 @@ if (strtolower($filetype) == "csv") {
 # read first row from XLS
 elseif(strtolower($filetype) == "xls") {
     // now autoloaded 
-	$xls = new PHPExcelReader\SpreadsheetReader('upload/data_import.xls', false);
+	$xls = new PHPExcelReader\SpreadsheetReader(IPAM_ROOT . '/upload/data_import.xls', false);
 	$sheet = 0; $row = 1;
 
 	# map import columns to expected fields as per previous window

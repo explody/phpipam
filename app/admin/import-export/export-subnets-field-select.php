@@ -4,6 +4,8 @@
  *	Subnets export
  */
 
+$csrf = $User->csrf_cookie ("create", "export-subnets");
+
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 
 # fetch all sections
@@ -126,6 +128,8 @@ if($all_sections!==false) {
 	print '<div class="checkbox"><label><input type="checkbox" name="exportSections" checked>'._("Include the sections in a separate sheet.").'</label></div>';
 
 }
+print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
+print '<input type="hidden" name="action" value="export">';
 print '</form>';
 ?>
 

@@ -3,6 +3,8 @@
 /**
  *	IP Addresses import form + upload
  */
+ 
+$csrf = $User->csrf_cookie ("create", "import-ipaddr");
 
 $tpl_field_names = "";
 $tpl_field_types = "";
@@ -117,6 +119,8 @@ print "<div id='bottommsg'>"._("The fields marked with * are mandatory.")."
 print "<div class='checkbox'><label><input name='searchallvrfs' id='searchallvrfs' type='checkbox' unchecked>"._("Search for matching subnet in all VRFs (ignore provided VRF).")."</label></div>";
 #TODO# add option to hide php fields
 #print "<div class='checkbox'><label><input name='showspecific' id='showspecific' type='checkbox' unchecked>"._("Show PHPIPAM specific columns.")."</label></div>";
+print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
+print '<input type="hidden" name="action" value="import">';
 print "</form>";
 
 $templatetype = 'ipaddr';

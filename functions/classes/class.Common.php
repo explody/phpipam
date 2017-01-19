@@ -993,7 +993,9 @@ class Common_functions  {
                 "save"     => ["POST","GET"], #
                 "regen"    => ["POST","GET"], #
                 "scan"     => ["POST","GET"], #
-                "search"   => ["POST","GET"]  #
+                "search"   => ["POST","GET"], #
+                "export"   => ["POST","GET"], #
+                "import"   => ["POST","GET"]  #
               );
     }
     

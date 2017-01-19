@@ -3,6 +3,8 @@
 /**
  *	L2 Domain export
  */
+ 
+ $csrf = $User->csrf_cookie ("create", "export-l2domains");
 
 # prepare HTML variables
 $custom_fields_names = "";
@@ -35,6 +37,8 @@ print "	<td><input type='checkbox' name='description' checked> </td>";
 print "	</tr>";
 
 print '</table>';
+print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
+print '<input type="hidden" name="action" value="export">';
 print '</form>';
 
 ?>

@@ -4,6 +4,8 @@
  *	Subnets master/nested recompute select form
  */
 
+$csrf = $User->csrf_cookie ("create", "recompute");
+
 $mtable = "subnets"; # main table where to check the fields
 # predefine field list
 $expfields = array ("section","subnet","mask","description","vrf");
@@ -81,6 +83,8 @@ print "<tr>	<th><input type='checkbox' id='recomputeSectionSelectAll' checked> "
 			<th><input type='checkbox' id='recomputeCVRFSelectAll' checked> Cross VRF</th></tr>";
 print $section_rows;
 print "</tbody></table>";
+print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
+print '<input type="hidden" name="action" value="export">';
 print "</form>";
 ?>
 </div>

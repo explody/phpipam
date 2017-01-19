@@ -4,6 +4,8 @@
  *	VRF import form + upload
  */
 
+$csrf = $User->csrf_cookie ("create", "import-vrf");
+
 $tpl_field_names = "";
 $tpl_field_types = "";
 
@@ -68,6 +70,8 @@ print "<tr>" . $tpl_field_names . "</tr>";
 print "<tr>" . $tpl_field_types . "</tr>";
 print "</tbody></table>";
 print "<div id='bottommsg'>"._("The fields marked with * are mandatory.")."</div>";
+print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
+print '<input type="hidden" name="action" value="import">';
 print "</form>";
 
 $templatetype = 'vrf';

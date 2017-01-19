@@ -3,6 +3,8 @@
 /**
  *	L2 Domain import form + upload
  */
+ 
+ $csrf = $User->csrf_cookie ("create", "import-l2dom");
 
 $tpl_field_names = "";
 $tpl_field_types = "";

@@ -5,7 +5,7 @@
  ******************************************/
 
 # Load colors and icons
-include 'import-constants.php';
+include dirname(__FILE__) . '/import-constants.php';
 
 $p=array();
 $pi4 = new Net_IPv4();	# Pear IPv4
@@ -35,17 +35,17 @@ function my_ip2Bin($pi6,$ip)
 }
 
 # Read selected fields and pass them to the save form
-foreach($_GET as $key => $value) {
+foreach($_POST as $key => $value) {
 	if (preg_match("/recomputeSection_(\d+)$/",$key,$matches) && ($value == "on")) {
 		# Grab provided values
-		$rlist[$matches[1]]["IPv4"] = ($_GET['recomputeSectionIPv4_'.$matches[1]] == "on" ? true : false);
-		$rlist[$matches[1]]["IPv6"] = ($_GET['recomputeSectionIPv6_'.$matches[1]] == "on" ? true : false);
-		$rlist[$matches[1]]["CVRF"] = ($_GET['recomputeSectionCVRF_'.$matches[1]] == "on" ? true : false);
+		$rlist[$matches[1]]["IPv4"] = ($_POST['recomputeSectionIPv4_'.$matches[1]] == "on" ? true : false);
+		$rlist[$matches[1]]["IPv6"] = ($_POST['recomputeSectionIPv6_'.$matches[1]] == "on" ? true : false);
+		$rlist[$matches[1]]["CVRF"] = ($_POST['recomputeSectionCVRF_'.$matches[1]] == "on" ? true : false);
 		# Build hidden form inputs
 		$pass_inputs.="<input name='".$key."' type='hidden' value='".$value."' style='display:none;'>";
-		$pass_inputs.="<input name='recomputeSectionIPv4_".$matches[1]."' type='hidden' value='".$_GET['recomputeSectionIPv4_'.$matches[1]]."' style='display:none;'>";
-		$pass_inputs.="<input name='recomputeSectionIPv6_".$matches[1]."' type='hidden' value='".$_GET['recomputeSectionIPv6_'.$matches[1]]."' style='display:none;'>";
-		$pass_inputs.="<input name='recomputeSectionCVRF_".$matches[1]."' type='hidden' value='".$_GET['recomputeSectionCVRF_'.$matches[1]]."' style='display:none;'>";
+		$pass_inputs.="<input name='recomputeSectionIPv4_".$matches[1]."' type='hidden' value='".$_POST['recomputeSectionIPv4_'.$matches[1]]."' style='display:none;'>";
+		$pass_inputs.="<input name='recomputeSectionIPv6_".$matches[1]."' type='hidden' value='".$_POST['recomputeSectionIPv6_'.$matches[1]]."' style='display:none;'>";
+		$pass_inputs.="<input name='recomputeSectionCVRF_".$matches[1]."' type='hidden' value='".$_POST['recomputeSectionCVRF_'.$matches[1]]."' style='display:none;'>";
 	}
 }
 

@@ -2,6 +2,8 @@
 /*
  * Data import verify and load header row
  *************************************************/
+ 
+ $User->csrf_cookie ("validate", "import-" . $_POST['type'], $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
 /* get extension */
 $filename = $_FILES['file']['name'];
@@ -12,7 +14,7 @@ $filetype = strtolower(end($file_exp));
 /* list of permitted file extensions */
 $allowed = array('xls','csv');
 /* upload dir */
-$upload_dir = "upload/";
+$upload_dir = IPAM_ROOT . "/upload";
 
 $today = date("Ymd-His");
 
@@ -29,7 +31,7 @@ if(isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
         exit;
     }
 	//if cannot move
-	elseif(!move_uploaded_file($_FILES["file"]["tmp_name"], $upload_dir."data_import.".$filetype )) {
+	elseif(!move_uploaded_file($_FILES["file"]["tmp_name"], $upload_dir . "/data_import." . $filetype )) {
 		echo '{"status":"error", "error":"Cannot move file to upload dir"}';
 		exit;
 	}
@@ -44,7 +46,7 @@ if(isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
 	// grab first row from CSV
 	if (strtolower($filetype) == "csv") {
 		/* get file to string */
-		$filehdl = fopen('upload/data_import.csv', 'r');
+		$filehdl = fopen($upload_dir . '/data_import.csv', 'r');
 		$data = fgets($filehdl);
 		fclose($filehdl);
 
@@ -59,7 +61,7 @@ if(isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
 	// grab first row from XLS
 	elseif(strtolower($filetype) == "xls") {
         // now autoloaded 
-		$data = new PHPExcelReader\SpreadsheetReader('upload/data_import.xls', false);
+		$data = new PHPExcelReader\SpreadsheetReader($upload_dir . '/data_import.xls', false);
 		$sheet = 0; $row = 1;
 
 		for($col=1;$col<=$data->colcount($sheet);$col++) {

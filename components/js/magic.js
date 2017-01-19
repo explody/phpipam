@@ -693,82 +693,16 @@ $(document).on("click", "input#csvImportYes", function() {
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 });
+
+
 //download template
-$(document).on("click", "#csvtemplate", function() {
+$(document).on("click", "#downloadTemplate", function() {
+    var csrf = $(this).attr('data-csrf');
+    var tpl = $(this).attr('data-tpl');
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/subnets/import-subnet/import-template'></iframe></div>");
-
-
+    $('div.exportDIV').append('<div style="display:none" class="dl"><iframe src="ajx/admin/import-export/import-template/?type=' + tpl + '&action=import&csrf_cookie=' + csrf + '"></iframe></div>');
 	return false;
 });
-//download vrf template
-$(document).on("click", "#vrftemplate", function() {
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/import-template.php?type=vrf'></iframe></div>");
-
-
-	return false;
-});
-
-//download domain template
-$(document).on("click", "#vlanstemplate", function() {
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/import-template.php?type=vlans'></iframe></div>");
-
-
-	return false;
-});
-
-
-//download vlan domain template
-$(document).on("click", "#vlandomaintemplate", function() {
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/import-template.php?type=vlandomain'></iframe></div>");
-
-
-	return false;
-});
-
-
-//download subnet template
-$(document).on("click", "#subnetstemplate", function() {
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/import-template.php?type=subnets'></iframe></div>");
-
-
-	return false;
-});
-
-
-//download ip address template
-$(document).on("click", "#ipaddrtemplate", function() {
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/import-template.php?type=ipaddr'></iframe></div>");
-
-
-	return false;
-});
-
-
-//download device template
-$(document).on("click", "#devicestemplate", function() {
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/import-template.php?type=devices'></iframe></div>");
-
-
-	return false;
-});
-
-
-//download device types template
-$(document).on("click", "#devicetypestemplate", function() {
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/import-template.php?type=devicetypes'></iframe></div>");
-
-
-	return false;
-});
-
 
 
 /*    export IP addresses
@@ -791,7 +725,7 @@ $(document).on("click", "button#exportSubnet", function() {
     //get selected fields
     var exportFields = $('form#selectExportFields').serialize();
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/subnets/addresses/export-subnet.php?subnetId=" + subnetId + "&" + exportFields + "'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/subnets/addresses/export-subnet/?subnetId=" + subnetId + "&" + exportFields + "'></iframe></div>");
     return false;
 });
 
@@ -1064,7 +998,7 @@ $(document).on("mouseleave", '#user_menu', function(event){
 $(document).on("click", "#exportSearch", function(event){
     var searchTerm = $(this).attr('data-post');
     $("div.dl").remove();                                                //remove old innerDiv
-    $('div.exportDIVSearch').append("<div style='display:none' class='dl'><iframe src='ajx/tools/search/search-results-export.php?ip=" + searchTerm + "'></iframe></div>");
+    $('div.exportDIVSearch').append("<div style='display:none' class='dl'><iframe src='ajx/tools/search/search-results-export/?ip=" + searchTerm + "'></iframe></div>");
     return false;
 });
 
@@ -2954,29 +2888,30 @@ $('button#searchReplaceSave').click(function() {
 
 /*  Data Import / Export
 *************************/
-// XLS exports
-$('button#XLSdump').click(function () {
+// MySQL/Hosts/XLS exports
+$('button.dataDump').click(function () {
     showSpinner();
+    var action = $(this).attr('data-action');
+    var csrf = $(this).attr('data-csrf');
+    var type = $(this).attr('data-type');
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/generate-xls'></iframe></div>");
-    hideSpinner();
+    $('div.exportDIV').append('<div style="display:none" class="dl"><iframe id="dataExport" src="ajx/admin/import-export/generate-' + type + '/?action=' + action + '&csrf_cookie=' + csrf + '"></iframe></div>');
+    
+    // TODO: make the spinner work correctly. Below might work.
+    // var ifr=$('<iframe/>', {
+    //         id:'dataExport',
+    //         src:'/ajx/admin/import-export/generate-' + type + '/?action=' + action + '&csrf_cookie=' + csrf,
+    //         style:'display:none',
+    //         load:function(){
+    //             hideSpinner();
+    //         }
+    //     });
+    // $('div.exportDIV').append(ifr);
 });
-// MySQL export
-$('button#MySQLdump').click(function () {
-    showSpinner();
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/generate-mysql'></iframe></div>");
-    hideSpinner();
-});
-// Hostfile export
-$('button#hostfileDump').click(function () {
-    showSpinner();
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/generate-hosts'></iframe></div>");
-    hideSpinner();
-});
+
 //Export Section
 $('button.dataExport').click(function () {
+    var action = $(this).attr('data-action');
 	var implemented = ["vrf","vlan","subnets","ipaddr"]; var popsize = {};
 	popsize["subnets"] = "w700"; popsize["ipaddr"] = "w700";
 	var dataType = $('select[name=dataType]').find(":selected").val();
@@ -2984,7 +2919,7 @@ $('button.dataExport').click(function () {
     //show popup window
 	if (implemented.indexOf(dataType) > -1) {
 		showSpinner();
-		$.post('ajx/admin/import-export/export-' + dataType + '-field-select', function(data) {
+		$.post('ajx/admin/import-export/export-' + dataType + '-field-select', {action: action}, function(data) {
 		if (popsize[dataType] !== undefined) {
 			$('div.popup_'+popsize[dataType]).html(data);
 			showPopup('popup_'+popsize[dataType]);
@@ -3011,25 +2946,25 @@ $(document).on("click", "button#dataExportSubmit", function() {
 	switch(dataType) {
 		case 'vrf':
 			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-vrf.php?" + exportFields + "'></iframe></div>");
+			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-vrf/?" + exportFields + "'></iframe></div>");
 			setTimeout(function (){hidePopups();}, 1500);
 			break;
 		case 'vlan':
 			var exportDomains = $('form#selectExportDomains').serialize();
 			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-vlan.php?" + exportDomains + "&" + exportFields + "'></iframe></div>");
+			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-vlan/?" + exportDomains + "&" + exportFields + "'></iframe></div>");
 			setTimeout(function (){hidePopups();}, 1500);
 			break;
 		case 'subnets':
 			var exportSections = $('form#selectExportSections').serialize();
 			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-subnets.php?" + exportSections + "&" + exportFields + "'></iframe></div>");
+			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-subnets/?" + exportSections + "&" + exportFields + "'></iframe></div>");
 			setTimeout(function (){hidePopups();}, 1500);
 			break;
 		case 'ipaddr':
 			var exportSections = $('form#selectExportSections').serialize();
 			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-ipaddr.php?" + exportSections + "&" + exportFields + "'></iframe></div>");
+			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-ipaddr/?" + exportSections + "&" + exportFields + "'></iframe></div>");
 			setTimeout(function (){hidePopups();}, 1500);
 			break;
 	}
@@ -3097,6 +3032,7 @@ $(document).on("click", "input#recomputeCVRFSelectAll", function() {
 });
 //Import Section
 $('button.dataImport').click(function () {
+    var action = $(this).attr('data-action');
 	var implemented = ["vrf","vlan","subnets","recompute","ipaddr"]; var popsize = {};
 	popsize["subnets"] = "max";popsize["ipaddr"] = "max";
 	var dataType = $('select[name=dataType]').find(":selected").val();
@@ -3104,7 +3040,7 @@ $('button.dataImport').click(function () {
     //show popup window, if implemented
 	if (implemented.indexOf(dataType) > -1) {
 		showSpinner();
-		$.post('ajx/admin/import-export/import-' + dataType + '-select', function(data) {
+		$.post('ajx/admin/import-export/import-' + dataType + '-select', {action: action}, function(data) {
 		if (popsize[dataType] !== undefined) {
 			$('div.popup_'+popsize[dataType]).html(data);
 			showPopup('popup_'+popsize[dataType]);
@@ -3115,7 +3051,7 @@ $('button.dataImport').click(function () {
 		hideSpinner();
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	} else {
-		$.post('ajx/admin/import-export/not-implemented', function(data) {
+		$.post('ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
 		$('#popupOverlay div.popup_w400').html(data);
 		showPopup('popup_w400');
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -3133,7 +3069,7 @@ $(document).on("click", "button#dataImportPreview", function() {
     //show popup window, if implemented
 	if (implemented.indexOf(dataType) > -1) {
 		showSpinner();
-		$.post('ajx/admin/import-export/import-' + dataType + '-preview.php?' + importFields, function(data) {
+		$.post('ajx/admin/import-export/import-' + dataType + '-preview/', importFields, function(data) {
 		if (popsize[dataType] !== undefined) {
 			$('div.popup_'+popsize[dataType]).html(data);
 			showPopup('popup_'+popsize[dataType]);
@@ -3144,7 +3080,7 @@ $(document).on("click", "button#dataImportPreview", function() {
 		hideSpinner();
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	} else {
-		$.post('ajx/admin/import-export/not-implemented', function(data) {
+		$.post('ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
 		$('#popupOverlay div.popup_w400').html(data);
 		showPopup('popup_w400');
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -3161,7 +3097,7 @@ $(document).on("click", "button#dataImportSubmit", function() {
     //show popup window, if implemented
 	if (implemented.indexOf(dataType) > -1) {
 		showSpinner();
-		$.post('ajx/admin/import-export/import-' + dataType + '.php?' + importFields, function(data) {
+		$.post('ajx/admin/import-export/import-' + dataType + '/', importFields, function(data) {
 		if (popsize[dataType] !== undefined) {
 			$('div.popup_'+popsize[dataType]).html(data);
 			showPopup('popup_'+popsize[dataType]);
@@ -3172,7 +3108,7 @@ $(document).on("click", "button#dataImportSubmit", function() {
 		hideSpinner();
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	} else {
-		$.post('ajx/admin/import-export/not-implemented', function(data) {
+		$.post('ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
 		$('#popupOverlay div.popup_w400').html(data);
 		showPopup('popup_w400');
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -3182,7 +3118,7 @@ $(document).on("click", "button#dataImportSubmit", function() {
 // recompute button
 $('button.dataRecompute').click(function () {
 	showSpinner();
-	$.post('ajx/admin/import-export/import-recompute-select', function(data) {
+	$.post('ajx/admin/import-export/import-recompute-select', { action: 'read' }, function(data) {
 	$('#popupOverlay div.popup_w700').html(data);
 	showPopup('popup_w700');
 	hideSpinner();

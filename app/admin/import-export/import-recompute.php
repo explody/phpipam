@@ -2,6 +2,8 @@
 /*
  * Subnets Master/Nested recompute save
  ****************************************/
+ 
+ $User->csrf_cookie ("validate", "recompute", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
 # Load subnets and recompute the master/nested relations
 include 'import-recompute-logic.php';

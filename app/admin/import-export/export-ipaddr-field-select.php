@@ -4,6 +4,9 @@
  *	IP Addresses export
  */
 
+ # create csrf token
+ $csrf = $User->csrf_cookie ("create", "export-ipaddresses");
+
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 
 # fetch all sections
@@ -133,6 +136,8 @@ if($all_sections!==false) {
 //	print '<div class="checkbox"><label><input type="checkbox" name="separateSheets">'._("Export each section in a separate sheet.").'</label></div>';
 
 }
+print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
+print '<input type="hidden" name="action" value="export">';
 print '</form>';
 ?>
 

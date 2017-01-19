@@ -3,6 +3,10 @@
  *	Generate XLS template
  *********************************/
 
+$type = $_GET['type'];
+
+$User->csrf_cookie ("validate", "import-$type", $_GET['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+
 // Create a workbook
 $filename = "phpipam_template_" . $type . ".xls";
 $workbook = new Spreadsheet_Excel_Writer();
@@ -10,7 +14,6 @@ $lineCount = 0;
 
 // Create a worksheet
 $worksheet = $workbook->addWorksheet("template");
-
 
 if ($type == 'subnets'){
 	//get all custom fields!

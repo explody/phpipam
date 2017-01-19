@@ -4,6 +4,9 @@
  *	VRF export
  */
 
+ # create csrf token
+ $csrf = $User->csrf_cookie ("create", "export-vrf");
+
 ?>
 
 <!-- header -->
@@ -33,6 +36,8 @@ print "	<td><input type='checkbox' name='description' checked> </td>";
 print "	</tr>";
 
 print '</table>';
+print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
+print '<input type="hidden" name="action" value="export">';
 print '</form>';
 
 ?>
