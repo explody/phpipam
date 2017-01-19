@@ -269,7 +269,7 @@ if($('#dashboard').length>0) {
 		var w = $(this).attr('id');
 		//remove w-
 		w = w.replace("w-", "");
-		$.post('ajx/dashboard/widgets/' + w, function(data) {
+		$.post('/ajx/dashboard/widgets/' + w, function(data) {
 			$("#w-"+w+' .hContent').html(data);
 		}).fail(function(xhr, textStatus, errorThrown) {
 			$("#w-"+w+' .hContent').html('<blockquote style="margin-top:20px;margin-left:20px;">File not found!</blockquote>');
@@ -280,7 +280,7 @@ if($('#dashboard').length>0) {
 $(document).on('click','.add-new-widget',function() {
     showSpinner();
 
-    $.post('ajx/dashboard/widget-popup', function(data) {
+    $.post('/ajx/dashboard/widget-popup', function(data) {
 	    $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -302,7 +302,7 @@ $(document).on('click', '#sortablePopup li a.widget-add', function() {
 	$('#dashboard').append(data);
 	//load
 	w = wid.replace("w-", "");
-	$.post('ajx/dashboard/widgets/' + w, function(data) {
+	$.post('/ajx/dashboard/widgets/' + w, function(data) {
 		$("#"+wid+' .hContent').html(data);
 	}).fail(function(xhr, textStatus, errorThrown) {
 		$("#"+wid+' .hContent').html('<blockquote style="margin-top:20px;margin-left:20px;">File not found!</blockquote>');
@@ -438,7 +438,7 @@ $(document).on("click", ".modIPaddr", function() {
     var stopIP    = $(this).attr('data-stopIP');
     //format posted values
     var postdata = "action="+action+"&id="+id+"&subnetId="+subnetId+"&stopIP="+stopIP;
-    $.post('ajx/subnets/addresses/address-modify', postdata, function(data) {
+    $.post('/ajx/subnets/addresses/address-modify', postdata, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
         hideSpinner();
@@ -453,7 +453,7 @@ $(document).on("click", "a.moveIPaddr", function() {
     var subnetId  = $(this).attr('data-subnetId');
     //format posted values
     var postdata = "action="+action+"&id="+id+"&subnetId="+subnetId;
-    $.post('ajx/subnets/addresses/move-address', postdata, function(data) {
+    $.post('/ajx/subnets/addresses/move-address', postdata, function(data) {
         $('#popupOverlay div.popup_w400').html(data);
         showPopup('popup_w400');
         hideSpinner();
@@ -465,7 +465,7 @@ $(document).on("click", "#refreshHostname", function() {
     showSpinner();
     var ipaddress = $('input.ip_addr').val();
     var subnetId  = $(this).attr('data-subnetId');;
-    $.post('ajx/subnets/addresses/address-resolve', {ipaddress:ipaddress, subnetId: subnetId}, function(data) {
+    $.post('/ajx/subnets/addresses/address-resolve', {ipaddress:ipaddress, subnetId: subnetId}, function(data) {
         if(data.length !== 0) {
             $('input[name=dns_name]').val(data);
         }
@@ -483,7 +483,7 @@ $(document).on("click", "button#editIPAddressSubmit, .editIPSubmitDelete", funct
     //replace delete if from visual
     if($(this).attr('data-action') == "all-delete" ) { postdata += '&action-visual=delete';}
 
-    $.post('ajx/subnets/addresses/address-modify-submit', postdata, function(data) {
+    $.post('/ajx/subnets/addresses/address-modify-submit', postdata, function(data) {
         $('div.addnew_check').html(data);
         $('div.addnew_check').slideDown('fast');
         //reload after 2 seconds if succeeded!
@@ -499,7 +499,7 @@ $(document).on("click", ".ping_ipaddress", function() {
 	// new ip?
 	if ($(this).hasClass("ping_ipaddress_new")) { id = $("input[name=ip_addr]").val(); }
 	//check
-	$.post('ajx/subnets/addresses/ping-address', {id:id, subnetId:subnetId}, function(data) {
+	$.post('/ajx/subnets/addresses/ping-address', {id:id, subnetId:subnetId}, function(data) {
         $('#popupOverlay2 div.popup_w400').html(data);
         showPopup('popup_w400', false, true);
 		hideSpinner();
@@ -514,7 +514,7 @@ $(document).on("click", ".ping_ipaddress", function() {
 $(document).on("click", "a.mail_ipaddress", function() {
     //get IP address id
     var IPid = $(this).attr('data-id');
-    $.post('ajx/subnets/addresses/mail-notify', { id:IPid }, function(data) {
+    $.post('/ajx/subnets/addresses/mail-notify', { id:IPid }, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -526,7 +526,7 @@ $(document).on("click", "#mailIPAddressSubmit", function() {
     showSpinner();
     var mailData = $('form#mailNotify').serialize();
     //post to check script
-    $.post('ajx/subnets/addresses/mail-notify-check', mailData, function(data) {
+    $.post('/ajx/subnets/addresses/mail-notify-check', mailData, function(data) {
         $('div.sendmail_check').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -539,7 +539,7 @@ $(document).on("click", "#mailIPAddressSubmit", function() {
 $(document).on("click", "a.mail_subnet", function() {
     //get IP address id
     var id = $(this).attr('data-id');
-    $.post('ajx/subnets/mail-notify-subnet', { id:id }, function(data) {
+    $.post('/ajx/subnets/mail-notify-subnet', { id:id }, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -551,7 +551,7 @@ $(document).on("click", "#mailSubnetSubmit", function() {
     showSpinner();
     var mailData = $('form#mailNotifySubnet').serialize();
     //post to check script
-    $.post('ajx/subnets/mail-notify-subnet-check', mailData, function(data) {
+    $.post('/ajx/subnets/mail-notify-subnet-check', mailData, function(data) {
         $('div.sendmail_check').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -575,7 +575,7 @@ $("table.ipaddresses th a").click( function() {
 $('a.scan_subnet').click(function() {
 	showSpinner();
 	var subnetId = $(this).attr('data-subnetId');
-	$.post('ajx/subnets/scan/subnet-scan', {subnetId:subnetId}, function(data) {
+	$.post('/ajx/subnets/scan/subnet-scan', {subnetId:subnetId}, function(data) {
         $('#popupOverlay div.popup_wmasks').html(data);
         showPopup('popup_wmasks');
 		hideSpinner();
@@ -604,7 +604,7 @@ $(document).on('click','#subnetScanSubmit', function() {
 	else										{ var debug = 0; }
 	var port     = $('input[name=telnetports]').val();
 	$('#alert-scan').slideUp('fast');
-	$.post('ajx/subnets/scan/subnet-scan-execute', {subnetId:subnetId, type:type, debug:debug, port:port}, function(data) {
+	$.post('/ajx/subnets/scan/subnet-scan-execute', {subnetId:subnetId, type:type, debug:debug, port:port}, function(data) {
         $('#subnetScanResult').html(data).slideDown('fast');
 		hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -636,7 +636,7 @@ $(document).on('click', 'a#saveScanResults', function() {
 	var subnetId = $(this).attr('data-subnetId');
 	var postData = $('form.'+script+"-form").serialize();
 	var postData = postData+"&subnetId="+subnetId;
-	$.post('ajx/subnets/scan/subnet-'+script+"-result", postData, function(data) {
+	$.post('/ajx/subnets/scan/subnet-'+script+"-result", postData, function(data) {
         $('#subnetScanAddResult').html(data);
         //hide if success!
         //reload after 2 seconds if succeeded!
@@ -653,7 +653,7 @@ $(document).on('click', 'a#saveScanResults', function() {
 $('a.csvImport').click(function () {
     showSpinner();
     var subnetId = $(this).attr('data-subnetId');
-    $.post('ajx/subnets/import-subnet/index', {subnetId:subnetId}, function(data) {
+    $.post('/ajx/subnets/import-subnet/index', {subnetId:subnetId}, function(data) {
         $('div.popup_max').html(data);
         showPopup('popup_max');
         hideSpinner();
@@ -666,7 +666,7 @@ $(document).on("click", "input#csvimportcheck", function() {
     //get filetype
     var filetype = $('span.fname').html();
     var xlsSubnetId  = $('a.csvImport').attr('data-subnetId');
-    $.post('ajx/subnets/import-subnet/print-file', { filetype:filetype, subnetId:xlsSubnetId }, function(data) {
+    $.post('/ajx/subnets/import-subnet/print-file', { filetype:filetype, subnetId:xlsSubnetId }, function(data) {
         $('div.csvimportverify').html(data).slideDown('fast');
         hideSpinner();
         // add reload class
@@ -688,7 +688,7 @@ $(document).on("click", "input#csvImportYes", function() {
     var xlsSubnetId  = $('a.csvImport').attr('data-subnetId');
     var postData = "subnetId=" + xlsSubnetId + "&filetype=" + filetype + "&ignoreError=" + ignoreError;
 
-    $.post('ajx/subnets/import-subnet/import-file', postData, function(data) {
+    $.post('/ajx/subnets/import-subnet/import-file', postData, function(data) {
         $('div.csvImportResult').html(data).slideDown('fast');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -712,7 +712,7 @@ $('a.csvExport').click(function() {
     showSpinner();
     var subnetId = $(this).attr('data-subnetId');
     //show select fields
-    $.post('ajx/subnets/addresses/export-field-select', {subnetId:subnetId}, function(data) {
+    $.post('/ajx/subnets/addresses/export-field-select', {subnetId:subnetId}, function(data) {
 	    $('#popupOverlay div.popup_w400').html(data);
         showPopup('popup_w400');
         hideSpinner();
@@ -725,7 +725,7 @@ $(document).on("click", "button#exportSubnet", function() {
     //get selected fields
     var exportFields = $('form#selectExportFields').serialize();
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/subnets/addresses/export-subnet/?subnetId=" + subnetId + "&" + exportFields + "'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/subnets/addresses/export-subnet/?subnetId=" + subnetId + "&" + exportFields + "'></iframe></div>");
     return false;
 });
 
@@ -739,7 +739,7 @@ $(document).on('click', 'a.editFavourite', function() {
 	var item     = $(this);
 
 	//remove
-	$.post('ajx/tools/favourites/favourite-edit', {subnetId:subnetId, action:action, from:from}, function(data) {
+	$.post('/ajx/tools/favourites/favourite-edit', {subnetId:subnetId, action:action, from:from}, function(data) {
 		//success - widget - remove item
 		if(data=='success' && from=='widget') 	{
 			$('tr.favSubnet-'+subnetId).addClass('error');
@@ -778,7 +778,7 @@ $(document).on('click', 'a.editFavourite', function() {
 $('a.request_ipaddress').click(function () {
     showSpinner();
     var subnetId  = $(this).attr('data-subnetId');
-    $.post('ajx/tools/request-ip/index', {subnetId:subnetId}, function(data) {
+    $.post('/ajx/tools/request-ip/index', {subnetId:subnetId}, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
         hideSpinner();
@@ -790,7 +790,7 @@ $(document).on("click", "button#requestIP_widget", function() {
     showSpinner();
 	var subnetId = $('select#subnetId option:selected').attr('value');
     var ip_addr = document.getElementById('ip_addr_widget').value;
-    $.post('ajx/tools/request-ip/index', {subnetId:subnetId, ip_addr:ip_addr}, function(data) {
+    $.post('/ajx/tools/request-ip/index', {subnetId:subnetId, ip_addr:ip_addr}, function(data) {
         $('div.popup_w500').html(data);
         showPopup('popup_w500');
         hideSpinner();
@@ -802,7 +802,7 @@ $(document).on("change", "select#subnetId", function() {
     showSpinner();
     var subnetId = $('select#subnetId option:selected').attr('value');
     //post it via json to request_ip_first_free.php
-    $.post('ajx/login/request_ip_first_free', { subnetId:subnetId}, function(data) {
+    $.post('/ajx/login/request_ip_first_free', { subnetId:subnetId}, function(data) {
         $('input.ip_addr').val(data);
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -812,7 +812,7 @@ $(document).on("change", "select#subnetId", function() {
 $(document).on("click", "button#requestIPAddressSubmit", function() {
     showSpinner();
     var request = $('form#requestIP').serialize();
-    $.post('ajx/login/request_ip_result', request, function(data) {
+    $.post('/ajx/login/request_ip_result', request, function(data) {
         $('div#requestIPresult').html(data).slideDown('fast');
         reload_window (data);
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -834,7 +834,7 @@ $(document).on("click", "button#requestIPAddressSubmit", function() {
 $('form#ipCalc').submit(function () {
     showSpinner();
     var ipCalcData = $(this).serialize();
-    $.post('ajx/tools/ip-calculator/result', ipCalcData, function(data) {
+    $.post('/ajx/tools/ip-calculator/result', ipCalcData, function(data) {
         $('div.ipCalcResult').html(data).fadeIn('fast');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -998,7 +998,7 @@ $(document).on("mouseleave", '#user_menu', function(event){
 $(document).on("click", "#exportSearch", function(event){
     var searchTerm = $(this).attr('data-post');
     $("div.dl").remove();                                                //remove old innerDiv
-    $('div.exportDIVSearch').append("<div style='display:none' class='dl'><iframe src='ajx/tools/search/search-results-export/?ip=" + searchTerm + "'></iframe></div>");
+    $('div.exportDIVSearch').append("<div style='display:none' class='dl'><iframe src='/ajx/tools/search/search-results-export/?ip=" + searchTerm + "'></iframe></div>");
     return false;
 });
 
@@ -1019,7 +1019,7 @@ $('form#userModSelf').submit(function () {
     var selfdata = $(this).serialize();
     $('div.userModSelfResult').hide();
 
-    $.post('ajx/tools/user-menu/user-edit', selfdata, function(data) {
+    $.post('/ajx/tools/user-menu/user-edit', selfdata, function(data) {
         $('div.userModSelfResult').html(data).fadeIn('fast').delay(2000).fadeOut('slow');
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
     return false;
@@ -1055,7 +1055,7 @@ $('form#changePassRequiredForm').submit(function() {
     //get login data
     var postData = "ipampassword1="+ipampassword1+"&ipampassword2="+ipampassword2;
 
-    $.post('ajx/tools/pass-change/result', postData, function(data) {
+    $.post('/ajx/tools/pass-change/result', postData, function(data) {
         $('div#changePassRequiredResult').html(data).fadeIn('fast');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -1079,7 +1079,7 @@ $('#settings').submit(function() {
     showSpinner();
     var settings = $(this).serialize();
     //load submit results
-    $.post('ajx/admin/settings/settings-save', settings, function(data) {
+    $.post('/ajx/admin/settings/settings-save', settings, function(data) {
         $('div.settingsEdit').html(data).slideDown('fast');
         //reload after 1 second if all is ok!
         reload_window (data);
@@ -1090,12 +1090,12 @@ $('#settings').submit(function() {
 /* show logo uploader */
 $('#upload-logo').click(function () {
     csrf_cookie = $('form#settings input[name=csrf_cookie]').val();
-    open_popup ("700", 'ajx/admin/settings/logo/logo-uploader',  {csrf_cookie:csrf_cookie}, false)
+    open_popup ("700", '/ajx/admin/settings/logo/logo-uploader',  {csrf_cookie:csrf_cookie}, false)
     return false;
 });
 // clear logo
 $(document).on("click", ".logo-clear", function() {
-     $.post('ajx/admin/settings/logo/logo-clear', "", function(data) {
+     $.post('/ajx/admin/settings/logo/logo-clear', "", function(data) {
         $('div.logo-current').html(data).slideDown('fast');
         //reload after 1 second if all is ok!
         reload_window (data);
@@ -1107,7 +1107,7 @@ $('#mailsettings').submit(function() {
     showSpinner();
     var settings = $(this).serialize();
     //load submit results
-    $.post('ajx/admin/mail/edit', settings, function(data) {
+    $.post('/ajx/admin/mail/edit', settings, function(data) {
         $('div.settingsMailEdit').html(data).slideDown('fast');
         //reload after 1 second if all is ok!
         reload_window (data);
@@ -1131,7 +1131,7 @@ $('.sendTestMail').click(function() {
     $('#formAction').val('test');
 
    //send mail
-    $.post('ajx/admin/mail/test-mail', $('form#mailsettings').serialize(), function(data) {
+    $.post('/ajx/admin/mail/test-mail', $('form#mailsettings').serialize(), function(data) {
         $('div.settingsMailEdit').html(data).slideDown('fast');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -1147,7 +1147,7 @@ $('.editUser').click(function () {
     var id     = $(this).attr('data-userid');
     var action = $(this).attr('data-action');
 
-    $.post('ajx/admin/users/edit',{id:id, action:action}, function(data) {
+    $.post('/ajx/admin/users/edit',{id:id, action:action}, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -1159,7 +1159,7 @@ $(document).on("click", "#editUserSubmit", function() {
     showSpinner();
     var loginData = $('form#usersEdit').serialize();
 
-    $.post('ajx/admin/users/edit-result', loginData, function(data) {
+    $.post('/ajx/admin/users/edit-result', loginData, function(data) {
         $('div.usersEditResult').html(data).show();
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -1192,7 +1192,7 @@ $(document).on("click", "a#randomPass", function() {
 });
 //search domain popup
 $(document).on("click", ".adsearchuser", function() {
-	$('#popupOverlay2 .popup_w500').load('ajx/admin/users/ad-search-form');
+	$('#popupOverlay2 .popup_w500').load('/ajx/admin/users/ad-search-form');
     showPopup('popup_w500', false, true);
     hideSpinner();
 });
@@ -1201,7 +1201,7 @@ $(document).on("click", "#adsearchusersubmit", function() {
 	showSpinner();
 	var dname = $('#dusername').val();
 	var server = $('#adserver').find(":selected").val();
-	$.post('ajx/admin/users/ad-search-result', {dname:dname, server:server}, function(data) {
+	$.post('/ajx/admin/users/ad-search-result', {dname:dname, server:server}, function(data) {
 		$('div#adsearchuserresult').html(data)
 		hideSpinner();
 	});
@@ -1223,7 +1223,7 @@ $(document).on("click", ".userselect", function() {
 	$('tbody#user_password').hide();
 	//check server type and fetch group membership
 	if (server_type=="AD" || server_type=="LDAP") {
-		$.post('ajx/admin/users/ad-search-result-groups-membership', {server:server,username:username}, function(data) {
+		$.post('/ajx/admin/users/ad-search-result-groups-membership', {server:server,username:username}, function(data) {
 			//some data found
 			if(data.length>0) {
 				// to array and check
@@ -1246,7 +1246,7 @@ $(document).on("click", ".userselect", function() {
 ***************************/
 //search AD group popup
 $(document).on("click", ".adLookup", function() {
-	$('#popupOverlay div.popup_w700').load('ajx/admin/groups/ad-search-group-form');
+	$('#popupOverlay div.popup_w700').load('/ajx/admin/groups/ad-search-group-form');
 
     showPopup('popup_w700');
     hideSpinner();
@@ -1256,7 +1256,7 @@ $(document).on("click", "#adsearchgroupsubmit", function() {
 	showSpinner();
 	var dfilter = $('#dfilter').val();
 	var server = $('#adserver').find(":selected").val();
-	$.post('ajx/admin/groups/ad-search-group-result', {dfilter:dfilter, server:server}, function(data) {
+	$.post('/ajx/admin/groups/ad-search-group-result', {dfilter:dfilter, server:server}, function(data) {
 		$('div#adsearchgroupresult').html(data)
 		hideSpinner();
 	});
@@ -1270,7 +1270,7 @@ $(document).on("click", ".groupselect", function() {
 	var gid = $(this).attr("data-gid");
 	var csrf_cookie = $(this).attr("data-csrf_cookie");
 
-	$.post('ajx/admin/groups/edit-group-result', {action:"add", g_name:gname, g_desc:gdescription, gmembers:gmembers, csrf_cookie:csrf_cookie}, function(data) {
+	$.post('/ajx/admin/groups/edit-group-result', {action:"add", g_name:gname, g_desc:gdescription, gmembers:gmembers, csrf_cookie:csrf_cookie}, function(data) {
 		$('div.adgroup-'+gid).html(data)
 		hideSpinner();
 	});
@@ -1282,7 +1282,7 @@ $('.editGroup').click(function () {
     var id     = $(this).attr('data-groupid');
     var action = $(this).attr('data-action');
 
-    $.post('ajx/admin/groups/edit-group',{id:id, action:action}, function(data) {
+    $.post('/ajx/admin/groups/edit-group',{id:id, action:action}, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -1294,7 +1294,7 @@ $(document).on("click", "#editGroupSubmit", function() {
     showSpinner();
     var loginData = $('form#groupEdit').serialize();
 
-    $.post('ajx/admin/groups/edit-group-result', loginData, function(data) {
+    $.post('/ajx/admin/groups/edit-group-result', loginData, function(data) {
         $('div.groupEditResult').html(data).show();
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -1306,7 +1306,7 @@ $('.addToGroup').click(function() {
     showSpinner();
 	var g_id = $(this).attr('data-groupid');
 
-    $.post('ajx/admin/groups/add-users',{g_id:g_id}, function(data) {
+    $.post('/ajx/admin/groups/add-users',{g_id:g_id}, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -1318,7 +1318,7 @@ $(document).on("click", "#groupAddUsersSubmit", function() {
 	showSpinner();
 	var users = $('#groupAddUsers').serialize();
 
-    $.post('ajx/admin/groups/add-users-result', users, function(data) {
+    $.post('/ajx/admin/groups/add-users-result', users, function(data) {
         $('div.groupAddUsersResult').html(data).show();
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -1330,7 +1330,7 @@ $('.removeFromGroup').click(function() {
     showSpinner();
 	var g_id = $(this).attr('data-groupid');
 
-    $.post('ajx/admin/groups/remove-users',{g_id:g_id}, function(data) {
+    $.post('/ajx/admin/groups/remove-users',{g_id:g_id}, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -1342,7 +1342,7 @@ $(document).on("click", "#groupRemoveUsersSubmit", function() {
 	showSpinner();
 	var users = $('#groupRemoveUsers').serialize();
 
-    $.post('ajx/admin/groups/remove-users-result', users, function(data) {
+    $.post('/ajx/admin/groups/remove-users-result', users, function(data) {
         $('div.groupRemoveUsersResult').html(data).show();
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -1360,7 +1360,7 @@ $('.editAuthMethod').click(function () {
     var action = $(this).attr('data-action');
     var type   = $(this).attr('data-type');
 
-    $.post('ajx/admin/authentication-methods/edit',{id:id, action:action, type:type}, function(data) {
+    $.post('/ajx/admin/authentication-methods/edit',{id:id, action:action, type:type}, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -1372,7 +1372,7 @@ $(document).on("click", "#editAuthMethodSubmit", function() {
     showSpinner();
     var loginData = $('form#editAuthMethod').serialize();
 
-    $.post('ajx/admin/authentication-methods/edit-result', loginData, function(data) {
+    $.post('/ajx/admin/authentication-methods/edit-result', loginData, function(data) {
         $('div.editAuthMethodResult').html(data).show();
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -1383,7 +1383,7 @@ $(document).on("click", "#editAuthMethodSubmit", function() {
 $('.checkAuthMethod').click(function () {
     showSpinner();
     var id     = $(this).attr('data-id');
-    $.post('ajx/admin/authentication-methods/check-connection',{id:id}, function(data) {
+    $.post('/ajx/admin/authentication-methods/check-connection',{id:id}, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
         hideSpinner();
@@ -1401,7 +1401,7 @@ $('#instructionsForm').submit(function () {
 	$('div.instructionsPreview').hide('fast');
 
     showSpinner();
-    $.post('ajx/admin/instructions/edit-result', {instructions:instructions, csrf_cookie:csrf_cookie, id:id}, function(data) {
+    $.post('/ajx/admin/instructions/edit-result', {instructions:instructions, csrf_cookie:csrf_cookie, id:id}, function(data) {
         $('div.instructionsResult').html(data).fadeIn('fast');
         if(data.search("alert-danger")==-1 && data.search("error")==-1)     	{ $('div.instructionsResult').delay(2000).fadeOut('slow'); hideSpinner(); }
         else                             	{ hideSpinner(); }
@@ -1412,7 +1412,7 @@ $('#preview').click(function () {
     showSpinner();
     var instructions = CKEDITOR.instances.instructions.getData();
 
-    $.post('ajx/admin/instructions/preview', {instructions:instructions,action: 'read'}, function(data) {
+    $.post('/ajx/admin/instructions/preview', {instructions:instructions,action: 'read'}, function(data) {
         $('div.instructionsPreview').html(data).fadeIn('fast');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -1426,7 +1426,7 @@ $('#preview').click(function () {
 $('form#logs').change(function () {
     showSpinner();
     var logSelection = $('form#logs').serialize();
-    $.post('ajx/tools/logs/show-logs', logSelection, function(data) {
+    $.post('/ajx/tools/logs/show-logs', logSelection, function(data) {
         $('div.logs').html(data);
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -1434,7 +1434,7 @@ $('form#logs').change(function () {
 //log files show details
 $(document).on("click", "a.openLogDetail", function() {
     var id = $(this).attr('data-logid');
-    $.post('ajx/tools/logs/detail-popup', {id:id}, function(data) {
+    $.post('/ajx/tools/logs/detail-popup', {id:id}, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
         hideSpinner();
@@ -1457,7 +1457,7 @@ $('#logDirection button').click(function() {
     var postData = logSelection + "&direction=" + direction + "&lastId=" + lastId;
 
     /* show logs */
-    $.post('ajx/tools/logs/show-logs', postData, function(data1) {
+    $.post('/ajx/tools/logs/show-logs', postData, function(data1) {
         $('div.logs').html(data1);
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -1467,7 +1467,7 @@ $('#logDirection button').click(function() {
 $('#downloadLogs').click(function() {
     showSpinner();
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/logs/export'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/logs/export'></iframe></div>");
     hideSpinner();
     //show downloading
     $('div.logs').prepend("<div class='alert alert-info' id='logsInfo'><i class='icon-remove icon-gray selfDestruct'></i> Preparing download... </div>");
@@ -1476,7 +1476,7 @@ $('#downloadLogs').click(function() {
 //logs clear
 $('#clearLogs').click(function() {
     showSpinner();
-    $.post('ajx/tools/logs/clear-logs', function(data) {
+    $.post('/ajx/tools/logs/clear-logs', function(data) {
     	$('div.logs').html(data);
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -1520,7 +1520,7 @@ $(document).on("click", "#editSectionSubmit, .editSectionSubmitDelete", function
 	//append deleteconfirm
 	if($(this).attr('id') == "editSectionSubmitDelete") { sectionData += "&deleteconfirm=yes"; };
 
-    $.post('ajx/admin/sections/edit-result', sectionData, function(data) {
+    $.post('/ajx/admin/sections/edit-result', sectionData, function(data) {
         $('div.sectionEditResult').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -1549,7 +1549,7 @@ $(document).on("click", "#sectionOrderSubmit", function() {
 	}).get().join(';');
 
 	//post
-	$.post('ajx/admin/sections/edit-order-result', {position: lis}, function(data) {
+	$.post('/ajx/admin/sections/edit-order-result', {position: lis}, function(data) {
 		$('.sectionOrderResult').html(data).fadeIn('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -1567,7 +1567,7 @@ $('#pdns-settings').submit(function() {
     showSpinner();
     var settings = $(this).serialize();
     //load submit results
-    $.post('ajx/admin/powerDNS/settings-save', settings, function(data) {
+    $.post('/ajx/admin/powerDNS/settings-save', settings, function(data) {
         $('div.settingsEdit').html(data).slideDown('fast');
         //reload after 1 second if all is ok!
         reload_window (data);
@@ -1579,7 +1579,7 @@ $('#pdns-defaults').submit(function() {
     showSpinner();
     var settings = $(this).serialize();
     //load submit results
-    $.post('ajx/admin/powerDNS/defaults-save', settings, function(data) {
+    $.post('/ajx/admin/powerDNS/defaults-save', settings, function(data) {
         $('div.settingsEdit').html(data).slideDown('fast');
         //reload after 1 second if all is ok!
         reload_window (data);
@@ -1659,7 +1659,7 @@ $('#firewallZoneSettings').submit(function() {
     showSpinner();
     var settings = $(this).serialize();
     //load submit results
-    $.post('ajx/admin/firewall-zones/settings-save', settings, function(data) {
+    $.post('/ajx/admin/firewall-zones/settings-save', settings, function(data) {
         $('div.settingsEdit').html(data).slideDown('fast');
         //reload after 1 second if all is ok!
         reload_window (data);
@@ -1687,7 +1687,7 @@ $(document).on("click", ".subnet_to_zone", function() {
     var operation = $(this).attr('data-operation');
     //format posted values
     var postdata = "operation="+operation+"&subnetId="+subnetId;
-    $.post('ajx/admin/firewall-zones/subnet-to-zone', postdata, function(data) {
+    $.post('/ajx/admin/firewall-zones/subnet-to-zone', postdata, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
         hideSpinner();
@@ -1707,7 +1707,7 @@ $(document).on("change", ".checkMapping",(function () {
     pData.push({name:'operation',value:'checkMapping'});
 
     //load results
-    $.post('ajx/admin/firewall-zones/ajax', pData, function(data) {
+    $.post('/ajx/admin/firewall-zones/ajax', pData, function(data) {
         $('div.mappingAdd').html(data).slideDown('fast');
 
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -1722,7 +1722,7 @@ $(document).on("click", ".editNetwork", function() {
      var pData = $('form#zoneEdit').serializeArray();
      pData.push({name:'action',value:$(this).attr('data-action')});
      pData.push({name:'subnetId',value:$(this).attr('data-subnetId')});
-     $('#popupOverlay2 .popup_w500').load('ajx/admin/firewall-zones/zones-edit-network',pData);
+     $('#popupOverlay2 .popup_w500').load('/ajx/admin/firewall-zones/zones-edit-network',pData);
     showPopup('popup_w500', false, true);
     hideSpinner();
 });
@@ -1777,7 +1777,7 @@ $(document).on("change", "#fw-zone-section-select",(function () {
     pData.push({name:'operation',value:'fetchSectionSubnets'});
     pData.push({name:'action',value:'read'});  // see Common::get_valid_actions
     //load results
-    $.post('ajx/admin/firewall-zones/ajax', pData, function(data) {
+    $.post('/ajx/admin/firewall-zones/ajax', pData, function(data) {
         $('div.sectionSubnets').html(data).slideDown('fast');
         
         // The embedded script in the HTML doesn't kick when the AJAX call 
@@ -1814,7 +1814,7 @@ $(document).on("change", ".mappingZoneInformation",(function() {
     var pData = $(this).serializeArray();
     pData.push({name:'operation',value:'deliverZoneDetail'});
     //load results
-    $.post('ajx/admin/firewall-zones/ajax', pData, function(data) {
+    $.post('/ajx/admin/firewall-zones/ajax', pData, function(data) {
         $('div.zoneInformation').html(data).slideDown('fast');
 
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -1836,7 +1836,7 @@ $(document).on("click", "a.fw_autogen", function() {
     showSpinner();
 
     // send information to ajax.php to generate a new address object
-    $.post('ajx/admin/firewall-zones/ajax', {subnetId:subnetId, IPId:IPId, dnsName:dnsName, action:action, operation:operation}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
+    $.post('/ajx/admin/firewall-zones/ajax', {subnetId:subnetId, IPId:IPId, dnsName:dnsName, action:action, operation:operation}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 
     // hide the spinner and reload the window on success
     setTimeout(function (){hideSpinner();window.location.reload();}, 500);
@@ -2061,7 +2061,7 @@ $('.showSubnetPerm').click(function() {
 $(document).on("click", ".editSubnetPermissionsSubmit", function() {
 	showSpinner();
 	var perms = $('form#editSubnetPermissions').serialize();
-	$.post('ajx/admin/subnets/permissions-submit', perms, function(data) {
+	$.post('/ajx/admin/subnets/permissions-submit', perms, function(data) {
 		$('.editSubnetPermissionsResult').html(data);
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2092,7 +2092,7 @@ $('.editSubnetLink').click(function() {
 });
 $(document).on('click', '.linkSubnetSave', function() {
     showSpinner();
-	$.post('ajx/admin/subnets/linked-subnet-submit', $('form#editLinkedSubnet').serialize(), function(data) {
+	$.post('/ajx/admin/subnets/linked-subnet-submit', $('form#editLinkedSubnet').serialize(), function(data) {
 		$('.linkSubnetSaveResult').html(data);
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2120,7 +2120,7 @@ $(document).on("change", "select#selectSectionfromIPCalc", function() {
     //make section active
     $('table.newSections ul#sections li#' + sectionId ).addClass('active');
     //load add Subnet form / popup
-    $.post('ajx/admin/subnets/edit', postdata , function(data) {
+    $.post('/ajx/admin/subnets/edit', postdata , function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -2136,7 +2136,7 @@ $(document).on("click", ".createfromfree", function() {
     var bitmask   = cidrArr[1];
     var postdata  = "sectionId=" + sectionId + "&subnet=" + subnet + "&bitmask=" + bitmask + "&freespaceMSID=" + freespaceMSISD + "&action=add&location=ipcalc";
     //load add Subnet form / popup
-    $.post('ajx/admin/subnets/edit', postdata , function(data) {
+    $.post('/ajx/admin/subnets/edit', postdata , function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -2154,7 +2154,7 @@ $(document).on("click", '.edit_subnet, button.edit_subnet, button#add_subnet', f
     //format posted values
     var postdata     = "sectionId="+sectionId+"&subnetId="+subnetId+"&action="+action+"&location=IPaddresses";
     //load add Subnet form / popup
-    $.post('ajx/admin/subnets/edit', postdata , function(data) {
+    $.post('/ajx/admin/subnets/edit', postdata , function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -2169,7 +2169,7 @@ $(document).on("change", "select[name=vlanId]", function() {
     var domain = $("select[name=vlanId] option:selected").attr('data-domain');
     if($(this).val() == 'Add') {
         showSpinner();
-        $.post('ajx/admin/vlans/edit', {action:"add", fromSubnet:"true", domain:domain}, function(data) {
+        $.post('/ajx/admin/vlans/edit', {action:"add", fromSubnet:"true", domain:domain}, function(data) {
             showPopup('popup_w400', data, true);
             hideSpinner();
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -2182,13 +2182,13 @@ $(document).on("click", ".vlanManagementEditFromSubnetButton", function() {
     //get new vlan details
     var postData = $('form#vlanManagementEditFromSubnet').serialize();
 	//add to save script
-    $.post('ajx/admin/vlans/edit-result', postData, function(data) {
+    $.post('/ajx/admin/vlans/edit-result', postData, function(data) {
         $('div.vlanManagementEditFromSubnetResult').html(data).show();
         // ok
         if(data.search("alert-danger")==-1 && data.search("error")==-1) {
             var vlanId	  = $('#vlanidforonthefly').html();
             var sectionId = $('#editSubnetDetails input[name=sectionId]').val();
-            $.post('ajx/admin/subnets/edit-vlan-dropdown', {vlanId:vlanId, sectionId:sectionId} , function(data) {
+            $.post('/ajx/admin/subnets/edit-vlan-dropdown', {vlanId:vlanId, sectionId:sectionId} , function(data) {
                 $('.editSubnetDetails td#vlanDropdown').html(data);
                 hideSpinner();
 			}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -2234,7 +2234,7 @@ $('#add_folder, .add_folder').click(function() {
     //format posted values
     var postdata     = "sectionId="+sectionId+"&subnetId="+subnetId+"&action="+action+"&location=IPaddresses";
 
-    $.post('ajx/admin/subnets/edit-folder', postdata, function(data) {
+    $.post('/ajx/admin/subnets/edit-folder', postdata, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -2246,7 +2246,7 @@ $('#add_folder, .add_folder').click(function() {
 $(document).on("click", ".editFolderSubmit", function() {
 	showSpinner();
 	var postData = $('form#editFolderDetails').serialize();
-	$.post('ajx/admin/subnets/edit-folder-result', postData, function(data) {
+	$.post('/ajx/admin/subnets/edit-folder-result', postData, function(data) {
 		$('.manageFolderEditResult').html("").html(data);
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2263,7 +2263,7 @@ $(document).on("click", ".editFolderSubmitDelete", function() {
     var postData     = "subnetId="+subnetId+"&description="+description+"&action=delete"+"&csrf_cookie="+csrf_cookie;
 	//append deleteconfirm
 	if($(this).attr('id') == "editFolderSubmitDelete") { postData += "&deleteconfirm=yes"; };
-	$.post('ajx/admin/subnets/edit-folder-result', postData, function(data) {
+	$.post('/ajx/admin/subnets/edit-folder-result', postData, function(data) {
 		$('.manageFolderEditResult').html(data);
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2656,7 +2656,7 @@ $('.removeSharedTemp').click(function() {
 $('form#ripeImport').submit(function() {
     showSpinner();
     var as = $(this).serialize();
-    $.post('ajx/admin/ripe-import/ripe-telnet', as, function(data) {
+    $.post('/ajx/admin/ripe-import/ripe-telnet', as, function(data) {
         $('div.ripeImportTelnet').html(data).fadeIn('fast');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -2672,7 +2672,7 @@ $(document).on("submit", "form#asImport", function() {
     showSpinner();
     //get subnets to add
     var importData = $(this).serialize();
-    $.post('ajx/admin/ripe-import/import-subnets', importData, function(data) {
+    $.post('/ajx/admin/ripe-import/import-subnets', importData, function(data) {
         $('div.ripeImportResult').html(data).slideDown('fast');
         //hide after 2 seconds
         if(data.search("alert-danger")==-1 && data.search("error")==-1)     { $('table.asImport').delay(1000).fadeOut('fast'); hideSpinner(); }
@@ -2687,7 +2687,7 @@ $(document).on("submit", "form#asImport", function() {
 $('button#filterIPSave').click(function() {
     showSpinner();
     var addata = $('form#filterIP').serialize();
-    $.post('ajx/admin/filter-fields/filter-result', addata, function(data) {
+    $.post('/ajx/admin/filter-fields/filter-result', addata, function(data) {
         $('div.filterIPResult').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         if(data.search("alert-danger")==-1 && data.search("error")==-1)     { $('div.filterIPResult').delay(2000).fadeOut('slow');    hideSpinner(); }
@@ -2708,7 +2708,7 @@ $(document).on("click", ".edit-custom-field", function() {
     var action    = $(this).attr('data-action');
     var fieldName = $(this).attr('data-fieldname');
     var table	  = $(this).attr('data-table');
-    $.post('ajx/admin/custom-fields/edit',  {action:action, fieldName:fieldName, table:table}, function(data) {
+    $.post('/ajx/admin/custom-fields/edit',  {action:action, fieldName:fieldName, table:table}, function(data) {
         $('#popupOverlay div.popup_w400').html(data);
         showPopup('popup_w400');
         hideSpinner();
@@ -2719,7 +2719,7 @@ $(document).on("click", ".edit-custom-field", function() {
 $(document).on("click", "#editcustomSubmit", function() {
     showSpinner();
     var field = $('form#editCustomFields').serialize();
-    $.post('ajx/admin/custom-fields/edit-result', field, function(data) {
+    $.post('/ajx/admin/custom-fields/edit-result', field, function(data) {
         $('div.customEditResult').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2732,7 +2732,7 @@ $('table.customIP button.down').click(function() {
     var current  = $(this).attr('data-fieldname');
     var next     = $(this).attr('data-nextfieldname');
     var table	 = $(this).attr('data-table');
-    $.post('ajx/admin/custom-fields/order', {current:current, next:next, table:table}, function(data) {
+    $.post('/ajx/admin/custom-fields/order', {current:current, next:next, table:table}, function(data) {
         $('div.'+table+'-order-result').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2743,7 +2743,7 @@ $('table.customIP button.down').click(function() {
 $('.edit-custom-filter').click(function() {
 	showSpinner();
 	var table = $(this).attr('data-table');
-    $.post('ajx/admin/custom-fields/filter',  {table:table}, function(data) {
+    $.post('/ajx/admin/custom-fields/filter',  {table: table, action: 'edit'}, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
         hideSpinner();
@@ -2753,7 +2753,7 @@ $('.edit-custom-filter').click(function() {
 $(document).on("click", "#editcustomFilterSubmit", function() {
     showSpinner();
     var field = $('form#editCustomFieldsFilter').serialize();
-    $.post('ajx/admin/custom-fields/filter-result', field, function(data) {
+    $.post('/ajx/admin/custom-fields/filter-result', field, function(data) {
         $('div.customEditFilterResult').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2774,7 +2774,7 @@ $('button.lang').click(function() {
     showSpinner();
     var langid    = $(this).attr('data-langid');
     var action   = $(this).attr('data-action');
-    $.post('ajx/admin/languages/edit', {langid:langid, action:action}, function(data) {
+    $.post('/ajx/admin/languages/edit', {langid:langid, action:action}, function(data) {
         $('#popupOverlay div.popup_w400').html(data);
         showPopup('popup_w400');
         hideSpinner();
@@ -2785,7 +2785,7 @@ $('button.lang').click(function() {
 $(document).on("click", "#langEditSubmit", function() {
     showSpinner();
     var ldata = $('form#langEdit').serialize();
-    $.post('ajx/admin/languages/edit-result', ldata, function(data) {
+    $.post('/ajx/admin/languages/edit-result', ldata, function(data) {
         $('div.langEditResult').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2801,7 +2801,7 @@ $('button.wedit').click(function() {
     showSpinner();
     var wid    = $(this).attr('data-wid');
     var action = $(this).attr('data-action');
-    $.post('ajx/admin/widgets/edit', {wid:wid, action:action}, function(data) {
+    $.post('/ajx/admin/widgets/edit', {wid:wid, action:action}, function(data) {
         $('#popupOverlay div.popup_w500').html(data);
         showPopup('popup_w500');
         hideSpinner();
@@ -2812,7 +2812,7 @@ $('button.wedit').click(function() {
 $(document).on("click", "#widgetEditSubmit", function() {
     showSpinner();
     var ldata = $('form#widgetEdit').serialize();
-    $.post('ajx/admin/widgets/edit-result', ldata, function(data) {
+    $.post('/ajx/admin/widgets/edit-result', ldata, function(data) {
         $('div.widgetEditResult').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2829,7 +2829,7 @@ $('button.editAPI').click(function() {
     showSpinner();
     var appid    = $(this).attr('data-appid');
     var action   = $(this).attr('data-action');
-    $.post('ajx/admin/api/edit', {appid:appid, action:action}, function(data) {
+    $.post('/ajx/admin/api/edit', {appid:appid, action:action}, function(data) {
         $('#popupOverlay div.popup_w700').html(data);
         showPopup('popup_w700');
         hideSpinner();
@@ -2840,7 +2840,7 @@ $('button.editAPI').click(function() {
 $(document).on("click", "#apiEditSubmit", function() {
     showSpinner();
     var apidata = $('form#apiEdit').serialize();
-    $.post('ajx/admin/api/edit-result', apidata, function(data) {
+    $.post('/ajx/admin/api/edit-result', apidata, function(data) {
         $('div.apiEditResult').html(data).slideDown('fast');
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2878,7 +2878,7 @@ $(document).on("click", "#agentEditSubmit", function() {
 $('button#searchReplaceSave').click(function() {
     showSpinner();
     var searchData = $('form#searchReplace').serialize();
-    $.post('ajx/admin/replace-fields/result', searchData, function(data) {
+    $.post('/ajx/admin/replace-fields/result', searchData, function(data) {
         $('div.searchReplaceResult').html(data);
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -2919,7 +2919,7 @@ $('button.dataExport').click(function () {
     //show popup window
 	if (implemented.indexOf(dataType) > -1) {
 		showSpinner();
-		$.post('ajx/admin/import-export/export-' + dataType + '-field-select', {action: action}, function(data) {
+		$.post('/ajx/admin/import-export/export-' + dataType + '-field-select', {action: action}, function(data) {
 		if (popsize[dataType] !== undefined) {
 			$('div.popup_'+popsize[dataType]).html(data);
 			showPopup('popup_'+popsize[dataType]);
@@ -2930,7 +2930,7 @@ $('button.dataExport').click(function () {
 		hideSpinner();
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	} else {
-		$.post('ajx/admin/import-export/not-implemented', function(data) {
+		$.post('/ajx/admin/import-export/not-implemented', function(data) {
 		$('#popupOverlay div.popup_w400').html(data);
 		showPopup('popup_w400');
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -2946,25 +2946,25 @@ $(document).on("click", "button#dataExportSubmit", function() {
 	switch(dataType) {
 		case 'vrf':
 			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-vrf/?" + exportFields + "'></iframe></div>");
+			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-vrf/?" + exportFields + "'></iframe></div>");
 			setTimeout(function (){hidePopups();}, 1500);
 			break;
 		case 'vlan':
 			var exportDomains = $('form#selectExportDomains').serialize();
 			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-vlan/?" + exportDomains + "&" + exportFields + "'></iframe></div>");
+			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-vlan/?" + exportDomains + "&" + exportFields + "'></iframe></div>");
 			setTimeout(function (){hidePopups();}, 1500);
 			break;
 		case 'subnets':
 			var exportSections = $('form#selectExportSections').serialize();
 			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-subnets/?" + exportSections + "&" + exportFields + "'></iframe></div>");
+			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-subnets/?" + exportSections + "&" + exportFields + "'></iframe></div>");
 			setTimeout(function (){hidePopups();}, 1500);
 			break;
 		case 'ipaddr':
 			var exportSections = $('form#selectExportSections').serialize();
 			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='ajx/admin/import-export/export-ipaddr/?" + exportSections + "&" + exportFields + "'></iframe></div>");
+			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-ipaddr/?" + exportSections + "&" + exportFields + "'></iframe></div>");
 			setTimeout(function (){hidePopups();}, 1500);
 			break;
 	}
@@ -3040,7 +3040,7 @@ $('button.dataImport').click(function () {
     //show popup window, if implemented
 	if (implemented.indexOf(dataType) > -1) {
 		showSpinner();
-		$.post('ajx/admin/import-export/import-' + dataType + '-select', {action: action}, function(data) {
+		$.post('/ajx/admin/import-export/import-' + dataType + '-select', {action: action}, function(data) {
 		if (popsize[dataType] !== undefined) {
 			$('div.popup_'+popsize[dataType]).html(data);
 			showPopup('popup_'+popsize[dataType]);
@@ -3051,7 +3051,7 @@ $('button.dataImport').click(function () {
 		hideSpinner();
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	} else {
-		$.post('ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
+		$.post('/ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
 		$('#popupOverlay div.popup_w400').html(data);
 		showPopup('popup_w400');
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -3069,7 +3069,7 @@ $(document).on("click", "button#dataImportPreview", function() {
     //show popup window, if implemented
 	if (implemented.indexOf(dataType) > -1) {
 		showSpinner();
-		$.post('ajx/admin/import-export/import-' + dataType + '-preview/', importFields, function(data) {
+		$.post('/ajx/admin/import-export/import-' + dataType + '-preview/', importFields, function(data) {
 		if (popsize[dataType] !== undefined) {
 			$('div.popup_'+popsize[dataType]).html(data);
 			showPopup('popup_'+popsize[dataType]);
@@ -3080,7 +3080,7 @@ $(document).on("click", "button#dataImportPreview", function() {
 		hideSpinner();
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	} else {
-		$.post('ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
+		$.post('/ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
 		$('#popupOverlay div.popup_w400').html(data);
 		showPopup('popup_w400');
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -3097,7 +3097,7 @@ $(document).on("click", "button#dataImportSubmit", function() {
     //show popup window, if implemented
 	if (implemented.indexOf(dataType) > -1) {
 		showSpinner();
-		$.post('ajx/admin/import-export/import-' + dataType + '/', importFields, function(data) {
+		$.post('/ajx/admin/import-export/import-' + dataType + '/', importFields, function(data) {
 		if (popsize[dataType] !== undefined) {
 			$('div.popup_'+popsize[dataType]).html(data);
 			showPopup('popup_'+popsize[dataType]);
@@ -3108,7 +3108,7 @@ $(document).on("click", "button#dataImportSubmit", function() {
 		hideSpinner();
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	} else {
-		$.post('ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
+		$.post('/ajx/admin/import-export/not-implemented', {action: 'read'}, function(data) {
 		$('#popupOverlay div.popup_w400').html(data);
 		showPopup('popup_w400');
 		}).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
@@ -3118,7 +3118,7 @@ $(document).on("click", "button#dataImportSubmit", function() {
 // recompute button
 $('button.dataRecompute').click(function () {
 	showSpinner();
-	$.post('ajx/admin/import-export/import-recompute-select', { action: 'read' }, function(data) {
+	$.post('/ajx/admin/import-export/import-recompute-select', { action: 'read' }, function(data) {
 	$('#popupOverlay div.popup_w700').html(data);
 	showPopup('popup_w700');
 	hideSpinner();
@@ -3133,7 +3133,7 @@ $(document).on('click', '.btn-tablefix', function() {
 	var tableid = $(this).attr('data-tableid');
 	var fieldid = $(this).attr('data-fieldid');
 	var type 	= $(this).attr('data-type');
-    $.post('ajx/admin/verify-database/fix', {tableid:tableid, fieldid:fieldid, type:type}, function(data) {
+    $.post('/ajx/admin/verify-database/fix', {tableid:tableid, fieldid:fieldid, type:type}, function(data) {
         $('div#fix-result-'+tableid+fieldid).html(data).fadeIn('fast');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });

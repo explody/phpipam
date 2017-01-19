@@ -7,7 +7,7 @@
 $User->csrf_cookie ("validate", "recompute", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
 # Load subnets and recompute the master/nested relations
-include dirname(__FILE__) . '/import-recompute-logic.php';
+include FUNCTIONS . '/ajax/import-recompute-logic.php';
 
 ?>
 

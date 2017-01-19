@@ -2,11 +2,13 @@
 /*
  * L2 Domain Import
  ************************************************/
+ 
+ $User->csrf_cookie ("validate", "import-l2dom", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
 
 # load data from uploaded file
-include 'import-load-data.php';
+include FUNCTIONS . '/ajax/import-load-data.php';
 # check data and mark the entries to import/update
-include 'import-l2dom-check.php';
+include FUNCTIONS . '/ajax/import-l2dom-check.php';
 
 ?>
 

@@ -3,9 +3,12 @@
 /**
  * Script to manage sections
  *************************************************/
+ 
+$csrf = $User->csrf_cookie ("create", "ripe-import");
 
 # verify that user is logged in
 $User->check_user_session();
+
 ?>
 
 <h4><?php print _('Import subnets from RIPE'); ?></h4>
@@ -19,6 +22,8 @@ $User->check_user_session();
 		<input class="search form-control input-sm" placeholder="<?php print _('AS number'); ?>" name="as" type="text">
 	</div>
 	<div class="form-group">
+        <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+        <input type="hidden" name="action" value="read">
 		<button type="submit" class="btn btn-sm btn-default"><?php print _('Search'); ?></button>
 	</div>
 </form>

@@ -4,6 +4,8 @@
  * Script to get all active IP requests
  ****************************************/
 
+$User->csrf_cookie ("validate", "filter-fields", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+
 # set fields to update
 $values = array("id"=>1,
 				"IPfilter"=>implode(';', $_POST));
