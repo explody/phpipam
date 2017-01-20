@@ -31,7 +31,7 @@ require_once VENDOR . '/autoload.php';
 if(!isset($_GET['page'])) { $_GET['page'] = "dashboard"; }
 
 # if not install fetch settings etc
-if($_GET['page'] !="install" ) {
+if($_GET['page'] != "install" ) {
 	# database object
 	$Database 	= new Database_PDO;
 
@@ -54,7 +54,13 @@ if($_GET['page'] !="install" ) {
 /** include proper subpage **/
 if($_GET['page']=='install')		{ require(APP . '/install/index.php'); }
 elseif($_GET['page']=='upgrade')	{ require(APP . '/upgrade/index.php'); }
-elseif($_GET['page']=='login')		{ require(APP . '/login/index.php'); }
+elseif($_GET['page']=='login')		{ 
+    if ($_GET['section'] == 'captcha') {
+        require(APP . '/login/captcha/captchashow.php'); 
+    } else {
+        require(APP . '/login/index.php'); 
+    }
+}
 elseif($_GET['page']=='logout')		{ require(APP . '/logout/index.php'); }
 elseif($_GET['page']=='temp_share')	{ require(APP . '/temp_share/index.php'); }
 elseif($_GET['page']=='request_ip')	{ require(APP . '/login/index.php'); }
@@ -153,11 +159,9 @@ else {
     <?php 
     if ($User->settings->enableLocations=="1") { 
         # API key check
-        if(!empty($gmaps_api_key)) {
-            $key = strlen($gmaps_api_key)>0 ? "?key=".$gmaps_api_key : "";
-            print '<script type="text/javascript" src="https://maps.google.com/maps/api/js' . $key . '"></script>';
-            print '<script type="text/javascript" src="' . MEDIA . '/js/gmaps.js"></script>';
-        }
+        $key = strlen($gmaps_api_key)>0 ? "?key=".$gmaps_api_key : "";
+        print '<script type="text/javascript" src="https://maps.google.com/maps/api/js' . $key . '"></script>';
+        print '<script type="text/javascript" src="' . MEDIA . '/js/gmaps.js"></script>';
     }	
     ?>
 </head>
@@ -239,8 +243,8 @@ else {
 <!-- content -->
 <div class="content_overlay">
 <div class="container-fluid" id="mainContainer">
+        
 		<?php
-
 		/* error */
 		if($_GET['page'] == "error") {
 			print "<div id='error' class='container'>";

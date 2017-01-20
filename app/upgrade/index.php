@@ -1,7 +1,7 @@
 <?php
 
 # make upgrade and php build checks
-include('functions/checks/check_php_build.php');		# check for support for PHP modules and database connection
+include(FUNCTIONS . '/checks/check_php_build.php');		# check for support for PHP modules and database connection
 
 # verify that user is logged in
 $User->check_user_session();
@@ -195,7 +195,7 @@ else {
 <div id="prettyLinks" style="display:none"><?php print $User->settings->prettyLinks; ?></div>
 
 <!-- Page footer -->
-<div class="footer"><?php include('app/footer.php'); ?></div>
+<div class="footer"><?php include(APP . '/footer.php'); ?></div>
 
 <!-- export div -->
 <div class="exportDIV"></div>

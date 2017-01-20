@@ -54,7 +54,7 @@ $path = $_GET['a'];
 // dispose of the path elements from _GET
 unset($_GET['a']);
 
-# verify that user is logged in, unless it's a login call
+# verify that user is logged in, unless it's a login or captcha call
 if ($path[1] != 'login_check') {
     $User->check_user_session();
 }

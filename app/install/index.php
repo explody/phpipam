@@ -111,19 +111,19 @@ if($Install->check_db_connection(false) && $Install->check_table("vrf", false)) 
 
 <?php
 # select install type
-if(!isset($_GET['section']))										{ include("select_install_type.php"); }
+if(!isset($_GET['section']))										{ include(APP . "/install/select_install_type.php"); }
 # open subpage
 else {
 	//check if subnetId == configure than already installed
-	if(@$_GET['subnetId']=="configure")								{ include(dirname(__FILE__)."/postinstall_configure.php"); }
+	if(@$_GET['subnetId']=="configure")								{ include(APP . "/install//postinstall_configure.php"); }
 	else {
     	// validate install type
     	$install_types = array("install_automatic", "install_manual", "install_mysqlimport");
         if(!in_array($_GET['section'], $install_types)) 	        { $Result->show("danger", "Invalid request", true); }
 
 		// verify that page exists
-		if(!file_exists(dirname(__FILE__)."/$_GET[section].php"))	{ include("invalid_install_type.php"); }
-		else														{ include(dirname(__FILE__)."/$_GET[section].php"); }
+		if(!file_exists(dirname(__FILE__)."/$_GET[section].php"))	{ include(APP . "/install/invalid_install_type.php"); }
+		else														{ include(APP . "/install/$_GET[section].php"); }
 	}
 }
 ?>
@@ -138,7 +138,7 @@ else {
 </div>
 
 <!-- Page footer -->
-<div class="footer"><?php include('footer.php'); ?></div>
+<div class="footer"><?php include(APP . '/footer.php'); ?></div>
 
 <!-- end body -->
 </body>

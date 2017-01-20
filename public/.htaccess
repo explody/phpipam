@@ -33,6 +33,14 @@ ErrorDocument 500 /error/500/
 # IE login dashboard fix
 RewriteRule ^login/dashboard/$ dashboard/ [R]
 RewriteRule ^logout/dashboard/$ dashboard/ [R]
+
+# AJAX
+RewriteCond %{REQUEST_URI} !^/ajx/.*
+RewriteRule .? - [S=3]
+RewriteRule ^ajx/([^/]+)/([^/]+)/?$ ajax.php?a[]=$1&a[]=$2 [L,QSA]
+RewriteRule ^ajx/([^/]+)/([^/]+)/([^/]+)/?$ ajax.php?a[]=$1&a[]=$2&a[]=$3 [L,QSA]
+RewriteRule ^ajx/([^/]+)/([^/]+)/([^/]+)/([^/]+)/?$ ajax.php?a[]=$1&a[]=$2&a[]=$3&a[]=$4 [L,QSA]
+
 # search override
 RewriteRule ^tools/search/(.*)$ index.php?page=tools&section=search&ip=$1 [L]
 

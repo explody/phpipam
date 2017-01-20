@@ -1,6 +1,6 @@
 <?php
 # verify php build
-include('functions/checks/check_php_build.php');		# check for support for PHP modules and database connection
+include(FUNCTIONS . '/checks/check_php_build.php');		# check for support for PHP modules and database connection
 
 # fetch settings
 $settings = $Tools->fetch_object("settings", "id", 1);
@@ -111,8 +111,8 @@ $max_width = (@$temp_objects[$_GET['section']]->type=="ipaddresses" || isset($_G
 
 			if($temp_objects[$_GET['section']]->type=="subnets") 		{
 				# address?
-				if(isset($_GET['subnetId']))							{ include("address.php"); }
-				else													{ include("subnet.php"); }
+				if(isset($_GET['subnetId']))							{ include(APP . "/temp_share/address.php"); }
+				else													{ include(APP . "/temp_share/subnet.php"); }
 			}
 			else														{
 				# set object
@@ -123,7 +123,7 @@ $max_width = (@$temp_objects[$_GET['section']]->type=="ipaddresses" || isset($_G
 				// fetch subnet
 				$subnet  = (array) $Subnets->fetch_subnet(null, $address['subnetId']);
 
-				include("address.php");
+				include(APP . "/temp_share/address.php");
 			}
 		}
 
@@ -149,7 +149,7 @@ $max_width = (@$temp_objects[$_GET['section']]->type=="ipaddresses" || isset($_G
 <div id="prettyLinks" style="display:none"><?php print $settings->prettyLinks; ?></div>
 
 <!-- Page footer -->
-<div class="footer"><?php include('app/footer.php'); ?></div>
+<div class="footer"><?php include(APP . '/footer.php'); ?></div>
 
 <!-- end body -->
 </body>
