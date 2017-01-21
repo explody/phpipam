@@ -5,7 +5,6 @@ namespace Ipam\Migration;
 require(dirname(__FILE__) . '/class.RepeatableTable.php');
 
 use Phinx\Migration\AbstractMigration;
-use Ipam\Migration\RepeatableMigration;
 
 class RepeatableMigration extends AbstractMigration
 {
@@ -13,10 +12,18 @@ class RepeatableMigration extends AbstractMigration
     /**
     * {@inheritdoc}
     */
-   public function table($tableName, $options = array()) {
+    public function table($tableName, $options = array()) {
        return new RepeatableTable($tableName, $options, $this->getAdapter());
-   }
+    }
     
+    /**
+     * Utility method.  Takes a structured array of schema information and adds/updates 
+     * tables, columns, indexes and foreign keys.
+     *
+     * @param array $schema
+     * @param bool $debug
+     * @return void
+     */
     public function migrationFromSchemaArray($schema, $debug = false) {
         
         foreach ($schema as $tn => $td) {

@@ -7,10 +7,19 @@ use Phinx\Db\Table;
 
 class RepeatableTable extends Table
 {
-    
+    /**
+     * @var array
+     */
     protected $columnsByName = [];
+    
+    /**
+     * @var bool
+     */
     protected $debug = false;
     
+    /**
+     * {@inheritdoc}
+     */
     public function __construct($name, $options = array(), AdapterInterface $adapter = null) {
         
         parent::__construct($name, $options, $adapter);
@@ -25,22 +34,41 @@ class RepeatableTable extends Table
         
     }
     
+    /**
+     * Sets the debugging flag
+     *
+     * @param bool $flag true/false
+     * @return void
+     */
     public function setDebug($flag) {
         $this->debug = $flag;
     }
-    
-    public function setColumnsByName($columns) {
-        $this->columnsByName = $columns;
-    }
-    
+
+    /**
+     * Returns the array of columns, indexed on column name
+     *
+     * @return array
+     */
     public function getColumnsByName() {
         return $this->columnsByName;
     }
     
+    /**
+     * Returns one column object from the array of columns
+     *
+     * @return false|Phinx\Db\Table\Column
+     */
     public function getColumnByName($columnName) {
         return (array_key_exists($columnName, $this->columnsByName) ? $this->columnsByName[$columnName] : false);
     }
     
+    /**
+     * {@inheritdoc}
+     * 
+     * Wrapper around the parent's addColumn(). Differs in that it will check if the table and column
+     * exist. If not, it will add as normal. If both do, it will compare the column type and options.
+     * If they are different than the given column options, it will trigger a changeColumn()
+     */
     public function addColumn($columnName, $type = NULL, $options = array()) {
         
         $oldColumn = $this->getColumnByName($columnName);
@@ -80,6 +108,11 @@ class RepeatableTable extends Table
         return $this;
     }
     
+    /**
+     * {@inheritdoc}
+     * 
+     * Wrapper around the parent's addIndex(). If the index already exists, does nothing. If not, adds it.
+     */
     public function addIndex($columns, $options = array()) {
         
         if(!$this->exists() || !$this->hasIndex($columns)) {
@@ -89,6 +122,11 @@ class RepeatableTable extends Table
         
     }
     
+    /**
+     * {@inheritdoc}
+     * 
+     * Wrapper around the parent's addForeignKey(). If the FK already exists, does nothing. If not, adds it.
+     */
     public function addForeignKey($columns, $referencedTable, $referencedColumns = array('id'), $options = array()) {
         
         if(!$this->exists() || !$this->hasForeignKey($columns)) {
