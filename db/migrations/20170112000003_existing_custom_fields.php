@@ -4,7 +4,7 @@ use Phinx\Migration\AbstractMigration;
 
 class ExistingCustomFields extends AbstractMigration
 {
-    public function change()
+    public function skip()
     {
         $this->table('subnets')
                 ->addColumn('DHCP', 'boolean', array('default'=>0,'null'=>true,'comment'=>'TRUE/FALSE if this should be served from one of our DHCP servers'))
@@ -35,3 +35,5 @@ class ExistingCustomFields extends AbstractMigration
                 ->update();
     }
 }
+
+?>

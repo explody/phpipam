@@ -28,7 +28,7 @@ class PagedSearch extends Common_functions {
                                 $sortby,
                                 $search_custom = false) {
         
-        $this->Tools	    = new Tools ($Database);
+        $this->Tools        = new Tools ($Database);
         $this->Database     = $Database;
         
         $this->custom = $this->Tools->fetch_custom_fields($table_name);

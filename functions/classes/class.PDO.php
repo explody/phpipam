@@ -986,14 +986,14 @@ class Database_PDO extends DB {
                                 $charset = null,
                                 $socket = null,
                                 $ssl = null,
-                                $options = []) {
+                                $options = null) {
 		
         $this->c = IpamConfig::config();
         
 		# Use passed parameters if they have been given, otherwise try config values
         # Note: IpamConfig returns null if one tries to reference a nonexistent property
 		$this->username = ($username ? $username : $this->c->db->user);
-        $this->password = ($pass     ? $password : $this->c->db->pass);
+        $this->password = ($password ? $password : $this->c->db->pass);
         $this->host     = ($host     ? $host     : $this->c->db->host);
         $this->port     = ($port     ? $port     : $this->c->db->port);
         $this->dbname   = ($dbname   ? $dbname   : $this->c->db->name);
@@ -1003,13 +1003,13 @@ class Database_PDO extends DB {
         
         // Options are slightly different. If not set in the config, referencing 'mysql_attr' would return null but we
         // want an empty array if there is no value. So, here's a nested ternary.  Sorry, I like one-liners.
-        $this->options  = ($options  ? $options  : (is_null($this->c->db->mysql_attr) ? [] : $this->c->db->mysql_attr->as_array() ));        
+        $this->options  = (!is_null($options) ? $options : (is_null($this->c->db->mysql_attr) ? [] : $this->c->db->mysql_attr->as_array() ));        
         
         # Translate options array into PDO options
         $this->set_pdo_options();
         
         $this->dsn = $this->makeDsn();
-        
+
 		# construct
 		parent::__construct($this->dsn, $this->username, $this->password, $this->pdo_options);
 	}

@@ -31,6 +31,10 @@ print_r($c->db_defaults);
 // This lets us build a phinx config array for all the environments with config files.
 foreach ($finder as $file) {
 
+    if (substr($file, -3) != 'yml') {
+        continue;
+    }
+    
     $env = basename($file, '.yml');
     $env_conf = Yaml::parse(file_get_contents($file->getRealPath()));
 
