@@ -4,6 +4,7 @@ namespace Ipam\Migration;
 
 use Phinx\Db\Adapter\AdapterInterface;
 use Phinx\Db\Table;
+use Phinx\Db\Column;
 
 class RepeatableTable extends Table
 {
@@ -75,6 +76,7 @@ class RepeatableTable extends Table
         $this->debug ? print "    Check column $columnName" . ($oldColumn ? " (EXISTS)\n" : " (NEW)\n"): null;
         
         if(!$this->exists() || ($this->exists() && !$oldColumn)) {
+            $this->debug ? print "    Table exists, calling parent::addColumn\n" : null;
             parent::addColumn($columnName, $type, $options);
         } else {
             

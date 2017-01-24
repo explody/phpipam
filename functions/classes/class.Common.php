@@ -161,6 +161,22 @@ class Common_functions  {
              return strnatcmp($a->$prop, $b->$prop);
          };
      }
+     
+     /**
+      * Take a simple array of objects and return a 2D array, indexed on a given property
+      * 
+      * @access public
+      * @param array $objects An array of objects
+      * @param string $prop object property on which to sort
+      * @return array 
+      */
+      public static function index_array($objects, $prop) {
+          $indexed = [];
+          foreach($objects as $obj) {
+              $indexed[$obj->$prop] = $obj;
+          }
+          return $indexed;
+      }
 
      /**
       *	Takes an array of objects and returns an array of <option> elements

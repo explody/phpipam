@@ -65,6 +65,24 @@ $(document).on("click", ".select2-container", function (event) {
 
 });
 
+/* produces safe strings for use in dbs, vars, etc */
+/* ----------------------------------------------- */
+function safe_string (str) {
+    return str.replace(/[^a-z0-9_]|[ \s\t\n\r]/g, function (char) {
+        switch (char) {
+            case " ":
+            case "-":
+            case "\s":
+            case "\t":
+            case "\n":
+            case "\r":
+                return "_";
+            default:
+                return "";
+        }
+    });
+}
+
 /* this functions opens popup */
 /* -------------------------- */
 function open_popup (popup_class, target_script, post_data, secondary) {
@@ -108,7 +126,7 @@ function submit_popup_data (result_div, target_script, post_data, reload) {
 function reload_window (data) {
 	if(	data.search("alert-danger")==-1 &&
 		data.search("error")==-1 &&
-		data.search("alert-warning") == -1 )    { setTimeout(function (){window.location.reload();}, 1500); }
+		data.search("alert-warning") == -1 )    { setTimeout(function (){window.location.reload();}, 1000); }
 	else                               		  	{ hideSpinner(); }
 }
 
@@ -2699,29 +2717,30 @@ $('button#filterIPSave').click(function() {
 ************************************/
 
 //show edit form
-$(document).on("click", ".edit-custom-field", function() {
+$(document).on("click", ".edit-cf", function() {
     showSpinner();
-    var action    = $(this).attr('data-action');
-    var fieldName = $(this).attr('data-fieldname');
-    var table	  = $(this).attr('data-table');
-    $.post('/ajx/admin/custom-fields/edit',  {action:action, fieldName:fieldName, table:table}, function(data) {
-        $('#popupOverlay div.popup_w400').html(data);
-        showPopup('popup_w400');
+    var action = $(this).attr('data-action');
+    var id     = $(this).attr('data-id');
+    var table  = $(this).attr('data-table');
+    $.post('/ajx/admin/custom-fields/edit',  {action:action, id:id, table:table}, function(data) {
+        $('#popupOverlay div.popup_w500').html(data);
+        showPopup('popup_w500');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
     return false;
 });
+
 //submit change
 $(document).on("click", "#editcustomSubmit", function() {
     showSpinner();
     var field = $('form#editCustomFields').serialize();
     $.post('/ajx/admin/custom-fields/edit-result', field, function(data) {
         $('div.customEditResult').html(data).slideDown('fast');
-        //reload after 2 seconds if succeeded!
         reload_window (data);
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
     return false;
 });
+
 //field reordering
 $('table.customIP button.down').click(function() {
     showSpinner();
@@ -2730,11 +2749,11 @@ $('table.customIP button.down').click(function() {
     var table	 = $(this).attr('data-table');
     $.post('/ajx/admin/custom-fields/order', {current:current, next:next, table:table}, function(data) {
         $('div.'+table+'-order-result').html(data).slideDown('fast');
-        //reload after 2 seconds if succeeded!
         reload_window (data);
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
     return false;
 });
+
 //filter
 $('.edit-custom-filter').click(function() {
 	showSpinner();
@@ -2746,21 +2765,92 @@ $('.edit-custom-filter').click(function() {
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
     return false;
 });
+
 $(document).on("click", "#editcustomFilterSubmit", function() {
     showSpinner();
     var field = $('form#editCustomFieldsFilter').serialize();
     $.post('/ajx/admin/custom-fields/filter-result', field, function(data) {
         $('div.customEditFilterResult').html(data).slideDown('fast');
-        //reload after 2 seconds if succeeded!
         reload_window (data);
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
     return false;
 });
 
+// Help auto fill the field name
+// Not so sure about this behavior
+$(document).on("focus", "input#cf-display-name", function() {
+    $(this).keyup(function(e) {
+        if ( ($(this).val().length < 25) && (e.which >= 48 && e.which <= 90) ||
+                                             e.which >= 188 || e.which == 46 || e.which == 8) {
+            $("input#cf-name").val( safe_string($(this).val().toLowerCase()) );
+        }
+    });
+});
 
+// If required is checked, 'not null' must be enforced.
+$(document).on("switchChange.bootstrapSwitch", "input#cf-required", function(event, state) {
+    if($(this).bootstrapSwitch('state')) {
+        $("input#cf-null").bootstrapSwitch('state',false);
+        $("input#cf-null").bootstrapSwitch('readonly', true);
+    } else {
+        $("input#cf-null").bootstrapSwitch('disabled', false);
+    }
+});
 
+// This is fairly clumsy. make it better sometime
+$(document).on("change", "select#cf-type", function() {    
+    var selectedType = $(this).find(":selected").val();
+    if(selectedType == "enum" || selectedType == "set") {
+        
+        $("input#cf-limit").attr("disabled", true);
+        $("tr#set-values-row").css("display", "");
+        $("input#cf-limit").val('');
+        
+    } else if($.inArray(selectedType, ['date','datetime','time','timestamp', 'set','enum']) != -1) {
+        
+        $("input#cf-limit").val('');
+        $("input#cf-limit").attr("disabled", true);
+        
+        if (selectedType == "timestamp") {
+            $("input#cf-default").val('CURRENT_TIMESTAMP');
+        } 
+        
+    } else {
+        
+        $("input#cf-limit").attr("disabled", false);
+        $("input#cf-limit").attr("readonly", false);
+        $("tr#set-values-row").css("display", "none");
 
+        if(selectedType == "boolean") {
+            $("input#cf-limit").val(1);
+            $("input#cf-limit").attr("readonly", true);
+        }
+        
+        if(selectedType == "text") {
+            $("input#cf-limit").val(255);
+        }
+        
+        if(selectedType == "string") {
+            $("input#cf-limit").val(64);
+        }
+        
+        if(selectedType == "integer") {
+            $("input#cf-limit").val(11);
+        }
+        
+        if(selectedType == "float") {
+            $("input#cf-limit").val('12,4');
+        }
+        
+        if(selectedType == "char") {
+            $("input#cf-limit").val(8);
+        }
+        
+        
+    }
+    
 
+});
 
 
 /* Languages

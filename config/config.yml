@@ -1,4 +1,4 @@
-environment: development
+environment: experimental
 
 debugging: false
 phpsessname: phpipam

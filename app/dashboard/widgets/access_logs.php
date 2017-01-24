@@ -5,6 +5,8 @@ if($_SERVER['HTTP_X_REQUESTED_WITH']!="XMLHttpRequest")	{
 	header("Location: ".create_link("tools","logs"));
 }
 
+$Log = new Logging ($Database);
+
 # if syslog print
 if ($User->settings->log=="syslog") {
 	$Result->show("warning", _("Log files are sent to syslog"));

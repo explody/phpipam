@@ -40,21 +40,26 @@ $(".input-switch").bootstrapSwitch(switch_options);
 <!-- content -->
 <div class="pContent">
 
-	<form id="editCustomFieldsFilter">
+	<form id="editCustomFieldsFilter">    
 	<table id="editCustomFields" class="table table-noborder table-condensed">
 
-	<input type="hidden" name="table" value="<?php print $_POST['table']; ?>">
-
 	<?php
-	foreach($custom as $k=>$c) {
+	foreach($custom as $c) {
 		print "<tr>";
 		# select
 		print "	<td style='width:20px;'>";
-		if(in_array($k, $filters[$_POST['table']]))	{ print "<input type='checkbox' class='input-switch' name='$k' checked>"; }
-		else										{ print "<input type='checkbox' class='input-switch' name='$k'>"; }
+        // When there are multiple inputs with the same name, PHP will use the last one set.  With dual inputs for all of these,
+        // the initial value is in the hidden input and any user changes will overwrite that with the input 
+        // from the checkbox, which gives us visible/hidden state for all fields when the user hits submit
+        print "<input type='hidden' name='visible[$c->id]' value='off'>";
+		if($c->visible) { 
+            print "<input type='checkbox' class='input-switch' name='visible[$c->id]'>"; 
+        } else { 
+            print "<input type='checkbox' class='input-switch' name='visible[$c->id]' checked>"; 
+        }
 		print "	</td>";
 		# name and comment
-		print "	<td>".$k." (".$c['Comment'].")</td>";
+		print "	<td>".$c->name." (".$c->display_name.")</td>";
 		print "</tr>";
 	}
 

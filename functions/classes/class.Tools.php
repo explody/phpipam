@@ -669,56 +669,9 @@ class Tools extends Common_functions {
 	 * @param mixed $table
 	 * @return array
 	 */
-	public function fetch_custom_fields ($table) {
-    	# fetch columns
-		$fields = $this->fetch_columns ($table);
-
-		$res = array();
-
-		# save Field values only
-		foreach($fields as $field) {
-			# cast
-			$field = (array) $field;
-
-			$res[$field['Field']]['name'] 	 = $field['Field'];
-			$res[$field['Field']]['type'] 	 = $field['Type'];
-			$res[$field['Field']]['Comment'] = $field['Comment'];
-			$res[$field['Field']]['Null'] 	 = $field['Null'];
-			$res[$field['Field']]['Default'] = $field['Default'];
-		}
-
-		# fetch standard fields
-		$standard = $this->fetch_standard_fields ($table);
-
-		# remove them
-		foreach($standard as $st) {
-			unset($res[$st]);
-		}
-		# return array
-		return sizeof($res)==0 ? array() : $res;
-	}
-
-	/**
-	 * Fetches all custom fields and reorders them into numeric array
-	 *
-	 * @access public
-	 * @param mixed $table
-	 * @return array
-	 */
-	public function fetch_custom_fields_numeric ($table) {
-		# fetch all custom fields
-		$custom_fields = $this->fetch_custom_fields ($table);
-		# make numberic array
-		if(sizeof($custom_fields>0)) {
-			foreach($custom_fields as $f) {
-				$out[] = $f;
-			}
-			# result
-			return isset($out) ? $out : array();
-		}
-		else {
-			return array();
-		}
+	public function fetch_custom_fields($table) {
+        $fields = $this->fetch_multiple_objects('customFields', 'table', $table, 'order');
+        return $fields ? $fields : [];
 	}
 
 	/**
@@ -773,27 +726,7 @@ class Tools extends Common_functions {
 		return is_array($out) ? array_filter($out) : array();
 	}
 
-	/**
-	 * Fetches standard tables from SCHEMA.sql file
-	 *
-	 * @return array
-	 */
-	public function fetch_standard_tables () {
-		# get SCHEMA.SQL file
-		$schema = fopen(dirname(__FILE__) . "/../../db/SCHEMA.sql", "r");
-		$schema = fread($schema, 100000);
 
-		# get definitions to array, explode with CREATE TABLE `
-		$creates = explode("CREATE TABLE `", $schema);
-		# fill tables array
-		$tables = array();
-		foreach($creates as $k=>$c) {
-			if($k>0)	{ $tables[] = strstr($c, "`", true); }	//we exclude first !
-		}
-
-		# return array of tables
-		return $tables;
-	}
 
 	/**
 	 * This functions fetches all columns for specified Field

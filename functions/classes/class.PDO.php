@@ -388,6 +388,32 @@ abstract class DB {
         return $this->numObjectsConditional($tableName, $conditional, $value);
 
 	}
+    
+    /**
+	 * Update one field of one item in the DB
+	 *
+	 * Note: supports only tables that use 'id' as unique pkey 
+	 *
+	 * @access public
+	 * @param string $table
+	 * @param string $column
+	 * @param int $id
+	 * @param imixed $value
+	 * @return bool
+	 */
+    public function updateField($table, $column, $id, $value) {
+        //id and value potentially contain input from forms
+        $id = $this->escape($id);
+        $value = $this->escape($value);
+        
+        $statement = $this->pdo->prepare('UPDATE `' . $table . '` SET `' . $column . '`=\'' . $value . '\' WHERE id=' . $id);
+        
+        //debug
+		$this->log_query ($statement);
+		//run the update on the object
+		return $statement->execute();
+        
+    }
 
 	/**
 	 * Update an object in a table with values given
@@ -788,10 +814,10 @@ abstract class DB {
 
         // subnets
         if ($table=="subnets" && $sortField=="subnet_int") {
-    		return $this->getObjectsQuery('SELECT '.$result_fields.',CAST(subnet AS DECIMAL(39,0)) as subnet_int FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortField.'` ' . ($sortAsc ? '' : 'DESC') . ';', array($value));
+    		return $this->getObjectsQuery('SELECT `'.$result_fields.'`,subnet*1 as subnet_int FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortFie    ld.'` ' . ($sortAsc ? '' : 'DESC') . ';', array($value));
         }
         else {
-    		return $this->getObjectsQuery('SELECT '.$result_fields.' FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortField.'` ' . ($sortAsc ? '' : 'DESC') . ';', array($value));
+    		return $this->getObjectsQuery('SELECT `'.$result_fields.'` FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortField.'` ' . ($sortAsc ? '    ' : 'DESC') . ';', array($value));
         }
 	}
 
@@ -893,6 +919,29 @@ abstract class DB {
 		//execute
 		return $this->runQuery('TRUNCATE TABLE `'.$tableName.'`;');
 	}
+    
+    /**
+     * Check if a table exists in the current database.
+     *
+     * @param PDO $pdo PDO instance connected to a database.
+     * @param string $table Table to search for.
+     * @return bool TRUE if table exists, FALSE if no table found.
+     */
+    function tableExists($table) {
+        
+        $table = $this->escape($table);
+        // Try a select statement against the table
+        // Run it in try/catch in case PDO is in ERRMODE_EXCEPTION.
+        try {
+            $result = $this->pdo->query("SELECT 1 FROM $table LIMIT 1");
+        } catch (Exception $e) {
+            // We got an exception == table not found
+            return FALSE;
+        }
+
+        // Result is either boolean FALSE (no table found) or PDOStatement Object (table found)
+        return $result !== FALSE;
+    }
 }
 
 
