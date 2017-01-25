@@ -26,15 +26,22 @@ $field_types = [
             'Float'=>'float',
             'True/False'=>'boolean', 
             'Fixed Length Text'=>'char', 
-            // 'Date'=>'date', 
-            // 'Datetime'=>'datetime',  // Disabled for now
-            // 'Time'=>'time', 
+            'Date'=>'date', 
+            'Datetime'=>'datetime',
+            'Time'=>'time', 
             'Timestamp'=>'timestamp',
             'Enum'=>'enum',
             'Set'=>'set' 
         ];
 
-/* reset field name for add! */
+$date_must_allow_null = false;
+$sm = $Database->sqlMode();
+$modes = explode(",",$sm);
+
+if (in_array('NO_ZERO_IN_DATE', $modes) || in_array('NO_ZERO_DATE', $modes)) {
+    $date_must_allow_null = true;
+}
+
 if ($action == "add") {
     
     if ($Database->tableExists($_POST['table'])) {
@@ -142,6 +149,11 @@ if ($action == "add") {
             }
             ?>
 			</select>
+            <?php 
+                if ($date_must_allow_null) {
+                    print "<input type=\"hidden\" id=\"date-must-allow-null\" name=\"date-must-allow-null\" value=\"1\" />\n";
+                }
+            ?>
 		</td>
 	</tr>
 

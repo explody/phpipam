@@ -133,7 +133,11 @@ else {
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.switch.js"></script>
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/magic.js"></script>
-    
+    <script type="tetx/javascript">
+    $.ajaxSetup({
+      cache: true
+    });
+    </script>
 <?php
     if($_GET['page']=="login" || $_GET['page']=="request_ip") {
 	       print '<script type="text/javascript" src="' . MEDIA . '/js/login.js"></script>';

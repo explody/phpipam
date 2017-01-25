@@ -217,6 +217,18 @@ abstract class DB {
 		unset($this->pdo);
 		$this->install = false;
 	}
+    
+    /**
+	 * returns the current sql_mode
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function sqlMode() {
+        $statement = $this->pdo->prepare('SELECT @@sql_mode');
+		$statement->execute();
+		return $statement->fetchColumn();
+	}
 
 	/**
 	 * logs queries to file

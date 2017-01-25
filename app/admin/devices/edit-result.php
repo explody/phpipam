@@ -55,23 +55,12 @@ if (strlen(@$device['rack']>0)) {
 # fetch custom fields
 $custom = $Tools->fetch_custom_fields('devices');
 if(sizeof($custom) > 0) {
-	foreach($custom as $myField) {
-
-		//replace possible ___ back to spaces
-		$myField['nameTest'] = str_replace(" ", "___", $myField['name']);
-		if(isset($_POST[$myField['nameTest']])) { $_POST[$myField['name']] = $_POST[$myField['nameTest']];}
-
-		//booleans can be only 0 and 1!
-		if($myField['type']=="tinyint(1)") {
-			if($device[$myField['name']]>1) {
-				$device[$myField['name']] = 0;
-			}
-		}
+	foreach($custom as $cf) {
 		//not null!
-		if($myField['Null']=="NO" && strlen($device[$myField['name']])==0) { $Result->show("danger", $myField['name'].'" can not be empty!', true); }
+		if(!$cf->null && strlen($device[$cf->name])==0) { $Result->show("danger", $cf->name.'" can not be empty!', true); }
 
 		# save to update array
-		$update[$myField['name']] = $device[$myField['nameTest']];
+		$update[$cf->name] = $device[$cf->name];
 	}
 }
 
@@ -100,8 +89,10 @@ if (strlen(@$device['rack']>0)) {
 }
 
 # update device
-if(!$Admin->object_modify("devices", $_POST['action'], "id", $values))	{}
-else																	{ $Result->show("success", _("Device $device[action] successfull").'!', false); }
+if(!$Admin->object_modify("devices", $_POST['action'], "id", $values)) {    
+} else { 
+    $Result->show("success", _("Device $device[action] successfull").'!', false); 
+}
 
 if($_POST['action']=="delete"){
 	# remove all references from subnets and ip addresses

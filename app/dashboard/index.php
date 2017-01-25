@@ -9,12 +9,15 @@
 $User->check_user_session();
 
 ?>
+
+<!-- jquery jclock is abandoned
 <script type="text/javascript">
 //show clock
 $(function($) {
 	$('span.jclock').jclock();
 });
-</script>
+</script> 
+-->
 
 
 <script>
@@ -80,7 +83,7 @@ $(document).ready(function() {
 
 
 <div class="welcome" style="text-align:right">
-	<span class="jclock"></span>
+	<!-- <span class="jclock"></span> -->
 </div>
 
 <?php

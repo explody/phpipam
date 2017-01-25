@@ -37,7 +37,6 @@ $User->check_user_session();
 
 	<!-- js -->
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
-	<script type="text/javascript" src="<?php print MEDIA; ?>/js/jclock.jquery.js"></script>
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/login.js"></script>
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/install.js"></script>
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>

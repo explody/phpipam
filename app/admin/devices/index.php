@@ -21,11 +21,6 @@ if ($device_types !== false) {
 }
 
 if ($s->count() > 0) {
-
-    # get hidden fields
-    $hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
-    $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
-
     # rack object
     $Racks      = new phpipam_rack ($Database);
 }
@@ -145,10 +140,10 @@ else {
 	print '	<th>'._('Rack').'</th>';
 	print '	<th><i class="icon-gray icon-info-sign" rel="tooltip" title="'._('Shows in which sections device will be visible for selection').'"></i> '._('Sections').'</th>';
 
-    if(sizeof(@$s->custom) > 0) {
+    if(sizeof($s->custom) > 0) {
     	foreach($s->custom as $field) {
-    		if(!in_array($field['name'], $hidden_custom_fields)) {
-                $field_header = empty($field['Comment']) ? $field['name'] : $field['Comment'];
+    		if($field->visible) {
+                $field_header = empty($field->display_name) ? $field->name : $field->display_name;
     			print "<th class='hidden-sm hidden-xs hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $field_header'>".$field_header."</th>";
     			$colspanCustom++;
     		}
@@ -227,25 +222,26 @@ else {
 		//custom
 		if(sizeof($s->custom) > 0) {
 			foreach($s->custom as $field) {
-				if(!in_array($field['name'], $hidden_custom_fields)) {
+				if($field->visible) {
 					print "<td class='hidden-xs hidden-sm hidden-md'>";
 
 					// create links
-					$device[$field['name']] = $Result->create_links ($device[$field['name']], $field['type']);
+					$device[$field->name] = $Result->create_links ($device[$field->name], $field->type);
 
 					//booleans
-					if($field['type']=="tinyint(1)")	{
-						if($device[$field['name']] == "0")		{ print _("No"); }
-						elseif($device[$field['name']] == "1")	{ print _("Yes"); }
+					if($field->type == "boolean") {
+                        print $device[$field->name] ? _("Yes") : _("No");
 					}
 					//text
-					elseif($field['type']=="text") {
-						if(strlen($device[$field['name']])>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $device[$field['name']])."'>"; }
-						else											{ print ""; }
+					elseif($field->type == "text") {
+						if(strlen($device[$field->name])>0) {
+                            print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $device[$field->name])."'>";
+                        } else {
+                            print "";
+                        }
 					}
 					else {
-						print $device[$field['name']];
-
+						print $device[$field->name];
 					}
 					print "</td>";
 				}

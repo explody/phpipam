@@ -10,45 +10,64 @@ $csrf = $User->csrf_create('device');
 # fetch custom fields
 $custom = $Tools->fetch_custom_fields('devices');
 
+if(!in_array($_POST['action'], ['add','edit','delete'])) { 
+    $Result->show("danger", _("Invalid action"), true, true); 
+}
+
 # ID must be numeric
-if($_POST['action']!="add" && !is_numeric($_POST['switchId']))		{ $Result->show("danger", _("Invalid ID"), true, true); }
+if($_POST['action'] != "add" && !is_numeric($_POST['switchId'])) { 
+    $Result->show("danger", _("Invalid ID"), true, true);
+}
 
 # fetch device details
 if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
-	$device = (array) $Admin->fetch_object("devices", "id", $_POST['switchId']);
+	$device = $Admin->fetch_object("devices", "id", $_POST['switchId']);
 	// false
-	if ($device===false)                                            { $Result->show("danger", _("Invalid ID"), true, true);  }
+	if ($device===false) {
+        $Result->show("danger", _("Invalid ID"), true, true);
+    }
+} else {
+    $device = new stdClass(); // empty object for adds
 }
 
-# set readonly flag
-$readonly = $_POST['action']=="delete" ? "readonly" : "";
+$action = $_POST['action'];
 
+# set readonly flag
+$readonly = $action == "delete" ? "readonly" : "";
 
 # all locations
-if($User->settings->enableLocations=="1")
-$locations = $Tools->fetch_all_objects ("locations", "name");
+if($User->settings->enableLocations == "1")   {
+    $locations = $Tools->fetch_all_objects ("locations", "name");
+}
 
 // set show for rack
-if (is_null($device['rack']))   { $display='display:none'; }
-else                            { $display=''; }
+if (is_null($device->rack)) {
+    $display='display:none';
+} else {
+    $display='';
+}
+
 ?>
 <!-- select2 -->
-<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+<script async type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
 
 <!-- common jquery plugins -->
-<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
+<script async type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
      if ($("[rel=tooltip]").length) { $("[rel=tooltip]").tooltip(); }
 });
 // form change
-$('#switchManagementEdit').change(function() {
+$('#rack-select').change(function() {
    //change id
    $('.showRackPopup').attr("data-rackid",$('#switchManagementEdit select[name=rack]').val());
    //toggle show
-   if($('#switchManagementEdit select[name=rack]').val().length == 0) { $('tbody#rack').hide(); }
-   else                                                               { $('tbody#rack').show(); }
+   if($('#switchManagementEdit select[name=rack]').val().length == 0) { 
+       $('tbody#rack').hide(); 
+   } else { 
+       $('tbody#rack').show();
+   }
 });
 </script>
 
@@ -67,7 +86,7 @@ $('#switchManagementEdit').change(function() {
 	<tr>
 		<td><?php print _('Name'); ?></td>
 		<td>
-			<input type="text" name="hostname" class="form-control input-sm" placeholder="<?php print _('Hostname'); ?>" value="<?php if(isset($device['hostname'])) print $device['hostname']; ?>" <?php print $readonly; ?>>
+			<input type="text" name="hostname" class="form-control input-sm" placeholder="<?php print _('Hostname'); ?>" value="<?php if(isset($device->hostname)) print $device->hostname; ?>" <?php print $readonly; ?>>
 		</td>
 	</tr>
 
@@ -75,7 +94,7 @@ $('#switchManagementEdit').change(function() {
 	<tr>
 		<td><?php print _('IP address'); ?></td>
 		<td>
-			<input type="text" name="ip_addr" class="form-control input-sm" placeholder="<?php print _('IP address'); ?>" value="<?php if(isset($device['ip_addr'])) print $device['ip_addr']; ?>" <?php print $readonly; ?>>
+			<input type="text" name="ip_addr" class="form-control input-sm" placeholder="<?php print _('IP address'); ?>" value="<?php if(isset($device->ip_addr)) print $device->ip_addr; ?>" <?php print $readonly; ?>>
 		</td>
 	</tr>
 
@@ -92,7 +111,7 @@ $('#switchManagementEdit').change(function() {
                    array(
                        'sort' => true,
                        'group' => false,
-                       'selected' => array('id' => $device['type']),
+                       'selected' => array('id' => $device->type),
                    )
                );
 			?>
@@ -119,7 +138,7 @@ $('#switchManagementEdit').change(function() {
                            array(
                                'sort' => true,
                                'group' => false,
-                               'selected' => array('id' => $device['location']),
+                               'selected' => array('id' => $device->location),
                            )
                        );
                 }
@@ -134,7 +153,7 @@ $('#switchManagementEdit').change(function() {
 	<?php } ?>
 
     <!-- Rack -->
-    <?php if($User->settings->enableRACK=="1") { ?>
+    <?php if($User->settings->enableRACK == "1") { ?>
 	<tr>
 	   	<td colspan="2"><hr></td>
     </tr>
@@ -154,7 +173,7 @@ $('#switchManagementEdit').change(function() {
                        array(
                            'sort' => true,
                            'group' => false,
-                           'selected' => array('id' => $device['rack']),
+                           'selected' => array('id' => $device->rack),
                        )
                    );
                 ?>
@@ -171,15 +190,15 @@ $('#switchManagementEdit').change(function() {
         <td><?php print _('Start position'); ?></td>
         <td>
             <div class="input-group" style="width:100px;">
-                <input type="text" name="rack_start" size="2" class="form-control input-w-auto input-sm" placeholder="1" value="<?php print @$device['rack_start']; ?>">
-                <a href="" class="input-group-addon showRackPopup" rel='tooltip' data-placement='right' data-rackid="<?php print @$device['rack']; ?>" data-deviceid='<?php print @$device['id']; ?>' title='<?php print _("Show rack"); ?>'><i class='fa fa-server'></i></a>
+                <input type="text" name="rack_start" size="2" class="form-control input-w-auto input-sm" placeholder="1" value="<?php print @$device->rack_start; ?>">
+                <a href="" class="input-group-addon showRackPopup" rel='tooltip' data-placement='right' data-rackid="<?php print @$device->rack; ?>" data-deviceid='<?php print @$device->id; ?>' title='<?php print _("Show rack"); ?>'><i class='fa fa-server'></i></a>
             </div>
         </td>
     </tr>
     <tr>
         <td><?php print _('Size'); ?> (U)</td>
         <td>
-            <input type="text" name="rack_size" size="2" class="form-control input-w-auto input-sm" style="width:100px;" placeholder="1" value="<?php print @$device['rack_size']; ?>">
+            <input type="text" name="rack_size" size="2" class="form-control input-w-auto input-sm" style="width:100px;" placeholder="1" value="<?php print @$device->rack_size; ?>">
         </td>
     </tr>
     </tbody>
@@ -192,12 +211,12 @@ $('#switchManagementEdit').change(function() {
 	<tr>
 		<td><?php print _('Description'); ?></td>
 		<td>
-			<textarea name="description" class="form-control input-sm" placeholder="<?php print _('Description'); ?>" <?php print $readonly; ?>><?php if(isset($device['description'])) print $device['description']; ?></textarea>
+			<textarea name="description" class="form-control input-sm" placeholder="<?php print _('Description'); ?>" <?php print $readonly; ?>><?php if(isset($device->description)) print $device->description; ?></textarea>
 			<?php
-			if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
+			if( ($action == "edit") || ($action == "delete") ) {
 				print '<input type="hidden" name="switchId" value="'. $_POST['switchId'] .'">'. "\n";
 			} ?>
-			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
+			<input type="hidden" name="action" value="<?php print $action; ?>">
 			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 	</tr>
@@ -212,16 +231,16 @@ $('#switchManagementEdit').change(function() {
 
 		# count datepickers
 		$timepicker_index = 0;
-
+        
 		# all my fields
 		foreach($custom as $field) {
     		// create input > result is array (required, input(html), timepicker_index)
-    		$custom_input = $Tools->create_custom_field_input ($field, $device, $_POST['action'], $timepicker_index);
+    		$custom_input = $Components->render_custom_field_input($field, $device, $action, $timepicker_index);
     		// add datepicker index
     		$timepicker_index = $timepicker_index + $custom_input['timepicker_index'];
             // print
 			print "<tr>";
-			print "	<td>".ucwords((empty($field['Comment']) ? $field['name'] : $field['Comment']))." ".$custom_input['required']."</td>";
+			print "	<td>".ucwords((empty($field->display_name) ? $field->name : $field->display_name))." ".$custom_input['required']."</td>";
 			print "	<td>".$custom_input['field']."</td>";
 			print "</tr>";
 		}
@@ -248,7 +267,7 @@ $('#switchManagementEdit').change(function() {
 		$sections = $Sections->fetch_all_sections('name');
 
 		# reformat device sections to array
-		$deviceSections = explode(";", $device['sections']);
+		$deviceSections = explode(";", $device->sections);
 		$deviceSections = is_array($deviceSections) ? $deviceSections : array();
         $selectedSections = array();
 		if ($sections!==false) {
@@ -279,7 +298,7 @@ $('#switchManagementEdit').change(function() {
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-default <?php if($_POST['action']=="delete") { print "btn-danger"; } else { print "btn-success"; } ?>" id="editSwitchsubmit"><i class="fa <?php if($_POST['action']=="add") { print "fa-plus"; } else if ($_POST['action']=="delete") { print "fa-trash-o"; } else { print "fa-check"; } ?>"></i> <?php print ucwords(_($_POST['action'])); ?></button>
+		<button class="btn btn-sm btn-default <?php if($action=="delete") { print "btn-danger"; } else { print "btn-success"; } ?>" id="editSwitchsubmit"><i class="fa <?php if($action=="add") { print "fa-plus"; } else if ($action=="delete") { print "fa-trash-o"; } else { print "fa-check"; } ?>"></i> <?php print ucwords(_($action)); ?></button>
 	</div>
 
 	<!-- result -->

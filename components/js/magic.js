@@ -2800,16 +2800,31 @@ $(document).on("switchChange.bootstrapSwitch", "input#cf-required", function(eve
 // This is fairly clumsy. make it better sometime
 $(document).on("change", "select#cf-type", function() {    
     var selectedType = $(this).find(":selected").val();
+    var showDateWarning = $("input#date-must-allow-null").val();
     if(selectedType == "enum" || selectedType == "set") {
         
         $("input#cf-limit").attr("disabled", true);
         $("tr#set-values-row").css("display", "");
         $("input#cf-limit").val('');
         
-    } else if($.inArray(selectedType, ['date','datetime','time','timestamp', 'set','enum']) != -1) {
+    } else if($.inArray(selectedType, ['date','datetime','time','timestamp']) != -1) {
         
         $("input#cf-limit").val('');
         $("input#cf-limit").attr("disabled", true);
+        
+        $("input#cf-null").bootstrapSwitch('state',true);
+        
+        var dateWarning =  "<div class=\"alert alert-warning\">" +
+                           "<strong>Warning:</strong><hr /> Your database server is running with sql mode including " + 
+                           "NO_ZERO_IN_DATE and/or NO_ZERO_DATE. You MUST either set Nulls as 'yes' " +
+                           "or modify your server config to allow 0 values in date fields. If not, the date column " +
+                           " will fill existing rows with 0 values, which will cause errors on all later DB changes. " +
+                           " See: <br />https://dev.mysql.com/doc/refman/5.7/en/sql-mode.html#sqlmode_no_zero_date" +
+                           "</div>";
+
+        if (showDateWarning == 1) {
+            $("div.customEditResult").html(dateWarning);
+        }
         
         if (selectedType == "timestamp") {
             $("input#cf-default").val('CURRENT_TIMESTAMP');
