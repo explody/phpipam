@@ -120,22 +120,22 @@ if ($_GET['id'] != 0 && sizeof($device) > 0) {
         foreach ($custom_fields as $field) {
 
                 // fix for boolean
-                if ($field['type'] == 'tinyint(1)' || $field['type'] == 'boolean') {
-                    if ($device[$field['name']] == '0') {
-                        $device[$field['name']] = 'false';
-                    } elseif ($device[$field['name']] == '1') {
-                        $device[$field['name']] = 'true';
+                if ($field->type == 'boolean') {
+                    if ($device[$field->name] == '0') {
+                        $device[$field->name] = 'false';
+                    } elseif ($device[$field->name] == '1') {
+                        $device[$field->name] = 'true';
                     } else {
-                        $device[$field['name']] = '';
+                        $device[$field->name] = '';
                     }
                 }
 
                 // create links
-                $device[$field['name']] = $Result->create_links($device[$field['name']]);
+                $device[$field->name] = $Result->create_links($device[$field->name]);
 
             echo '<tr>';
-            echo '<th>' . (empty($field['Comment']) ? $field['name'] : $field['Comment']) . '</th>';
-            echo '<td>'.$device[$field['name']].'</d>';
+            echo '<th>' . ($field->display_name ? $field->display_name : $field->name) . '</th>';
+            echo '<td>'.$device[$field->name].'</d>';
             echo '</tr>';
         }
 

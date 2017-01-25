@@ -380,19 +380,23 @@ $(document).ready(function() {
 		<select name="link_field" class="form-control input-sm input-w-auto">
 		<?php
         # fetch all custom IP fields
-        $custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
-        $custom_fields2[]['name'] = "None";
-        $custom_fields2[]['name'] = "ip_addr";
-        $custom_fields2[]['name'] = "dns_name";
-        $custom_fields2[]['name'] = "mac";
-        $custom_fields2[]['name'] = "owner";
+        $custom_fields = $Tools->fetch_custom_fields('ipaddresses');
+        $default_fields = [];
+        // fakeout // TODO: all fields should be objects
+        foreach(['None','ip_addr','dns_name','mac','owner'] as $fname) {
+            $ff = new stdClass();
+            $ff->name = $fname;
+            $default_fields[] = $ff;
+        }
+
         // merge
-        $custom_fields = array_merge($custom_fields2, $custom_fields);
+        $custom_fields = array_merge($default_fields, $custom_fields);
 
 		//default
-		foreach($custom_fields as $k=>$d) {
-			if($d['name']==$settings['link_field'])     { print "<option value='$d[name]' selected='selected'>$d[name]</option>"; }
-			else						                { print "<option value='$d[name]' 				     >$d[name]</option>"; }
+		foreach($custom_fields as $cf) {
+            print '<option value="' . $cf->name . '"' . 
+                  ($cf->name == $settings['link_field'] ? ' selected="selected">' : '>') . 
+                  $cf->name . '</option>';
 		}
 		?>
 		</select>
