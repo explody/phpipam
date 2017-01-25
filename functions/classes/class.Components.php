@@ -624,4 +624,119 @@ class Components {
         );
     }
     
+    /**
+     * Creates form input field for custom fields.
+     *
+     * @access public
+     * @param mixed $field
+     * @param mixed $object
+     * @param mixed $action
+     * @param mixed $timepicker_index
+     * @return array
+     */
+    public static function render_custom_field_input($field, $object, $action, $timepicker_index) {
+        
+        $actions = ['add','edit','delete'];
+        foreach ($actions as $act) { $$act = false; }
+        
+        in_array($action,$actions) ? ${$action} = true : null;
+        
+        // field params are stored as json.
+        $field->params = json_decode($field->params);
+        
+        $html = array();
+
+        # required
+        $req_flag = $field->required ? "*" : "";
+
+        # set default value if adding new object
+        if ($add) { 
+            $object->{$field->name} = $field->default; 
+        }
+
+        //set, enum
+        if($field->type == "set" || $field->type == "enum") {
+
+            $html[] = "<select name='$field->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field->display_name'>";
+            foreach($field->params->values as $v) {
+                $html[] = '<option value="' . $v . '"' . ($v==$object->{$field->name} ? ' selected="selected">' : '>') . $v . '</option>';
+            }
+            $html[] = "</select>";
+            
+        }
+        //date and time picker
+        elseif(in_array($field->type, ['date','datetime','time','timestamp'])) {
+
+            
+            if($field->type == "date") { 
+                $size = 10; 
+                $format = "Y-MM-DD";
+            } else if($field->type == "time") { 
+                $size = 10; 
+                $format = "hh:mm:ss";
+            } else {
+                $size = 19; 
+                $format = "Y-MM-DD hh:mm:ss";
+            }
+            
+            // just for first
+            if($timepicker_index==0) {
+                $html[] =  '<link rel="stylesheet" type="text/css" href="' . MEDIA . '/css/bootstrap.datetimepicker.css">';
+                $html[] =  '<script type="text/javascript" src="' . MEDIA .'/js/moment.js"></script>';
+                $html[] =  '<script type="text/javascript" src="' . MEDIA .'/js/bootstrap.datetimepicker.js"></script>';
+            }
+            
+            $html[] = '<div class="'.$class.' input-group date">';
+            //field
+            if(!isset($object->{$field->name}))	{ 
+                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="' . $field->name . '" maxlength="' . $size . '" rel="tooltip" data-placement="right" title="' . $field->display_name . '"></input>'. "\n"; 
+            } else {
+                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="'. $field->name .'" maxlength="' . $size . '" value="' . $object->{$field->name} . '" rel="tooltip" data-placement="right" title="' . $field->display_name . '"></input>'. "\n"; 
+            }
+            $html[] = '<span class="input-group-addon"><span class="glyphicon-calendar glyphicon"></span></span>';
+            $html[] = '</div>';
+            
+            $html[] =  '<script type="text/javascript">';
+            $html[] =  '$(document).ready(function() {';
+            $html[] =  '    $("#datetimepicker' . $timepicker_index . '").datetimepicker( { format: \'' . $format . '\', allowInputToggle: true });';
+            $html[] =  '})';
+            $html[] =  '</script>';
+
+            $timepicker_index++;
+        }
+        //boolean
+        elseif($field->type == "boolean") {
+            $html[] =  "<select name='$field->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field->display_name'>";
+            $tmp = array(0=>"No",1=>"Yes");
+            //null
+            if($field->null) { $tmp[2] = ""; }
+
+            foreach($tmp as $k=>$v) {
+                if(strlen($object->{$field->name})==0 && $k==2) {
+                    $html[] = "<option value='$k' selected='selected'>"._($v)."</option>";
+                } elseif($k==$object->{$field->name}) {
+                    $html[] = "<option value='$k' selected='selected'>"._($v)."</option>"; 
+                } else {
+                    $html[] = "<option value='$k'>"._($v)."</option>";
+                }
+            }
+            $html[] = "</select>";
+        }
+        //text
+        elseif($field->type == "text") {
+            $html[] = ' <textarea class="form-control input-sm" name="' . $field->name . '" placeholder="'. ($field->description ? $field->description : $field->display_name) .'" rowspan=3 rel="tooltip" data-placement="right" title="'.$field->display_name.'">'. $object->{$field->name}. '</textarea>'. "\n";
+        }
+        //default - input field
+        else {
+            $html[] = ' <input type="text" class="form-control input-sm" name="' . $field->name . '" placeholder="'. ($field->description ? $field->description : $field->display_name) . '" value="'. $object->{$field->name}. '" size="30" rel="tooltip" data-placement="right" title="' . $field->display_name . '">'. "\n";
+        }
+
+        # result
+        return array(
+            "required" => $req_flag,
+            "field" => implode("\n", $html),
+            "timepicker_index" => $timepicker_index
+        );
+    }
+    
 }
