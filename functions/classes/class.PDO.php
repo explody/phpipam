@@ -206,6 +206,18 @@ abstract class DB {
         // We've introduced depency on php >= 5.6. charset is in the DSN now, this was only required for < 5.3
 		// @$this->pdo->query('SET NAMES \'' . $this->charset . '\';');
 	}
+    
+    /**
+	 * returns the current sql_mode
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function sqlMode() {
+        $statement = $this->pdo->prepare('SELECT @@sql_mode');
+		$statement->execute();
+		return $statement->fetchColumn();
+	}
 
 	/**
 	 * resets conection.
