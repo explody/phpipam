@@ -26,8 +26,6 @@ else {
     // rack check
     if($rack===false)                       { header("Location: ".create_link($_GET['page'], "racks")); $error =_("Invalid rack Id"); }
 
-    // get custom fields
-    $cfields = $Tools->fetch_custom_fields ('racks');
 }
 
 # if error set print it, otherwise print rack
@@ -96,17 +94,17 @@ if (isset($error)) { ?>
 
         	<?php
         	# print custom subnet fields if any
-        	if(sizeof($cfields) > 0) {
+        	if(sizeof($cfs) > 0) {
         		// divider
         		print "<tr><td colspan='2'><hr></td></tr>";
         		// fields
-        		foreach($cfields as $key=>$field) {
-        			$rack->{$key} = str_replace("\n", "<br>",$rack->{$key});
+        		foreach($cfs as $cf) {
+        			$rack->{$cf->name} = str_replace("\n", "<br>",$rack->{$cf->name});
         			// create links
-        			$rack->{$key} = $Result->create_links($rack->{$key});
+        			$rack->{$cf->name} = $Result->create_links($rack->{$cf->name});
         			print "<tr>";
-        			print "	<th>$key</th>";
-        			print "	<td style='vertical-align:top;align:left;'>".$rack->{$key}."</td>";
+        			print "	<th>$cf->name</th>";
+        			print "	<td style='vertical-align:top;align:left;'>".$rack->{$cf->name}."</td>";
         			print "</tr>";
         		}
         		// divider

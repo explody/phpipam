@@ -13,7 +13,7 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
 $User->csrf_validate("vlan", $_POST['csrf_cookie'], $Result);
 
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('vlans');
+$cfs = $Tools->fetch_custom_fields('vlans');
 
 //if it already exist die
 if($User->settings->vlanDuplicate==0 && $_POST['action']=="add") {
@@ -51,12 +51,8 @@ $values = array("vlanId"=>@$_POST['vlanId'],
 				"domainId"=>$_POST['domainId']
 				);
 # append custom
-if(sizeof($custom) > 0) {
-	foreach($custom as $myField) {
-		# replace possible ___ back to spaces!
-		$myField['nameTest']      = str_replace(" ", "___", $myField['name']);
-		if(isset($_POST[$myField['nameTest']])) { $values[$myField['name']] = @$_POST[$myField['nameTest']];}
-	}
+foreach($cfs as $cf) {
+	if(isset($_POST[$cf->name])) { $values[$cf->name] = @$_POST[$cf->name];}
 }
 
 

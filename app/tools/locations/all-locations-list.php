@@ -40,14 +40,14 @@ else {
     print " <th>"._('Description')."</th>";
     print " <th>"._('Address')."</th>";
     print " <th>"._('Coordinates')."</th>";
-	if(sizeof($custom) > 0) {
-		foreach($custom as $field) {
-			if(!in_array($field['name'], $hidden_custom_fields)) {
-				print "<th class='hidden-xs hidden-sm hidden-md'>$field[name]</th>";
-				$colspan++;
-			}
+
+	foreach($cfs as $cf) {
+		if($cf->visible) {
+			print "<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
+			$colspan++;
 		}
 	}
+
     if($admin)
     print " <th style='width:80px'></th>";
     print "</tr>";
@@ -82,32 +82,32 @@ else {
             if(strlen($l->lat)>0 || strlen($l->long)==0) { print "<td><span class='text-muted'>$l->lat / $l->long</span></td>"; }
             else                                         { print "<td>".$Result->show("warning", _("Location not set"), false, false, true)."</td>"; }
     		//custom
-    		if(sizeof($custom) > 0) {
-    			foreach($custom as $field) {
-    				if(!in_array($field['name'], $hidden_custom_fields)) {
-    					print "<td class='hidden-xs hidden-sm hidden-md'>";
 
-    					// create links
-    					$l->{$field['name']} = $Result->create_links ($l->{$field['name']}, $field['type']);
+			foreach($cfs as $cf) {
+				if($cf->visible) {
+					print "<td class='hidden-xs hidden-sm hidden-md'>";
 
-    					//booleans
-    					if($field['type']=="tinyint(1)")	{
-    						if($l->{$field['name']} == "0")		{ print _("No"); }
-    						elseif($l->{$field['name']} == "1")	{ print _("Yes"); }
-    					}
-    					//text
-    					elseif($field['type']=="text") {
-    						if(strlen($l->{$field['name']})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $l->{$field['name']})."'>"; }
-    						else								{ print ""; }
-    					}
-    					else {
-    						print $l->{$field['name']};
+					// create links
+					$l->{$cf->name} = $Result->create_links($l->{$cf->name}, $cf->type);
 
-    					}
-    					print "</td>";
-    				}
-    			}
-    		}
+					//booleans
+					if($cf->name == "boolean")	{
+						if($l->{$cf->name} == "0")		{ print _("No"); }
+						elseif($l->{$cf->name} == "1")	{ print _("Yes"); }
+					}
+					//text
+					elseif($cf->name == "text") {
+						if(strlen($l->{$cf->name})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $l->{$cf->name})."'>"; }
+						else								{ print ""; }
+					}
+					else {
+						print $l->{$cf->name};
+
+					}
+					print "</td>";
+				}
+			}
+
             // actions
             if($admin) {
     		print "	<td class='actions'>";

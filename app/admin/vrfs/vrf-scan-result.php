@@ -8,12 +8,12 @@ $max = ini_get("max_input_vars");
 if(sizeof($_POST)>=ini_get("max_input_vars")) 							{ $Result->show("danger", _("Number of discovered hosts exceed maximum possible defined by php.ini - set to ")." $max <hr>"._("Please adjust your php.ini settings for value `max_input_vars`"), true); }
 
 // fetch custom fields and check for required
-$required_fields = $Tools->fetch_custom_fields ('vrf');
-if($required_fields!==false) {
-    foreach ($required_fields as $k=>$f) {
-        if ($f['Null']!="NO") {
-            unset($required_fields[$k]);
-        }
+$cfs = $Tools->fetch_custom_fields ('vrf');
+
+$required_fields = [];
+foreach ($cfs as $k=>$f) {
+    if ($cfs->required) {
+        $required_fields[] = $cf;
     }
 }
 
@@ -27,9 +27,9 @@ foreach($_POST as $key=>$line) {
 	elseif(substr($key, 0,11)=="description") 	{ $res[substr($key, 11)]['description'] = $line; }
 	// custom fields
 	elseif (isset($required_fields)) {
-    	foreach ($required_fields as $k=>$f) {
-        	if((strpos($key, $f['name'])) !== false) {
-                                                { $res[substr($key, strlen($f['name']))][$f['name']] = $line; }
+    	foreach ($required_fields as $rf) {
+        	if((strpos($key, $rf->name)) !== false) {
+                                                { $res[substr($key, strlen($rf->name))][$rf->name] = $line; }
         	}
     	}
 	}

@@ -14,7 +14,7 @@ $subnet = (array) $Tools->fetch_object ("subnets", "id", $_GET['subnetId']);
 # fetch all IP addresses in subnet
 $addresses = $Addresses->fetch_subnet_addresses ($_GET['subnetId'], "ip_addr", "asc");
 # get all custom fields
-$custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
 
 
 # Create a workbook
@@ -122,21 +122,14 @@ if( (isset($_GET['note'])) && ($_GET['note'] == "on") ) {
 }
 
 //custom
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $myField) {
-		//set temp name - replace space with three ___
-		$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
-
-		if( (isset($_GET[$myField['nameTemp']])) && ($_GET[$myField['nameTemp']] == "on") ) {
-			$worksheet->write($lineCount, $rowCount, $myField['name'] ,$format_title);
-			$rowCount++;
-		}
+foreach($cfs as $cf) {
+	if( (isset($_GET[$cf->name])) && ($_GET[$cf->name] == "on") ) {
+		$worksheet->write($lineCount, $rowCount, $cf->name ,$format_title);
+		$rowCount++;
 	}
 }
 
-
 $lineCount++;
-
 
 //we need to reformat state!
 $ip_types = $Addresses->addresses_types_fetch();
@@ -206,17 +199,13 @@ foreach ($addresses as $ip) {
 	}
 
 	//custom
-	if(sizeof($custom_fields) > 0) {
-		foreach($custom_fields as $myField) {
-			//set temp name - replace space with three ___
-			$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
-
-			if( (isset($_GET[$myField['nameTemp']])) && ($_GET[$myField['nameTemp']] == "on") ) {
-				$worksheet->write($lineCount, $rowCount, $ip[$myField['name']]);
-				$rowCount++;
-			}
+	foreach($cfs as $cf) {
+		if( (isset($_GET[$cf->name])) && ($_GET[$cf->name] == "on") ) {
+			$worksheet->write($lineCount, $rowCount, $ip[$cf->name]);
+			$rowCount++;
 		}
 	}
+
 
 	$lineCount++;
 }

@@ -27,14 +27,8 @@ if ($device_types !== false) {
 }
 
 if ($s->count() > 0) {
-
-    # get hidden fields
-    $hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
-    $hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
-    
     # rack object
     $Racks      = new phpipam_rack ($Database);
-    
 }
 
 # title
@@ -148,15 +142,15 @@ print '   <th>'._('SNMP').'</th>';
 if($User->settings->enableRACK=="1")
 print '   <th>'._('Rack').'</th>';
 
-if(sizeof(@$s->custom) > 0) {
-  foreach($s->custom as $field) {
-      if(!in_array($field['name'], $hidden_custom_fields)) {
-            $field_header = empty($field['Comment']) ? $field['name'] : $field['Comment'];
-          print "<th class='hidden-sm hidden-xs hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $field_header'>".$field_header."</th>";
-			$colspanCustom++;
-		}
-	}
+
+foreach($s->custom as $cf) {
+  if($cf->visible) {
+        $field_header = empty($cf->display_name) ? $cf->name : $cf->display_name;
+      print "<th class='hidden-sm hidden-xs hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $field_header'>".$field_header."</th>";
+      $colspanCustom++;
+  }
 }
+
 
 print '	<th class="actions"></th>';
 print '</tr>';
@@ -224,67 +218,37 @@ else {
         }
         
         //custom
-		if(sizeof($s->custom) > 0) {
-			foreach($s->custom as $field) {
-				if(!in_array($field['name'], $hidden_custom_fields)) {
-					print "<td class='hidden-xs hidden-sm hidden-md'>";
+		foreach($s->custom as $cf) {
+			if($cf->visible) {
+				print "<td class='hidden-xs hidden-sm hidden-md'>";
 
-					// create links
-					$device[$field['name']] = $Result->create_links ($device[$field['name']], $field['type']);
+				// create links
+				$device[$cf->name] = $Result->create_links ($device[$cf->name], $cf->type);
 
-					//booleans
-					if($field['type']=="tinyint(1)")	{
-						if($device[$field['name']] == "0")		{ print _("No"); }
-						elseif($device[$field['name']] == "1")	{ print _("Yes"); }
-					}
-					//text
-					elseif($field['type']=="text") {
-						if(strlen($device[$field['name']])>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $device[$field['name']])."'>"; }
-						else											{ print ""; }
-					}
-					else {
-						print $device[$field['name']];
-
-					}
-					print "</td>";
+				//booleans
+				if($cf->type == "boolean")	{
+					if($device[$cf->name] == "0")		{ print _("No"); }
+					elseif($device[$cf->name] == "1")	{ print _("Yes"); }
 				}
+				//text
+				elseif($cf->type == "text") {
+					if(strlen($device[$cf->name])>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $device[$cf->name])."'>"; }
+					else											{ print ""; }
+				}
+				else {
+					print $device[$cf->name];
+
+				}
+				print "</td>";
 			}
 		}
+
 
     	print '	<td class="actions"><a href="'.create_link("tools","devices",$device['id']).'" class="btn btn-sm btn-default"><i class="fa fa-angle-right"></i> '._('Show details').'</a></td>';
     	print '</tr>'. "\n";
 
 	}
 
-    // Tentatively disabling this section because this only prints a line showing a number
-    // of items not associated with a device, but offers no way to see the list 
-    // or otherwise do anything with the data. Also it breaks DataTable.
-    //
-	// # print for unspecified
-	// print '<tr class="unspecified">'. "\n";
-    // 
-    // // count empty
-	// $cnt1 = $Tools->count_database_objects("ipaddresses", "switch", 0);
-	// $cnt2 = $Tools->count_database_objects("subnets", "device", 0);
-	// $cnt = $cnt1 + $cnt2;
-    // 
-    // 
-	// print '	<td>'._('Device not specified').'</td>'. "\n";
-	// print '	<td></td>'. "\n";
-	// print '	<td></td>'. "\n";
-	// print '	<td><span class="badge badge1 badge5">'. $cnt .'</span> '._('Objects').'</td>'. "\n";
-	// print '	<td class="hidden-sm"></td>'. "\n";
-    // 
-	// //custom
-	// if(sizeof(@$s->custom) > 0) {
-	// 	foreach($s->custom as $field) {
-	// 		if(!in_array($field['name'], $hidden_custom_fields)) {
-	// 			print "<td class='hidden-sm hidden-xs hidden-md'></td>";
-	// 		}
-	// 	}
-	// }
-	// print '	<td class="actions"></td>';
-	// print '</tr>'. "\n";
 }
 
 print '</table>';

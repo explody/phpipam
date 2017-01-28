@@ -10,7 +10,7 @@ $User->check_user_session();
 if(!$vrf) { $Result->show("danger", _('Invalid VRF id'), true); }
 
 # get custom VLAN fields
-$cfields = $Tools->fetch_custom_fields ('vrf');
+$cfs = $Tools->fetch_custom_fields ('vrf');
 ?>
 
 <!-- for adding IP address! -->
@@ -69,17 +69,17 @@ $cfields = $Tools->fetch_custom_fields ('vrf');
 	<?php
 
 	# print custom subnet fields if any
-	if(sizeof($cfields) > 0) {
+	if(sizeof($cfs) > 0) {
 		// divider
 		print "<tr><td><hr></td><td></td></tr>";
 		// fields
-		foreach($cfields as $key=>$field) {
-			$vrf->{$key} = str_replace("\n", "<br>",$vrf->{$key});
+		foreach($cfs as $cf) {
+			$vrf->{$cf->name} = str_replace("\n", "<br>",$vrf->{$cf->name});
 			// create links
-			$vrf->{$key} = $Result->create_links($vrf->{$key});
+			$vrf->{$cf->name} = $Result->create_links($vrf->{$cf->name});
 			print "<tr>";
-			print "	<th>$key</th>";
-			print "	<td style='vertical-align:top;align:left;'>".$vrf->{$key}."</td>";
+			print "	<th>$cf->name</th>";
+			print "	<td style='vertical-align:top;align:left;'>".$vrf->{$cf->name}."</td>";
 			print "</tr>";
 		}
 		// divider

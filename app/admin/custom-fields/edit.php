@@ -161,7 +161,7 @@ if ($action == "add") {
 	<tr <?php print (in_array($cfield->type, ['set','enum']) ? null : 'style="display: none;"'); ?> id="set-values-row">
 		<td><?php print _('Enum Values '); ?></td>
 		<td>
-			<input type="text" name="params[values]" id="cf-values" class="form-control input-sm" value="<?php print @$cfield->params->values; ?>" placeholder="<?php print _('Enter options for set/enum, separated with commas.'); ?>" <?php $delete ? print 'readonly' : null; ?>>
+			<input type="text" name="params[values]" id="cf-values" class="form-control input-sm" value="<?php print implode(',', (isset($cfield->params->values) ? $cfield->params->values : [] )); ?>" placeholder="<?php print _('Enter options for set/enum, separated with commas.'); ?>" <?php $delete ? print 'readonly' : null; ?>>
 		</td>
 	</tr>
     
@@ -169,7 +169,7 @@ if ($action == "add") {
 	<tr>
 		<td><?php print _('Size / Length'); ?></td>
 		<td>
-			<input type="text" name="limit" id="cf-limit" class="form-control input-sm input-w-100" value="<?php $add ? print '64' : print @$cfield->limit; ?>" placeholder="<?php print _('Enter field length'); ?>" <?php $delete ? print 'readonly' : null; ?>>
+			<input type="text" name="limit" id="cf-limit" class="form-control input-sm input-w-100" value="<?php $add ? print '64' : print @$cfield->limit; ?>" placeholder="<?php print _('Enter field length'); ?>" <?php $delete || $cfield->type == 'boolean' ? print 'readonly' : null; ?>>
 		</td>
 	</tr>
 

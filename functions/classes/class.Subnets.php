@@ -2842,12 +2842,12 @@ class Subnets extends Common_functions {
 	 * @access public
 	 * @param array $user
 	 * @param array $subnets
-	 * @param array $custom_fields
+	 * @param array $cfs
 	 * @param bool $print
 	 * @param bool $showSupernetOnly
 	 * @return string
 	 */
-	public function print_subnets_tools( $user, $subnets, $custom_fields, $print = true, $showSupernetOnly = 0 ) {
+	public function print_subnets_tools( $user, $subnets, $cfs, $print = true ) {
 
 		# tools object
 		$Tools = new Tools ($this->Database);
@@ -3033,32 +3033,32 @@ class Subnets extends Common_functions {
 					$html[] = "	<td class='hidden-xs hidden-sm'>$requests</td>";
 				}
 				//custom
-				if(sizeof($custom_fields) > 0) {
-			   		foreach($custom_fields as $field) {
-				   		# hidden?
-				   		if(!in_array($field['name'], $hidden_fields)) {
 
-				   			$html[] =  "<td class='hidden-xs hidden-sm hidden-md'>";
+		   		foreach($cfs as $cf) {
+			   		# hidden?
+			   		if($cf->visible) {
 
-				   			//booleans
-							if($field['type']=="tinyint(1)")	{
-								if($option['value'][$field['name']] == "0")			{ $html[] = _("No"); }
-								elseif($option['value'][$field['name']] == "1")		{ $html[] = _("Yes"); }
-							}
-							//text
-							elseif($field['type']=="text") {
-								if(strlen($option['value'][$field['name']])>0)		{ $html[] = "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $option['value'][$field['name']])."'>"; }
-								else												{ $html[] = ""; }
-							}
-							else {
-								$html[] = $option['value'][$field['name']];
+			   			$html[] =  "<td class='hidden-xs hidden-sm hidden-md'>";
 
-							}
+			   			//booleans
+						if($cf->type == "boolean")	{
+							if($option['value'][$cf->name] == "0")			{ $html[] = _("No"); }
+							elseif($option['value'][$cf->name] == "1")		{ $html[] = _("Yes"); }
+						}
+						//text
+						elseif($cf->type == "text") {
+							if(strlen($option['value'][$cf->name])>0)		{ $html[] = "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $option['value'][$cf->name])."'>"; }
+							else												{ $html[] = ""; }
+						}
+						else {
+							$html[] = $option['value'][$cf->name];
 
-				   			$html[] =  "</td>";
-			   			}
-			    	}
-			    }
+						}
+
+			   			$html[] =  "</td>";
+		   			}
+		    	}
+
 
 				# set permission
 				$permission = $this->check_permission ($user, $option['value']['id']);

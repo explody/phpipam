@@ -11,11 +11,7 @@ $User->check_user_session();
 $subnets = $Subnets->fetch_multicast_subnets();
 
 # get custom fields
-$custom_fields = $Tools->fetch_custom_fields('subnets');
-
-# set hidden fields
-$hidden_cfields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_cfields = is_array($hidden_cfields['subnets']) ? $hidden_cfields['subnets'] : array();
+$cfs = $Tools->fetch_custom_fields('subnets');
 
 # set selected address fields array
 $selected_ip_fields = explode(";", $User->settings->IPfilter);  																	//format to array
@@ -27,7 +23,7 @@ $selected_ip_fields_size = in_array('state', $selected_ip_fields) ? sizeof($sele
 if($selected_ip_fields_size==1 && strlen($selected_ip_fields[0])==0) { $selected_ip_fields_size = 0; }								//fix for 0
 
 // colspan
-$colSpan  = $selected_ip_fields_size + sizeof($custom_fields) + 3;		//empty colspan
+$colSpan  = $selected_ip_fields_size + sizeof($cfs) + 3;		//empty colspan
 
 
 # title
@@ -63,11 +59,10 @@ if ($subnets!==false) {
     	if(in_array('owner', $selected_ip_fields)) 	{ print "<th class='hidden-xs hidden-sm'>"._('Owner')."</th>"; }
 
     	# custom fields
-    	if(sizeof($custom_fields) > 0) {
-    		foreach($custom_fields as $myField) 	{
-    			print "<th class='hidden-xs hidden-sm hidden-md'>$myField[name]</th>";
-    		}
-    	}
+		foreach($cfs as $cf) {
+			print "<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
+		}
+
     	# actions
     	print '<th class="actions"></th>';
         print '</tr>';
@@ -215,32 +210,31 @@ if ($subnets!==false) {
 					if(in_array('owner', $selected_ip_fields)) 		{ print "<td class='hidden-xs hidden-sm'>".$address->owner."</td>"; }
 
 					# print custom fields
-					if(sizeof($custom_fields) > 0) {
-						foreach($custom_fields as $myField) 					{
-							if(!in_array($myField['name'], $hidden_cfields)) 	{
-								print "<td class='customField hidden-xs hidden-sm hidden-md'>";
 
-								// create html links
-								$address->{$myField['name']} = $Result->create_links($address->{$myField['name']}, $myField['type']);
+					foreach($cfs as $cf) {
+						if($cf->visible) 	{
+							print "<td class='customField hidden-xs hidden-sm hidden-md'>";
 
-								//booleans
-								if($myField['type']=="tinyint(1)")	{
-									if($address->{$myField['name']} == "0")		{ print _("No"); }
-									elseif($address->{$myField['name']} == "1")	{ print _("Yes"); }
-								}
-								//text
-								elseif($myField['type']=="text") {
-									if(strlen($address->{$myField['name']})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $address->{$myField['name']})."'>"; }
-									else											{ print ""; }
-								}
-								else {
-									print $address->{$myField['name']};
+							// create html links
+							$address->{$cf->name} = $Result->create_links($address->{$cf->name}, $cf->type);
 
-								}
-								print "</td>";
+							//booleans
+							if($cf->type=="boolean")	{
+								if($address->{$cf->name} == "0")		{ print _("No"); }
+								elseif($address->{$cf->name} == "1")	{ print _("Yes"); }
 							}
+							//text
+							elseif($cf->type=="text") {
+								if(strlen($address->{$cf->name})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $address->{$cf->name})."'>"; }
+								else											{ print ""; }
+							}
+							else {
+								print $address->{$cf->name};
+							}
+							print "</td>";
 						}
 					}
+
 
     				# print action links if user can edit
     				print "<td class='btn-actions'>";

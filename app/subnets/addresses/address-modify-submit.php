@@ -57,25 +57,22 @@ sizeof($subnet)>0 ?:			$Result->show("danger", _("Invalid subnet"), true);
 $address = $Addresses->reformat_empty_array_fields ($address, null);
 
 # custom fields and checks
-$custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $field) {
-		# replace possible ___ back to spaces!
-		$field['nameTest']      = str_replace(" ", "___", $field['name']);
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
 
-		if(isset($address[$field['nameTest']])) { $address[$field['name']] = $address[$field['nameTest']];}
-		# booleans can be only 0 and 1
-		if($field['type']=="tinyint(1)") {
-			if($address[$field['name']]>1) {
-				$address[$field['name']] = "";
-			}
-		}
-		# null custom fields not permitted
-		if($field['Null']=="NO" && strlen($address[$field['name']])==0) {
-			$Result->show("danger", $field['name']._(" can not be empty!"), true);
+foreach($cfs as $cf) {
+
+	# booleans can be only 0 and 1
+	if($cf->type == "boolean") {
+		if($address[$cf->name]>1) {
+			$address[$cf->name] = "";
 		}
 	}
+	# null custom fields not permitted
+	if(!$cf->null && strlen($address[$cf->name])==0) {
+		$Result->show("danger", $cf->name._(" can not be empty!"), true);
+	}
 }
+
 
 # we need old address details for mailing or if we are editing address
 if($action=="edit" || $action=="delete" || $action=="move") {

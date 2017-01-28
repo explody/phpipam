@@ -49,7 +49,6 @@ $cfs[$current]->order = $cfs[$current]->order + 1;
 //$params['after'] = $cfs[$next]->name;
 $col->setAfter($cfs[$next]->name);
 
-print_r($params);
 try {
     $rt->changeColumn($cfs[$current]->name, $col)->save();
     foreach([$cfs[$current], $cfs[$next]] as $ucf) {

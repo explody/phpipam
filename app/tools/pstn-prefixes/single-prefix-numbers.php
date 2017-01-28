@@ -3,7 +3,7 @@
 $User->check_user_session();
 
 # custom fields
-$custom_fields = $Tools->fetch_custom_fields ('pstnNumbers');
+$cfs = $Tools->fetch_custom_fields ('pstnNumbers');
 
 // colspan
 $colspan = 8;
@@ -24,13 +24,13 @@ $colspan_dhcp = 4;
         <th></th>
         <?php
     	# custom fields
-    	if(sizeof($custom_fields) > 0) {
-    		foreach($custom_fields as $myField) 	{
-    			print "<th class='hidden-xs hidden-sm hidden-md'>$myField[name]</span></th>";
-    			$colspan++;
-    			$colspan_dhcp++;
-    		}
-    	}
+
+		foreach($cfs as $cf) 	{
+			print "<th class='hidden-xs hidden-sm hidden-md'>$cf->name</span></th>";
+			$colspan++;
+			$colspan_dhcp++;
+		}
+
         ?>
         <th></th>
     </tr>
@@ -117,25 +117,25 @@ $colspan_dhcp = 4;
             print "<td>$description</td>";
 
 			# print custom fields
-			if(sizeof($custom_fields) > 0) {
-				foreach($custom_fields as $myField) 					{
+			if(sizeof($cfs) > 0) {
+				foreach($cfs as $cf) 					{
 					print "<td class='customField hidden-xs hidden-sm hidden-md'>";
 
 					// create html links
-					$n->{$myField['name']} = $Result->create_links($n->{$myField['name']}, $myField['type']);
+					$n->{$cf->name} = $Result->create_links($n->{$cf->name}, $cf->type);
 
 					//booleans
-					if($myField['type']=="tinyint(1)")	{
-						if($n->{$myField['name']} == "0")		{ print _("No"); }
-						elseif($n->{$myField['name']} == "1")	{ print _("Yes"); }
+					if($cf->type=="tinyint(1)")	{
+						if($n->{$cf->name} == "0")		{ print _("No"); }
+						elseif($n->{$cf->name} == "1")	{ print _("Yes"); }
 					}
 					//text
-					elseif($myField['type']=="text") {
-						if(strlen($n->{$myField['name']})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $n->{$myField['name']})."'>"; }
+					elseif($cf->type=="text") {
+						if(strlen($n->{$cf->name})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $n->{$cf->name})."'>"; }
 						else									{ print ""; }
 					}
 					else {
-						print $n->{$myField['name']};
+						print $n->{$cf->name};
 
 					}
 					print "</td>";

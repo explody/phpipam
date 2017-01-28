@@ -16,7 +16,7 @@ $csrf = $User->csrf_create('vlan');
 $vlan = $Admin->fetch_object ("vlans", "vlanId", @$_POST['vlanId']);
 $vlan = $vlan!==false ? (array) $vlan : array();
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('vlans');
+$cfs = $Tools->fetch_custom_fields('vlans');
 
 # set readonly flag
 $readonly = $_POST['action']=="delete" ? "readonly" : "";
@@ -124,25 +124,25 @@ $(document).ready(function(){
 
 	<!-- Custom -->
 	<?php
-	if(sizeof($custom) > 0) {
+	if(sizeof($cfs) > 0) {
 
 		print '<tr>';
 		print '	<td colspan="2"><hr></td>';
 		print '</tr>';
 
 
-		# count datepickers
-		$timepicker_index = 0;
+		# custom field indexes
+		$index = false;
 
 		# all my fields
-		foreach($custom as $field) {
+		foreach($cfs as $cf) {
     		// create input > result is array (required, input(html), timepicker_index)
-    		$custom_input = $Tools->create_custom_field_input ($field, $vlan, $_POST['action'], $timepicker_index);
+    		$custom_input = $Components->render_custom_field_input($cf, $vlan, $_POST['action'], $index);
     		// add datepicker index
-    		$timepicker_index = $timepicker_index + $custom_input['timepicker_index'];
+    		$index = $custom_input['index'];
             // print
 			print "<tr>";
-			print "	<td>".ucwords($field['name'])." ".$custom_input['required']."</td>";
+			print "	<td>".ucwords($cf->name)." ".$custom_input['required']."</td>";
 			print "	<td>".$custom_input['field']."</td>";
 			print "</tr>";
 		}

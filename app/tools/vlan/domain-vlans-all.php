@@ -14,19 +14,13 @@ $vlan_domain = new StdClass();
 $vlans = $Tools->fetch_all_domains_and_vlans ();
 
 # get custom VLAN fields
-$custom_fields = (array) $Tools->fetch_custom_fields('vlans');
-
-# set hidden fields
-$hidden_fields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_fields = is_array(@$hidden_fields['vlans']) ? $hidden_fields['vlans'] : array();
+$cfs = $Tools->fetch_custom_fields('vlans');
 
 # size of custom fields
-$csize = sizeof($custom_fields) - sizeof($hidden_fields);
-
+$csize = Tools::count_where($cfs, 'required', 1);
 
 # set disabled for non-admins
 $disabled = $User->is_admin(false)==true ? "" : "hidden";
-
 
 # title
 print "<h4>"._('VLANs in all domains')."</h4>";
@@ -53,13 +47,13 @@ else {
 	print ' <th data-field="number" data-sortable="true">'._('Number').'</th>' . "\n";
 	print ' <th data-field="name" data-sortable="true">'._('Name').'</th>' . "\n";
 	print ' <th data-field="name" data-sortable="true">'._('L2domain').'</th>' . "\n";
-	if(sizeof(@$custom_fields) > 0) {
-		foreach($custom_fields as $field) {
-			if(!in_array($field['name'], $hidden_fields)) {
-				print "	<th class='hidden-xs hidden-sm hidden-md'>$field[name]</th>";
-			}
+
+	foreach($cfs as $cf) {
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
 		}
 	}
+
     print "<th></th>";
 	print "</tr>";
 	print "</thead>";
@@ -105,33 +99,33 @@ else {
 		print "	<td>".$vlan->name.$vlan->description."</td>";
 		print "	<td>".$vlan->domainName.$vlan->domainDescription."</td>";
         //custom fields - no subnets
-        if(sizeof(@$custom_fields) > 0) {
-	   		foreach($custom_fields as $field) {
-		   		# hidden
-		   		if(!in_array($field['name'], $hidden_fields)) {
 
-					// create links
-					$vlan->{$field['name']} = $Result->create_links ($vlan->{$field['name']}, $field['type']);
+   		foreach($cfs as $cf) {
+	   		# hidden
+	   		if($cf->visible) {
 
-					print "<td class='hidden-xs hidden-sm hidden-md'>";
-					//booleans
-					if($field['type']=="tinyint(1)")	{
-						if($vlan->{$field['name']} == "0")		{ print _("No"); }
-						elseif($vlan->{$field['name']} == "1")	{ print _("Yes"); }
-					}
-					//text
-					elseif($field['type']=="text") {
-						if(strlen($vlan->{$field['name']})>0)		{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $vlan->{$field['name']})."'>"; }
-						else									{ print ""; }
-					}
-					else {
-						print $vlan->{$field['name']};
+				// create links
+				$vlan->{$cf->name} = $Result->create_links ($vlan->{$cf->name}, $cf->type);
 
-					}
-					print "</td>";
+				print "<td class='hidden-xs hidden-sm hidden-md'>";
+				//booleans
+				if($cf->type == "boolean")	{
+					if($vlan->{$cf->name} == "0")		{ print _("No"); }
+					elseif($vlan->{$cf->name} == "1")	{ print _("Yes"); }
 				}
-	    	}
-	    }
+				//text
+				elseif($cf->type == "text") {
+					if(strlen($vlan->{$cf->name})>0)		{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $vlan->{$cf->name})."'>"; }
+					else									{ print ""; }
+				}
+				else {
+					print $vlan->{$cf->name};
+
+				}
+				print "</td>";
+			}
+    	}
+
 
         // actions
 		print "	<td class='actions'>";

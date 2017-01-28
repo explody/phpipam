@@ -29,7 +29,7 @@ $_POST['subnet'] = trim($temp[0]);
 # get section details
 $section = (array) $Sections->fetch_section(null, $_POST['sectionId']);
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('subnets');
+$cfs = $Tools->fetch_custom_fields('subnets');
 
 # get master subnet details for folder overrides
 if($_POST['masterSubnetId']!=0)	{
@@ -159,24 +159,19 @@ else {
     if($Subnets->check_permission ($User->user, $_POST['subnetId']) != 3) 	{ $Result->show("danger", _('You do not have permissions to add edit/delete this subnet')."!", true); }
 }
 
-
-
 //custom fields check
-if(sizeof($custom) > 0) {
-	foreach($custom as $myField) {
-		//booleans can be only 0 and 1!
-		if($myField['type']=="tinyint(1)") {
-			if($_POST[$myField['name']]>1) {
-				$_POST[$myField['name']] = "";
-			}
-		}
-		//not empty
-		if($myField['Null']=="NO" && strlen($_POST[$myField['name']])==0) {
-			$errors[] = "Field \"$myField[name]\" cannot be empty!";
+foreach($cfs as $cf) {
+	//booleans can be only 0 and 1!
+	if($cf->type=="boolean") {
+		if($_POST[$cf->name] != '1' && $_POST[$cf->name] != '0') {
+			$errors[] = "Field \"$cf->name\" may only be 1 or 0!";
 		}
 	}
+	//not empty
+	if(!$cf->null && strlen($_POST[$cf->name])==0) {
+		$errors[] = "Field \"$cf->name\" cannot be empty!";
+	}
 }
-
 
 
 /* If no errors are present execute request */
@@ -273,28 +268,23 @@ else {
 			$values['vrfId']=$_POST['vrfId'];
 		}
 	}
-	# append custom fields
-	$custom = $Tools->fetch_custom_fields('subnets');
-	if(sizeof($custom) > 0) {
-		foreach($custom as $myField) {
 
-			//replace possible ___ back to spaces
-			$myField['nameTest'] = str_replace(" ", "___", $myField['name']);
-			if(isset($_POST[$myField['nameTest']])) { $_POST[$myField['name']] = $_POST[$myField['nameTest']];}
+	foreach($cfs as $cf) {
+		if(isset($_POST[$cf->name])) { $_POST[$cf->name] = $_POST[$cf->name];}
 
-			//booleans can be only 0 and 1!
-			if($myField['type']=="tinyint(1)") {
-				if($_POST[$myField['name']]>1) {
-					$_POST[$myField['name']] = 0;
-				}
+		//booleans can be only 0 and 1!
+		if($cf->type=="tinyint(1)") {
+			if($_POST[$cf->name]>1) {
+				$_POST[$cf->name] = 0;
 			}
-			//not null!
-			if($myField['Null']=="NO" && strlen($_POST[$myField['name']])==0) { $Result->show("danger", $myField['name'].'" can not be empty!', true); }
-
-			# save to update array
-			$values[$myField['name']] = $_POST[$myField['name']];
 		}
+		//not null!
+		if(!$cf->null && strlen($_POST[$cf->name])==0) { $Result->show("danger", $cf->name.'" can not be empty!', true); }
+
+		# save to update array
+		$values[$cf->name] = $_POST[$cf->name];
 	}
+
 
 	# execute
 	if (!$Subnets->modify_subnet ($_POST['action'], $values))	{ $Result->show("danger", _('Error editing subnet'), true); }

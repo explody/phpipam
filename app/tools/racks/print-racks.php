@@ -47,19 +47,19 @@ else {
     print " <th>"._('Size')."</th>";
     print " <th>"._('Description')."</th>";
     print " <th>"._('Devices')."</th>";
-	if(sizeof($custom) > 0) {
-		foreach($custom as $field) {
-			if(!in_array($field['name'], $hidden_custom_fields)) {
-				print "<th class='hidden-xs hidden-sm hidden-md'>$field[name]</th>";
-			}
+
+	foreach($cfs as $cf) {
+		if($cf->visible) {
+			print "<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
 		}
 	}
+
     print "</tr>";
     print "</thead>";
 
     print "<tbody>";
     # none
-    if ($Racks->all_racks === false) {
+    if (empty($Racks->all_racks)) {
         print "<tr>";
         print " <td colspan='5'>".$Result->show("info", _("No racks available"), false, false, true)."</td>";
         print "</tr>";
@@ -123,32 +123,32 @@ else {
             }
 
     		//custom
-    		if(sizeof($custom) > 0) {
-    			foreach($custom as $field) {
-    				if(!in_array($field['name'], $hidden_custom_fields)) {
-    					print "<td class='hidden-xs hidden-sm hidden-md'>";
 
-    					// create links
-    					$r->{$field['name']} = $Result->create_links ($r->{$field['name']}, $field['type']);
+			foreach($cfs as $cf) {
+				if($cf->visible) {
+					print "<td class='hidden-xs hidden-sm hidden-md'>";
 
-    					//booleans
-    					if($field['type']=="tinyint(1)")	{
-    						if($r->{$field['name']} == "0")		{ print _("No"); }
-    						elseif($r->{$field['name']} == "1")	{ print _("Yes"); }
-    					}
-    					//text
-    					elseif($field['type']=="text") {
-    						if(strlen($r->{$field['name']})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $r->{$field['name']})."'>"; }
-    						else								{ print ""; }
-    					}
-    					else {
-    						print $r->{$field['name']};
+					// create links
+					$r->{$cf->name} = $Result->create_links ($r->{$cf->name}, $cf->type);
 
-    					}
-    					print "</td>";
-    				}
-    			}
-    		}
+					//booleans
+					if($cf->type == "boolean")	{
+						if($r->{$cf->name} == "0")		{ print _("No"); }
+						elseif($r->{$cf->name} == "1")	{ print _("Yes"); }
+					}
+					//text
+					elseif($cf->type == "text") {
+						if(strlen($r->{$cf->name})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $r->{$cf->name})."'>"; }
+						else								{ print ""; }
+					}
+					else {
+						print $r->{$cf->name};
+
+					}
+					print "</td>";
+				}
+			}
+
 
             print "</tr>";
         }

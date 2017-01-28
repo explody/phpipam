@@ -71,7 +71,7 @@ $(document).on("submit", "#requestIP", function() {
 	showSpinner();
 
     //post to check form
-    $.post('app/login/request_ip_result.php', postData, function(data) {
+    $.post('ajx/login/request_ip_result', postData, function(data) {
         $('div#requestIPresult').html(data).slideDown('fast');
         hideSpinner();
         //reset sender to prevent duplicates on success

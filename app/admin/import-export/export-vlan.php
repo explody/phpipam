@@ -10,7 +10,7 @@ $User->csrf_validate("export-vlans", $_GET['csrf_cookie'], $Result);
 $vlan_domains = $Admin->fetch_all_objects("vlanDomains", "id");
 
 # get all custom fields
-$custom_fields = $Tools->fetch_custom_fields('vlans');
+$cfs = $Tools->fetch_custom_fields('vlans');
 
 # Create a workbook
 $today = date("Ymd");
@@ -53,15 +53,10 @@ if( (isset($_GET['description'])) && ($_GET['description'] == "on") ) {
 }
 
 //custom fields
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $myField) {
-		//set temp name - replace space with three ___
-		$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
-
-		if( (isset($_GET[$myField['nameTemp']])) && ($_GET[$myField['nameTemp']] == "on") ) {
-			$worksheet->write($lineCount, $rowCount, $myField['name'] ,$format_header);
-			$rowCount++;
-		}
+foreach($cfs as $cf) {
+	if( (isset($_GET[$cf->name])) && ($_GET[$cf->name] == "on") ) {
+		$worksheet->write($lineCount, $rowCount, $cf->name ,$format_header);
+		$rowCount++;
 	}
 }
 
@@ -105,17 +100,14 @@ foreach ($vlan_domains as $vlan_domain) {
 			}
 
 			//custom fields, per VLAN
-			if(sizeof($custom_fields) > 0) {
-				foreach($custom_fields as $myField) {
-					//set temp name - replace space with three ___
-					$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
 
-					if( (isset($_GET[$myField['nameTemp']])) && ($_GET[$myField['nameTemp']] == "on") ) {
-						$worksheet->write($lineCount, $rowCount, $vlan[$myField['name']], $format_text);
-						$rowCount++;
-					}
+			foreach($cfs as $cf) {
+				if( (isset($_GET[$cf->name])) && ($_GET[$cf->name] == "on") ) {
+					$worksheet->write($lineCount, $rowCount, $vlan[$cf->name], $format_text);
+					$rowCount++;
 				}
 			}
+
 
 			$lineCount++;
 		}

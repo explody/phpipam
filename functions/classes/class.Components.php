@@ -139,31 +139,47 @@ class Components {
       
       /**
        *  Render the inline script element necessary for a select2 dropdown
+       *  TODO: have this cleanly support options for the method as well as options for the JS
        * 
        *  @access public
        *  @param array $selector Name of the jQuery selector of the <select>
        *  @param array $options Optional array of options to pass to select2()
        */
        public static function render_select2_js($selector,$options=[]) {
-           $defoptions = array('theme' => 'bootstrap', 
+           $defoptions = array('return' => false,
+                               'theme' => 'bootstrap', 
                                'width' => "", // intentional
                                'minimumResultsForSearch' => 15,
                                'templateResult' => '$(this).s2oneLine'
                          );
            $options = (object) array_merge($defoptions, $options);
-
-           print "<script type=\"text/javascript\">\n";
-           print "$('$selector').select2({\n";
+           
+           // this is dumb but I added 'return' later and it's not an option for the JS
+           $return = $options->return;
+           unset($options->return);
+           
+           $output = [];
+           
+           $output[] = "<script type=\"text/javascript\">";
+           $output[] = "$('$selector').select2({";
                
            foreach ($options as $k=>$v) {
-                   print "   $k: " . ((is_int($v) || $k === 'templateResult') ? 
-                                      $v : 
-                                      "\"$v\"") . ",\n";
+                   if ($k == "return") {  
+                       continue;
+                   }
+                   $output[] = "   $k: " . ((is_int($v) || $k === 'templateResult') ? 
+                                             $v : 
+                                             "\"$v\"") . ",\n";
            }
 
-           print "});";
-           print "</script>";
-
+           $output[] = "});";
+           $output[] = "</script>";
+           
+           // If the 'return' option is true, just return the array of strings, otherwise print them.
+           if ($return) {
+               return $output;
+           } 
+           print implode("\n", $output);
        }
     
     /**
@@ -279,6 +295,9 @@ class Components {
      *               concatenated together with " | "
      * @param array $options An array of options for rendering <option> and 
      *               <optgroup> elements
+     * @param bool   $options['return'] If true, will return an array of strings 
+     *               rather than printing them inline.
+     *               Default: false.  Prints by defaul
      * @param bool|string $options['sort'] Sort the objects. Either a property
      *               name on which to sort them, or 'true' to sort by name.
      *               Will apply to options under optgroups.
@@ -314,11 +333,12 @@ class Components {
      * @param array $options['selected'] Array of [k=>v] where if the option 
      *               object->k === v, we'll add 'selected'
      *               Default: []
-     * @return void
+     * @return void|array  Directly prints options or returns an array of strings.
      */
     public function render_options($objs, $valueField, $displayField, $options = []) {
         
-        $defoptions = array('group' => false, 
+        $defoptions = array('return' => false,
+                            'group' => false, 
                             'groupby' => false,
                             'resolveGroupKey' => false,
                             'sort' => false,
@@ -329,6 +349,7 @@ class Components {
                             'selected' => []
                       );
         $options = (object) array_merge($defoptions, $options);
+        $output  = [];
         
         if ($options->group && $options->groupby) {
             
@@ -342,7 +363,6 @@ class Components {
                         $gobj = $this->Tools->fetch_object($options->extFields[$options->groupby], 'id', $gid);
                       
                         if ($gobj) {
-                            // print "Got a group obj: ". $gobj->name . "\n";
                             $r = false;
                             
                             // Sort object list on the property given in $options->sort or
@@ -383,12 +403,13 @@ class Components {
                                                 $options->selected, 
                                                 $options->gclasses, 
                                                 $options->oclasses);
+            
             foreach ($ogs as $og=>$os) {
-                print "$og\n";
+                $output[] = "$og";
                 foreach ($os as $o) {
-                    print "    $o\n";
+                    $output[] = "    $o";
                 }
-                print "</optgroup>\n";
+                $output[] = "</optgroup>";
             }
         
         // end $group && $groupby    
@@ -405,10 +426,47 @@ class Components {
                                            $displayField, 
                                            $options->selected);
             foreach ($opts as $o) {
-                print "$o\n";
+                $output[] = "$o";
             }
         }
+        
+        // If the 'return' option is true, just return the array of strings, otherwise print them.
+        if ($options->return) {
+            return $output;
+        } 
+        print implode("\n", $output);
+        
     } // end render_options
+    
+    /**
+     * Allows use of render_options given an 1D list of unique non-objects. 
+     * supports only the most basic usage of render_options, no grouping, keys, etc.
+     * Supports 'return' and 'selected' and applies 'sort'. Unsupported options will be ignored.
+     *
+     * @access public
+     * @param mixed $list a list of strings
+     * @return void
+     */
+    public function render_options_from_list($list, $options = []) {
+        $array = [];
+        foreach($list as $item) {
+            $array[$item] = new stdClass();
+            $array[$item]->name = $item;
+            $array[$item]->value = $item;
+        }
+        
+        $supported_options = ['sort' => true];
+        
+        if (array_key_exists('return', $options)) {
+            $supported_options['return'] = $options['return'];
+        }
+        
+        if (array_key_exists('selected', $options)) {
+            $supported_options['selected'] = $options['selected'];
+        }
+        
+        return $this->render_options($array, 'value', 'name', $supported_options);
+    }
     
     /**
      * Creates form input field for custom fields.
@@ -420,7 +478,20 @@ class Components {
      * @param mixed $timepicker_index
      * @return array
      */
-    public static function render_custom_field_input($field, $object, $action, $timepicker_index) {
+    public function render_custom_field_input($cf, $object, $action, $index) {
+        
+        // Old code will be passing arrays until it's all updated
+        if(!is_object($object)) {
+            $object = (object) $object;
+        }
+        
+        // If $index is not provided, set the counters to 0
+        if (!$index) {
+            $index = [];
+            foreach(['timepicker','boolean','select'] as $ikey) {
+                $index[$ikey] = 0;
+            } 
+        }
         
         $actions = ['add','edit','delete'];
         foreach ($actions as $act) { $$act = false; }
@@ -428,36 +499,57 @@ class Components {
         in_array($action,$actions) ? ${$action} = true : null;
         
         // field params are stored as json.
-        $field->params = json_decode($field->params);
+        $cf->params = json_decode((!empty($cf->params) ? $cf->params : ''));
         
         $html = array();
 
         # required
-        $req_flag = $field->required ? "*" : "";
+        $req_flag = $cf->required ? "*" : "";
 
         # set default value if adding new object
         if ($add) { 
-            $object->{$field->name} = $field->default; 
+            $object->{$cf->name} = $cf->default; 
         }
 
         //set, enum
-        if($field->type == "set" || $field->type == "enum") {
-
-            $html[] = "<select name='$field->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field->display_name'>";
-            foreach($field->params->values as $v) {
-                $html[] = '<option value="' . $v . '"' . ($v==$object->{$field->name} ? ' selected="selected">' : '>') . $v . '</option>';
+        if($cf->type == "set" || $cf->type == "enum") {
+            
+            if($index['select'] == 0) {
+                $html[] =  '<script type="text/javascript" src="' . MEDIA .'/js/select2.js"></script>';
+                $html[] =  '<script type="text/javascript" src="' . MEDIA .'/js/common.plugins.js"></script>';
             }
+
+            $html[] = "<select name='$cf->name' id='custom-select" . $index['select'] . "' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$cf->display_name'>";
+            
+            // if the field allows null, add an option for 'none'
+            if ($cf->null) {
+                print "HERE";
+                $html[] = "<option value=\"\">None</option>";
+            }
+            
+            $html = array_merge($html, $this->render_options_from_list($cf->params->values, ['return' => true, 
+                                                                                             'selected' => 
+                                                                                                ['value' => $object->{$cf->name}]
+                                                                                            ])
+                                                                                        );
+
             $html[] = "</select>";
             
+            if($index['select'] == 0) {
+                $html = array_merge($html, Components::render_select2_js('#custom-select' . $index['select'],
+                                              ['return' => true, 'templateResult' => '$(this).s2oneLine']));
+            }
+            
+            $index['select']++;
         }
         //date and time picker
-        elseif(in_array($field->type, ['date','datetime','time','timestamp'])) {
+        elseif(in_array($cf->type, ['date','datetime','time','timestamp'])) {
 
             
-            if($field->type == "date") { 
+            if($cf->type == "date") { 
                 $size = 10; 
                 $format = "Y-MM-DD";
-            } else if($field->type == "time") { 
+            } else if($cf->type == "time") { 
                 $size = 10; 
                 $format = "hh:mm:ss";
             } else {
@@ -466,7 +558,7 @@ class Components {
             }
             
             // just for first
-            if($timepicker_index==0) {
+            if($index['timepicker'] == 0) {
                 $html[] =  '<link rel="stylesheet" type="text/css" href="' . MEDIA . '/css/bootstrap.datetimepicker.css">';
                 $html[] =  '<script type="text/javascript" src="' . MEDIA .'/js/moment.js"></script>';
                 $html[] =  '<script type="text/javascript" src="' . MEDIA .'/js/bootstrap.datetimepicker.js"></script>';
@@ -474,10 +566,10 @@ class Components {
             
             $html[] = '<div class="'.$class.' input-group date">';
             //field
-            if(!isset($object->{$field->name}))	{ 
-                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="' . $field->name . '" maxlength="' . $size . '" rel="tooltip" data-placement="right" title="' . $field->display_name . '"></input>'. "\n"; 
+            if(!isset($object->{$cf->name}))	{ 
+                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="' . $cf->name . '" maxlength="' . $size . '" rel="tooltip" data-placement="right" title="' . $cf->display_name . '"></input>'. "\n"; 
             } else {
-                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="'. $field->name .'" maxlength="' . $size . '" value="' . $object->{$field->name} . '" rel="tooltip" data-placement="right" title="' . $field->display_name . '"></input>'. "\n"; 
+                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="'. $cf->name .'" maxlength="' . $size . '" value="' . $object->{$cf->name} . '" rel="tooltip" data-placement="right" title="' . $cf->display_name . '"></input>'. "\n"; 
             }
             $html[] = '<span class="input-group-addon"><span class="glyphicon-calendar glyphicon"></span></span>';
             $html[] = '</div>';
@@ -488,40 +580,47 @@ class Components {
             $html[] =  '})';
             $html[] =  '</script>';
 
-            $timepicker_index++;
+            $index['timepicker']++;
         }
         //boolean
-        elseif($field->type == "boolean") {
-            $html[] =  "<select name='$field->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field->display_name'>";
-            $tmp = array(0=>"No",1=>"Yes");
-            //null
-            if($field->null) { $tmp[2] = ""; }
-
-            foreach($tmp as $k=>$v) {
-                if(strlen($object->{$field->name})==0 && $k==2) {
-                    $html[] = "<option value='$k' selected='selected'>"._($v)."</option>";
-                } elseif($k==$object->{$field->name}) {
-                    $html[] = "<option value='$k' selected='selected'>"._($v)."</option>"; 
-                } else {
-                    $html[] = "<option value='$k'>"._($v)."</option>";
-                }
+        elseif($cf->type == "boolean") {
+            
+            if($index['boolean'] == 0) {
+                $html[] = '<script type="text/javascript">';
+                $html[] = '$(document).ready(function() { console.log("HERE");';
+                $html[] = 'var switch_options = { onText: "Yes", offText: "No", onColor: "default", offColor: "default", size: "mini", inverse: true };';
+                // applying this to a class will allow it to trigger on all subsequent inputs
+                $html[] = '$(".input-switch").bootstrapSwitch(switch_options);';
+                $html[] = '});';
+                $html[] = '</script>';
             }
-            $html[] = "</select>";
+            
+            // This input will be overwritten by the checkbox, if the checkbox is clicked.  This ensures that we 
+            // always get a valid back for this input, including "no/off/0", which checkboxes don't send if they are unchecked.
+            $html[] =  "<input type='hidden' name='$cf->name' value='0'>";
+            // This is a little ugly.  If the value of the custom field in the object is 1 (true/yes), set selected 
+            // or, if the property is empty *and* the default value is 1 (true/yes), set selected
+            $html[] =  "<input type='checkbox' class='input-switch' name='$cf->name' value='1'" . 
+                         (($object->{$cf->name} || ( empty($object->{$cf->name}) && $cf->default == 1)) ? 
+                         'checked>' : 
+                         '>' );
+            
+            $index['boolean']++;
         }
         //text
-        elseif($field->type == "text") {
-            $html[] = ' <textarea class="form-control input-sm" name="' . $field->name . '" placeholder="'. ($field->description ? $field->description : $field->display_name) .'" rowspan=3 rel="tooltip" data-placement="right" title="'.$field->display_name.'">'. $object->{$field->name}. '</textarea>'. "\n";
+        elseif($cf->type == "text") {
+            $html[] = ' <textarea class="form-control input-sm" name="' . $cf->name . '" placeholder="'. ($cf->description ? $cf->description : $cf->display_name) .'" rowspan="3" rows="5" rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. $object->{$cf->name}. '</textarea>'. "\n";
         }
         //default - input field
         else {
-            $html[] = ' <input type="text" class="form-control input-sm" name="' . $field->name . '" placeholder="'. ($field->description ? $field->description : $field->display_name) . '" value="'. $object->{$field->name}. '" size="30" rel="tooltip" data-placement="right" title="' . $field->display_name . '">'. "\n";
+            $html[] = ' <input type="text" class="form-control input-sm" name="' . $cf->name . '" placeholder="'. ($cf->description ? $cf->description : $cf->display_name) . '" value="'. $object->{$cf->name}. '" size="30" rel="tooltip" data-placement="right" title="' . $cf->display_name . '">'. "\n";
         }
 
         # result
         return array(
             "required" => $req_flag,
             "field" => implode("\n", $html),
-            "timepicker_index" => $timepicker_index
+            "index" => $index
         );
     }
     

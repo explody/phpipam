@@ -86,19 +86,14 @@ print "	<td><input type='checkbox' name='note' checked> </td>";
 print "	</tr>";
 
 # get all custom fields
-$custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $myField) {
-
-		//change spaces to ___
-		$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
-
-		print "	<tr>";
-		print "	<td>$myField[name]</td>";
-		print "	<td><input type='checkbox' name='$myField[nameTemp]' checked> </td>";
-		print "	</tr>";
-	}
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
+foreach($cfs as $cf) {
+	print "	<tr>";
+	print "	<td>$cf->name</td>";
+	print "	<td><input type='checkbox' name='$cf->name' checked> </td>";
+	print "	</tr>";
 }
+
 
 # set file name
 print "	<tr>";

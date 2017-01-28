@@ -15,12 +15,11 @@ if(!is_numeric($_POST['subnetId']) || $_POST['subnetId']==0)			{ $Result->show("
 if($Subnets->check_permission ($User->user, $_POST['subnetId']) != 3) 	{ $Result->show("danger", _('You do not have permissions to modify hosts in this subnet')."!", true); }
 
 // fetch custom fields and check for required
-$required_fields = $Tools->fetch_custom_fields ('ipaddresses');
-if($required_fields!==false) {
-    foreach ($required_fields as $k=>$f) {
-        if ($f['Null']!="NO") {
-            unset($required_fields[$k]);
-        }
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
+$required_fields = [];
+foreach ($cfs as $k=>$f) {
+    if ($cfs->required) {
+        $required_fields[] = $cf;
     }
 }
 
@@ -34,9 +33,9 @@ foreach($_POST as $key=>$line) {
 	elseif(substr($key, 0,8)=="dns_name") 		{ $res[substr($key, 8)]['dns_name']  	= $line; }
 	// custom fields
 	elseif (isset($required_fields)) {
-    	foreach ($required_fields as $k=>$f) {
-        	if((strpos($key, $f['name'])) !== false) {
-                                                { $res[substr($key, strlen($f['name']))][$f['name']] = $line; }
+    	foreach ($required_fields as $rf) {
+        	if((strpos($key, $rf->name)) !== false) {
+                                                { $res[substr($key, strlen($rf->name))][$rf->name] = $line; }
         	}
     	}
 	}
@@ -64,8 +63,8 @@ if(sizeof($res)>0) {
 						);
         # custom fields
 		if (isset($required_fields)) {
-			foreach ($required_fields as $k=>$f) {
-				$values[$f['name']] = $r[$f['name']];
+			foreach ($required_fields as $rf) {
+				$values[$rf->name] = $r[$rf->name];
 			}
 		}
 		# insert

@@ -8,7 +8,7 @@
 if(!is_numeric($_POST['subnetId']))                        { $Result->show("danger", "Invalid subnet Id", true); die(); }
 
 # invoke CLI with threading support
-$cmd = $Scan->php_exec." ".dirname(__FILE__) . '/../../../functions/scan/subnet-scan-icmp-execute.php'." 'update' ".$_POST['subnetId'];
+$cmd = $Scan->php_exec." ". FUNCTIONS . '/scan/subnet-scan-icmp-execute.php'." 'update' ".$_POST['subnetId'];
 
 # save result to $output
 exec($cmd, $output, $retval);
@@ -16,6 +16,14 @@ exec($cmd, $output, $retval);
 # format result back to object
 $output = array_values(array_filter($output));
 $script_result = json_decode($output[0]);
+
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
+$required_fields = [];
+foreach ($cfs as $k=>$f) {
+    if ($cfs->required) {
+        $required_fields[] = $cf;
+    }
+}
 
 # set blank values
 if (!isset($script_result->values->alive) || is_null($script_result->values->alive) )	{ $script_result->values->alive = array(); }

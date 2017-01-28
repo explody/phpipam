@@ -116,6 +116,9 @@ if (in_array($action, ['edit','add'])) {
 
     if ($cfield->type === 'boolean') {
         $cfield->limit = 1;
+        if ($cfield->default != '1' && $cfield->default != '0') {
+            $errors[] = _('Default value for boolean fields may only be 1 (yes) or 0 (no)');
+        }
     } elseif ($cfield->type === 'enum' || $cfield->type === 'set') {
         if(empty($params['values'])) {
             $errors[] = _('A list of values is required for enum and set fields');
@@ -192,7 +195,6 @@ if (sizeof($errors) != 0) {
     $rt = new Ipam\Migration\RepeatableTable($cfield->table, [], $a);
 
     try {
-
         // add/edit RepeatableTable::addColumn will add if absent and update if the column exists
         ($add || $edit) ? $rt->addColumn($cfield->name, $cfield->type, $params)->update() : null;
 

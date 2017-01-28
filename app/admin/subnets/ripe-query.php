@@ -22,16 +22,19 @@ $res = $Subnets->resolve_ripe_arin ($_POST['subnet']);
 	else {
 		// fetch all fields for subnets
 		$standard_fields = array("description");
-		$custom_fields 	 = $Tools->fetch_custom_fields ("subnets");
+		$cfs = $Tools->fetch_custom_fields ("subnets");
 
 		// leave only varchar and text
-		foreach ($custom_fields as $k=>$f) {
-			if (!(strpos($f['type'], "varchar")!==false || $f['type']=="text")) {
-				unset($custom_fields[$k]);
+		foreach ($cfs as $idx=>$cf) {
+			if ($cf->type != "string" || $cf->type != "text")) {
+				unset($cfs[$k]);
 			}
 		}
-		// append description
-		$custom_fields = array_merge(array("description"=>array("name"=>"description")), $custom_fields);
+        
+		// FIXME: this is silly
+        $desc_f = new stdClass();
+        $desc_f->name = "description";
+        array_push($cfs, $desc_f);
 
 		print "<h4>"._("Please select fields to populate:")."</h4>";
 		// form
@@ -47,19 +50,23 @@ $res = $Subnets->resolve_ripe_arin ($_POST['subnet']);
 
 				print "<td>";
 				// add +
-				$d = str_replace(" ", "___", $d);
 				print "<select name='$d' class='form-control input-sm'>";
 				print "<option value='0'>None</option>";
 				// print custom
-				if (sizeof($custom_fields>0)) {
-					foreach ($custom_fields as $f) {
-						// replace descr with description
-						if ($k=="descr")	$k = "description";
 
-						if (strtolower($f['name'])==strtolower($k))	{ print "<option values='$f[name]' selected='selected'>$f[name]</option>"; }
-						else										{ print "<option values='$f[name]'>$f[name]</option>"; }
-					}
+				foreach ($cfs as $cf) {
+					// replace descr with description
+					if ($k == "descr") { 
+                        $k = "description"; 
+                    }
+
+					if (strtolower($cf->name) == strtolower($k)) {
+                        print "<option values='$cf->name' selected='selected'>$cf->display_name</option>";
+                    } else {
+                        print "<option values='$cf->name'>$cf->display_name</option>";
+                    }
 				}
+
 				print "</select>";
 				print "</td>";
 				print "</tr>";

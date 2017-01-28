@@ -48,8 +48,7 @@ if ($ip_address===false) {
 
 # set selected address fields array
 $selected_ip_fields = explode(";", $User->settings->IPfilter);
-# fetch custom fields
-$custom_fields = $Tools->fetch_custom_fields('ipaddresses');
+
 ?>
 
 <!-- header -->
@@ -195,92 +194,90 @@ $custom_fields = $Tools->fetch_custom_fields('ipaddresses');
 
 	<!-- Custom fields -->
 	<?php
-	if(sizeof(@$custom_fields) > 0) {
-	    # count datepickers
-	    $timeP = 0;
 
-	    # all my fields
-	    foreach($custom_fields as $myField) {
-	        # replace spaces with |
-	        $myField['nameNew'] = str_replace(" ", "___", $myField['name']);
+    # count datepickers
+    $timeP = 0;
 
-	        # required
-	        if($myField['Null']=="NO")  { $required = "*"; }
-	        else                        { $required = ""; }
+    # all my fields
+    foreach($Tools->fetch_custom_fields('ipaddresses') as $cf) {
 
-	        print '<tr>'. "\n";
-	        print ' <td>'. $myField['name'] .' '.$required.'</td>'. "\n";
-	        print ' <td>'. "\n";
+        # required
+        if(!$cf->null)  { $required = "*"; }
+        else                        { $required = ""; }
 
-	        //set type
-		    if(substr($myField['type'], 0,3) == "set" || substr($myField['type'], 0,4) == "enum") {
-				//parse values
-				$tmp = substr($myField['type'], 0,3)=="set" ? explode(",", str_replace(array("set(", ")", "'"), "", $myField['type'])) : explode(",", str_replace(array("enum(", ")", "'"), "", $myField['type']));
-	            //null
-	            if($myField['Null']!="NO") { array_unshift($tmp, ""); }
+        print '<tr>'. "\n";
+        print ' <td>'. $cf->name .' '.$required.'</td>'. "\n";
+        print ' <td>'. "\n";
 
-	            print "<select name='$myField[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$myField[Comment]'>";
-	            foreach($tmp as $v) {
-	                if($v==@$details[$myField['name']])  { print "<option value='$v' selected='selected'>$v</option>"; }
-	                else                                 { print "<option value='$v'>$v</option>"; }
-	            }
-	            print "</select>";
-	        }
-	        //date and time picker
-	        elseif($myField['type'] == "date" || $myField['type'] == "datetime") {
-	            // just for first
-	            if($timeP==0) {
-                    
-                    $Components->css('bootstrap.datetimepicker');
-                    $Components->js('bootstrap.datetimepicker');
+        //set type
+	    if(substr($cf->type, 0,3) == "set" || substr($cf->type, 0,4) == "enum") {
+			//parse values
+			$tmp = substr($cf->type, 0,3)=="set" ? explode(",", str_replace(array("set(", ")", "'"), "", $cf->type)) : explode(",", str_replace(array("enum(", ")", "'"), "", $cf->type));
+            //null
+            if($cf->null) { array_unshift($tmp, ""); }
 
-	                print '<script type="text/javascript">';
-	                print '$(document).ready(function() {';
-	                //date only
-	                print ' $(".datepicker").datetimepicker( {pickDate: true, pickTime: false, pickSeconds: false });';
-	                //date + time
-	                print ' $(".datetimepicker").datetimepicker( { pickDate: true, pickTime: true } );';
+            print "<select name='$cf->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$cf->display_name'>";
+            foreach($tmp as $v) {
+                if($v==@$details[$cf->name])  { print "<option value='$v' selected='selected'>$v</option>"; }
+                else                                 { print "<option value='$v'>$v</option>"; }
+            }
+            print "</select>";
+        }
+        //date and time picker
+        elseif($cf->type == "date" || $cf->type == "datetime") {
+            // just for first
+            if($timeP==0) {
+                
+                $Components->css('bootstrap.datetimepicker');
+                $Components->js('bootstrap.datetimepicker');
 
-	                print '})';
-	                print '</script>';
-	            }
-	            $timeP++;
+                print '<script type="text/javascript">';
+                print '$(document).ready(function() {';
+                //date only
+                print ' $(".datepicker").datetimepicker( {pickDate: true, pickTime: false, pickSeconds: false });';
+                //date + time
+                print ' $(".datetimepicker").datetimepicker( { pickDate: true, pickTime: true } );';
 
-	            //set size
-	            if($myField['type'] == "date")  { $size = 10; $class='datepicker';      $format = "yyyy-MM-dd"; }
-	            else                            { $size = 19; $class='datetimepicker';  $format = "yyyy-MM-dd"; }
+                print '})';
+                print '</script>';
+            }
+            $timeP++;
 
-	            //field
-	            if(!isset($details[$myField['name']]))  { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $myField['nameNew'] .'" maxlength="'.$size.'" rel="tooltip" data-placement="right" title="'.$myField['Comment'].'">'. "\n"; }
-	            else                                    { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $myField['nameNew'] .'" maxlength="'.$size.'" value="'. @$details[$myField['name']]. '" rel="tooltip" data-placement="right" title="'.$myField['Comment'].'">'. "\n"; }
-	        }
-	        //boolean
-	        elseif($myField['type'] == "tinyint(1)") {
-	            print "<select name='$myField[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$myField[Comment]'>";
-	            $tmp = array(0=>"No",1=>"Yes");
-	            //null
-	            if($myField['Null']!="NO") { $tmp[2] = ""; }
+            //set size
+            if($cf->type == "date")  { $size = 10; $class='datepicker';      $format = "yyyy-MM-dd"; }
+            else                            { $size = 19; $class='datetimepicker';  $format = "yyyy-MM-dd"; }
 
-	            foreach($tmp as $k=>$v) {
-	                if(strlen(@$details[$myField['name']])==0 && $k==2)  { print "<option value='$k' selected='selected'>"._($v)."</option>"; }
-	                elseif($k==@$details[$myField['name']])              { print "<option value='$k' selected='selected'>"._($v)."</option>"; }
-	                else                                                 { print "<option value='$k'>"._($v)."</option>"; }
-	            }
-	            print "</select>";
-	        }
-	        //text
-	        elseif($myField['type'] == "text") {
-	            print ' <textarea class="form-control input-sm" name="'. $myField['nameNew'] .'" placeholder="'. $myField['name'] .'" rowspan=3 rel="tooltip" data-placement="right" title="'.$myField['Comment'].'">'. $details[$myField['name']]. '</textarea>'. "\n";
-	        }
-	        //default - input field
-	        else {
-	            print ' <input type="text" class="ip_addr form-control input-sm" name="'. $myField['nameNew'] .'" placeholder="'. $myField['name'] .'" value="'. @$details[$myField['name']]. '" size="30" rel="tooltip" data-placement="right" title="'.$myField['Comment'].'">'. "\n";
-	        }
+            //field
+            if(!isset($details[$cf->name]))  { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $cf->name .'" maxlength="'.$size.'" rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. "\n"; }
+            else                                    { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $cf->name .'" maxlength="'.$size.'" value="'. @$details[$cf->name]. '" rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. "\n"; }
+        }
+        //boolean
+        elseif($cf->type == "tinyint(1)") {
+            print "<select name='$cf->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$cf->display_name'>";
+            $tmp = array(0=>"No",1=>"Yes");
+            //null
+            if($cf->null) { $tmp[2] = ""; }
 
-	        print ' </td>'. "\n";
-	        print '</tr>'. "\n";
-	    }
-	}
+            foreach($tmp as $k=>$v) {
+                if(strlen(@$details[$cf->name])==0 && $k==2)  { print "<option value='$k' selected='selected'>"._($v)."</option>"; }
+                elseif($k==@$details[$cf->name])              { print "<option value='$k' selected='selected'>"._($v)."</option>"; }
+                else                                                 { print "<option value='$k'>"._($v)."</option>"; }
+            }
+            print "</select>";
+        }
+        //text
+        elseif($cf->type == "text") {
+            print ' <textarea class="form-control input-sm" name="'. $cf->name .'" placeholder="'. $cf->name .'" rowspan=3 rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. $details[$cf->name]. '</textarea>'. "\n";
+        }
+        //default - input field
+        else {
+            print ' <input type="text" class="ip_addr form-control input-sm" name="'. $cf->name .'" placeholder="'. $cf->name .'" value="'. @$details[$cf->name]. '" size="30" rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. "\n";
+        }
+
+        print ' </td>'. "\n";
+        print '</tr>'. "\n";
+    }
+
 	?>
 
 	<!-- divider -->

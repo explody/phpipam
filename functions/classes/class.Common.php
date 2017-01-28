@@ -163,6 +163,27 @@ class Common_functions  {
      }
      
      /**
+      * Take a simple array of objects and return a count where a property matches a given value
+      * 
+      * @access public
+      * @param array $objects An array of objects
+      * @param string $prop object property to check
+      * @param mixed $val value to compare with $prop
+      * @return int 
+      */
+      public static function count_where($objects, $prop, $val) {
+          $cnt = 0;
+          foreach($objects as $obj) {
+              if (property_exists($obj, $prop)) {
+                  if ($obj->$prop == $val) {
+                      $cnt++;
+                  }
+              }
+          }
+          return $cnt;
+      }
+     
+     /**
       * Take a simple array of objects and return a 2D array, indexed on a given property
       * 
       * @access public
@@ -662,7 +683,6 @@ class Common_functions  {
     public function initialize_pear_net_IPv4 () {
         //initialize NET object
         if(!is_object($this->Net_IPv4)) {
-            require_once( FUNCTIONS . '/PEAR/Net/IPv4.php' );
             //initialize object
             $this->Net_IPv4 = new Net_IPv4();
         }
@@ -677,7 +697,6 @@ class Common_functions  {
     public function initialize_pear_net_IPv6 () {
         //initialize NET object
         if(!is_object($this->Net_IPv6)) {
-            require_once( FUNCTIONS . '/PEAR/Net/IPv6.php' );
             //initialize object
             $this->Net_IPv6 = new Net_IPv6();
         }
@@ -692,7 +711,6 @@ class Common_functions  {
     public function initialize_pear_net_DNS2 () {
         //initialize NET object
         if(!is_object($this->DNS2)) {
-            require_once( FUNCTIONS . '/PEAR/Net/DNS2.php' );
             //initialize object
             $this->DNS2 = new Net_DNS2_Resolver();
         }
@@ -1327,101 +1345,6 @@ class Common_functions  {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Creates form input field for custom fields.
-     *
-     * @access public
-     * @param mixed $field
-     * @param mixed $object
-     * @param mixed $action
-     * @param mixed $timepicker_index
-     * @return array
-     */
-    public function create_custom_field_input ($field, $object, $action, $timepicker_index) {
-        # make sure it is array
-        $field = (array) $field;
-        $object = (object) $object;
-        $html = array();
-
-        # replace spaces with |
-        $field['nameNew'] = str_replace(" ", "___", $field['name']);
-
-        # required
-        $required = $field['Null']=="NO" ? "*" : "";
-
-        # set default value if adding new object
-        if ($action=="add")	{ $object->{$field['name']} = $field['Default']; }
-
-
-        //set, enum
-        if(substr($field['type'], 0,3) == "set" || substr($field['type'], 0,4) == "enum") {
-            //parse values
-            $tmp = substr($field['type'], 0,3)=="set" ? explode(",", str_replace(array("set(", ")", "'"), "", $field['type'])) : explode(",", str_replace(array("enum(", ")", "'"), "", $field['type']));
-            //null
-            if($field['Null']!="NO") { array_unshift($tmp, ""); }
-
-            $html[] = "<select name='$field[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
-            foreach($tmp as $v) {
-            $html[] = $v==$object->{$field['name']} ? "<option value='$v' selected='selected'>$v</option>" : "<option value='$v'>$v</option>";
-            }
-            $html[] = "</select>";
-        }
-        //date and time picker
-        elseif($field['type'] == "date" || $field['type'] == "datetime") {
-            // just for first
-            if($timepicker_index==0) {
-                $html[] =  '<link rel="stylesheet" type="text/css" href="' . MEDIA . '/css/bootstrap.datetimepicker.css">';
-                $html[] =  '<script type="text/javascript" src="' . MEDIA . '/js/bootstrap.datetimepicker.js"></script>';
-                $html[] =  '<script type="text/javascript">';
-                $html[] =  '$(document).ready(function() {';
-                //date only
-                $html[] =  '	$(".datepicker").datetimepicker( {pickDate: true, pickTime: false, pickSeconds: false });';
-                //date + time
-                $html[] =  '	$(".datetimepicker").datetimepicker( { pickDate: true, pickTime: true } );';
-                $html[] =  '})';
-                $html[] =  '</script>';
-            }
-            $timepicker_index++;
-
-            //set size
-            if($field['type'] == "date")	{ $size = 10; $class='datepicker';		$format = "yyyy-MM-dd"; }
-            else							{ $size = 19; $class='datetimepicker';	$format = "yyyy-MM-dd"; }
-
-            //field
-            if(!isset($object->{$field['name']}))	{ $html[] = ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'] .'" maxlength="'.$size.'" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
-            else								    { $html[] = ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'] .'" maxlength="'.$size.'" value="'. $object->{$field['name']}. '" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
-        }
-        //boolean
-        elseif($field['type'] == "tinyint(1)") {
-            $html[] =  "<select name='$field[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
-            $tmp = array(0=>"No",1=>"Yes");
-            //null
-            if($field['Null']!="NO") { $tmp[2] = ""; }
-
-            foreach($tmp as $k=>$v) {
-                if(strlen($object->{$field['name']})==0 && $k==2)	{ $html[] = "<option value='$k' selected='selected'>"._($v)."</option>"; }
-                elseif($k==$object->{$field['name']})				{ $html[] = "<option value='$k' selected='selected'>"._($v)."</option>"; }
-                else											    { $html[] = "<option value='$k'>"._($v)."</option>"; }
-            }
-            $html[] = "</select>";
-        }
-        //text
-        elseif($field['type'] == "text") {
-            $html[] = ' <textarea class="form-control input-sm" name="'. $field['nameNew'] .'" placeholder="'. $field['name'] .'" rowspan=3 rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. $object->{$field['name']}. '</textarea>'. "\n";
-        }
-        //default - input field
-        else {
-            $html[] = ' <input type="text" class="ip_addr form-control input-sm" name="'. $field['nameNew'] .'" placeholder="'. $field['name'] .'" value="'. $object->{$field['name']}. '" size="30" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n";
-        }
-
-        # result
-        return array(
-            "required" => $required,
-            "field" => implode("\n", $html),
-            "timepicker_index" => $timepicker_index
-        );
     }
 
     /**

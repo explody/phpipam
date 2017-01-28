@@ -127,7 +127,9 @@ $delete = $_POST['action']=="delete" ? "disabled" : "";
             <?php 
             $all_groups	= $Admin->fetch_all_objects ("userGroups", "g_id"); 
             foreach ($all_groups as $g) {
-                $checked = in_array($g->g_id, $method_settings->params->assign_groups) ? 'checked' : '';
+                if (property_exists($method_settings->params, 'assign_groups')) {
+                    $checked = in_array($g->g_id, $method_settings->params->assign_groups) ? 'checked' : '';
+                }
                 print "<input type='checkbox' name='assign_groups[]' value='$g->g_id' $checked>&nbsp;$g->g_name<br />";
             }
             ?>

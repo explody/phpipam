@@ -28,10 +28,9 @@ if ($devices!==false) {
 
 //get all custom fields!
 # fetch custom fields
-$myFields = $Tools->fetch_custom_fields('ipaddresses');
-$myFieldsSize = sizeof($myFields);
+$cfs = $Tools->fetch_custom_fields('ipaddresses');
 
-$colSize = 8 + $myFieldsSize;
+$colSize = 8 + sizeof($cfs);
 
 //formatting headers
 $format_header = $workbook->addFormat();
@@ -111,11 +110,9 @@ foreach ($sections as $section) {
 			$worksheet->write($lineCount, 8, _('note' ),$format_title);
 			$m = 9;
 			//custom
-			if(sizeof($myFields) > 0) {
-				foreach($myFields as $myField) {
-					$worksheet->write($lineCount, $m, $myField['name'] ,$format_title);
-					$m++;
-				}
+			foreach($cfs as $cf) {
+				$worksheet->write($lineCount, $m, $cf->name ,$format_title);
+				$m++;
 			}
 
 			$lineCount++;
@@ -144,11 +141,10 @@ foreach ($sections as $section) {
 				$worksheet->write($lineCount, 8, $ip['note']);
 				//custom
 				$m = 9;
-				if(sizeof($myFields) > 0) {
-					foreach($myFields as $myField) {
-						$worksheet->write($lineCount, $m, $ip[$myField['name']]);
-						$m++;
-					}
+
+				foreach($cfs as $cf) {
+					$worksheet->write($lineCount, $m, $ip[$cf->name]);
+					$m++;
 				}
 
 				$lineCount++;

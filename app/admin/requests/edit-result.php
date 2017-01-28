@@ -11,11 +11,8 @@ $User->csrf_validate("requests", $_POST['csrf_cookie'], $Result);
 if($Subnets->check_permission($User->user, $_POST['subnetId']) != 3)	{ $Result->show("danger", _('You do not have permissions to process this request')."!", true); }
 
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('ipaddresses');
-if(sizeof($custom) > 0) {
-	foreach($custom as $myField) {
-		if(isset($_POST[$myField['name']])) { $_POST[$myField['name']] = $_POST[$myField['name']];}
-	}
+foreach($Tools->fetch_custom_fields('ipaddresses') as $cf) {
+	if(isset($_POST[$cf->name])) { $_POST[$cf->name] = $_POST[$cf->name];}
 }
 
 # fetch subnet

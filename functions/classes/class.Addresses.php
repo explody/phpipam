@@ -383,8 +383,8 @@ class Addresses extends Common_functions {
             $insert['location'] = $address['location_item'];
         }
 		# custom fields, append to array
-		foreach($this->set_custom_fields() as $c) {
-			$insert[$c['name']] = strlen(@$address[$c['name']])>0 ? @$address[$c['name']] : null;
+		foreach($this->set_custom_fields() as $cf) {
+			$insert[$cf->name] = strlen(@$address[$cf->name])>0 ? @$address[$cf->name] : null;
 		}
 
 		# null empty values
@@ -452,8 +452,8 @@ class Addresses extends Common_functions {
             $insert['location'] = $address['location_item'];
         }
 		# custom fields, append to array
-		foreach($this->set_custom_fields() as $c) {
-			$insert[$c['name']] = strlen(@$address[$c['name']])>0 ? @$address[$c['name']] : null;
+		foreach($this->set_custom_fields() as $cf) {
+			$insert[$cf->name] = strlen(@$address[$cf->name])>0 ? @$address[$cf->name] : null;
 		}
 
 		# set primary key for update

@@ -23,8 +23,6 @@ $pconf = [
     ]
 ];
 
-
-print_r($c->db_defaults);
 // It's a bit repetitive to load individual env configs here after 
 // using IpamConfig. But, the frequency of running here is low and 
 // the performance hit is trivial at worst.

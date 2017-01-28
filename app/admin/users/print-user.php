@@ -17,8 +17,7 @@ if($user===false)		{ $Result->show("danger", _("Invalid ID"), true); }
 $language 	  = $Admin->fetch_object("lang", "l_id", $user->lang);
 # check users auth method
 $auth_details = $Admin->fetch_object("usersAuthMethod", "id", $user->authMethod);
-# fetch custom fields
-$custom_fields = $Tools->fetch_custom_fields('users');
+
 ?>
 
 <!-- display existing users -->
@@ -172,28 +171,28 @@ $custom_fields = $Tools->fetch_custom_fields('users');
 
 <?php
 # custom subnet fields
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $key=>$field) {
-		$user->{$key} = str_replace("\n", "<br>",$user->{$key});
-		print "<tr>";
-		print "	<td>$key</td>";
-		print "	<td>";
-		//no length
-		if(strlen($user->{$key})==0) {
-			print "/";
-		}
-		//booleans
-		elseif($field['type']=="tinyint(1)")	{
-			if($user->{$key} == "0")		{ print _("No"); }
-			elseif($user->{$key} == "1")	{ print _("Yes"); }
-		}
-		else {
-			print $user->{$key};
-		}
-		print "	</td>";
-		print "</tr>";
-		}
+
+foreach($Tools->fetch_custom_fields('users') as $cf) {
+	$user->{$cf->name} = str_replace("\n", "<br>",$user->{$cf->name});
+	print "<tr>";
+	print "	<td>$cf->name</td>";
+	print "	<td>";
+	//no length
+	if(strlen($user->{$cf->name})==0) {
+		print "/";
+	}
+	//booleans
+	elseif($cf->type == "boolean")	{
+		if($user->{$cf->name} == "0")		{ print _("No"); }
+		elseif($user->{$cf->name} == "1")	{ print _("Yes"); }
+	}
+	else {
+		print $user->{$cf->name};
+	}
+	print "	</td>";
+	print "</tr>";
 }
+
 ?>
 
 

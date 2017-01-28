@@ -25,8 +25,8 @@ $custom_tables = array( "ipaddresses"=>"IP address",
 foreach ($custom_tables as $k=>$f) {
     $custom_fields_numeric[$k]        = $Tools->fetch_custom_fields($k);
     $custom_fields[$k]                = $Tools::index_array($custom_fields_numeric[$k], 'name');
-    $custom_fields[$k]['title']    = "Custom $f fields";
-    $custom_fields[$k]['tooltip']    = "Add new custom $f field";
+    $custom_fields[$k]['title']       = "Custom $f fields";
+    $custom_fields[$k]['tooltip']     = "Add new custom $f field";
 }
 ?>
 

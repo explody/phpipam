@@ -13,7 +13,7 @@ $vlan = (array) $vlan;
 if(!$vlan) { $Result->show("danger", _('Invalid VLAN id'),true); }
 
 # get custom VLAN fields
-$cfields = $Tools->fetch_custom_fields ('vlans');
+$cfs = $Tools->fetch_custom_fields ('vlans');
 ?>
 
 <!-- content print! -->
@@ -48,17 +48,17 @@ $cfields = $Tools->fetch_custom_fields ('vlans');
 
 	<?php
 	# print custom subnet fields if any
-	if(sizeof($cfields) > 0) {
+	if(sizeof($cfs) > 0) {
 		// divider
 		print "<tr><td><hr></td><td></td></tr>";
 		// fields
-		foreach($cfields as $key=>$field) {
-			$vlan[$key] = str_replace("\n", "<br>",$vlan[$key]);
+		foreach($cfields as $cf) {
+			$vlan[$cf->name] = str_replace("\n", "<br>",$vlan[$cf->name]);
 			// create links
-			$vlan[$key] = $Result->create_links($vlan[$key]);
+			$vlan[$cf->name] = $Result->create_links($vlan[$cf->name]);
 			print "<tr>";
-			print "	<th>$key</th>";
-			print "	<td style='vertical-align:top;align:left;'>$vlan[$key]</td>";
+			print "	<th>$cf->name</th>";
+			print "	<td style='vertical-align:top;align:left;'>" . $vlan[$cf->name] . "</td>";
 			print "</tr>";
 		}
 		// divider

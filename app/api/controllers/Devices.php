@@ -158,10 +158,10 @@ class Devices_controller extends Common_api_functions
                     $base_query = "SELECT * from devices where ";
                     
                     # Search all custom fields
-                    $custom_fields = array_keys($this->Tools->fetch_custom_fields('devices'));
+                    $cfs = array_keys($this->Tools->fetch_custom_fields('devices'));
                     
                     # Merge default fields with custom fields
-                    $search_fields = array_merge($custom_fields, $this->default_search_fields);
+                    $search_fields = array_merge($cfs, $this->default_search_fields);
                     
                     # Using the search fields, build a string to query parameters chained together with " or "
                     $search_term = $this->_params->id2;

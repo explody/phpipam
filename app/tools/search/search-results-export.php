@@ -131,11 +131,11 @@ if(sizeof($result_addresses)>0) {
 	$worksheet->write($lineCount, $x, _('note') ,$format_title);			$x++;
 	}else { $colSpan--; }
 	//custom
-	if(sizeof($custom_address_fields) > 0) {
-	foreach($custom_address_fields as $myField) {
-	$worksheet->write($lineCount, $x, $myField['name'], $format_title);	$x++;
+
+	foreach($custom_address_fields as $cf) {
+       $worksheet->write($lineCount, $x, $cf->name, $format_title);	$x++;
 	}
-	}
+
 
 	//new line
 	$lineCount++;
@@ -222,11 +222,10 @@ if(sizeof($result_addresses)>0) {
 			}
 
 			#custom
-			if(sizeof($custom_address_fields) > 0) {
-				foreach($custom_address_fields as $myField) {
-					$worksheet->write($lineCount, $x, $ip[$myField['name']]); $x++;
-				}
+			foreach($custom_address_fields as $cf) {
+				$worksheet->write($lineCount, $x, $ip[$cf->name]); $x++;
 			}
+
 
 			//new line
 			$lineCount++;
@@ -254,8 +253,8 @@ if(sizeof($result_subnets)>0) {
 	$worksheet->write($lineCount, 6, _('IP requests') ,$format_title);
 	$c=7;
 	if(sizeof($custom_subnet_fields) > 0) {
-		foreach($custom_subnet_fields as $field) {
-			$worksheet->write($lineCount, $c, $field['name'], $format_title);
+		foreach($custom_subnet_fields as $cf) {
+			$worksheet->write($lineCount, $c, $cf->name, $format_title);
 			$c++;
 		}
 	}
@@ -305,8 +304,8 @@ if(sizeof($result_subnets)>0) {
 		//custom
 		$c=7;
 		if(sizeof($custom_subnet_fields) > 0) {
-			foreach($custom_subnet_fields as $field) {
-				$worksheet->write($lineCount, $c, $line[$field['name']]);
+			foreach($custom_subnet_fields as $cf) {
+				$worksheet->write($lineCount, $c, $line[$cf->name]);
 				$c++;
 			}
 		}
@@ -331,8 +330,8 @@ if(sizeof($result_vlans)>0) {
 	$worksheet->write($lineCount, 2, _('Description') ,$format_title);
 	$c=3;
 	if(sizeof($custom_vlan_fields) > 0) {
-		foreach($custom_vlan_fields as $field) {
-			$worksheet->write($lineCount, $c, $field['name'], $format_title);
+		foreach($custom_vlan_fields as $cf) {
+			$worksheet->write($lineCount, $c, $cf->name, $format_title);
 			$c++;
 		}
 	}
@@ -351,8 +350,8 @@ if(sizeof($result_vlans)>0) {
 		//custom
 		$c=3;
 		if(sizeof($custom_vlan_fields) > 0) {
-			foreach($custom_subnet_fields as $field) {
-				$worksheet->write($lineCount, $c, $line[$field['name']]);
+			foreach($custom_subnet_fields as $cf) {
+				$worksheet->write($lineCount, $c, $line[$cf->name]);
 				$c++;
 			}
 		}
@@ -379,8 +378,8 @@ if(sizeof($result_vrf)>0) {
 	$worksheet->write($lineCount, 2, _('Description') ,$format_title);
 	$c=3;
 	if(sizeof($custom_vrf_fields) > 0) {
-		foreach($custom_vrf_fields as $field) {
-			$worksheet->write($lineCount, $c, $field['name'], $format_title);
+		foreach($custom_vrf_fields as $cf) {
+			$worksheet->write($lineCount, $c, $cf->name, $format_title);
 			$c++;
 		}
 	}
@@ -399,8 +398,8 @@ if(sizeof($result_vrf)>0) {
 		//custom
 		$c=3;
 		if(sizeof($custom_vrf_fields) > 0) {
-			foreach($custom_vrf_fields as $field) {
-				$worksheet->write($lineCount, $c, $line[$field['name']]);
+			foreach($custom_vrf_fields as $cf) {
+				$worksheet->write($lineCount, $c, $line[$cf->name]);
 				$c++;
 			}
 		}

@@ -9,14 +9,10 @@ $User->check_user_session ();
 if(!is_numeric($_GET['section']))	{ $Result->show("danger", _("Invalid ID"), true); }
 
 # set custom fields
-$custom = $Tools->fetch_custom_fields ("subnets");
-
-# set hidden fields
-$hidden_fields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_fields = is_array($hidden_fields['subnets']) ? $hidden_fields['subnets'] : array();
+$cfs = $Tools->fetch_custom_fields ("subnets");
 
 # set colspan
-$colspan = 8 + sizeof($custom);
+$colspan = 8 + sizeof($csf);
 if($User->settings->enableVRF == 1) { $colspan++; }
 
 # title
@@ -40,21 +36,23 @@ if($permission != 0) {
 		//$section_subnets = $Subnets->fetch_section_subnets($_GET['section']);
 
 		# remove custom fields if all empty! */
-		foreach($custom as $field) {
-			$sizeMyFields[$field['name']] = 0;				// default value
+        $idx = 0;
+		foreach($cfs as $cf) {
+			$sizeMyFields[$cf->name] = 0;				// default value
 			# check against each IP address
 			foreach($section_subnets as $subn) {
-				if(strlen($subn->{$field['name']}) > 0) {
-					$sizeMyFields[$field['name']]++;		// +1
+				if(strlen($subn->{$cf->name}) > 0) {
+					$sizeMyFields[$cf->name]++;		// +1
 				}
 			}
 			# unset if value == 0
-			if($sizeMyFields[$field['name']] == 0) {
-				unset($custom[$field['name']]);
+			if($sizeMyFields[$cf->name] == 0) {
+				unset($cfs[$idx]);
 			}
 			else {
 				$colCount++;								// colspan
 			}
+            $idx++;
 		}
 
 		# collapsed div with details
@@ -72,13 +70,13 @@ if($permission != 0) {
 		if($User->settings->enableIPrequests == 1) {
 			print "	<th class='hidden-xs hidden-sm'>"._('Requests')."</th>";
 		}
-		if(sizeof($custom) > 0) {
-			foreach($custom as $field) {
-				if(!in_array($field['name'], $hidden_fields)) {
-					print "	<th class='hidden-xs hidden-sm'>$field[name]</th>";
-				}
-			}
-		}
+ 
+        foreach($cfs as $cf) {
+            if($cf->visible) {
+                print " <th class='hidden-xs hidden-sm'>$field[name]</th>";
+            }
+        }
+ 
 		print "	<th class='actions' style='width:140px;white-space:nowrap;'></th>";
 		print "</tr>";
 		print "</thead>";
@@ -104,7 +102,7 @@ if($permission != 0) {
 		}
 		else {
 			// print subnets
-			if($Subnets->print_subnets_tools($User->user, $section_subnets, $custom, true, $section['showSupernetOnly'])===false) {
+			if($Subnets->print_subnets_tools($User->user, $section_subnets, $cfs, true, $section['showSupernetOnly'])===false) {
 				print "<tr>";
 				print "	<td colspan='$colspan'><div class='alert alert-info'>"._('No subnets available')."</div></td>";
 				print "</tr>";
@@ -139,7 +137,7 @@ if($permission != 0) {
 					print "</tr>";
 
 					// print subnets
-					if($Subnets->print_subnets_tools($User->user, $slavesubnets, $custom, true, $section['showSupernetOnly'])===false) {
+					if($Subnets->print_subnets_tools($User->user, $slavesubnets, $cfs, true, $section['showSupernetOnly'])===false) {
 						print "<tr>";
 						print "	<td colspan='$colspan'><div class='alert alert-info'>"._('No subnets available')."</div></td>";
 						print "</tr>";

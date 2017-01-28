@@ -20,10 +20,7 @@ $address = (array) $Addresses-> fetch_address(null, $_GET['ipaddrid']);
 $subnet  = (array) $Subnets->fetch_subnet(null, $address['subnetId']);
 
 # fetch all custom fields
-$custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
-# set hidden custom fields
-$hidden_cfields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_cfields = is_array($hidden_cfields['ipaddresses']) ? $hidden_cfields['ipaddresses'] : array();
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
 
 # set selected address fields array
 $selected_ip_fields = $User->settings->IPfilter;

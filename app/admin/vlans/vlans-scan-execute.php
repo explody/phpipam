@@ -1,5 +1,6 @@
 <?php
-
+// FIXME: vlan and vrf scans are surely broken but cannot test because the MIBs don't work
+$Result->show("danger", _("This is broken right now"), true);
 /*
  * Discover new vlans with snmp
  *******************************/
@@ -84,12 +85,12 @@ elseif(sizeof($new_vlans)==0) 	                     { $Result->show("info", _("N
 # ok
 else {
     // fetch custom fields and check for required
-    $required_fields = $Tools->fetch_custom_fields ('vlans');
-    if($required_fields!==false) {
-        foreach ($required_fields as $k=>$f) {
-            if ($f['Null']!="NO") {
-                unset($required_fields[$k]);
-            }
+    $cfs = $Tools->fetch_custom_fields ('vrf');
+
+    $required_fields = [];
+    foreach ($cfs as $cf) {
+        if ($cfs->required) {
+            $required_fields[] = $cf;
         }
     }
 
@@ -107,11 +108,10 @@ else {
 	print "	<th>"._("Name")."</th>";
 	print "	<th>"._("Description")."</th>";
     // custom
-	if (isset($required_fields)) {
-		foreach ($required_fields as $field) {
-            print "<th>"._($field['name'])."</th>";
-		}
-    }
+	foreach ($required_fields as $rf) {
+        print "<th>"._($rf->name)."</th>";
+	}
+
 	print "	<th></th>";
 	print "</tr>";
 

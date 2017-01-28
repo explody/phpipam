@@ -18,7 +18,7 @@ $subnet!==false ? : $Result->show("danger", _("Invalid ID"), true, true);
 if ($_POST['type']!="update-icmp" && $subnet->isFull==1)                { $Result->show("warning", _("Cannot scan as subnet is market as used"), true, true); }
 
 # get custom fields
-$custom_address_fields = $Tools->fetch_custom_fields('ipaddresses');
+$cfs = $Tools->fetch_custom_fields('ipaddresses');
 ?>
 
 <!-- header -->
@@ -30,14 +30,12 @@ $custom_address_fields = $Tools->fetch_custom_fields('ipaddresses');
 
 	<?php
 	# get custom fields
-	if(sizeof($custom_address_fields) > 0) {
-		$custFields = " | ";
-		foreach($custom_address_fields as $myField) {
-			$custFields .= "$myField[name] | ";
-		}
-		# remove last |
-		$custFields = substr($custFields, 0,-2);
+	$custFields = " | ";
+	foreach($cfs as $cf) {
+		$custFields .= "$cf->name | ";
 	}
+	# remove last |
+	$custFields = substr($custFields, 0,-2);
 	?>
 
 	<!-- notes -->

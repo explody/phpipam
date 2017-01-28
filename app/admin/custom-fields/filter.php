@@ -15,7 +15,7 @@ $filters = json_decode($User->settings->hiddenCustomFields, true);
 isset($filters[$_POST['table']]) ? : $filters[$_POST['table']] = array();
 
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields($_POST['table']);
+$cfs = $Tools->fetch_custom_fields($_POST['table']);
 ?>
 
 <script type="text/javascript">
@@ -44,22 +44,22 @@ $(".input-switch").bootstrapSwitch(switch_options);
 	<table id="editCustomFields" class="table table-noborder table-condensed">
 
 	<?php
-	foreach($custom as $c) {
+	foreach($cfs as $cf) {
 		print "<tr>";
 		# select
 		print "	<td style='width:20px;'>";
         // When there are multiple inputs with the same name, PHP will use the last one set.  With dual inputs for all of these,
         // the initial value is in the hidden input and any user changes will overwrite that with the input 
         // from the checkbox, which gives us visible/hidden state for all fields when the user hits submit
-        print "<input type='hidden' name='visible[$c->id]' value='off'>";
-		if($c->visible) { 
-            print "<input type='checkbox' class='input-switch' name='visible[$c->id]'>"; 
+        print "<input type='hidden' name='visible[$cf->id]' value='off'>";
+		if($cf->visible) { 
+            print "<input type='checkbox' class='input-switch' name='visible[$cf->id]'>"; 
         } else { 
-            print "<input type='checkbox' class='input-switch' name='visible[$c->id]' checked>"; 
+            print "<input type='checkbox' class='input-switch' name='visible[$cf->id]' checked>"; 
         }
 		print "	</td>";
 		# name and comment
-		print "	<td>".$c->name." (".$c->display_name.")</td>";
+		print "	<td>".$cf->name." (".$cf->display_name.")</td>";
 		print "</tr>";
 	}
 

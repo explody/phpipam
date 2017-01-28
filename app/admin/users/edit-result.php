@@ -52,24 +52,21 @@ if ($_POST['action']=="add") {
 if($_POST['action']=="delete" && $_POST['username']=="admin") 			{ $Result->show("danger", _("Admin user cannot be deleted"), true); }
 
 # custom fields check
-$myFields = $Tools->fetch_custom_fields('users');
-if(sizeof($myFields) > 0) {
-	foreach($myFields as $myField) {
-		# replace possible ___ back to spaces!
-		$myField['nameTest']      = str_replace(" ", "___", $myField['name']);
+$cfs = $Tools->fetch_custom_fields('users');
+foreach($cfs as $cf) {
 
-		if(isset($_POST[$myField['nameTest']])) { $_POST[$myField['name']] = $_POST[$myField['nameTest']];}
+	if(isset($_POST[$cf->name])) { $_POST[$cf->name] = $_POST[$cf->name];}
 
-		//booleans can be only 0 and 1!
-		if($myField['type']=="tinyint(1)") {
-			if($_POST[$myField['name']]>1) {
-				$_POST[$myField['name']] = "";
-			}
+	//booleans can be only 0 and 1!
+	if($cf->type=="boolean") {
+		if($_POST[$cf->name]>1) {
+			$_POST[$cf->name] = "";
 		}
-		//not null!
-		if($myField['Null']=="NO" && strlen($_POST[$myField['name']])==0) { $Result->show("danger", '"'.$myField['name'].'" can not be empty!', true); }
 	}
+	//not null!
+	if(!$cf->null && strlen($_POST[$cf->name])==0) { $Result->show("danger", '"'.$cf->name.'" can not be empty!', true); }
 }
+
 
 
 /* update */
@@ -88,15 +85,12 @@ $values = array("id"=>@$_POST['userId'],
 				"pstn"=>$_POST['pstn'],
 				"pdns"=>$_POST['pdns']
 				);
-# custom fields
-if (sizeof($myFields)>0) {
-    foreach($myFields as $myField) {
-		# replace possible ___ back to spaces!
-		$myField['nameTest']      = str_replace(" ", "___", $myField['name']);
 
-		if(isset($_POST[$myField['nameTest']])) { $values[$myField['name']] = $_POST[$myField['nameTest']];}
-    }
+# custom fields
+foreach($cfs as $cf) {
+	if(isset($_POST[$cf->name])) { $values[$cf->name] = $_POST[$cf->name];}
 }
+
 # update pass ?
 if(strlen(@$_POST['password1'])>0 || (@$_POST['action']=="add" && $auth_method->type=="local")) {
 	$values['password'] = $_POST['password1'];

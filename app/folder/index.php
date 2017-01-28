@@ -11,7 +11,7 @@ if(!is_numeric($_GET['section']))	{ $Result->show("danger", _("Invalid ID"), tru
 $folderId = $_GET['subnetId'];
 
 # get custom subnet fields
-$cfields = $Tools->fetch_custom_fields ('subnets');
+$cfs = $Tools->fetch_custom_fields ('subnets');
 
 # fetch subnet details!
 $folder	= $Subnets->fetch_subnet ("id", $folderId);

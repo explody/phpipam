@@ -10,11 +10,8 @@ $User->check_user_session();
 # fetch all APIs
 $users = $Admin->fetch_all_objects("users", "username");
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('users');
+$cfs = $Tools->fetch_custom_fields('users');
 
-/* check customfields */
-$ffields = json_decode($User->settings->hiddenCustomFields, true);
-$ffields = is_array(@$ffields['users']) ? $ffields['users'] : array();
 ?>
 
 <!-- display existing users -->
@@ -47,13 +44,13 @@ $ffields = is_array(@$ffields['users']) ? $ffields['users'] : array();
     <th><?php print _('Groups'); ?></th>
     <th><?php print _('Last login'); ?></th>
 	<?php
-	if(sizeof(@$custom) > 0) {
-		foreach($custom as $field) {
-			if(!in_array($field['name'], $ffields)) {
-				print "<th>$field[name]</th>";
-			}
+
+	foreach($cfs as $cf) {
+		if($cf->visible) {
+			print "<th>$field[name]</th>";
 		}
 	}
+
 	?>
     <th class="actions"></th>
 </tr>
@@ -165,28 +162,28 @@ foreach ($users as $user) {
 	print "</td>";
 
 	# custom
-	if(sizeof($custom) > 0) {
-		foreach($custom as $field) {
-			if(!in_array($field['name'], $ffields)) {
-				print "<td>";
-				//booleans
-				if($field['type']=="tinyint(1)")	{
-					if($user[$field['name']] == "0")		{ print _("No"); }
-					elseif($user[$field['name']] == "1")	{ print _("Yes"); }
-				}
-				//text
-				elseif($field['type']=="text") {
-					if(strlen($user[$field['name']])>0)		{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $user[$field['name']])."'>"; }
-					else									{ print ""; }
-				}
-				else {
-					print $user[$field['name']];
-
-				}
-				print "</td>";
+	
+	foreach($cfs as $cf) {
+		if($cf->visible) {
+			print "<td>";
+			//booleans
+			if($cf->type == "boolean")	{
+				if($user[$cf->name] == "0")		{ print _("No"); }
+				elseif($user[$cf->name] == "1")	{ print _("Yes"); }
 			}
+			//text
+			elseif($cf->type == "text") {
+				if(strlen($user[$cf->name])>0)		{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $user[$cf->name])."'>"; }
+				else									{ print ""; }
+			}
+			else {
+				print $user[$cf->name];
+
+			}
+			print "</td>";
 		}
 	}
+	
 
 	# edit, delete
 	print "	<td class='actions'>";

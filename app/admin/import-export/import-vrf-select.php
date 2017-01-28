@@ -25,6 +25,7 @@ foreach($expfields as $std_field) {
 	$field = $Tools->fetch_full_field_definition("vrf",$std_field);
 	$field = (array) $field;
 
+    # TODO: $res is not used anywhere
 	$res[$field['Field']]['name'] 	 = $field['Field'];
 	$res[$field['Field']]['type'] 	 = $field['Type'];
 	$res[$field['Field']]['Comment'] = $field['Comment'];
@@ -37,15 +38,14 @@ foreach($expfields as $std_field) {
 }
 
 # append the custom fields, if any
-$custom_fields = $Tools->fetch_custom_fields("vrf");
-if(sizeof($custom_fields) > 0) {
-	$res[] = $custom_fields;
-	foreach($custom_fields as $myField) {
-		$tpl_field_names.= "<th>". $myField['name'] ."</th>";
-		$tpl_field_types.= "<td><small>". wordwrap($myField['type'],18,"<br>\n",true) ."</small></td>";
-		$expfields[] = $myField['name'];
-	}
+$cfs = $Tools->fetch_custom_fields("vrf");
+$res[] = $cfs;
+foreach($cfs as $cf) {
+	$tpl_field_names.= "<th>". $cf->name ."</th>";
+	$tpl_field_types.= "<td><small>". wordwrap($cf->type,18,"<br>\n",true) ."</small></td>";
+	$expfields[] = $cf->name;
 }
+
 
 ?>
 

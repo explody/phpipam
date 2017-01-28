@@ -13,7 +13,7 @@ $User->check_user_session();
 
 // validate
 if(!is_numeric($_GET['subnetId'])) {
-    $Result->show("danger", _("Invalid Id"), true);
+    $Result->show("danger", _("Invalid IdX" . $_GET['subnetId']), true);
 }
 else {
     # check that location support isenabled
@@ -25,7 +25,7 @@ else {
         $location = $Tools->fetch_object("locations", "id", $_GET['subnetId']);
 
         // get custom fields
-        $cfields = $Tools->fetch_custom_fields ('locations');
+        $cfs = $Tools->fetch_custom_fields ('locations');
 
         if($location===false) {
              $Result->show("danger", _("Location not found"), false);
@@ -82,18 +82,19 @@ else {
             	print "	<td>$location->description</td>";
             	print "</tr>";
 
+                # TODO: DRY
             	# print custom subnet fields if any
-            	if(sizeof($cfields) > 0) {
+            	if(sizeof($cfs) > 0) {
             		// divider
             		print "<tr><td colspan='2'><hr></td></tr>";
             		// fields
-            		foreach($cfields as $key=>$field) {
-            			$location->{$key} = str_replace("\n", "<br>",$location->{$key});
+            		foreach($cfs as $cf) {
+            			$location->{$cf->name} = str_replace("\n", "<br>",$location->{$cf->name});
             			// create links
-            			$location->{$key} = $Result->create_links($location->{$key});
+            			$location->{$cf->name} = $Result->create_links($location->{$cf->name});
             			print "<tr>";
-            			print "	<th>$key</th>";
-            			print "	<td style='vertical-align:top;align:left;'>".$location->{$key}."</td>";
+            			print "	<th>$cf->name</th>";
+            			print "	<td style='vertical-align:top;align:left;'>".$location->{$cf->name}."</td>";
             			print "</tr>";
             		}
             	}

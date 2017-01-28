@@ -31,19 +31,14 @@ if($all_sections!==false) {
 	$sections_sorted = @$sectionssorted;
 }
 
-# get all custom fields
-$custom_fields = $Tools->fetch_custom_fields('subnets');
+
 # prepare HTML variables
 $custom_fields_names = "";
 $custom_fields_boxes = "";
 
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $myField) {
-		//change spaces to "___" so it can be used as element id
-		$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
-		$custom_fields_names.= "	<th>$myField[name]</th>";
-		$custom_fields_boxes.= "	<td><input type='checkbox' name='$myField[nameTemp]' checked> </td>";
-	}
+foreach($Tools->fetch_custom_fields('subnets') as $cf) {
+	$custom_fields_names.= "	<th>$cf->name</th>";
+	$custom_fields_boxes.= "	<td><input type='checkbox' name='$cf->name' checked> </td>";
 }
 
 ?>

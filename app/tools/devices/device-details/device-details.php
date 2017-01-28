@@ -14,7 +14,7 @@ is_numeric($_GET['id']) ?: $Result->show('danger', _('Invalid ID: '.$_GET['id'])
 $device = (array) $Tools->fetch_object('devices', 'id', $_GET['id']);
 
 // get custom fields
-$custom_fields = $Tools->fetch_custom_fields('devices');
+$cfs = $Tools->fetch_custom_fields('devices');
 
 // title
 echo '<h4>'._('Device details').'</h4>';
@@ -116,26 +116,26 @@ if ($_GET['id'] != 0 && sizeof($device) > 0) {
     echo "	<td colspan='2'><hr></td>";
     echo '</tr>';
 
-    if (sizeof($custom_fields) > 0) {
-        foreach ($custom_fields as $field) {
+    if (sizeof($cfs) > 0) {
+        foreach ($cfs as $cf) {
 
                 // fix for boolean
                 if ($field->type == 'boolean') {
-                    if ($device[$field->name] == '0') {
-                        $device[$field->name] = 'false';
-                    } elseif ($device[$field->name] == '1') {
-                        $device[$field->name] = 'true';
+                    if ($device[$cf->name] == '0') {
+                        $device[$cf->name] = 'false';
+                    } elseif ($device[$cf->name] == '1') {
+                        $device[$cf->name] = 'true';
                     } else {
-                        $device[$field->name] = '';
+                        $device[$cf->name] = '';
                     }
                 }
 
                 // create links
-                $device[$field->name] = $Result->create_links($device[$field->name]);
+                $device[$cf->name] = $Result->create_links($device[$cf->name]);
 
             echo '<tr>';
-            echo '<th>' . ($field->display_name ? $field->display_name : $field->name) . '</th>';
-            echo '<td>'.$device[$field->name].'</d>';
+            echo '<th>' . ($cf->display_name ? $cf->display_name : $cf->name) . '</th>';
+            echo '<td>'.$device[$cf->name].'</d>';
             echo '</tr>';
         }
 

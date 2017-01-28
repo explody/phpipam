@@ -12,10 +12,7 @@ $('body').tooltip({ selector: '[rel=tooltip]' });
 $DNS = new DNS ($Database, $User->settings);
 
 # reset custom fields to ip addresses
-$custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
-# set hidden custom fields
-$hidden_cfields = json_decode($settings->hiddenCustomFields, true);
-$hidden_cfields = is_array($hidden_cfields['ipaddresses']) ? $hidden_cfields['ipaddresses'] : array();
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
 
 # set selected address fields array
 $selected_ip_fields = $settings->IPfilter;
@@ -30,30 +27,33 @@ if($selected_ip_fields_size==1 && strlen($selected_ip_fields[0])==0) { $selected
 $addresses_visual = $addresses;
 
 # set colspan for output
-$colspan['empty']  = $selected_ip_fields_size + sizeof($custom_fields) +4;		//empty colspan
-$colspan['unused'] = $selected_ip_fields_size + sizeof($custom_fields) +3;		//unused colspan
-$colspan['dhcp']   = $selected_ip_fields_size + sizeof($custom_fields);			//dhcp colspan
+$colspan['empty']  = $selected_ip_fields_size + sizeof($cfs) +4;		//empty colspan
+$colspan['unused'] = $selected_ip_fields_size + sizeof($cfs) +3;		//unused colspan
+$colspan['dhcp']   = $selected_ip_fields_size + sizeof($cfs);			//dhcp colspan
 
 # remove custom fields if all are empty!
-foreach($custom_fields as $field) {
-	$sizeMyFields[$field['name']] = 0;				// default value
+# TODO: DRY again
+$idx = 0;
+foreach($cfs as $cf) {
+	$sizeMyFields[$cf->name] = 0;				// default value
 	# check against each IP address
 	if($addresses!==false) {
 		foreach($addresses as $ip) {
 			$ip = (array) $ip;
-			if(strlen($ip[$field['name']]) > 0) {
-				$sizeMyFields[$field['name']]++;		// +1
+			if(strlen($ip[$cf->name]) > 0) {
+				$sizeMyFields[$cf->name]++;		// +1
 			}
 		}
 		# unset if value == 0
-		if($sizeMyFields[$field['name']] == 0) {
-			unset($custom_fields[$field['name']]);
+		if($sizeMyFields[$cf->name] == 0) {
+			unset($cfs[$idx]);
 
 			$colspan['empty']--;
 			$colspan['unused']--;						//unused  span -1
 			$colspan['dhcp']--;							//dhcp span -1
 		}
 	}
+    $idx++;
 }
 
 /* output variables */
@@ -100,13 +100,13 @@ else 				{ print _("IP addresses belonging to ALL nested subnets"); }
 	if(in_array('owner', $selected_ip_fields)) 	{ print "<th class='hidden-xs hidden-sm hidden-md'>"._('Owner')."</th>"; }
 
 	# custom fields
-	if(sizeof($custom_fields) > 0) {
-		foreach($custom_fields as $myField) 	{
-			if(!in_array($myField['name'], $hidden_cfields)) {
-				print "<th class='hidden-xs hidden-sm hidden-md'>$myField[name]</th>";
-			}
+    # TODO: more DRY
+	foreach($cfs as $cf) 	{
+		if($cf->visible) {
+			print "<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
 		}
 	}
+
 	?>
 </tr>
 </tbody>
@@ -219,29 +219,28 @@ else {
 			if(in_array('owner', $selected_ip_fields)) 				{ print "<td class='hidden-xs hidden-sm'>".$addresses[$n]->owner."</td>"; }
 
 			# print custom fields
-			if(sizeof($custom_fields) > 0) {
-				foreach($custom_fields as $myField) 					{
-					if(!in_array($myField['name'], $hidden_cfields)) 	{
-						print "<td class='customField hidden-xs hidden-sm hidden-md'>";
+			foreach($cfs as $cf) {
+				if($cf->visible) {
+					print "<td class='customField hidden-xs hidden-sm hidden-md'>";
 
-						//booleans
-						if($myField['type']=="tinyint(1)")	{
-							if($addresses[$n]->{$myField['name']} == "0")		{ print _("No"); }
-							elseif($addresses[$n]->{$myField['name']} == "1")	{ print _("Yes"); }
-						}
-						//text
-						elseif($myField['type']=="text") {
-							if(strlen($addresses[$n]->{$myField['name']})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $addresses[$n][$myField['name']])."'>"; }
-							else											{ print ""; }
-						}
-						else {
-							print $addresses[$n]->{$myField['name']};
-
-						}
-						print "</td>";
+					//booleans
+					if($cf->type=="boolean")	{
+						if($addresses[$n]->{$cf->name} == "0")		{ print _("No"); }
+						elseif($addresses[$n]->{$cf->name} == "1")	{ print _("Yes"); }
 					}
+					//text
+					elseif($cf->type=="text") {
+						if(strlen($addresses[$n]->{$cf->name})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $addresses[$n][$cf->name])."'>"; }
+						else											{ print ""; }
+					}
+					else {
+						print $addresses[$n]->{$cf->name};
+
+					}
+					print "</td>";
 				}
 			}
+
 	    }
 		print '</tr>'. "\n";
 

@@ -32,7 +32,7 @@ $selected_ip_fields = $User->settings->IPfilter;
 $selected_ip_fields = explode(";", $selected_ip_fields);																			//format to array
 
 # get all custom fields
-$custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
 
 # if subnet is full we cannot any more ip addresses
 if (($action=="add" || $action=="all-add") && $subnet['isFull']==1)   $Result->show("warning", _("Cannot add address as subnet is market as used"), true, true);
@@ -530,98 +530,26 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
     </tr>
     <!-- Custom fields -->
     <?php
-    if(sizeof($custom_fields) > 0) {
-        # count datepickers
-        $timeP = 0;
+    
+    if(sizeof($cfs) > 0) {
 
-        # all my fields
-        foreach($custom_fields as $field) {
-            # replace spaces with |
-            $field['nameNew'] = str_replace(" ", "___", $field['name']);
-
-            # required
-            if($field['Null']=="NO") { 
-                $required = "*"; 
-            } else { 
-                $required = ""; 
-            }
-
-            # set default value !
-            if ($_POST['action']=="add") { 
-                $address[$field['name']] = $field['Default']; 
-            }
-
-            print '<tr>'. "\n";
-            print '	<td>'. (empty($field['Comment']) ? $field['name'] : $field['Comment']) .' '.$required.'</td>'. "\n";
-            print '	<td>'. "\n";
-
-            //set type
-            if(substr($field['type'], 0,3) == "set" || substr($field['type'], 0,4) == "enum") {
-                //parse values
-                $tmp = substr($field['type'], 0,3)=="set" ? explode(",", str_replace(array("set(", ")", "'"), "", $field['type'])) : explode(",", str_replace(array("enum(", ")", "'"), "", $field['type']));
-                //null
-                if($field['Null']!="NO") { array_unshift($tmp, ""); }
-
-                print "<select name='$field[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
-                foreach($tmp as $v) {
-                    if($v==@$address[$field['name']])	{ print "<option value='$v' selected='selected'>$v</option>"; }
-                    else								{ print "<option value='$v'>$v</option>"; }
-                }
-                print "</select>";
-            }
-            //date and time picker
-            elseif($field['type'] == "date" || $field['type'] == "datetime") {
-                // just for first
-                if($timeP==0) {
-                    print '<link rel="stylesheet" type="text/css" href="' . MEDIA . '/css/bootstrap.datetimepicker.css">';
-                    print '<script type="text/javascript" src="' . MEDIA . '/js/bootstrap.datetimepicker.js"></script>';
-                    print '<script type="text/javascript">';
-                    print '$(document).ready(function() {';
-                    //date only
-                    print '	$(".datepicker").datetimepicker( {pickDate: true, pickTime: false, pickSeconds: false });';
-                    //date + time
-                    print '	$(".datetimepicker").datetimepicker( { pickDate: true, pickTime: true } );';
-
-                    print '})';
-                    print '</script>';
-                }
-                $timeP++;
-
-                //set size
-                if($field['type'] == "date")	{ $size = 10; $class='datepicker';		$format = "yyyy-MM-dd"; }
-                else							{ $size = 19; $class='datetimepicker';	$format = "yyyy-MM-dd"; }
-
-                //field
-                if(!isset($address[$field['name']]))	{ print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'] .'" maxlength="'.$size.'" '.$delete.' rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
-                else									{ print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'] .'" maxlength="'.$size.'" value="'. $address[$field['name']]. '" '.$delete.' rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
-            }
-            //boolean
-            elseif($field['type'] == "tinyint(1)") {
-                print "<select name='$field[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
-                $tmp = array(0=>"No",1=>"Yes");
-                //null
-                if($field['Null']!="NO") { $tmp[2] = ""; }
-
-                foreach($tmp as $k=>$v) {
-                    if(strlen(@$address[$field['name']])==0 && $k==2)	{ print "<option value='$k' selected='selected'>"._($v)."</option>"; }
-                    elseif($k==@$address[$field['name']])				{ print "<option value='$k' selected='selected'>"._($v)."</option>"; }
-                    else												{ print "<option value='$k'>"._($v)."</option>"; }
-                }
-                print "</select>";
-            }
-            //text
-            elseif($field['type'] == "text") {
-                print ' <textarea class="form-control input-sm" name="'. $field['nameNew'] .'" placeholder="'. $field['name'] .'" '.$delete.' rowspan=3 rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. $address[$field['name']]. '</textarea>'. "\n";
-            }
-            //default - input field
-            else {
-                print ' <input type="text" class="ip_addr form-control input-sm" name="'. $field['nameNew'] .'" placeholder="'. $field['name'] .'" value="'. @$address[$field['name']]. '" size="30" '.$delete.' rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n";
-            }
-
-            print '	</td>'. "\n";
-            print '</tr>'. "\n";
+        $index = false;
+        foreach($cfs as $cf) {
+            
+            // create input > result is array (required, input(html), timepicker_index)
+            $custom_input = $Components->render_custom_field_input($cf, $address, $action, $index);
+            $index = $custom_input['index'];
+            
+            // print
+            print "<tr>";
+            print "	<td>" . (empty($cf->display_name) ? $cf->name : $cf->display_name) . " ".$custom_input['required']."</td>";
+            print "	<td>".$custom_input['field']."</td>";
+            print " <td class=\"info2\">$cf->description</td>";
+            print "</tr>";
+            
         }
     }
+    
     ?>
 
     <?php if ($action!=="delete") {  ?>

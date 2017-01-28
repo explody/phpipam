@@ -5,7 +5,7 @@
  *************************************************/
 
 # read again the custom fields, if any
-if (!isset($custom_fields)) { $custom_fields = $Tools->fetch_custom_fields("ipaddresses"); }
+if (!isset($cfs)) { $cfs = $Tools->fetch_custom_fields("ipaddresses"); }
 
 # check which sections we need to care about
 $used_section = array();
@@ -207,11 +207,9 @@ foreach ($data as &$cdata) {
 			if ($cdata['state'] != $cedata['state']) { $msg.= "Address tag (state) will be updated."; $action = "edit"; }
 
 			# Check if the values of the custom fields have changed
-			if(sizeof($custom_fields) > 0) {
-				foreach($custom_fields as $myField) {
-					if ($cdata[$myField['name']] != $cedata[$myField['name']]) {
-						$msg.= $myField['name']." will be updated."; $action = "edit";
-					}
+			foreach($cfs as $cf) {
+				if ($cdata[$cf->name] != $cedata[$cf->name]) {
+					$msg.= $cf->name." will be updated."; $action = "edit";
 				}
 			}
 

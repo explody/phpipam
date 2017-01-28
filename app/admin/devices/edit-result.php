@@ -53,16 +53,18 @@ if (strlen(@$device['rack']>0)) {
 }
 
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('devices');
-if(sizeof($custom) > 0) {
-	foreach($custom as $cf) {
-		//not null!
-		if(!$cf->null && strlen($device[$cf->name])==0) { $Result->show("danger", $cf->name.'" can not be empty!', true); }
+$cfs = $Tools->fetch_custom_fields('devices');
 
-		# save to update array
-		$update[$cf->name] = $device[$cf->name];
-	}
+foreach($cfs as $cf) {
+	//not null!
+	if(!$cf->null && strlen($device[$cf->name])==0) { 
+        $Result->show("danger", $cf->name.'" can not be empty!', true);
+    }
+
+	# save to update array
+	$update[$cf->name] = $device[$cf->name];
 }
+
 
 # set update values
 $values = array("id"=>@$device['switchId'],

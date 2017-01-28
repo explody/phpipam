@@ -7,15 +7,14 @@
 # create csrf token
 $csrf = $User->csrf_create('device_snmp');
 
-# fetch custom fields
-$custom = $Tools->fetch_custom_fields('devices');
-
 # ID must be numeric
 if(!is_numeric($_POST['switchId']))		     { $Result->show("danger", _("Invalid ID"), true, true); }
 
 # fetch device details
 $device = $Admin->fetch_object("devices", "id", $_POST['switchId']);
 if ($device===false)                         { $Result->show("danger", _("Invalid ID"), true, true);  }
+
+$Snmp = new phpipamSNMP ();
 
 // set show
 if ($device->snmp_version=="1" || $device->snmp_version=="2")   { $display=''; }

@@ -10,7 +10,7 @@ $workbook = new Spreadsheet_Excel_Writer();
 $workbook->setVersion(8);
 
 //get all custom fields!
-$custom_address_fields = $Tools->fetch_custom_fields('ipaddresses');
+$cfs = $Tools->fetch_custom_fields('ipaddresses');
 
 // Create a worksheet
 $worksheet = $workbook->addWorksheet("template");
@@ -31,8 +31,8 @@ $worksheet->write($lineCount, 7, _('device'));
 $worksheet->write($lineCount, 8, _('port'));
 $worksheet->write($lineCount, 9, _('note'));
 $fc = 10;
-foreach($custom_address_fields as $k=>$f) {
-	$worksheet->write($lineCount, $fc, $k);
+foreach($cfs as $cf) {
+	$worksheet->write($lineCount, $fc, $cf->name);
 	$fc++;
 }
 

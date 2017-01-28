@@ -9,7 +9,7 @@ $User->check_user_session();
 if(!is_numeric($_GET['subnetId'])) 	{ $Result->show("danger", _('Invalid ID'), true); }
 
 # fetch subnet related stuff
-$custom_fields = $Tools->fetch_custom_fields ('subnets');											//custom fields
+$cfs = $Tools->fetch_custom_fields ('subnets');											//custom fields
 $subnet  = $Subnets->fetch_subnet(null, $_GET['subnetId']);									//subnet details
 if($subnet===false) 				{ header("Location: ".create_link("subnets", $_GET['section'])); die(); }	//redirect if false
 else { $subnet = (array) $subnet; }

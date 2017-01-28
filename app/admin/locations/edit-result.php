@@ -38,22 +38,19 @@ if($_POST['action']=="add" || $_POST['action']=="edit") {
 }
 
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('locations');
-if(sizeof($custom) > 0) {
-	foreach($custom as $myField) {
-		//booleans can be only 0 and 1!
-		if($myField['type']=="tinyint(1)") {
-			if($_POST[$myField['name']]>1) {
-				$_POST[$myField['name']] = 0;
-			}
+foreach($Tools->fetch_custom_fields('locations') as $cf) {
+	//booleans can be only 0 and 1!
+	if($cf->type == "boolean") {
+		if($_POST[$cf->name]>1) {
+			$_POST[$cf->name] = 0;
 		}
-		//not null!
-		if($myField['Null']=="NO" && strlen($_POST[$myField['name']])==0) {
-																		{ $Result->show("danger", $myField['name'].'" can not be empty!', true); }
-		}
-		# save to update array
-		$update[$myField['name']] = $_POST[$myField['name']];
 	}
+	//not null!
+	if(!$cf->null && strlen($_POST[$cf->name])==0) {
+        $Result->show("danger", $cf->name.'" can not be empty!', true);
+	}
+	# save to update array
+	$update[$cf->name] = $_POST[$cf->name];
 }
 
 

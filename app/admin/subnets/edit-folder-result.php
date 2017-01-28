@@ -1,4 +1,4 @@
-<?php
+$cfs<?php
 
 /**
  * Function to add / edit / delete section
@@ -31,15 +31,10 @@ if($_POST['action']=="edit" || $_POST['action']=="delete") {
 # get section details
 $section = (array) $Sections->fetch_section(null, @$_POST['sectionId']);
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('subnets');
+$cfs = $Tools->fetch_custom_fields('subnets');
 
-//custom
-if(sizeof($custom) > 0) {
-	foreach($custom as $myField) {
-		# replace possible ___ back to spaces!
-		$myField['nameTest']      = str_replace(" ", "___", $myField['name']);
-		if(isset($_POST[$myField['nameTest']])) { $_POST[$myField['name']] = $_POST[$myField['nameTest']];}
-	}
+foreach($cfs as $cf) {
+	if(isset($_POST[$cf->name])) { $_POST[$cf->name] = $_POST[$cf->name];}
 }
 
 //remove subnet-specific fields
@@ -69,17 +64,17 @@ elseif ($_POST['action']=="edit") {
 //check for name length - 2 is minimum!
 if(strlen($_POST['description'])<2 && $_POST['action']!="delete") { $Result->show("danger", _('Folder name must have at least 2 characters')."!", true); }
 //custom fields
-if(sizeof($custom) > 0 && $_POST['action']!="delete") {
-	foreach($custom as $myField) {
+if($_POST['action'] != "delete") {
+	foreach($cfs as $cf) {
 		//booleans can be only 0 and 1!
-		if($myField['type']=="tinyint(1)") {
-			if(@$_POST[$myField['name']]>1) {
-				$_POST[$myField['name']] = "";
+		if($cf->type=="boolean") {
+			if(@$_POST[$cf->name]>1) {
+				$_POST[$cf->name] = "";
 			}
 		}
 		//not empty
-		if($myField['Null']=="NO" && strlen($_POST[$myField['name']])==0) {
-			$errors[] = "Field \"$myField[name]\" cannot be empty!";
+		if(!$cf->null && strlen($_POST[$cf->name])==0) {
+			$errors[] = "Field \"$cf->name\" cannot be empty!";
 		}
 	}
 }
@@ -135,29 +130,25 @@ else {
 			$values['sectionId']=$_POST['sectionIdNew'];
 		}
 	}
+    
 	# append custom fields
-	$custom = $Tools->fetch_custom_fields('subnets');
-	if(sizeof($custom) > 0) {
-		foreach($custom as $myField) {
+	foreach($cfs as $cf) {
 
-			//replace possible ___ back to spaces
-			$myField['nameTest'] = str_replace(" ", "___", $myField['name']);
-			if(isset($_POST[$myField['nameTest']])) { $_POST[$myField['name']] = $_POST[$myField['nameTest']];}
+		if(isset($_POST[$cf->name])) { $_POST[$cf->name] = $_POST[$cf->name];}
 
-			//booleans can be only 0 and 1!
-			if($myField['type']=="tinyint(1)") {
-				if($_POST[$myField['name']]>1) {
-					$_POST[$myField['name']] = 0;
-				}
+		//booleans can be only 0 and 1!
+		if($cf->type=="boolean") {
+			if($_POST[$cf->name]>1) {
+				$_POST[$cf->name] = 0;
 			}
-			//not null!
-			if ($_POST['action']!="delete") {
-    			if($myField['Null']=="NO" && strlen($_POST[$myField['name']])==0) { $Result->show("danger", $myField['name'].'" can not be empty!', true); }
-            }
-
-			# save to update array
-			$values[$myField['name']] = $_POST[$myField['name']];
 		}
+		//not null!
+		if ($_POST['action']!="delete") {
+			if(!$cf->null && strlen($_POST[$cf->name])==0) { $Result->show("danger", $cf->name.'" can not be empty!', true); }
+        }
+
+		# save to update array
+		$values[$cf->name] = $_POST[$cf->name];
 	}
 
 	# execute

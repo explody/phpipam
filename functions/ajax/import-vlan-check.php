@@ -8,7 +8,7 @@
 $vlan_domains = $Admin->fetch_all_objects("vlanDomains", "id");
 
 # read again the custom fields, if any
-if (!isset($custom_fields)) { $custom_fields = $Tools->fetch_custom_fields("vlans"); }
+if (!isset($cfs)) { $cfs = $Tools->fetch_custom_fields("vlans"); }
 
 # Load existing data
 $edata = array(); $vdom = array(); $vdomid = array();
@@ -64,7 +64,7 @@ foreach ($data as &$cdata) {
 	}
 
 	# Generate the custom fields columns
-	if(sizeof($custom_fields) > 0) { foreach($custom_fields as $myField) { $cfieldtds.= "<td>".$cdata[$myField['name']]."</td>"; } }
+	if(sizeof($cfs) > 0) { foreach($cfs as $cf) { $cfieldtds.= "<td>".$cdata[$cf->name]."</td>"; } }
 
 	# check if duplicate VLAN
 	if (isset($unique[$cdom][$cdata['number']])) { $msg.= "Duplicate VLAN domain and number not supported. Please check import file."; $action = "error"; }
@@ -77,11 +77,10 @@ foreach ($data as &$cdata) {
 			if ($cdata['name'] != $edata[$cdom][$cdata['number']]['name']) { $msg.= "VLAN name will be updated."; $action = "edit"; }
 			if ($cdata['description'] != $edata[$cdom][$cdata['number']]['description']) { $msg.= "VLAN description will be updated."; $action = "edit"; }
 			# Check if the values of the custom fields have changed
-			if(sizeof($custom_fields) > 0) {
-				foreach($custom_fields as $myField) {
-					if ($cdata[$myField['name']] != $edata[$cdom][$cdata['number']][$myField['name']]) {
-						$msg.= "VLAN ".$myField['name']." will be updated."; $action = "edit";
-					}
+
+			foreach($cfs as $cf) {
+				if ($cdata[$cf->name] != $edata[$cdom][$cdata['number']][$cf->name]) {
+					$msg.= "VLAN ".$cf->name." will be updated."; $action = "edit";
 				}
 			}
 

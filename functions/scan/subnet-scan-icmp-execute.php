@@ -26,6 +26,8 @@
  *
  */
 
+require_once(dirname(__FILE__) . "/../../paths.php");
+
 /* functions */
 require( FUNCTIONS . '/functions.php');
 require( FUNCTIONS . '/classes/class.Thread.php');

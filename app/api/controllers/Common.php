@@ -153,15 +153,13 @@ class Common_api_functions {
 		$this->valid_keys = $this->Tools->fetch_standard_fields ($controller);
 
 		# add custom fields
-		$custom_fields = $this->Tools->fetch_custom_fields($controller);
-		if(sizeof($custom_fields)>0) {
-			foreach($custom_fields as $cf) {
-				$this->custom_keys[] = $cf['name'];
-			}
+		$cfs = $this->Tools->fetch_custom_fields($controller);
+		foreach($cfs as $cf) {
+			$this->custom_keys[] = $cf->name;
 		}
 
 		# save custom fields
-		$this->custom_fields = $custom_fields;
+		$this->custom_fields = $cfs;
 
 		# merge all
 		$this->valid_keys = array_merge($this->controller_keys, $this->valid_keys);

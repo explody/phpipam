@@ -33,7 +33,7 @@ if($all_sections !== false) {
 
 
 # get all custom fields
-$custom_fields = $Tools->fetch_custom_fields('ipaddresses');
+$cfs = $Tools->fetch_custom_fields('ipaddresses');
 
 # Create a workbook
 $today = date("Ymd");
@@ -124,17 +124,13 @@ if( (isset($_GET['gateway'])) && ($_GET['gateway'] == "on") ) {
 }
 
 //custom fields
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $myField) {
-		//set temp name - replace space with three ___
-		$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
-
-		if( (isset($_GET[$myField['nameTemp']])) && ($_GET[$myField['nameTemp']] == "on") ) {
-			$worksheet->write($lineCount, $rowCount, $myField['name'] ,$format_header);
-			$rowCount++;
-		}
+foreach($cfs as $cf) {
+	if( (isset($_GET[$cf->name])) && ($_GET[$cf->name] == "on") ) {
+		$worksheet->write($lineCount, $rowCount, $cf->name ,$format_header);
+		$rowCount++;
 	}
 }
+
 
 $rowCount = 0;
 $lineCount++;
@@ -240,13 +236,13 @@ if($all_sections!==false) {
 					}
 
 					//custom fields, per subnet
-					if(sizeof($custom_fields) > 0) {
-						foreach($custom_fields as $myField) {
+					if(sizeof($cfs) > 0) {
+						foreach($cfs as $cf) {
 							//set temp name - replace space with three ___
-							$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
+							
 
-							if( (isset($_GET[$myField['nameTemp']])) && ($_GET[$myField['nameTemp']] == "on") ) {
-								$worksheet->write($lineCount, $rowCount, $ip[$myField['name']], $format_text);
+							if( (isset($_GET[$cf->name])) && ($_GET[$cf->name] == "on") ) {
+								$worksheet->write($lineCount, $rowCount, $ip[$cf->name], $format_text);
 								$rowCount++;
 							}
 						}

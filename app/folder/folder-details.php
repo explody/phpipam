@@ -51,26 +51,26 @@ if($folder['sectionId']!=$_GET['section'])	{
 
 	<?php
 	# print custom subnet fields if any
-	if(sizeof(sizeof($cfields)) > 0) {
-		foreach($cfields as $key=>$field) {
-			if(strlen($folder[$key]) > 0) {
-			print "<tr>";
-			print "	<th>$key</th>";
-			print "	<td>";
-				# booleans
-				if($field['type']=="tinyint(1)")	{
-					if($folder[$field['name']] == 0)		{ print _("No"); }
-					elseif($folder[$field['name']] == 1)	{ print _("Yes"); }
-				}
-				else {
-					print $folder[$field['name']];
 
-				}
-			print "	</td>";
-			print "</tr>";
-			}
+	foreach($cfs as $cf) {
+		if(strlen($folder[$key]) > 0) {
+    		print "<tr>";
+    		print "	<th>$key</th>";
+    		print "	<td>";
+    			# booleans
+    			if($cf->type == "boolean")	{
+    				if($folder[$cf->name] == 0)		{ print _("No"); }
+    				elseif($folder[$cf->name] == 1)	{ print _("Yes"); }
+    			}
+    			else {
+    				print $folder[$cf->name];
+
+    			}
+    		print "	</td>";
+    		print "</tr>";
 		}
 	}
+
 
     # divider
     print "<tr>";

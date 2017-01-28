@@ -120,14 +120,14 @@ class Tools extends Common_functions {
 	 */
 	public function fetch_vlans_and_subnets ($domainId=1) {
 	    # custom fields
-	    $custom_fields = $this->fetch_custom_fields("vlans");
+	    $cfs = $this->fetch_custom_fields("vlans");
 		# if set add to query
 		$custom_fields_query = "";
-	    if(sizeof($custom_fields)>0) {
-			foreach($custom_fields as $myField) {
-				$custom_fields_query  .= ',`vlans`.`'.$myField['name'].'`';
-			}
+
+		foreach($cfs as $cf) {
+			$custom_fields_query  .= ',`vlans`.`'.$cf->name.'`';
 		}
+
 	    # set query
 	    $query = 'SELECT vlans.vlanId,vlans.number,vlans.name,vlans.description,subnets.subnet,subnets.mask,subnets.id AS subnetId,subnets.sectionId'.@$custom_fields_query.' FROM vlans LEFT JOIN subnets ON subnets.vlanId = vlans.vlanId where vlans.`domainId` = ? ORDER BY vlans.number ASC;';
 		# fetch
@@ -189,7 +189,7 @@ class Tools extends Common_functions {
 	 * @param array $custom_fields (default: array())
 	 * @return array
 	 */
-	public function search_addresses($search_term, $high = "", $low = "", $custom_fields = array()) {
+	public function search_addresses($search_term, $high = "", $low = "", $cfs = array()) {
 
     	$tags = $this->fetch_all_objects ("ipTags", "id");
     	foreach ($tags as $t) {
@@ -206,12 +206,11 @@ class Tools extends Common_functions {
 		$query[] = "or `dns_name` like :search_term ";			//hostname
 		$query[] = "or `owner` like :search_term ";				//owner
 		# custom fields
-		if(sizeof($custom_fields) > 0) {
-			foreach($custom_fields as $myField) {
-				$myField['name'] = $this->Database->escape($myField['name']);
-				$query[] = "or `$myField[name]` like :search_term ";
-			}
+		foreach($cfs as $cf) {
+			$cf->name = $this->Database->escape($cf->name);
+			$query[] = "or `$cf->name` like :search_term ";
 		}
+
 		$query[] = "or `switch` like :search_term ";
 		$query[] = "or `port` like :search_term ";				//port search
 		$query[] = "or `description` like :search_term ";		//descriptions
@@ -249,9 +248,9 @@ class Tools extends Common_functions {
 	 * @param mixed $custom_fields (default: array())
 	 * @return array
 	 */
-	public function search_subnets($search_term, $high = "", $low = "", $search_req, $custom_fields = array()) {
+	public function search_subnets($search_term, $high = "", $low = "", $search_req, $cfs = array()) {
 		# first search if range provided
-		$result1 = $this->search_subnets_range  ($search_term, $high, $low, $custom_fields);
+		$result1 = $this->search_subnets_range  ($search_term, $high, $low, $cfs);
 		# search inside subnets even if IP does not exist!
 		$result2 = $this->search_subnets_inside ($high, $low);
 		# search inside subnets even if IP does not exist - IPv6
@@ -272,7 +271,7 @@ class Tools extends Common_functions {
 	 * @param mixed $custom_fields (default: array())
 	 * @return array
 	 */
-	private function search_subnets_range ($search_term, $high, $low, $custom_fields = array()) {
+	private function search_subnets_range ($search_term, $high, $low, $cfs = array()) {
 		# reformat low/high
 		if($high==0 && $low==0)	{ $high = "1"; $low="1"; }
 
@@ -280,12 +279,12 @@ class Tools extends Common_functions {
 		$query[] = "select * from `subnets` where `description` like :search_term ";
 		$query[] = "or `subnet` between :low and :high ";
 		# custom
-	    if(sizeof($custom_fields) > 0) {
-			foreach($custom_fields as $myField) {
-				$myField['name'] = $this->Database->escape($myField['name']);
-				$query[] = " or `$myField[name]` like :search_term ";
-			}
+
+		foreach($cfs as $cf) {
+			$cf->name = $this->Database->escape($cf->name);
+			$query[] = " or `$cf->name` like :search_term ";
 		}
+
 		$query[] = "order by `subnet` asc, `mask` asc;";
 
 		# join query
@@ -418,16 +417,15 @@ class Tools extends Common_functions {
 	 * @param array $custom_fields (default: array())
 	 * @return array
 	 */
-	public function search_vlans($search_term, $custom_fields = array()) {
+	public function search_vlans($search_term, $cfs = array()) {
 		# query
 		$query[] = "select * from `vlans` where `name` like :search_term or `description` like :search_term or `number` like :search_term ";
 		# custom
-	    if(sizeof($custom_fields) > 0) {
-			foreach($custom_fields as $myField) {
-				$myField['name'] = $this->Database->escape($myField['name']);
-				$query[] = " or `$myField[name]` like :search_term ";
-			}
+		foreach($cfs as $cf) {
+			$cf->name = $this->Database->escape($cf->name);
+			$query[] = " or `$cf->name` like :search_term ";
 		}
+
 		$query[] = ";";
 		# join query
 		$query = implode("\n", $query);
@@ -452,16 +450,15 @@ class Tools extends Common_functions {
 	 * @param array $custom_fields (default: array())
 	 * @return array
 	 */
-	public function search_vrfs ($search_term, $custom_fields = array()) {
+	public function search_vrfs ($search_term, $cfs = array()) {
 		# query
 		$query[] = "select * from `vrf` where `name` like :search_term or `description` like :search_term or `rd` like :search_term ";
 		# custom
-	    if(sizeof($custom_fields) > 0) {
-			foreach($custom_fields as $myField) {
-				$myField['name'] = $this->Database->escape($myField['name']);
-				$query[] = " or `$myField[name]` like :search_term ";
-			}
+		foreach($cfs as $cf) {
+			$cf->name = $this->Database->escape($cf->name);
+			$query[] = " or `$cf->name` like :search_term ";
 		}
+
 		$query[] = ";";
 		# join query
 		$query = implode("\n", $query);
@@ -490,9 +487,9 @@ class Tools extends Common_functions {
 		$query[] = "select *,concat(prefix,start) as raw from `pstnPrefixes` where `prefix` like :search_term or `name` like :search_term or `description` like :search_term ";
 		# custom
 	    if(sizeof($custom_prefix_fields) > 0) {
-			foreach($custom_prefix_fields as $myField) {
-				$myField['name'] = $this->Database->escape($myField['name']);
-				$query[] = " or `$myField[name]` like :search_term ";
+			foreach($custom_prefix_fields as $cf) {
+				$cf->name = $this->Database->escape($cf->name);
+				$query[] = " or `$cf->name` like :search_term ";
 			}
 		}
 		$query[] = "order by  raw asc;";
@@ -523,9 +520,9 @@ class Tools extends Common_functions {
 		$query[] = "select * from `pstnNumbers` where `number` like :search_term or `name` like :search_term or `description` like :search_term or `owner` like :search_term ";
 		# custom
 	    if(sizeof($custom_prefix_fields) > 0) {
-			foreach($custom_prefix_fields as $myField) {
-				$myField['name'] = $this->Database->escape($myField['name']);
-				$query[] = " or `$myField[name]` like :search_term ";
+			foreach($custom_prefix_fields as $cf) {
+				$cf->name = $this->Database->escape($cf->name);
+				$query[] = " or `$cf->name` like :search_term ";
 			}
 		}
 		$query[] = "order by number asc;";
@@ -2066,12 +2063,10 @@ class Tools extends Common_functions {
 	 * @param mixed $custom_fields
 	 * @return mixed
 	 */
-	public function print_menu_prefixes ( $user, $prefixes, $custom_fields ) {
+	public function print_menu_prefixes ( $user, $prefixes, $cfs ) {
 
 		# set hidden fields
 		$this->get_settings ();
-		$hidden_fields = json_decode($this->settings->hiddenCustomFields, true);
-		$hidden_fields = is_array($hidden_fields['subnets']) ? $hidden_fields['subnets'] : array();
 
 		# set html array
 		$html = array();
@@ -2080,19 +2075,19 @@ class Tools extends Common_functions {
 
 		# remove all not permitted!
 		if(sizeof($prefixes)>0) {
-		foreach($prefixes as $k=>$s) {
-			$permission = $this->check_prefix_permission ($user);
-			if($permission == 0) { unset($prefixes[$k]); }
-		}
+    		foreach($prefixes as $k=>$s) {
+    			$permission = $this->check_prefix_permission ($user);
+    			if($permission == 0) { unset($prefixes[$k]); }
+    		}
 		}
 
 		# create loop array
 		if(sizeof($prefixes) > 0) {
-        $children_prefixes = array();
-		foreach ( $prefixes as $item ) {
-			$item = (array) $item;
-			$children_prefixes[$item['master']][] = $item;
-		}
+            $children_prefixes = array();
+    		foreach ( $prefixes as $item ) {
+    			$item = (array) $item;
+    			$children_prefixes[$item['master']][] = $item;
+    		}
 		}
 		else {
 			return false;
@@ -2188,32 +2183,30 @@ class Tools extends Common_functions {
 				}
 
 				//custom
-				if(sizeof($custom_fields) > 0) {
-			   		foreach($custom_fields as $field) {
-				   		# hidden?
-				   		if(!in_array($field['name'], $hidden_fields)) {
+		   		foreach($cfs as $cf) {
+			   		# hidden?
+			   		if($cf->visible) {
 
-				   			$html[] =  "<td class='hidden-xs hidden-sm hidden-md'>";
+			   			$html[] =  "<td class='hidden-xs hidden-sm hidden-md'>";
 
-				   			//booleans
-							if($field['type']=="tinyint(1)")	{
-								if($option['value'][$field['name']] == "0")			{ $html[] = _("No"); }
-								elseif($option['value'][$field['name']] == "1")		{ $html[] = _("Yes"); }
-							}
-							//text
-							elseif($field['type']=="text") {
-								if(strlen($option['value'][$field['name']])>0)		{ $html[] = "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $option['value'][$field['name']])."'>"; }
-								else												{ $html[] = ""; }
-							}
-							else {
-								$html[] = $option['value'][$field['name']];
+			   			//booleans
+						if($cf->type == "boolean")	{
+							if($option['value'][$cf->name] == "0")			{ $html[] = _("No"); }
+							elseif($option['value'][$cf->name] == "1")		{ $html[] = _("Yes"); }
+						}
+						//text
+						elseif($cf->type == "text") {
+							if(strlen($option['value'][$cf->name])>0)		{ $html[] = "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $option['value'][$cf->name])."'>"; }
+							else												{ $html[] = ""; }
+						}
+						else {
+							$html[] = $option['value'][$cf->name];
 
-							}
+						}
 
-				   			$html[] =  "</td>";
-			   			}
-			    	}
-			    }
+			   			$html[] =  "</td>";
+		   			}
+		    	}
 
 				# set permission
 				$permission = $this->check_prefix_permission ($user);
@@ -2580,13 +2573,12 @@ class Tools extends Common_functions {
 		$query[] = "	`v`.`number` as `number`,";
 		$query[] = "	`v`.`description` as `description`,";
 		// fetch custom fields
-		$custom_vlan_fields = $this->fetch_custom_fields ("vlans");
-		if ($custom_vlan_fields != false) {
-    		foreach ($custom_vlan_fields as $f) {
-        		$query[] = "  `v`.`$f[name]` as `$f[name]`,";
-    		}
+		$cfs = $this->fetch_custom_fields ("vlans");
 
+		foreach ($cfs as $cf) {
+    		$query[] = "  `v`.`$cf->name` as `$cf->name`,";
 		}
+
 		$query[] = "	`v`.`vlanId` as `id`";
 		$query[] = "	from";
 		$query[] = "	`vlans` as `v`,";

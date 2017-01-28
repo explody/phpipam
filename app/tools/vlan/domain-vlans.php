@@ -15,14 +15,11 @@ if($vlan_domain===false)			{ $Result->show("danger", _("Invalid ID"), true); }
 $vlans = $Tools->fetch_vlans_and_subnets ($vlan_domain->id);
 
 # get custom VLAN fields
-$custom_fields = (array) $Tools->fetch_custom_fields('vlans');
-
-# set hidden fields
-$hidden_fields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_fields = is_array(@$hidden_fields['vlans']) ? $hidden_fields['vlans'] : array();
+$cfs = $Tools->fetch_custom_fields('vlans');
 
 # size of custom fields
-$csize = sizeof($custom_fields) - sizeof($hidden_fields);
+$csize = Tools::count_where($cfs, 'required', 1);
+
 if($_GET['page']=="administration") { $csize++; }
 
 
@@ -68,13 +65,13 @@ else {
 	print ' <th data-field="number" data-sortable="true">'._('Number').'</th>' . "\n";
 	print ' <th data-field="name" data-sortable="true">'._('Name').'</th>' . "\n";
 	print ' <th data-field="description" data-sortable="true">'._('Description').'</th>' . "\n";
-	if(sizeof(@$custom_fields) > 0) {
-		foreach($custom_fields as $field) {
-			if(!in_array($field['name'], $hidden_fields)) {
-				print "	<th class='hidden-xs hidden-sm hidden-md'>$field[name]</th>";
-			}
+	
+	foreach($cfs as $cf) {
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
 		}
 	}
+
 	print ' <th>'._('Belonging subnets').'</th>' . "\n";
 	print ' <th>'._('Section').'</th>' . "\n";
     print "<th></th>";
@@ -142,47 +139,46 @@ else {
 					print "	<td>".$vlan[0]->name."</td>";
 					print "	<td>".$vlan[0]->description."</td>";
 			        //custom fields - no subnets
-			        if(sizeof(@$custom_fields) > 0) {
-				   		foreach($custom_fields as $field) {
+
+				   		foreach($cfs as $cf) {
 					   		# hidden
-					   		if(!in_array($field['name'], $hidden_fields)) {
+					   		if($cf->visible) {
 
 								// create links
-								$v->{$field['name']} = $Result->create_links ($v->{$field['name']},$field['type']);
+								$v->{$cf->name} = $Result->create_links ($v->{$cf->name},$cf->type);
 
 								print "<td class='hidden-xs hidden-sm hidden-md'>";
 								//booleans
-								if($field['type']=="tinyint(1)")	{
-									if($v->{$field['name']} == "0")		{ print _("No"); }
-									elseif($v->{$field['name']} == "1")	{ print _("Yes"); }
+								if($cf->type == "boolean")	{
+									if($v->{$cf->name} == "0")		{ print _("No"); }
+									elseif($v->{$cf->name} == "1")	{ print _("Yes"); }
 								}
 								//text
-								elseif($field['type']=="text") {
-									if(strlen($v->{$field['name']})>0)		{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $v->{$field['name']})."'>"; }
+								elseif($cf->type == "text") {
+									if(strlen($v->{$cf->name})>0)		{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $v->{$cf->name})."'>"; }
 									else									{ print ""; }
 								}
 								else {
-									print $v->{$field['name']};
+									print $v->{$cf->name};
 
 								}
 								print "</td>";
 							}
 				    	}
-				    }
+
 				}
 				else {
 					print "<tr class='$class'>";
 					print "<td></td>";
 					print "<td></td>";
 					print "<td></td>";
-			        if(sizeof(@$custom_fields) > 0) {
-				   		foreach($custom_fields as $field) {
-					   		# hidden
-					   		if(!in_array($field['name'], $hidden_fields)) {
-    					   		print "<td></td>";
-    					    }
-                        }
+
+			   		foreach($cfs as $cf) {
+				   		if($cf->visible) {
+					   		print "<td></td>";
+					    }
                     }
+
 				}
 				//subnet?
 				if ($v->subnetId!=null) {

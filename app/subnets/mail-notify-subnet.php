@@ -17,7 +17,7 @@ $vrf     = (array) $Tools->fetch_object ("vrf", "vrfId", $subnet['vrfId']);
 $nameservers    = (array) $Tools->fetch_object("nameservers", "id", $subnet['nameserverId']);
 
 # get all custom fields
-$custom_fields = $Tools->fetch_custom_fields ('subnets');
+$cfs = $Tools->fetch_custom_fields ('subnets');
 
 # checks
 sizeof($subnet)>0 ?:	$Result->show("danger", _("Invalid subnet"), true);
@@ -50,16 +50,13 @@ if ( !empty( $subnet['nameserverId'] ) ) {
 }
 
 # custom
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $custom_field) {
-		if(!empty($address[$custom_field['name']])) {
-						$content[] =  "&bull; ". _($custom_field['name']).":\t".$address[$custom_field['name']];
-		}
+foreach($cfs as $cf) {
+	if(!empty($address[$cf->name])) {
+					$content[] =  "&bull; ". _($cf->name).":\t".$address[$cf->name];
 	}
 }
+
 ?>
-
-
 
 <!-- header -->
 <div class="pHeader"><?php print _('Send email notification'); ?></div>

@@ -38,7 +38,7 @@ else {
 }
 
 # fetch custom fields
-$custom_fields = $Tools->fetch_custom_fields('subnets');
+$cfs = $Tools->fetch_custom_fields('subnets');
 # fetch all sections
 $sections = $Sections->fetch_all_sections();
 
@@ -117,100 +117,28 @@ $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : fals
 	<input type="hidden" name="csrf_cookie"     value="<?php print $csrf; ?>">
 
     <?php
-    	# custom Subnet fields
-	    if(sizeof($custom_fields) > 0) {
-	    	# count datepickers
-			$timeP = 0;
 
-	    	print "<tr>";
-	    	print "	<td colspan='3' class='hr'><hr></td>";
-	    	print "</tr>";
-		    foreach($custom_fields as $field) {
+    if(sizeof($cfs) > 0) {
 
-		    	# replace spaces
-		    	$field['nameNew'] = str_replace(" ", "___", $field['name']);
-		    	# retain newlines
-		    	$folder_old_details[$field['name']] = str_replace("\n", "\\n", @$folder_old_details[$field['name']]);
-
-				# set default value !
-				if ($_POST['action']=="add"){ $folder_old_details[$field['name']] = $field['Default']; }
-
-		    	# required
-				if($field['Null']=="NO")	{ $required = "*"; }
-				else						{ $required = ""; }
-
-				print '<tr>'. "\n";
-				print '	<td>'. $field['name'] .' '.$required.'</td>'. "\n";
-				print '	<td colspan="2">'. "\n";
-
-				//set type
-				if(substr($field['type'], 0,3) == "set" || substr($field['type'], 0,4) == "enum") {
-					//parse values
-					$tmp = substr($field['type'], 0,3)=="set" ? explode(",", str_replace(array("set(", ")", "'"), "", $field['type'])) : explode(",", str_replace(array("enum(", ")", "'"), "", $field['type']));
-
-					//null
-					if($field['Null']!="NO") { array_unshift($tmp, ""); }
-
-					print "<select name='$field[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
-					foreach($tmp as $v) {
-						if($v==$folder_old_details[$field['name']])	{ print "<option value='$v' selected='selected'>$v</option>"; }
-						else								{ print "<option value='$v'>$v</option>"; }
-					}
-					print "</select>";
-				}
-				//date and time picker
-				elseif($field['type'] == "date" || $field['type'] == "datetime") {
-					// just for first
-					if($timeP==0) {
-                        $Components->css('bootstrap.datetimepicker');
-                        $Components->js('bootstrap.datetimepicker');
-						print '<script type="text/javascript">';
-						print '$(document).ready(function() {';
-						//date only
-						print '	$(".datepicker").datetimepicker( {pickDate: true, pickTime: false, pickSeconds: false });';
-						//date + time
-						print '	$(".datetimepicker").datetimepicker( { pickDate: true, pickTime: true } );';
-
-						print '})';
-						print '</script>';
-					}
-					$timeP++;
-
-					//set size
-					if($field['type'] == "date")	{ $size = 10; $class='datepicker';		$format = "yyyy-MM-dd"; }
-					else							{ $size = 19; $class='datetimepicker';	$format = "yyyy-MM-dd"; }
-
-					//field
-					if(!isset($folder_old_details[$field['name']]))	{ print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'] .'" maxlength="'.$size.'" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
-					else										{ print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'] .'" maxlength="'.$size.'" value="'. $folder_old_details[$field['name']]. '" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
-				}
-				//boolean
-				elseif($field['type'] == "tinyint(1)") {
-					print "<select name='$field[nameNew]' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
-					$tmp = array(0=>"No",1=>"Yes");
-					//null
-					if($field['Null']!="NO") { $tmp[2] = ""; }
-
-					foreach($tmp as $k=>$v) {
-						if(strlen($folder_old_details[$field['name']])==0 && $k==2)	{ print "<option value='$k' selected='selected'>"._($v)."</option>"; }
-						elseif($k==$folder_old_details[$field['name']])				{ print "<option value='$k' selected='selected'>"._($v)."</option>"; }
-						else													{ print "<option value='$k'>"._($v)."</option>"; }
-					}
-					print "</select>";
-				}
-				//text
-				elseif($field['type'] == "text") {
-					print ' <textarea class="form-control input-sm" name="'. $field['nameNew'] .'" placeholder="'. $field['name'] .'" rowspan=3 rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. str_replace("\\n","",$folder_old_details[$field['name']]). '</textarea>'. "\n";
-				}
-				//default - input field
-				else {
-					print ' <input type="text" class="ip_addr form-control input-sm" name="'. $field['nameNew'] .'" placeholder="'. $field['name'] .'" value="'. $folder_old_details[$field['name']]. '" size="30" rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n";
-				}
-
-				print '	</td>'. "\n";
-				print '</tr>'. "\n";
-		    }
+    	print "<tr>";
+    	print "	<td colspan='3' class='hr'><hr></td>";
+    	print "</tr>";
+        $index = false;
+	    foreach($cfs as $cf) {
+            
+            // create input > result is array (required, input(html), timepicker_index)
+            $custom_input = $Components->render_custom_field_input($cf, $folder_old_details, $action, $index);
+            $index = $custom_input['index'];
+            
+            // print
+            print "<tr>";
+            print "	<td>" . (empty($cf->display_name) ? $cf->name : $cf->display_name) . " ".$custom_input['required']."</td>";
+            print "	<td>".$custom_input['field']."</td>";
+            print " <td class=\"info2\">$cf->description</td>";
+            print "</tr>";
+            
 	    }
+    }
 
 
     # divider

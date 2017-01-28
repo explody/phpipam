@@ -11,7 +11,7 @@ if(!isset($address)) {
 }
 
 # fetch all custom fields
-$custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
 
 # set selected address fields array
 $selected_ip_fields = $settings->IPfilter;
@@ -183,24 +183,24 @@ if(sizeof($address)>1) {
 	print "</tr>";
 
 	# custom fields
-	if(sizeof($custom_fields) > 0) {
+	if(sizeof($cfs) > 0) {
 		print "<tr>";
 		print "	<td colsapn='2'><hr></td>";
 		print "</tr>";
 
-		foreach($custom_fields as $key=>$field) {
-			if(strlen($address[$key])>0) {
-			$address[$key] = str_replace(array("\n", "\r\n"), "<br>",$address[$key]);
+		foreach($cfs as $cf) {
+			if(strlen($address[$cf->name])>0) {
+			$address[$cf->name] = str_replace(array("\n", "\r\n"), "<br>",$address[$cf->name]);
 			print "<tr>";
-			print "	<th>$key</th>";
+			print "	<th>$cf->name</th>";
 			print "	<td>";
 			#booleans
-			if($field['type']=="tinyint(1)")	{
-				if($address[$key] == 0)		{ print _("No"); }
-				elseif($address[$key] == 1)	{ print _("Yes"); }
+			if($cf->type == "boolean")	{
+				if($address[$cf->name] == 0)		{ print _("No"); }
+				elseif($address[$cf->name] == 1)	{ print _("Yes"); }
 			}
 			else {
-				print $address[$key];
+				print $address[$cf->name];
 			}
 			print "	</td>";
 			print "</tr>";

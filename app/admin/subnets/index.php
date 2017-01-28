@@ -5,14 +5,10 @@
  ***************************/
 
 # fetch custom fields
-$custom_fields = $Tools->fetch_custom_fields('subnets');
+$cfs = $Tools->fetch_custom_fields('subnets');
 
 # fetch all sections
 $sections = $Sections->fetch_all_sections();
-
-# set hidden fields
-$hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_custom_fields = is_array(@$hidden_custom_fields['subnets']) ? $hidden_custom_fields['subnets'] : array();
 
 # print all sections with delete / edit button
 print '<h4>'._('Subnet management').'</h4>';
@@ -37,14 +33,13 @@ if(sizeof($sections) > 0) {
 	print "	<th>"._('Device')."</th>";
 	print "	<th class='hidden-xs hidden-sm'>"._('Requests')."</th>";
 
-	if(sizeof($custom_fields) > 0) {
-		foreach($custom_fields as $field) {
-			# hidden?
-			if(!in_array($field['name'], $hidden_custom_fields)) {
-				print "	<th class='hidden-xs hidden-sm hidden-md'>$field[name]</th>";
-			}
+	foreach($cfs as $cf) {
+		# hidden?
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
 		}
 	}
+
 	# actions
 	print "<th class='actions' style='padding:0px;'></th>";
 	print "</tr>";
@@ -63,11 +58,9 @@ if(sizeof($sections) > 0) {
 			$colCount = $User->settings->enableVRF==1 ? 10 : 9;
 
 			# just for count
-			if(sizeof($custom_fields) > 0) {
-				foreach($custom_fields as $field) {
-					if(!in_array($field['name'], $hidden_custom_fields)) {
-						$colCount++;
-					}
+			foreach($cfs as $cf) {
+				if($cf->visible) {
+					$colCount++;
 				}
 			}
 
@@ -94,7 +87,8 @@ if(sizeof($sections) > 0) {
 			}
 			else {
 				# subnets
-				$Subnets->print_subnets_tools($User->user, $section_subnets, $custom_fields);
+                # TODO: fix the action buttons line wrapping and messing up table formatting
+				$Subnets->print_subnets_tools($User->user, $section_subnets, $cfs);
 			}
 			$m++;
 		}

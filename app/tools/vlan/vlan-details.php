@@ -17,7 +17,7 @@ if($vlan_domain===false)			{ $Result->show("danger", _("Invalid ID"), true); }
 if($vlan[0]===false)				{ $Result->show("danger", _('Invalid VLAN id'), true); }
 
 # get custom VLAN fields
-$custom_fields = $Tools->fetch_custom_fields('vlans');
+$cfs = $Tools->fetch_custom_fields('vlans');
 ?>
 
 
@@ -51,28 +51,29 @@ print "<a class='btn btn-sm btn-default' href='".create_link($_GET['page'], $_GE
 
 	<?php
 	/* print custom subnet fields if any */
-	if(sizeof($custom_fields) > 0) {
+    // TODO: more DRY
+	if(sizeof($cfs) > 0) {
 
 		print "<tr>";
 		print "	<td colspan='2'><hr></td>";
 		print "</tr>";
 
-		foreach($custom_fields as $key=>$field) {
-			$vlan[$key] = str_replace("\n", "<br>",$vlan[$key]);
+		foreach($cfs as $cf) {
+			$vlan[$cf->name] = str_replace("\n", "<br>",$vlan[$cf->name]);
 
 			# fix for boolean
-			if($field['type']=="tinyint(1)" || $field['type']=="boolean") {
-				if($vlan[$key]==0)		{ $vlan[$key] = "false"; }
-				elseif($vlan[$key]==1)	{ $vlan[$key] = "true"; }
-				else					{ $vlan[$key] = ""; }
+			if($cf->type == "boolean") {
+				if($vlan[$cf->name]==0)		{ $vlan[$cf->name] = "false"; }
+				elseif($vlan[$cf->name]==1)	{ $vlan[$cf->name] = "true"; }
+				else					{ $vlan[$cf->name] = ""; }
 			}
 
 			// create links
-			$vlan[$key] = $Result->create_links($vlan[$key]);
+			$vlan[$cf->name] = $Result->create_links($vlan[$cf->name]);
 
 			print "<tr>";
-			print "	<th>$key</th>";
-			print "	<td style='vertical-align:top;align:left;'>$vlan[$key]</td>";
+			print "	<th>$cf->name</th>";
+			print "	<td style='vertical-align:top;align:left;'>" . $vlan[$cf->name] . "</td>";
 			print "</tr>";
 		}
 	}

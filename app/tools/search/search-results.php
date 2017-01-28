@@ -39,16 +39,6 @@ $custom_vrf_fields     = $_REQUEST['vrf']=="on"       ? $Tools->fetch_custom_fie
 $custom_pstn_fields    = $_REQUEST['pstn']=="on"      ? $Tools->fetch_custom_fields ("pstnPrefixes") : array();
 $custom_pstnM_fields   = $_REQUEST['pstn']=="on"      ? $Tools->fetch_custom_fields ("pstnNumbers") : array();
 
-# set hidden custom fields
-$hidden_fields = json_decode($User->settings->hiddenCustomFields, true);
-
-$hidden_address_fields = is_array(@$hidden_fields['ipaddresses']) ? $hidden_fields['ipaddresses'] : array();
-$hidden_subnet_fields  = is_array(@$hidden_fields['subnets']) ? $hidden_fields['subnets'] : array();
-$hidden_vlan_fields    = is_array(@$hidden_fields['vlans']) ? $hidden_fields['vlans'] : array();
-$hidden_vrf_fields     = is_array(@$hidden_fields['vrf']) ? $hidden_fields['vrf'] : array();
-$hidden_pstn_fields    = is_array(@$hidden_fields['pstnPrefixes']) ? $hidden_fields['pstnPrefixes'] : array();
-$hidden_pstnn_fields   = is_array(@$hidden_fields['pstnNumbers']) ? $hidden_fields['pstnNumbers'] : array();
-
 # set selected address fields array
 $selected_ip_fields = $User->settings->IPfilter;
 $selected_ip_fields = explode(";", $selected_ip_fields);
@@ -109,11 +99,9 @@ if(sizeof($result_subnets)!=0 || sizeof($result_addresses)!=0 || sizeof($result_
 	<th><?php print _('VRF');?></th>
 	<th><?php print _('Requests');?></th>
 	<?php
-	if(sizeof($custom_subnet_fields) > 0) {
-		foreach($custom_subnet_fields as $field) {
-			if(!in_array($field['name'], $hidden_subnet_fields)) {
-				print "	<th class='hidden-xs hidden-sm'>$field[name]</th>";
-			}
+	foreach($custom_subnet_fields as $cf) {
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm'>$cf->name</th>";
 		}
 	}
 	?>
@@ -174,12 +162,10 @@ if(sizeof($result_subnets)!=0 || sizeof($result_addresses)!=0 || sizeof($result_
 				print ' <td>'. _($line['allowRequests']) .'</td>' . "\n";
 
 				# custom fields
-				if(sizeof($custom_subnet_fields) > 0) {
-					foreach($custom_subnet_fields as $field) {
-						if(!in_array($field['name'], $hidden_subnet_fields)) {
-							$line[$field['name']] = $Result->create_links ($line[$field['name']], $field['type']);
-							print "	<td class='hidden-xs hidden-sm'>".$line[$field['name']]."</td>";
-						}
+				foreach($custom_subnet_fields as $cf) {
+					if($cf->visible) {
+						$line[$cf->name] = $Result->create_links ($line[$cf->name], $cf->type);
+						print "	<td class='hidden-xs hidden-sm'>".$line[$cf->name]."</td>";
 					}
 				}
 
@@ -235,11 +221,12 @@ if($m==0) { $Result->show("info", _("No results"), false); }
 	else if (in_array('note', $selected_ip_fields)) 								{ print '<th></th>'. "\n"; $address_span++; }
 
 	# custom fields
-	if(sizeof($custom_address_fields) > 0) {
-		foreach($custom_address_fields as $field) {
-			if(!in_array($field['name'], $hidden_address_fields)) 					{ print "<th class='hidden-xs hidden-sm'>".$field['name']."</th>"; $address_span++; }
-		}
+	foreach($custom_address_fields as $cf) {
+		if($cf->visible) {
+            print "<th class='hidden-xs hidden-sm'>".$cf->name."</th>"; $address_span++;
+        }
 	}
+
 
 	# actions
 	print '<th class="actions"></th>';
@@ -333,14 +320,14 @@ if(sizeof($result_addresses) > 0) {
 				print '</td>'. "\n";
 			}
 			//custom fields
-			if(sizeof($custom_address_fields) > 0) {
-				foreach($custom_address_fields as $field) {
-					if(!in_array($field['name'], $hidden_address_fields)){
-						$line[$field['name']] = $Result->create_links ($line[$field['name']], $field['type']);
-						print '<td class="customField hidden-sm hidden-xs hidden-md">'. $line[$field['name']] .'</td>'. "\n";
-					}
+
+			foreach($custom_address_fields as $cf) {
+				if($cf->visible){
+					$line[$cf->name] = $Result->create_links ($line[$cf->name], $cf->type);
+					print '<td class="customField hidden-sm hidden-xs hidden-md">'. $line[$cf->name] .'</td>'. "\n";
 				}
 			}
+
 
 			# print action links if user can edit
 			print "<td class='actions'>";
@@ -389,11 +376,9 @@ if($n == 0) {
 	<th><?php print _('Number');?></th>
 	<th><?php print _('Description');?></th>
 	<?php
-	if(sizeof($custom_vlan_fields) > 0) {
-		foreach($custom_vlan_fields as $field) {
-			if(!in_array($field['name'], $hidden_vlan_fields)) {
-				print "	<th class='hidden-xs hidden-sm'>$field[name]</th>";
-			}
+	foreach($custom_vlan_fields as $cf) {
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm'>$cf->name</th>";
 		}
 	}
 	?>
@@ -412,15 +397,15 @@ if(sizeof($result_vlans) > 0) {
 		print ' <td><dd>'. $vlan['name']      .'</dd></td>' . "\n";
 		print ' <td><dd><a href="'.create_link("tools","vlan",$vlan['domainId'],$vlan['vlanId']).'">'. $vlan['number']     .'</a></dd></td>' . "\n";
 		print ' <td><dd>'. $vlan['description'] .'</dd></td>' . "\n";
+        
 		# custom fields
-		if(sizeof($custom_vlan_fields) > 0) {
-			foreach($custom_vlan_fields as $field) {
-				if(!in_array($field['name'], $hidden_vlan_fields)) {
-					$vlan[$field['name']] = $Result->create_links ($vlan[$field['name']], $field['type']);
-					print "	<td class='hidden-xs hidden-sm'>".$vlan[$field['name']]."</td>";
-				}
+		foreach($custom_vlan_fields as $cf) {
+			if($cf->visible) {
+				$vlan[$cf->name] = $Result->create_links ($vlan[$cf->name], $cf->type);
+				print "	<td class='hidden-xs hidden-sm'>".$vlan[$cf->name]."</td>";
 			}
 		}
+
 		# for admins print link
 		print " <td class='actions'>";
 		if($User->is_admin(false)) {
@@ -458,13 +443,13 @@ if(sizeof($result_vlans) == 0) {
 	<th><?php print _('RD');?></th>
 	<th><?php print _('Description');?></th>
 	<?php
-	if(sizeof($custom_vrf_fields) > 0) {
-		foreach($custom_vrf_fields as $field) {
-			if(!in_array($field['name'], $hidden_vrf_fields)) {
-				print "	<th class='hidden-xs hidden-sm'>$field[name]</th>";
-			}
+
+	foreach($custom_vrf_fields as $cf) {
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm'>$cf->name</th>";
 		}
 	}
+
 	?>
 	<th></th>
 </tr>
@@ -481,15 +466,15 @@ if(sizeof($result_vrf) > 0) {
 		print ' <td><dd>'. $vrf['name']      .'</dd></td>' . "\n";
 		print ' <td><dd>'. $vrf['rd']     .'</dd></td>' . "\n";
 		print ' <td><dd>'. $vrf['description'] .'</dd></td>' . "\n";
-		# custom fields
-		if(sizeof($custom_vrf_fields) > 0) {
-			foreach($custom_vrf_fields as $field) {
-				if(!in_array($field['name'], $hidden_vrf_fields)) {
-					$vrf[$field['name']] = $Result->create_links ($vrf[$field['name']], $field['type']);
-					print "	<td class='hidden-xs hidden-sm'>".$vrf[$field['name']]."</td>";
-				}
+		
+        # custom fields
+		foreach($custom_vrf_fields as $cf) {
+			if($cf->visible) {
+				$vrf[$cf->name] = $Result->create_links ($vrf[$cf->name], $cf->type);
+				print "	<td class='hidden-xs hidden-sm'>".$vrf[$cf->name]."</td>";
 			}
 		}
+
 		# for admins print link
 		print " <td class='actions'>";
 		if($User->is_admin(false)) {
@@ -530,11 +515,9 @@ if(sizeof($result_vrf) == 0) {
 	<th><?php print _('Range');?></th>
 	<th><?php print _('Device');?></th>
 	<?php
-	if(sizeof($custom_pstn_fields) > 0) {
-		foreach($custom_pstn_fields as $field) {
-			if(!in_array($field['name'], $hidden_pstn_fields)) {
-				print "	<th class='hidden-xs hidden-sm'>$field[name]</th>";
-			}
+	foreach($custom_pstn_fields as $cf) {
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm'>$cf->name</th>";
 		}
 	}
 	?>
@@ -560,14 +543,13 @@ if(sizeof($result_pstn) > 0) {
 		print ' <td class="hidden-sm hidden-xs">'. $pstn->deviceId  .'</td>' . "\n";
 
 		# custom fields
-		if(sizeof($custom_pstn_fields) > 0) {
-			foreach($custom_pstn_fields as $field) {
-				if(!in_array($field['name'], $hidden_pstn_fields)) {
-					$pstn->{$field['name']} = $Result->create_links ($pstn->{$field['name']}, $field['type']);
-					print "	<td class='hidden-xs hidden-sm'>".$pstn->{$field['name']}."</td>";
-				}
+		foreach($custom_pstn_fields as $cf) {
+			if($cf->visible) {
+				$pstn->{$cf->name} = $Result->create_links ($pstn->{$cf->name}, $cf->type);
+				print "	<td class='hidden-xs hidden-sm'>".$pstn->{$cf->name}."</td>";
 			}
 		}
+
 		# for admins print link
 		print " <td class='actions'>";
 		if($User->is_admin(false)) {
@@ -611,11 +593,9 @@ if(sizeof($result_pstn) == 0) {
 	<th><?php print _('Owner');?></th>
 	<th><?php print _('Device');?></th>
 	<?php
-	if(sizeof($custom_pstnn_fields) > 0) {
-		foreach($custom_pstnn_fields as $field) {
-			if(!in_array($field['name'], $hidden_pstnn_fields)) {
-				print "	<th class='hidden-xs hidden-sm'>$field[name]</th>";
-			}
+	foreach($custom_pstnn_fields as $cf) {
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm'>$cf->name</th>";
 		}
 	}
 	?>
@@ -640,14 +620,13 @@ if(sizeof($result_pstnn) > 0) {
 		print ' <td class="hidden-sm hidden-xs">'. $pstnn->deviceId  .'</td>' . "\n";
 
 		# custom fields
-		if(sizeof($custom_pstnn_fields) > 0) {
-			foreach($custom_pstnn_fields as $field) {
-				if(!in_array($field['name'], $hidden_pstnn_fields)) {
-					$pstnn->{$field['name']} = $Result->create_links ($pstnn->{$field['name']}, $field['type']);
-					print "	<td class='hidden-xs hidden-sm'>".$pstnn->{$field['name']}."</td>";
-				}
+		foreach($custom_pstnn_fields as $cf) {
+			if($cf->visible) {
+				$pstnn->{$cf->name} = $Result->create_links ($pstnn->{$cf->name}, $cf->type);
+				print "	<td class='hidden-xs hidden-sm'>".$pstnn->{$cf->name}."</td>";
 			}
 		}
+
 		# for admins print link
 		print " <td class='actions'>";
 		if($User->is_admin(false)) {

@@ -33,7 +33,7 @@ if($all_sections !== false) {
 
 
 # get all custom fields
-$custom_fields = $Tools->fetch_custom_fields('subnets');
+$cfs = $Tools->fetch_custom_fields('subnets');
 
 # Create a workbook
 $today = date("Ymd");
@@ -99,17 +99,13 @@ if( (isset($_GET['discover'])) && ($_GET['discover'] == "on") ) {
 }
 
 //custom fields
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $myField) {
-		//set temp name - replace space with three ___
-		$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
-
-		if( (isset($_GET[$myField['nameTemp']])) && ($_GET[$myField['nameTemp']] == "on") ) {
-			$worksheet->write($lineCount, $rowCount, $myField['name'] ,$format_header);
-			$rowCount++;
-		}
+foreach($cfs as $cf) {
+	if( (isset($_GET[$cf->name])) && ($_GET[$cf->name] == "on") ) {
+		$worksheet->write($lineCount, $rowCount, $cf->name ,$format_header);
+		$rowCount++;
 	}
 }
+
 
 $rowCount = 0;
 $lineCount++;
@@ -209,17 +205,13 @@ if($all_sections!==false) {
 				}
 
 				//custom fields, per subnet
-				if(sizeof($custom_fields) > 0) {
-					foreach($custom_fields as $myField) {
-						//set temp name - replace space with three ___
-						$myField['nameTemp'] = str_replace(" ", "___", $myField['name']);
-
-						if( (isset($_GET[$myField['nameTemp']])) && ($_GET[$myField['nameTemp']] == "on") ) {
-							$worksheet->write($lineCount, $rowCount, $subnet[$myField['name']], $format_text);
-							$rowCount++;
-						}
+				foreach($cfs as $cf) {
+					if( (isset($_GET[$cf->name])) && ($_GET[$cf->name] == "on") ) {
+						$worksheet->write($lineCount, $rowCount, $subnet[$cf->name], $format_text);
+						$rowCount++;
 					}
 				}
+
 
 			//reset row count
 			$rowCount = 0;

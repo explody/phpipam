@@ -25,7 +25,7 @@ class phpipam_rack extends Tools {
      * @var bool
      * @access public
      */
-    public $all_racks = false;
+    public $all_racks = [];
 
     /**
      * Content of current rack
@@ -135,8 +135,8 @@ class phpipam_rack extends Tools {
     public function fetch_all_racks () {
         $all_racks = $this->fetch_all_objects("racks", "name", "acs");
         // reorder
-        if ($all_racks==false) {
-            $this->all_racks = false;
+        if (!$all_racks) {
+            $this->all_racks = [];
         }
         else {
             // reindex
@@ -144,7 +144,7 @@ class phpipam_rack extends Tools {
                 $out[$r->id] = $r;
             }
             // save
-            $this->all_racks = (object) $out;
+            $this->all_racks = $out;
         }
     }
 
@@ -157,8 +157,8 @@ class phpipam_rack extends Tools {
      */
     public function fetch_rack_details ($id) {
         // first check all_racks
-        if (isset($this->all_racks->{$id})) {
-            return $this->all_racks->{$id};
+        if (isset($this->all_racks[$id])) {
+            return $this->all_racks[$id];
         }
         else {
             return $this->fetch_object("racks", "id", $id);

@@ -10,7 +10,7 @@ $Racks      = new phpipam_rack ($Database);
 $csrf = $User->csrf_create('rack');
 
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('racks');
+$cfs = $Tools->fetch_custom_fields('racks');
 
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['rackid']))		{ $Result->show("danger", _("Invalid ID"), true, true); }
@@ -123,7 +123,7 @@ $(document).ready(function(){
 
 	<!-- Custom -->
 	<?php
-	if(sizeof($custom) > 0) {
+	if(sizeof($cfs) > 0) {
 
 		print '<tr>';
 		print '	<td colspan="2"><hr></td>';
@@ -133,14 +133,14 @@ $(document).ready(function(){
 		$timepicker_index = 0;
 
 		# all my fields
-		foreach($custom as $field) {
+		foreach($cfs as $cf) {
     		// create input > result is array (required, input(html), timepicker_index)
-    		$custom_input = $Tools->create_custom_field_input ($field, $rack, $_POST['action'], $timepicker_index);
+    		$custom_input = $Tools->create_custom_field_input ($cf, $rack, $_POST['action'], $timepicker_index);
     		// add datepicker index
     		$timepicker_index = $timepicker_index + $custom_input['timepicker_index'];
             // print
 			print "<tr>";
-			print "	<td>".ucwords($field['name'])." ".$custom_input['required']."</td>";
+			print "	<td>".ucwords($cf->name)." ".$custom_input['required']."</td>";
 			print "	<td>".$custom_input['field']."</td>";
 			print "</tr>";
 		}

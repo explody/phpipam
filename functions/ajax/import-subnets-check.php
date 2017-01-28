@@ -9,7 +9,7 @@
 #separate option $rebuildmnr = isset($_GET['rebuildmnr']) ? $_GET['rebuildmnr'] : "off";
 
 # read again the custom fields, if any
-if (!isset($custom_fields)) { $custom_fields = $Tools->fetch_custom_fields("subnets"); }
+if (!isset($cfs)) { $cfs = $Tools->fetch_custom_fields("subnets"); }
 
 # fetch all l2 domains
 $vlan_domains = $Admin->fetch_all_objects("vlanDomains", "id");
@@ -171,13 +171,12 @@ foreach ($data as &$cdata) {
 			if ($cdata['description'] != $cedata['description']) { $msg.= "Subnet description will be updated."; $action = "edit"; }
 			if ($cdata['vlanId'] != $cedata['vlanId']) { $msg.= "VLAN ID will be updated."; $action = "edit"; }
 			# Check if the values of the custom fields have changed
-			if(sizeof($custom_fields) > 0) {
-				foreach($custom_fields as $myField) {
-					if ($cdata[$myField['name']] != $cedata[$myField['name']]) {
-						$msg.= $myField['name']." will be updated."; $action = "edit";
-					}
+			foreach($cfs as $cf) {
+				if ($cdata[$cf->name] != $cedata[$cf->name]) {
+					$msg.= $cf->name." will be updated."; $action = "edit";
 				}
 			}
+
 
 			if ($action == "skip") {
 				$msg.= "Duplicate, will skip.";

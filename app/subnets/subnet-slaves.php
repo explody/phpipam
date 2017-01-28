@@ -4,14 +4,10 @@ $('body').tooltip({ selector: '[rel=tooltip]' });
 </script>
 <?php
 
-# set which custom fields to display
-$hidden_fields = json_decode($User->settings->hiddenCustomFields, true);
 # set visible fields
-foreach ($custom_fields as $k=>$f) {
-    if (isset($hidden_fields['subnets'])) {
-        if (!in_array($k, $hidden_fields['subnets'])) {
-            $visible_fields[$k] = $f;
-        }
+foreach ($custom_fields as $cf) {
+    if ($cf->visible) {
+        $visible_fields[$cf->name] = $cf;
     }
 }
 # set colspan

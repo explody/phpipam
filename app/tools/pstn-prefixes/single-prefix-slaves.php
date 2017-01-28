@@ -27,9 +27,6 @@ else {
         # fetch all prefixes
         $prefix = $Tools->fetch_object("pstnPrefixes", "id", $_GET['subnetId']);
 
-        // get custom fields
-        $cfields = $Tools->fetch_custom_fields ('pstnPrefixes');
-
         if($prefix===false) {
              $Result->show("danger", _("Prefix not found"), false);
         }
@@ -145,17 +142,17 @@ else {
         	print "</tr>";
 
         	# print custom subnet fields if any
-        	if(sizeof($cfields) > 0) {
+        	if(sizeof($cfs) > 0) {
         		// divider
         		print "<tr><td colspan='2'><hr></td></tr>";
         		// fields
-        		foreach($cfields as $key=>$field) {
-        			$prefix->{$key} = str_replace("\n", "<br>",$prefix->{$key});
+        		foreach($cfs as $cf) {
+        			$prefix->{$cf->name} = str_replace("\n", "<br>",$prefix->{$cf->name});
         			// create links
-        			$prefix->{$key} = $Result->create_links($prefix->{$key});
+        			$prefix->{$cf->name} = $Result->create_links($prefix->{$cf->name});
         			print "<tr>";
-        			print "	<th>$key</th>";
-        			print "	<td style='vertical-align:top;align:left;'>".$prefix->{$key}."</td>";
+        			print "	<th>$cf->name</th>";
+        			print "	<td style='vertical-align:top;align:left;'>".$prefix->{$cf->name}."</td>";
         			print "</tr>";
         		}
         	}

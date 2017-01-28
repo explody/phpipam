@@ -42,8 +42,8 @@ foreach ($data as &$cdata) {
 
 		# add custom fields
 		if(sizeof($custom_fields) > 0) {
-			foreach($custom_fields as $myField) {
-				if(isset($cdata[$myField['name']])) { $values[$myField['name']] = $cdata[$myField['name']]; }
+			foreach($custom_fields as $cf) {
+				if(isset($cdata[$cf->name])) { $values[$cf->name] = $cdata[$cf->name]; }
 			}
 		}
 

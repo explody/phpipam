@@ -14,7 +14,7 @@ if(!is_numeric($subnet->id)) 		{ $Result->show("danger", _('Invalid ID'), true);
 $subnet = (array) $subnet;
 
 # fetch subnet reated stuff
-$custom_fields = $Tools->fetch_custom_fields ('subnets');											//custom fields
+$cfs = $Tools->fetch_custom_fields ('subnets');											//custom fields
 $subnet  = (array) $Subnets->fetch_subnet(null, $subnet['id']);										//subnet details
 if(sizeof($subnet)==0) 				{ $Result->show("danger", _('Subnet does not exist'), true); }	//die if empty
 $subnet_detailed = $Subnets->get_network_boundaries ($subnet['subnet'], $subnet['mask']);			//set network boundaries

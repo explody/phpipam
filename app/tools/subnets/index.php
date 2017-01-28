@@ -11,11 +11,7 @@ $User->check_user_session();
 $sections = $Sections->fetch_all_sections();
 
 # get custom fields
-$custom_fields = $Tools->fetch_custom_fields('subnets');
-
-# set hidden fields
-$hidden_fields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_fields = is_array($hidden_fields['subnets']) ? $hidden_fields['subnets'] : array();
+$cfs = $Tools->fetch_custom_fields('subnets');
 
 # title
 print "<h4>"._('Available subnets')."</h4>";
@@ -43,14 +39,14 @@ if ($sections!==false) {
 	if($User->settings->enableIPrequests == 1) {
 	print "	<th class='hidden-xs hidden-sm'>"._('Requests')."</th>";
 	}
-	if(sizeof($custom_fields) > 0) {
-		foreach($custom_fields as $field) {
-			# hidden?
-			if(!in_array($field['name'], $hidden_fields)) {
-				print "	<th class='hidden-xs hidden-sm hidden-md'>$field[name]</th>";
-			}
-		}
-	}
+
+    foreach($cfs as $cf) {
+        # hidden?
+        if($cf->visible) {
+            print " <th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
+        }
+    }
+  
 	# actions
 	print "<th class='actions' style='padding:0px;'></th>";
 	print "</tr>";
@@ -67,7 +63,7 @@ if ($sections!==false) {
 		$permission = $Sections->check_permission ($User->user, $section['id']);
 		if($permission > 0) {
 			# set colspan
-			$colSpan = 9 + (sizeof($custom_fields));
+			$colSpan = 9 + (sizeof($cfs));
 
 			# section names
 			print "	<tr class='subnets-title'>";
@@ -85,7 +81,7 @@ if ($sections!==false) {
 			}
 			else {
 				// print subnets, if none print no available
-				if($Subnets->print_subnets_tools($User->user, $subnets, $custom_fields)===false) {
+				if($Subnets->print_subnets_tools($User->user, $subnets, $cfs)===false) {
 					print "<tr><td colspan='$colSpan'><div class='alert alert-info'>". _("No subnets available")."</td></tr>";
 				}
 

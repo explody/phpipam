@@ -17,14 +17,14 @@ $filetype = explode(".", $_POST['filetype']);
 $filetype = end($filetype);
 
 # get custom fields
-$custom_address_fields = $Tools->fetch_custom_fields('ipaddresses');
+$cfs = $Tools->fetch_custom_fields('ipaddresses');
 
 # fetch subnet
 $subnet = $Subnets->fetch_subnet("id",$_POST['subnetId']);
 if($subnet===false)                $Result->show("danger", _("Invalid subnet ID") ,true);
 
 # Parse file
-$outFile = $Tools->parse_import_file ($filetype, $subnet, $custom_address_fields);
+$outFile = $Tools->parse_import_file ($filetype, $subnet, $cfs);
 
 # Fetch all devices
 $devices = $Tools->fetch_all_objects("devices", "hostname");
@@ -82,12 +82,12 @@ foreach($outFile as $k=>$line) {
         // custom fields
         // Incorrect Value for $currIndex = 10;
         $currIndex = 9;
-        if(sizeof($custom_address_fields) > 0) {
-        	foreach($custom_address_fields as $field) {
-            	$currIndex++;
-        		$address_insert[$field['name']] = $line[$currIndex];
-        	}
-        }
+
+    	foreach($cfs as $cf) {
+        	$currIndex++;
+    		$address_insert[$cf->name] = $line[$currIndex];
+    	}
+
 
 		// insert
 		if($Addresses->modify_address ($address_insert)===false)	{ $errors++; }

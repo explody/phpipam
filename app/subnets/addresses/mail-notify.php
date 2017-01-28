@@ -17,7 +17,7 @@ $vlan    = (array) $Tools->fetch_object ("vlans", "vlanId", $subnet['vlanId']);
 $nameservers    = (array) $Tools->fetch_object("nameservers", "id", $subnet['nameserverId']);
 
 # get all custom fields
-$custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
+$cfs = $Tools->fetch_custom_fields ('ipaddresses');
 
 # get subnet calculation
 $subnet_calculation = $Tools->calculate_ip_calc_results ($subnet['ip']."/".$subnet['mask']);
@@ -73,16 +73,13 @@ empty($address['mac']) ? : 			$content[] = "&bull; "._('Mac address').": \t\t $a
 empty($address['owner']) ? : 			$content[] = "&bull; "._('Owners').": \t\t $address[owner]";
 
 # custom
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $custom_field) {
-		if(!empty($address[$custom_field['name']])) {
-						$content[] =  "&bull; ". _($custom_field['name']).":\t".$address[$custom_field['name']];
-		}
+foreach($cfs as $cf) {
+	if(!empty($address[$cf->name])) {
+		$content[] =  "&bull; ". _($cf->name).":\t".$address[$cf->name];
 	}
 }
+
 ?>
-
-
 
 <!-- header -->
 <div class="pHeader"><?php print _('Send email notification'); ?></div>

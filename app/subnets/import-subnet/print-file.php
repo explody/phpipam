@@ -12,7 +12,7 @@ $filetype = end($filetype);
 is_numeric($_POST['subnetId']) ? : $Result->show("danger", _("Invalid subnet ID") ,true);
 
 # get custom fields
-$custom_address_fields = $Tools->fetch_custom_fields('ipaddresses');
+$cfs = $Tools->fetch_custom_fields('ipaddresses');
 
 # fetch subnet
 $subnet = $Subnets->fetch_subnet("id",$_POST['subnetId']);
@@ -20,7 +20,7 @@ $subnet = $Subnets->fetch_subnet("id",$_POST['subnetId']);
 if($subnet===false)                $Result->show("danger", _("Invalid subnet ID") ,true);
 
 # Parse file
-$outFile = $Tools->parse_import_file ($filetype, $subnet, $custom_address_fields);
+$outFile = $Tools->parse_import_file ($filetype, $subnet, $cfs);
 
 
 /*
@@ -41,11 +41,10 @@ print '	<th>'._('Device').'</th>';
 print '	<th>'._('Port').'</th>';
 print '	<th>'._('Note').'</th>';
 // Add custom fields
-if(sizeof($custom_address_fields) > 0) {
-	foreach($custom_address_fields as $field) {
-		print "	<th>$field[name]</th>";
-	}
+foreach($cfs as $cf) {
+	print "	<th>$cf->name</th>";
 }
+
 print '</tr>';
 
 

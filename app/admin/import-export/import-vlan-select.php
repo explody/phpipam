@@ -46,18 +46,15 @@ foreach($expfields as $std_field) {
 }
 
 # append the custom fields, if any
-$custom_fields = $Tools->fetch_custom_fields($mtable);
-if(sizeof($custom_fields) > 0) {
-	foreach($custom_fields as $myField) {
-		# add field to required fields if needed
-		if ($myField['Null'] == "NO") { $reqfields[] = $myField['name']; }
-		# mark required fields with *
-		$msgr = in_array($myField['name'],$reqfields) ? "*" : "";
+foreach($Tools->fetch_custom_fields($mtable) as $cf) {
+	# add field to required fields if needed
+	if (!$cf->null) { $reqfields[] = $cf->name; }
+	# mark required fields with *
+	$msgr = in_array($cf->name,$reqfields) ? "*" : "";
 
-		$tpl_field_names.= "<th>".$myField['name'].$msgr."</th>";
-		$tpl_field_types.= "<td><small>". wordwrap($myField['type'],18,"<br>\n",true) ."</small></td>";
-		$expfields[] = $myField['name'];
-	}
+	$tpl_field_names.= "<th>".$cf->name.$msgr."</th>";
+	$tpl_field_types.= "<td><small>". wordwrap($cf->type,18,"<br>\n",true) ."</small></td>";
+	$expfields[] = $cf->name;
 }
 
 ?>

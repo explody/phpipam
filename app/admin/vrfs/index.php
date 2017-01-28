@@ -11,14 +11,8 @@ $User->check_user_session();
 $all_vrfs = $Admin->fetch_all_objects("vrf", "name");
 
 # fetch custom fields
-$custom = $Tools->fetch_custom_fields('vrf');
+$cfs = $Tools->fetch_custom_fields('vrf');
 
-# set hidden fields
-$hidden_fields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_fields = is_array(@$hidden_fields['vrf']) ? $hidden_fields['vrf'] : array();
-
-# set size of custom fields
-$custom_size = sizeof($custom) - sizeof($hidden_fields);
 ?>
 
 <h4><?php print _('Manage VRF'); ?></h4>
@@ -49,13 +43,13 @@ else {
 	print '	<th>'._('RD').'</th>'. "\n";
 	print '	<th>'._('Sections').'</th>'. "\n";
 	print '	<th>'._('Description').'</th>'. "\n";
-	if(sizeof($custom) > 0) {
-		foreach($custom as $field) {
-			if(!in_array($field['name'], $hidden_fields)) {
-				print "<th class='customField hidden-xs hidden-sm'>$field[name]</th>";
-			}
+
+	foreach($cfs as $cf) {
+		if($cf->visible) {
+			print "<th class='customField hidden-xs hidden-sm'>$cf->name</th>";
 		}
 	}
+
 	print '	<th></th>'. "\n";
 	print '</tr>'. "\n";
 	print "</thead>";
@@ -91,33 +85,33 @@ else {
 		print '	<td class="description">'. $vrf['description'] .'</td>'. "\n";
 
 		// custom fields
-		if(sizeof($custom) > 0) {
-			foreach($custom as $field) {
-				if(!in_array($field['name'], $hidden_fields)) {
 
-					print "<td class='customField hidden-xs hidden-sm'>";
+		foreach($cfs as $cf) {
+			if($cf->visible) {
 
-					// create links
-					$vrf[$field['name']] = $Result->create_links ($vrf[$field['name']], $field['type']);
+				print "<td class='customField hidden-xs hidden-sm'>";
 
-					//booleans
-					if($field['type']=="tinyint(1)")	{
-						if($vrf[$field['name']] == "0")		{ print _("No"); }
-						elseif($vrf[$field['name']] == "1")	{ print _("Yes"); }
-					}
-					//text
-					elseif($field['type']=="text") {
-						if(strlen($vrf[$field['name']])>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $vrf[$field['name']])."'>"; }
-						else											{ print ""; }
-					}
-					else {
-						print $vrf[$field['name']];
+				// create links
+				$vrf[$cf->name] = $Result->create_links ($vrf[$cf->name], $cf->type);
 
-					}
-					print "</td>";
+				//booleans
+				if($field['type']=="tinyint(1)")	{
+					if($vrf[$cf->name] == "0")		{ print _("No"); }
+					elseif($vrf[$cf->name] == "1")	{ print _("Yes"); }
 				}
+				//text
+				elseif($field['type']=="text") {
+					if(strlen($vrf[$cf->name])>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $vrf[$cf->name])."'>"; }
+					else											{ print ""; }
+				}
+				else {
+					print $vrf[$cf->name];
+
+				}
+				print "</td>";
 			}
 		}
+
 
 		print "	<td class='actions'>";
 		print "	<div class='btn-group'>";

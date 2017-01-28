@@ -2842,7 +2842,7 @@ $(document).on("change", "select#cf-type", function() {
         }
         
         if(selectedType == "text") {
-            $("input#cf-limit").val(255);
+            $("input#cf-limit").val(65535);
         }
         
         if(selectedType == "string") {

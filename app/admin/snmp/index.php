@@ -10,20 +10,6 @@ $User->check_user_session();
 # fetch all Devices
 $Snmp = new phpipamSNMP ();
 
-# fetch all Device types and reindex
-$device_types = $Admin->fetch_all_objects("deviceTypes", "id");
-if ($device_types !== false) {
-	foreach ($device_types as $dt) {
-		$device_types_i[$dt->id] = $dt;
-	}
-}
-
-# fetch custom fields
-$custom = $Tools->fetch_custom_fields('devices');
-
-# get hidden fields
-$hidden_custom_fields = json_decode($User->settings->hiddenCustomFields, true);
-$hidden_custom_fields = is_array(@$hidden_custom_fields['devices']) ? $hidden_custom_fields['devices'] : array();
 ?>
 
 <h4><?php print _('SNMP management'); ?></h4>
