@@ -88,7 +88,7 @@ class CustomFieldConversion extends Ipam\Migration\RepeatableMigration
 
                     !empty($fdata['Default']) ? $cfield->default = $fdata['Default'] : null;
                     !empty($fdata['Comment']) ? $cfield->description = $fdata['Comment'] : null;
-                    $fdata['Null'] === 'NO' ? $cfield->null = 0 : $cfield->null = 1;
+                    $fdata['Null'] == 'NO' ? $cfield->null = '0' : $cfield->null = '1';
                     
                     $limit ? $cfield->limit = $limit : 128; // limit must be something
                     
@@ -101,9 +101,14 @@ class CustomFieldConversion extends Ipam\Migration\RepeatableMigration
                     $where = "`table`=? and `name`=?";
                     $count = $d->numObjectsConditional('customFields', $where, [$st,$fname]);
                     
+                    // Fill in params that we store as db columns
+                    $phinx_params = $params;
+                    foreach (['limit','null','default'] as $dbparam) {
+                        $phinx_params[$dbparam] = $cfield->$dbparam;
+                    }
                     // addColumn from RepeatableMigration handles add/update. Even though the columns must exist 
                     // at this point, run the migration to ensure consistency.
-                    $ct->addColumn($cfield->name, $cfield->type, $params)->save();
+                    $ct->addColumn($cfield->name, $cfield->type, $phinx_params)->save();
                     
                     // Entry does not exist in customFields, so add it.
                     if ($count == 0) {

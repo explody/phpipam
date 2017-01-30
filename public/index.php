@@ -34,14 +34,18 @@ if(!isset($_GET['page'])) {
 
 # if not install fetch settings etc
 if($_GET['page'] != "setup" ) {
-    
-	# database object
-	$Database 	= new Database_PDO;
-    
+
     try {
+        # database object
+    	$Database 	= new Database_PDO;
         $Database->connect();
     } catch (Exception $e) {
         header("Location: /broken/");
+    }
+    
+    // If setup is not complete, send to setup
+    if ($Database->setup_required()) {
+        header("Location: " . BASE . "setup/");
     }
 
 	$Result		= new Result;
@@ -52,13 +56,8 @@ if($_GET['page'] != "setup" ) {
 	$Addresses	= new Addresses ($Database);
 	$Log 		= new Logging ($Database);
 
-	# reset url for base
-	$url = $User->createURL ();
-    
-    // If setup is not complete, send to setup
-    if (!property_exists($User->settings, 'setup_completed') || !$User->settings->setup_completed) {
-        header("Location: ".create_link('setup'));
-    }
+    # reset url for base
+    $url = $User->createURL ();
     
 }
 

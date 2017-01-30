@@ -60,10 +60,18 @@ require( dirname(__FILE__) . '/classes/class.PagedSearch.php' );
 require( dirname(__FILE__) . '/classes/class.Components.php' );
 require( dirname(__FILE__) . '/classes/class.Devices.php' );
 
+if(!isset($Database)) {
+    try {
+        # database object
+        $Database     = new Database_PDO;
+        $Database->connect();
+    } catch (Exception $e) {
+        header("Location: /broken/");
+    }
+}
+
 # save settings to constant
-if(@$_GET['page']!="install" ) {
-	# database object
-	$Database 	= new Database_PDO;
+if (!$Database->bootstrap_required()) {
 	# try to fetch settings
 	try { $settings = $Database->getObject("settings", 1); }
 	catch (Exception $e) { $settings = false; }

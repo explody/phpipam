@@ -4,20 +4,29 @@
 
 $Install 	= new Install ($Database);
 
-# admin user is required
-if ($User->settings->setup_completed) { 
-    $User->is_admin(true);
+// If we're not bootstrapping the DB, there should be users
+if (!$Database->bootstrap_required()) {
+    # admin user is required
+    if ($User->settings->setup_completed) { 
+        $User->is_admin(true);
+    }
 }
 
 $migrate = $Install->migrate_database();
 
 if($migrate) {
-	
-	# migrate settings
-	$User->migrate_domain_settings ();
-    $User->migrate_ldap_settings ();
     
-    if (!property_exists($User->settings, 'setup_completed') || !$User->settings->setup_completed) {
+    // re-init $Database post-migration
+    $Database 	= new Database_PDO;
+    $User		= new User ($Database);
+	
+    if (!$Database->bootstrap_required()) {
+    	# migrate settings
+    	$User->migrate_domain_settings ();
+        $User->migrate_ldap_settings ();
+    }
+    
+    if ($Database->setup_required()) {
         $return_to = "setup";
     } else {
         $return_to = "dashboard";

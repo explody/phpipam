@@ -1028,6 +1028,26 @@ class Database_PDO extends DB {
 	protected $debug = false;
 
     /**
+	 * Setup required flag
+	 * If true, setup has not been completed
+	 * (default value: false)
+	 *
+	 * @var bool
+	 * @access protected
+	 */
+	protected $needs_setup = false;
+    
+    /**
+	 * Bootstrap required flag
+	 * If true, initial migration has not been completed
+	 * (default value: false)
+	 *
+	 * @var bool
+	 * @access protected
+	 */
+	protected $needs_bootstrap = false;
+
+    /**
 	 * Will contain connection options mapped with pdo constants
 	 *
 	 * @var array
@@ -1104,8 +1124,64 @@ class Database_PDO extends DB {
 
 		# construct
 		parent::__construct($this->dsn, $this->username, $this->password, $this->pdo_options);
+        
+        // This will verify that the setup has been completed and the database *should* be in a usable state
+        $this->check_setup();
 	}
 
+    /**
+     * Performs basic checks on the state of the database and sets $this->setup_required
+     *
+     * @access private
+     * @return bool
+     */
+    private function check_setup() {
+
+        if (!$this->tableExists('settings')) {
+            $this->needs_bootstrap = true;
+            $this->needs_setup = true;
+            return;
+        }
+        
+        if (!$this->tableExists('migrations')) {
+            $this->needs_bootstrap = true;
+            $this->needs_setup = true;
+            return;
+        }
+        
+        try {
+            $sc = $this->getObjectQuery("select setup_completed from settings");
+            
+            if (!$sc->setup_completed) {
+                $this->needs_setup = true;
+                return;
+            }
+        } catch (PDOException $e) {
+            $this->needs_setup = true;
+        }
+        
+    }
+    
+    /**
+     * Returns $this->needs_setup
+     *
+     * @access public
+     * @return bool
+     */
+    public function setup_required() {
+        return $this->needs_setup;
+    }
+    
+    /**
+     * Returns $this->needs_bootstrap
+     *
+     * @access public
+     * @return bool
+     */
+    public function bootstrap_required() {
+        return $this->needs_bootstrap;
+    }
+    
     /**
      * Returns true if the config migration version is higher than current migration version
      *
@@ -1113,6 +1189,9 @@ class Database_PDO extends DB {
      * @return bool
      */
     public function migration_required() {
+        if ($this->bootstrap_required()) {
+            return true;
+        }
         if ($this->currentMigrationVersion() < $this->c->migration_version) {
             return true;
         }

@@ -1,6 +1,6 @@
 <?php 
 
-$csrf = $User->csrf_create('setup-basic');
+$csrf = $Tools->csrf_create('setup-basic');
 $admin = $Tools->fetch_object ("users","username","Admin");
 $admin_exists = false;
 

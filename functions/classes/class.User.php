@@ -491,45 +491,6 @@ class User extends Common_functions {
 
 
 
-
-
-
-    /**
-     * CSRF cookie creation / validation.
-     *
-     * @access public
-     * @param string|null $index (default: null)
-     * @param string|null $value (default: null)
-     * @return string
-     */
-    public function csrf_create ($index = null, $value = null) {
-        $name = is_null($index) ? "csrf_cookie" : "csrf_cookie_".$index;
-        $_SESSION[$name] = ($value ? $value : md5(uniqid(mt_rand(), true)));
-        return $_SESSION[$name];
-    }
-
-    /**
-     * Validate provided csrf cookie
-     *
-     * @access public
-     * @param mixed $index
-     * @return bool
-     */
-    public function csrf_validate ($index, $value, $Result = false, $die = true) {
-        // set cookie suffix
-        $name = is_null($index) ? "csrf_cookie" : "csrf_cookie_".$index;
-        // check and return
-        if ($_SESSION[$name] != $value) {
-            if ($Result) {
-                $Result->show("danger", _("Invalid CSRF cookie"), $die);
-            }
-            return false;
-        }
-        return true;
-    }
-
-
-
    /**
      *    Check if migration of AD settings is required
      *

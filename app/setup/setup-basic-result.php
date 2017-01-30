@@ -4,7 +4,7 @@
  *	Post-installation submit
  */
  
-$User->csrf_validate("setup-basic", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate("setup-basic", $_POST['csrf_cookie'], $Result);
 
 $Install  = new Install($Database);
 
@@ -14,6 +14,7 @@ $admin = $Admin->fetch_object("users", "username", "Admin");
 # If admin already has a password, ensure setup_completed is set and redirect to login
 if (!empty($admin->password)) {
     $Install->mark_setup_completed();
+    $Result->show("success", "Basic setup complete!", false);
 } else {
     
     # check lengths

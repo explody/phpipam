@@ -40,14 +40,17 @@ $Tools		= new Tools ($Database);
 $method = $_SERVER['REQUEST_METHOD'];
 $Tools->validate_method($method, true);
 
-$User 		= new User ($Database);
-$Addresses  = new Addresses ($Database);
-$Admin	 	= new Admin ($Database, false);
-$Sections	= new Sections ($Database);
-$Subnets	= new Subnets ($Database);
+if (!$Database->bootstrap_required()) {
+    $User 		= new User ($Database);
+    $Addresses  = new Addresses ($Database);
+    $Admin	 	= new Admin ($Database, false);
+    $Sections	= new Sections ($Database);
+    $Subnets	= new Subnets ($Database);
+    $Devices    = new Devices ($Database);
+    $Components = new Components ($Tools);
+}
+
 $Result 	= new Result ();
-$Devices    = new Devices ($Database);
-$Components = new Components ($Tools);
 
 $path = $_GET['a'];
 
@@ -55,8 +58,7 @@ $path = $_GET['a'];
 unset($_GET['a']);
 
 # verify that user is logged in, unless it's a login or captcha call, or if setup is incomplete
-if ($path[1] != 'login_check' && (property_exists($User->settings, 'setup_completed') && 
-                                  $User->settings->setup_completed)) {
+if ($path[1] != 'login_check' && !$Database->setup_required()) {
     $User->check_user_session();
 }
 
