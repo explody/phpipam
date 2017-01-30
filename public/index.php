@@ -15,10 +15,10 @@ ob_start();
 require_once dirname(__FILE__) . "/../paths.php";
 
 /* config */
-if (!file_exists(CONFIG))	{ 
-    die("<br><hr>-- config.php file missing! Please copy default config file `config.dist.php` to `config.php` and set configuration! --<hr><br>phpipam installation documentation: <a href='http://phpipam.net/documents/installation/'>http://phpipam.net/documents/installation/</a>"); 
-} else { 
-    require CONFIG; 
+try {
+    $c = require(CONFIG);
+} catch (Exception $e) {
+    header("Location: /broken/");
 }
 
 /* site functions */
@@ -28,17 +28,22 @@ require FUNCTIONS . '/functions.php';
 require_once VENDOR . '/autoload.php';
 
 # set default page
-if(!isset($_GET['page'])) { $_GET['page'] = "dashboard"; }
+if(!isset($_GET['page'])) { 
+    $_GET['page'] = "dashboard"; 
+}
 
 # if not install fetch settings etc
-if($_GET['page'] != "install" ) {
+if($_GET['page'] != "setup" ) {
+    
 	# database object
 	$Database 	= new Database_PDO;
+    
+    try {
+        $Database->connect();
+    } catch (Exception $e) {
+        header("Location: /broken/");
+    }
 
-	# check if this is a new installation
-	require(FUNCTIONS . '/checks/check_db_install.php');
-
-	# initialize objects
 	$Result		= new Result;
 	$User		= new User ($Database);
 	$Sections	= new Sections ($Database);
@@ -49,11 +54,17 @@ if($_GET['page'] != "install" ) {
 
 	# reset url for base
 	$url = $User->createURL ();
+    
+    // If setup is not complete, send to setup
+    if (!property_exists($User->settings, 'setup_completed') || !$User->settings->setup_completed) {
+        header("Location: ".create_link('setup'));
+    }
+    
 }
 
 /** include proper subpage **/
-if($_GET['page']=='install')		{ require(APP . '/install/index.php'); }
-elseif($_GET['page']=='upgrade')	{ require(APP . '/upgrade/index.php'); }
+if($_GET['page']=='setup')          { require(APP . '/setup/index.php'); }
+elseif($_GET['page']=='migrate')	{ require(APP . '/migrate/index.php'); }
 elseif($_GET['page']=='login')		{ 
     if ($_GET['section'] == 'captcha') {
         require(APP . '/login/captcha/captchashow.php'); 
@@ -68,9 +79,14 @@ elseif($_GET['page']=='opensearch')	{ require(APP . '/tools/search/opensearch.ph
 else {
 	# verify that user is logged in
 	$User->check_user_session();
+    
+    if($_GET['page'] != "migrate" ) {
+        if ($Database->migration_required()) {
+            header("Location: /migrate/");
+        }
+    }
 
 	# make upgrade and php build checks
-	include(FUNCTIONS . '/checks/check_db_upgrade.php'); 	# check if database needs upgrade
 	include(FUNCTIONS . '/checks/check_php_build.php');	# check for support for PHP modules and database connection
 	if($_GET['switch'] && $_SESSION['realipamusername'] && $_GET['switch'] == "back"){
 		$_SESSION['ipamusername'] = $_SESSION['realipamusername'];
@@ -239,7 +255,7 @@ else {
 <!-- page sections / menu -->
 <div class="content">
 <div id="sections_overlay">
-    <?php if($_GET['page']!="login" && $_GET['page']!="request_ip" && $_GET['page']!="upgrade" && $_GET['page']!="install" && $User->user->passChange!="Yes")  include(APP . '/sections/index.php');?>
+    <?php if($_GET['page']!="login" && $_GET['page']!="request_ip" && $_GET['page']!="migrate" && $_GET['page']!="install" && $User->user->passChange!="Yes")  include(APP . '/sections/index.php');?>
 </div>
 </div>
 

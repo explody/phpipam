@@ -9,7 +9,7 @@ class DeviceGroupSettings extends Ipam\Migration\RepeatableMigration
     public function change()
     {
         $table = $this->table('settings')
-                    ->addColumn('devicegrouping', 'boolean', array('default'=>0,'null'=>true))
+                    ->addColumn('devicegrouping', 'boolean', array('default'=>0,'null'=>false))
                     ->addColumn('devicegroupfield', 'string', array('limit' => 128))
                     ->save();
     }

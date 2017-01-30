@@ -41,6 +41,20 @@ $defaults['db'] = $defaults['db_defaults'];
 // Recursively merge environment config over primary config
 $config = IpamConfig::config_merge_recursive($defaults, $env);
 
+// Break up the version into semantic parts
+list($maj,$min,$patch) = explode('.',VERSION);
+$config['version'] = [ 'major' => $maj, 
+                       'minor' => $min,
+                       'patch' => $patch ];
+                       
+// Determine latest migration version
+$mvs = [];
+foreach (glob(MIGRATION_DIR . '/[0-9]*php') as $mfile) {
+    $mvs[] = explode("_", basename($mfile), 2)[0];
+}
+rsort($mvs);
+$config['migration_version'] = $mvs[0];
+
 // Initalize the config pseudo-singleton with the config array
 IpamConfig::init($config);
 

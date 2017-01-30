@@ -59,6 +59,18 @@ define('CONFIG', CONFIG_DIR . '/loader.php');
   *  Default: CONFIG_DIR/environments
   **/
  define('ENV_DIR', CONFIG_DIR . '/environments');
+ 
+ /**
+  *  Full path to the migrations directory
+  *  Default: IPAM_ROOT/config
+  **/
+ define('DB_DIR', IPAM_ROOT . '/db');
+
+ /**
+  *  Full path to the migrations directory
+  *  Default: IPAM_ROOT/config
+  **/
+ define('MIGRATION_DIR', DB_DIR . '/migrations');
 
 # With basic paths set, we can require our version info 
 require_once CONFIG_DIR . '/version.php';

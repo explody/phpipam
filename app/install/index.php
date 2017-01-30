@@ -1,16 +1,31 @@
 <?php
 
 /**
- *	phpipam installation page!
+ *	phpipam setup page!
  */
 # check if php is built properly
 include(FUNCTIONS . '/checks/check_php_build.php');		# check for support for PHP modules and database connection
 
-# initialize install class
+# database object
 $Database 	= new Database_PDO;
+
+try {
+    $Database->connect();
+} catch (Exception $e) {
+    header("Location: /broken/");
+}
+
 $Result		= new Result;
 $Tools	    = new Tools ($Database);
 $Install 	= new Install ($Database);
+$User       = new User ($Database);
+
+$Tools->get_settings();
+
+// If setup is marked complete, immediately redirect elsewhere
+if (property_exists($Tools->settings, 'setup_completed') && $Tools->settings->setup_completed) {
+    header("Location: ".create_link('dashboard'));
+}
 
 # reset url for base
 $url = $Result->createURL ();
@@ -18,23 +33,13 @@ $url = $Result->createURL ();
 # If User is not available create fake user object for create_link!
 if(!is_object(@$User)) {
 	$User = new StdClass ();
-	@$User->settings->prettyLinks = "No";
+	@$User->settings->prettyLinks = "Yes";
 }
 
-# if already installed than redirect !
-if($Install->check_db_connection(false) && $Install->check_table("vrf", false)) {
 
-	# check if installation parts 2 and 3 are running, otherwise die!
-	$admin = $Tools->fetch_object ("users", "id", 1);
-	if($admin->password!='$6$rounds=3000$JQEE6dL9NpvjeFs4$RK5X3oa28.Uzt/h5VAfdrsvlVe.7HgQUYKMXTJUsud8dmWfPzZQPbRbk8xJn1Kyyt4.dWm4nJIYhAV2mbOZ3g.') {
-		header("Location: ".create_link("dashboard"));
-		die();
-	}
-}
-# printout
+
 ?>
-
-<!DOCTYPE HTML>
+    
 <html lang="en">
 
 <head>
@@ -44,7 +49,7 @@ if($Install->check_db_connection(false) && $Install->check_table("vrf", false)) 
 	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 
 	<meta name="Description" content="">
-	<meta name="title" content="phpipam installation">
+	<meta name="title" content="phpipam setup">
 	<meta name="robots" content="noindex, nofollow">
 	<meta http-equiv="X-UA-Compatible" content="IE=9" >
 
@@ -54,17 +59,17 @@ if($Install->check_db_connection(false) && $Install->check_table("vrf", false)) 
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 
 	<!-- title -->
-	<title>phpipam installation</title>
+	<title>phpipam setup</title>
 
 	<!-- css -->
-	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.custom.css">
 	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/font-awesome.css">
 	<link rel="shortcut icon" href="<?php print MEDIA; ?>/images/favicon.png">
 
 	<!-- js -->
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
-	<script type="text/javascript" src="<?php print MEDIA; ?>/js/install.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/setup.js"></script>
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
     
 	<script type="text/javascript">
@@ -95,10 +100,10 @@ if($Install->check_db_connection(false) && $Install->check_table("vrf", false)) 
 <div class="loading"><?php print _('Loading');?>...<br><i class="fa fa-spinner fa-spin"></i></div>
 
 <!-- header -->
-<div class="row header-install" id="header">
+<div class="row header-setup" id="header">
 	<div class="col-xs-12">
 		<div class="hero-unit" style="padding:20px;margin-bottom:10px;">
-			<a href="<?php print create_link(null,null,null,null,null,true); ?>">phpipam installation</a>
+			phpipam setup
 		</div>
 	</div>
 </div>
@@ -110,22 +115,37 @@ if($Install->check_db_connection(false) && $Install->check_table("vrf", false)) 
 <div class='container' id='dashboard'>
 
 <?php
-# select install type
-if(!isset($_GET['section']))										{ include(APP . "/install/select_install_type.php"); }
-# open subpage
-else {
-	//check if subnetId == configure than already installed
-	if(@$_GET['subnetId']=="configure")								{ include(APP . "/install//postinstall_configure.php"); }
-	else {
-    	// validate install type
-    	$install_types = array("install_automatic", "install_manual", "install_mysqlimport");
-        if(!in_array($_GET['section'], $install_types)) 	        { $Result->show("danger", "Invalid request", true); }
 
-		// verify that page exists
-		if(!file_exists(dirname(__FILE__)."/$_GET[section].php"))	{ include(APP . "/install/invalid_install_type.php"); }
-		else														{ include(APP . "/install/$_GET[section].php"); }
-	}
+$setup = true;
+
+# select install type
+if(!isset($_GET['section']) || $_GET['section'] == 'migrate') { 
+    
+    if ($Database->migration_required()) {
+        
+        include(APP . '/migrate/migrate.php');
+?>
+
+    <div class="widget-dash col-xs-12 col-md-8 col-md-offset-2">
+    <div class="inner install" style="min-height:auto;">
+        <div id="migration-title">
+            <?php print $title; ?>
+        </div>
+        <div class="hContent">
+        <div style="padding:10px;">
+            <?php print $content; ?>
+        </div>
+        </div>
+    </div>
+    </div>
+    
+<?php
+    } else {
+        include(APP . '/setup/setup-basic.php');
+    }
+    
 }
+
 ?>
 
 <!-- Base for IE -->

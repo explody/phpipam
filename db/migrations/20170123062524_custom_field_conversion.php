@@ -33,7 +33,10 @@ class CustomFieldConversion extends Ipam\Migration\RepeatableMigration
     
     // Column names from prior migrations that are not actually custom fields
     // This could probably be handled by reordering the migrations instead.
+    // Not bothering with specifying table names because the column names in question
+    // are unique.
     public $exclude = [
+        'setup_completed',
         'dbSessions',
         'devicegrouping',
         'devicegroupfield',
@@ -53,7 +56,6 @@ class CustomFieldConversion extends Ipam\Migration\RepeatableMigration
                 $this_table_count = 1;
                 
                 foreach($cf as $fname => $fdata) {
-                    print_r($fdata);
                     $cfield = (object) [];
                     $cfield->name = $fname;
                     

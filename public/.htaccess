@@ -18,10 +18,10 @@ RewriteRule ^static/.*$ - [L]
 RewriteRule ^api/.*$ - [L]
 RewriteRule ^saml/.*$ - [L]
 RewriteRule ^index.php$ - [L]
-RewriteRule ^env.php$ - [L]
+RewriteRule ^ajax.php$ - [L]
+RewriteRule ^broken/?$ broken.php [L]
 RewriteRule ^(css|js|site|test)/.*$ - [L]
 RewriteRule login/captcha/captchashow.php - [L]
-
 
 # redirect errors
 ErrorDocument 400 /error/400/

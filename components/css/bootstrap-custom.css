@@ -991,15 +991,25 @@ td#subnetsContent {
 #dashboard .inner .alert {
 	margin: 10px;
 }
-.inner.install h4 {
+
+.inner.install div#migration-title {
 	background: #F1FAFE !important;
 	border-bottom: 1px solid #DAE3EA;
 	text-align: center;
 	padding: 20px !important;
 }
+.inner.install h4 {
+	background: #F1FAFE !important;
+}
 .inner.install input {
 	margin: 5px auto;
 }
+
+.inner.install pre {
+    margin: 10px;
+    border-radius: 4px;
+}
+
 #dashboard .welcome {
 	margin-left: 1%;
 	text-align:center;
@@ -1008,7 +1018,6 @@ td#subnetsContent {
 #dashboard .inner h4 {
 	background: #f5f5f5;
 	padding: 10px;
-
 	margin-top: 0px;
 	margin-bottom: 0px;
 }

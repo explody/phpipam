@@ -982,7 +982,7 @@ class User extends Common_functions {
 
             # apache
             if (!empty($_SERVER['PHP_AUTH_USER'])) { $this->show_http_login(); }
-            else                                 { $this->Result->show("danger", _("Invalid username or password 2"), true); }
+            else                                 { $this->Result->show("danger", _("Invalid username or password."), true); }
         }
     }
 

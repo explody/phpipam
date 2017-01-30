@@ -7,8 +7,11 @@ class StandardizeDeviceTypes extends AbstractMigration
     public function change()
     {
         $table = $this->table('deviceTypes');
-        $table->renameColumn('tid','id');
-        $table->renameColumn('tname','name');
-        $table->renameColumn('tdescription','description');
+        foreach (['id','name','description'] as $col) {
+            if ($table->hasColumn('t' . $col) && !$table->hasColumn($col)) {
+                $table->renameColumn('t' . $col, $col);
+            }
+        }
+        $table->save();
     }
 }

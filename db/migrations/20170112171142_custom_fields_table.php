@@ -15,8 +15,8 @@ class CustomFieldsTable extends Ipam\Migration\RepeatableMigration
                 ['display_name', 'string', ['limit'=>64,'null'=>false]],
                 ['type', 'string', ['limit'=>32,'null'=>false]],
                 ['description', 'string', ['limit'=>255,'null'=>true]],
-                ['limit', 'integer', ['limit'=>8, 'default'=>128,'null'=>true]],
-                ['order', 'integer', ['limit'=>2, 'default'=>0,'null'=>false]],
+                ['limit', 'integer', ['default'=>128,'null'=>true]],
+                ['order', 'integer', ['default'=>0,'null'=>false]],
                 ['required', 'boolean', ['default'=>0,'null'=>false]],
                 ['null', 'boolean', ['default'=>1,'null'=>false]],
                 ['visible', 'boolean', ['default'=>1,'null'=>false]],
@@ -30,7 +30,7 @@ class CustomFieldsTable extends Ipam\Migration\RepeatableMigration
     
     public function change()
     {
-        $this->migrationFromSchemaArray($this->customFieldsTable,true);
+        $this->migrationFromSchemaArray($this->customFieldsTable);
     }
 }
 

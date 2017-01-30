@@ -196,13 +196,15 @@ abstract class DB {
 	 */
 	public function connect() {
 
-		try {
-            $this->pdo = new \PDO($this->dsn, $this->username, $this->password, $this->pdo_mysql_options);
-			$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-		} catch (\PDOException $e) {
-			throw new Exception ("Could not connect to database! ".$e->getMessage());
-		}
-
+        if (is_null($this->pdo)) {
+    		try {
+                $this->pdo = new \PDO($this->dsn, $this->username, $this->password, $this->pdo_mysql_options);
+    			$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    		} catch (\PDOException $e) {
+    			throw new PDOException ("Could not connect to database: ".$e->getMessage());
+    		}
+        }
+        
         // We've introduced depency on php >= 5.6. charset is in the DSN now, this was only required for < 5.3
 		// @$this->pdo->query('SET NAMES \'' . $this->charset . '\';');
 	}
@@ -966,6 +968,23 @@ abstract class DB {
         // Result is either boolean FALSE (no table found) or PDOStatement Object (table found)
         return $result !== FALSE;
     }
+    
+    /**
+     * Return the latest migration version
+     *
+     */
+    function currentMigrationVersion() {
+
+        // Run it in try/catch in case PDO is in ERRMODE_EXCEPTION.
+        try {
+            $result = $this->pdo->query("select version from migrations order by version desc limit 1");
+        } catch (Exception $e) {
+            // We got an exception == table not found
+            return FALSE;
+        }
+        $vo = $result->fetchObject();
+        return $vo->version;
+    }
 }
 
 
@@ -1087,6 +1106,18 @@ class Database_PDO extends DB {
 		parent::__construct($this->dsn, $this->username, $this->password, $this->pdo_options);
 	}
 
+    /**
+     * Returns true if the config migration version is higher than current migration version
+     *
+     * @access public
+     * @return bool
+     */
+    public function migration_required() {
+        if ($this->currentMigrationVersion() < $this->c->migration_version) {
+            return true;
+        }
+        return false;
+    }
 
 	/**
 	 * get database parameters from config.php

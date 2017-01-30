@@ -2,13 +2,12 @@
 
 require_once(__DIR__ . '/../paths.php');
 require_once(VENDOR   . '/autoload.php');
-require('loader.php');
-
-$c = IpamConfig::config();
+$c = require('loader.php');
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 
+# TODO: I don't think we need to use finder here. Try replacing with glob()
 $finder = new Finder();
 $finder->files()->in(ENV_DIR)->exclude('dist');
 

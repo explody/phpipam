@@ -571,7 +571,7 @@ class BaseSchema extends Ipam\Migration\RepeatableMigration
 
     public function change() {
         
-        $this->migrationFromSchemaArray($this->baseSchemaTables, true);
+        $this->migrationFromSchemaArray($this->baseSchemaTables);
     
     }                
 }

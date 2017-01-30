@@ -73,7 +73,7 @@ class InitialData extends AbstractMigration
         'users' => [
             'columns' => ['id', 'username', 'password', 'groups', 'role', 'real_name', 'email', 'domainUser','widgets', 'passChange'],
             'data' => [
-                [1,'Admin','password("admin")', '', 'Administrator', 'phpIPAM Admin', 'admin@domain.local', 0, 'statistics;favourite_subnets;changelog;access_logs;error_logs;top10_hosts_v4', 'Yes']
+                [1,'Admin', NULL, '', 'Administrator', 'phpIPAM Admin', 'admin@domain.local', 0, 'statistics;favourite_subnets;changelog;access_logs;error_logs;top10_hosts_v4', 'Yes']
             ]
         ],
         'lang' => [
