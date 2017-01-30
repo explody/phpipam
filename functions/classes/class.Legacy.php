@@ -341,4 +341,57 @@ class Legacy extends Common_functions {
             }
     }
     
+    /**
+	 *	@database verification methods
+	 *	------------------------------
+	 */
+
+	/**
+	 * Checks if all database fields are installed ok
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public function verify_database () {
+
+		# required tables from SCHEMA.sql
+		$tables = $this->fetch_standard_tables();
+
+		# fetch required fields
+		foreach($tables as $t) {
+			$fields[$t] = $this->fetch_standard_fields ($t);
+		}
+
+		/**
+		 * check that each database exist - if it does check also fields
+		 *		2 errors -> $tableError, $fieldError[table] = field
+		 ****************************************************************/
+		foreach($tables as $table) {
+
+			//check if table exists
+			if(!$this->table_exists($table)) {
+				$error['tableError'][] = $table;
+			}
+			//check for each field
+			else {
+				foreach($fields[$table] as $field) {
+					//if it doesnt exist store error
+					if(!$this->field_exists($table, $field)) {
+						$error['fieldError'][$table] = $field;
+					}
+				}
+			}
+		}
+
+		# return array
+		if(isset($error)) {
+			return $error;
+		} else 	{
+			# update check field
+			$this->update_db_verify_field ();
+			# return empty array
+			return array();
+		}
+	}
+    
 }

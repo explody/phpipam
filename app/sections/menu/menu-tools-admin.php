@@ -144,23 +144,7 @@ if($User->is_admin(false)) {
 		</ul>
 	</li>
 
-	<!-- DB verification -->
-	<?php
-	if($User->is_admin(false) && $User->settings->dbverified==0) {
-		//check
-		if(sizeof($dberrsize = $Tools->verify_database())>0) {
-			$esize = sizeof($dberrsize['tableError']) + sizeof($dberrsize['fieldError']);
-			print "<li>";
-			print "	<a href='".create_link("administration","verify-database")."' class='icon-li btn-danger' rel='tooltip' data-placement='bottom' title='"._('Database errors detected')."'><i class='fa fa-exclamation-triangle'></i><sup>$esize</sup></a>";
-			print "</li>";
-		}
-		else {
-			print "<li>";
-			print "	<a class='icon-li btn-success' rel='tooltip' data-placement='bottom' title='"._('Database verified')."'><i class='fa fa-check'></i></a>";
-			print "</li>";
-		}
-	}
-	?>
+
 
 	<?php
 	# get all request

@@ -537,7 +537,7 @@ class BaseSchema extends Ipam\Migration\RepeatableMigration
             'options' => [],
             'columns' => [
                 ['generator', 'boolean', []],
-                ['limit', 'integer', ['limit'=>2,'null'=>true]],
+                ['length', 'integer', ['limit'=>2,'null'=>true]],
                 ['padding', 'boolean', ['null'=>true]],
                 ['zone', 'string', ['limit'=>31]],
                 ['indicator', 'string', ['limit'=>8]],
