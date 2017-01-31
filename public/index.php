@@ -118,8 +118,8 @@ else {
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
     
     <!-- app info -->
-    <meta name="application-name" content="phpipam" data-page="<?php print $_GET['page']; ?>" data-section="<?php print $_GET['section']; ?>" />
-
+    <meta name="application-name" content="phpipam" data-base="<?php print BASE; ?>" data-page="<?php print $_GET['page']; ?>" data-section="<?php print $_GET['section']; ?>" data-prettylinks="<?php print $User->settings->prettyLinks; ?>" />
+    
 	<!-- title -->
 	<title><?php print $title; ?></title>
 

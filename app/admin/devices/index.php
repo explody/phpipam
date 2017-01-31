@@ -36,7 +36,7 @@ if ($s->count() > 0) {
     </div>
 
     <div id="list_search">
-        <form id="list_search" method="POST">
+        <form id="list_search">
             <input type="text" class="form-control input-sm" id="list_search_term" name="search" placeholder="Search string" value="<?php print "$s->search_term"; ?>" size="40" />
             <input type="hidden" id="list_target" name="list_target" value="admin_devices" />
         </form>

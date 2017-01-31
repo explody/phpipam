@@ -898,19 +898,31 @@ function search_execute (loc) {
 
 function list_search_execute (page, section) {
 
-    var prettyLinks = $('#prettyLinks').html();
-    var srch   = $("input#list_search_term").val();
+    var prettyLinks = $('meta[name=application-name]').attr("data-prettylinks");
+    var base = $('meta[name=application-name]').attr("data-base");
+    
+    var srch = $("input#list_search_term").val();
+    
+    if (!page) {
+        var page = $('meta[name=application-name]').attr("data-page");
+    }
+    
+    if (!section) {
+        var section = $('meta[name=application-name]').attr("data-section");
+    }
 
     if (!srch) {
         srch = '';
     }
     
-    var loc  = "?page=" + page + "&section=" + section + "&search=" + srch;
-    var ploc = page + "/" + section + "/search/" + srch;
+    var loc  = base + "?page=" + page + "&section=" + section + "&search=" + srch;
+    var ploc = base + page + "/" + section + "/search/" + srch;
 
-    if(prettyLinks=="Yes") { 
+    if(prettyLinks == "Yes") { 
+        console.log(ploc);
         send_to(ploc);
     } else { 
+        console.log(loc);
         send_to(loc);
     }
 }
@@ -923,6 +935,15 @@ function table_page_size (page, section, count, pagenum) {
     
     var prettyLinks = $('#prettyLinks').html();
     var srch = $("input#list_search_term").val();
+    var base = $('meta[name=application-name]').attr("data-base");
+     
+    if (!page) {
+        var page = $('meta[name=application-name]').attr("data-page");
+    }
+    
+    if (!section) {
+        var section = $('meta[name=application-name]').attr("data-section");
+    }
      
     if (!pagenum) {
         pagenum = 1;
@@ -932,8 +953,9 @@ function table_page_size (page, section, count, pagenum) {
         srch = '';
     }
      
-    var loc  = "?page=" + page + "&section=" + section + "&p=" + pagenum + "&search=" + srch;
-    var ploc = page + "/" + section + "/search/" + pagenum + "/" + srch;
+    // BASE should have a trailing slash
+    var loc  = base + "?page=" + page + "&section=" + section + "&p=" + pagenum + "&search=" + srch;
+    var ploc = base + page + "/" + section + "/search/" + pagenum + "/" + srch;
 
     if(prettyLinks=="Yes") { 
         send_to(ploc);
@@ -981,14 +1003,13 @@ $('a.search_ipaddress').click(function() {
 
 //submit form - lists
 $('button#listSearchSubmit').click(function () {
-    list_search_execute ();
+    list_search_execute();
     return false;
 });
 
-$('input#list_search_term').keyup(function(event){
+$('input#list_search_term').keypress(function(event){
     if(event.keyCode == 13){
-        list_search_execute ($('meta[name=application-name]').attr("data-page"),
-                             $('meta[name=application-name]').attr("data-section"));
+        list_search_execute();
         return false;
     }
 });
