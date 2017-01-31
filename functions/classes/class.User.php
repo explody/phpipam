@@ -848,7 +848,7 @@ class User extends Common_functions {
             # admin?
             if($user->role == "Administrator")    { $this->isadmin = true; }
 
-            if(sizeof($usert)==0)    { $this->block_ip (); $this->Log->write ("User login", _('Invalid username'), 2, $username ); $this->Result->show("danger", _("Invalid username or password 4"), true);}
+            if(sizeof($usert)==0)    { $this->block_ip (); $this->Log->write ("User login", _('Invalid username'), 2, $username ); $this->Result->show("danger", _("Invalid username or password"), true);}
             else                     { $this->user = $user; }
         }
     }

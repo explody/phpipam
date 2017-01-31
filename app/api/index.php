@@ -17,10 +17,23 @@
  *
  */
 
-# include funtions
-require( FUNCTIONS . '/functions.php');		// functions and objects from phpipam
-require( dirname(__FILE__) . '/controllers/Common.php');			// common methods
-require( dirname(__FILE__) . '/controllers/Responses.php');			// exception, header and response handling
+require_once dirname(__FILE__) . "/../../paths.php";
+
+// TODO: don't send API clients to HTML pages. 
+try {
+    $c = require(CONFIG);
+} catch (Exception $e) {
+    header("Location: /broken/");
+}
+
+/* site functions */
+require FUNCTIONS . '/functions.php';
+
+/* composer */
+require_once VENDOR . '/autoload.php';
+ 
+require( APP . '/api/controllers/Common.php');			// common methods
+require( APP . '/api/controllers/Responses.php');			// exception, header and response handling
 
 # settings
 $enable_authentication = true;
@@ -48,7 +61,6 @@ try {
 
 	// start measuring
 	$start = microtime(true);
-
 
 	/* Validate application ---------- */
 
@@ -138,7 +150,7 @@ try {
 	if (@$params->controller != "user" && $enable_authentication) {
 		if($app->app_security=="ssl" || $app->app_security=="none") {
 			// start auth class and validate connection
-			require( dirname(__FILE__) . '/controllers/User.php');				// authentication and token handling
+			require( APP . '/api/controllers/User.php');				// authentication and token handling
 			$Authentication = new User_controller ($Database, $Tools, $params, $Response);
 			$Authentication->check_auth ();
 		}
@@ -171,12 +183,12 @@ try {
 	$controller_file = ucfirst(strtolower($params->controller));
 
 	// check if the controller exists. if not, throw an exception
-	if( file_exists( dirname(__FILE__) . "/controllers/$controller_file.php") ) {
-		require( dirname(__FILE__) . "/controllers/$controller_file.php");
+	if( file_exists( APP . "/api/controllers/$controller_file.php") ) {
+		require( APP . "/api/controllers/$controller_file.php");
 	}
 	// check custom controllers
-	elseif( file_exists( dirname(__FILE__) . "/controllers/custom/$controller_file.php") ) {
-		require( dirname(__FILE__) . "/controllers/custom/$controller_file.php");
+	elseif( file_exists( APP . "/api/controllers/custom/$controller_file.php") ) {
+		require( APP . "/api/controllers/custom/$controller_file.php");
 	}
 	else {
 		$Response->throw_exception(400, 'Invalid controller');

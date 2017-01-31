@@ -209,14 +209,14 @@ $cfs = $Tools->fetch_custom_fields('pstnPrefixes');
     		print '</tr>';
 
     		# count datepickers
-    		$timepicker_index = 0;
+    		$index = false;
 
     		# all my fields
     		foreach($cfs as $cf) {
-        		// create input > result is array (required, input(html), timepicker_index)
-        		$custom_input = $Tools->create_custom_field_input ($cf, $prefix, $_POST['action'], $timepicker_index);
+        		// create input > result is array (required, input(html), index)
+        		$custom_input = $Components->render_custom_field_input ($cf, $prefix, $_POST['action'], $index);
         		// add datepicker index
-        		$timepicker_index = $timepicker_index + $custom_input['timepicker_index'];
+        		$index = $custom_input['index'];
                 // print
     			print "<tr>";
     			print "	<td>".ucwords($cf->name)." ".$custom_input['required']."</td>";

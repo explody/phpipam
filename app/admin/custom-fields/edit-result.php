@@ -184,7 +184,7 @@ if (sizeof($errors) != 0) {
     // Now, we populate the params array for addColumn
     $params['null']  = $cfield->null;
     $params['limit'] = $cfield->limit;
-    !empty($cfield->default) ? $params['default'] = $cfield->default : null;
+    ($cfield->default == '0' || !empty($cfield->default)) ? $params['default'] = $cfield->default : null;
 
     /*
      * Harness the power of phinx
