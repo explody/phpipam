@@ -45,6 +45,7 @@ $values = array("id"=>1,
 				"siteURL"             =>@$_POST['siteURL'],
 				"siteLoginText"       =>@$_POST['siteLoginText'],
 				"prettyLinks"         =>@$_POST['prettyLinks'],
+                "dbSessions"          =>@$_POST['dbSessions'],
 				"defaultLang"         =>@$_POST['defaultLang'],
 				"inactivityTimeout"   =>@$_POST['inactivityTimeout'],
 				//admin
