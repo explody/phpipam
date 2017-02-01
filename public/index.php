@@ -148,7 +148,7 @@ else {
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.switch.js"></script>
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/magic.js"></script>
-    <script type="tetx/javascript">
+    <script type="text/javascript">
     $.ajaxSetup({
       cache: true
     });
