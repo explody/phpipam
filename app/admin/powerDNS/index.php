@@ -5,8 +5,8 @@
  * Script to edit / add / delete groups
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 ?>
 
 <!-- display existing groups -->

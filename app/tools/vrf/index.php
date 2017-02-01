@@ -5,8 +5,8 @@
  *
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all VRFs
 $vrfs = $Tools->fetch_all_objects("vrf", "vrfId");

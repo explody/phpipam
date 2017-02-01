@@ -1,6 +1,6 @@
 <?php
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # check
 $mtest = $Subnets->validate_multicast_mac ($address['mac'], $subnet['sectionId'], $subnet['vlanId'], MCUNIQUE, $address['id']);

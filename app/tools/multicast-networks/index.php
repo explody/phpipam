@@ -4,8 +4,8 @@
  * print subnets
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # get all multicast subnets
 $subnets = $Subnets->fetch_multicast_subnets();

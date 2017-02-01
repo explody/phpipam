@@ -6,8 +6,8 @@
  * Script to print locations
  ***************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 // validate
 if(!is_numeric($_GET['subnetId'])) {

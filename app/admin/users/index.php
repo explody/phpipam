@@ -4,8 +4,8 @@
  * Script to edit / add / delete users
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 // switch user
 if(@$_GET['subnetId']=="switch"){

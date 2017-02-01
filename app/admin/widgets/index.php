@@ -4,8 +4,8 @@
  * Script to manage widgets
  ****************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all widgets
 $widgets = $Admin->fetch_all_objects("widgets", "wid");

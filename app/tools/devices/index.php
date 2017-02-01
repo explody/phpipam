@@ -5,8 +5,8 @@
  *
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 
 if(isset($_GET['id'])) {

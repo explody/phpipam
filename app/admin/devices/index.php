@@ -4,8 +4,8 @@
  * Script to print devices
  ***************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 $default_search_fields = ['hostname','ip_addr','description','version'];
 $table_name = 'devices';

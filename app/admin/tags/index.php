@@ -4,8 +4,8 @@
  *	Show all address / subnet tags
  ************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all vrfs
 $all_types = $Admin->fetch_all_objects("ipTags");

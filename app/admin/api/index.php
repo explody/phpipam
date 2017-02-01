@@ -4,8 +4,8 @@
  * Script to edit / add / delete APIs and keys
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all APIs
 $all_apis = $Admin->fetch_all_objects("api");

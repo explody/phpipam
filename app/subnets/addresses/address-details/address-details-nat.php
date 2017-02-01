@@ -7,8 +7,8 @@ include(dirname(__FILE__)."/../../subnet-details/subnet-nat.php");
 <hr>
 
 <?php
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 // table
 print "<table class='table table-condensed table-td-top table-auto'>";

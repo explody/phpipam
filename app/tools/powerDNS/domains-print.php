@@ -5,7 +5,7 @@
  *************************************************/
 
 // verify that user is logged in
-$User->check_user_session();
+
 
 $admin = $User->is_admin(false);
 

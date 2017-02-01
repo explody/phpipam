@@ -4,8 +4,8 @@
  * Script to get all active IP requests
  ****************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all Active requests
 $requests   = $Tools->fetch_multiple_objects ("requests", "processed", 0, "id", false);

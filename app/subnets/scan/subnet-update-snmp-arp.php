@@ -4,8 +4,8 @@
  * Discover new hosts with snmp
  *******************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # scan disabled
 if ($User->settings->enableSNMP!="1")           { $Result->show("danger", "SNMP module disbled", true); }

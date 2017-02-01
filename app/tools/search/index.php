@@ -2,8 +2,8 @@
 
 /** search form **/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # get posted search term
 if(isset($_GET['ip'])) {

@@ -4,8 +4,8 @@
  *	Script to replace fields in IP address list
  ***********************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # create csrf token
 $csrf = $User->csrf_create('replace_fields');

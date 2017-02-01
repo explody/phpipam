@@ -4,8 +4,8 @@
  * Script to display IP address info and history
  ***********************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # powerdns class
 $PowerDNS = new PowerDNS ($Database);

@@ -3,8 +3,8 @@
  * Display VLAN details
  ***********************************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # get VLAN details
 $vlan = (array) $Tools->fetch_object("vlans", "vlanId", $_GET['sPage']);

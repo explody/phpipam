@@ -1,6 +1,6 @@
 <?php
-# verify that user is logged in
-$User->check_user_session();
+
+
 ?>
 
 <h4><?php print _('IPv4v6 calculator');?></h4>

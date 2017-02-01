@@ -4,8 +4,8 @@
  * Discover new hosts with telnet scan
  *******************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # get ports
 if(strlen($_POST['port'])==0) 	  { $Result->show("danger", _('Please enter ports to scan').'!', true); }

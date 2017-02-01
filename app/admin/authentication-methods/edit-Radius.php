@@ -4,8 +4,8 @@
  * Set Radius method
  *****************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # validate action
 $Admin->validate_action ($_POST['action'], $_SERVER['REQUEST_METHOD'], true);

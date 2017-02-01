@@ -1,6 +1,6 @@
 <?php
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # if section is not set
 if(!isset($_GET['section'])) { $_GET['section'] = ""; }

@@ -6,8 +6,8 @@
  *	Left menu
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # ID must be numeric
 if(!is_numeric($_GET['section'])) { $Result->show("danger",_('Invalid ID'), true); }

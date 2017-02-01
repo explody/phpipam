@@ -4,8 +4,8 @@
  * Script to edit / add / delete groups
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # get subnets
 $leases4 = $DHCP->read_leases ("IPv4");

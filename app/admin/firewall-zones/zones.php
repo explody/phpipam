@@ -6,7 +6,7 @@
  *******************************/
 
 # validate session parameters
-$User->check_user_session();
+
 
 # initialize classes
 $Zones = new FirewallZones($Database);

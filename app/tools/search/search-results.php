@@ -4,8 +4,8 @@
  * Script to display search results
  **********************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # set searchterm
 if(isset($_REQUEST['ip'])) {

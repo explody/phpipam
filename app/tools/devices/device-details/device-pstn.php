@@ -4,8 +4,8 @@
  * Script to display devices
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch custom fields
 $cfs = $Tools->fetch_custom_fields('pstnPrefixes');

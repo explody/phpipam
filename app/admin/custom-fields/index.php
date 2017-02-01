@@ -4,8 +4,8 @@
  * Script tomanage custom IP fields
  ****************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 
 /* fetch all custom fields */

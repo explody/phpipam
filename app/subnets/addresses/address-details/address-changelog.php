@@ -4,8 +4,8 @@
  * Script to display IP address info and history
  ***********************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # get clog entries for current subnet
 $clogs = $Log->fetch_changlog_entries("ip_addr", $address['id']);

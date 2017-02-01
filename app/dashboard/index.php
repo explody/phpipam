@@ -5,8 +5,8 @@
  *  	show somw statistics, links, help,...
  *******************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 ?>
 

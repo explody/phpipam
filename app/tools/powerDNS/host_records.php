@@ -4,8 +4,8 @@
  * Script to edit / add / delete records for domain
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch unique IPs
 $unique_ips = $PowerDNS->search_unique_ips ();

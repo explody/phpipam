@@ -4,8 +4,8 @@
  * Script to edit / add / delete users
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all APIs
 $users = $Admin->fetch_all_objects("users", "username");

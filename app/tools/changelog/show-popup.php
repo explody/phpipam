@@ -13,7 +13,7 @@ $Log 	  = new Logging ($Database);
 $Result   = new Result ();
 
 # verify tdat user is logged in
-$User->check_user_session();
+
 
 # validate numberic id
 if(!is_numeric($_POST['cid']))	{ $Result->show("danger", _("Invalid ID"), true, true); }

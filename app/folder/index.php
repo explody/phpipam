@@ -1,7 +1,7 @@
 <?php
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # must be numeric
 if(!is_numeric($_GET['subnetId']))	{ $Result->show("danger", _("Invalid ID"), true); }

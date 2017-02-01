@@ -3,8 +3,8 @@
  * Display VRF details
  ***********************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # not existing
 if(!$vrf) { $Result->show("danger", _('Invalid VRF id'), true); }

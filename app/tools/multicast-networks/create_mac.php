@@ -13,8 +13,8 @@ $Result		= new Result;
 $User		= new User ($Database);
 $Subnets	= new Subnets ($Database);
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # check that multicast is enabled
 if ($User->settings->enableMulticast!="1")          { die("False"); }

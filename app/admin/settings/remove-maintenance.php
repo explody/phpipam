@@ -13,8 +13,8 @@ $User 		= new User ($Database);
 $Admin	 	= new Admin ($Database);
 $Result 	= new Result ();
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # set update values
 $values = array("id"=>1,

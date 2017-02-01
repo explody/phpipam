@@ -4,8 +4,8 @@
  * Script to print single location
  ***************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch location
 if(!$location) {

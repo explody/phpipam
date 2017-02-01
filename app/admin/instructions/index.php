@@ -5,8 +5,8 @@
  ******************************************/
 
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # create csrf token
 $csrf = $User->csrf_create('instructions');

@@ -16,8 +16,8 @@ $(document).ready(function() {
  * Usermenu - user can change password and email
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all languages
 $langs = $User->fetch_langs();

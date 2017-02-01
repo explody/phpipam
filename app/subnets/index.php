@@ -2,8 +2,8 @@
 
 /* script to show subnet details, addresses etc */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # subnet id must be numeric
 if(!is_numeric($_GET['subnetId'])) 	{ $Result->show("danger", _('Invalid ID'), true); }

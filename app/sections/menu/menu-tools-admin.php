@@ -1,6 +1,6 @@
 <?php
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # print admin menu if admin user and don't die!
 if($User->is_admin(false)) {

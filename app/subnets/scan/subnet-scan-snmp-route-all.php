@@ -30,8 +30,8 @@ if (!function_exists("create_link")) {
 }
 
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # snmp class
 $Snmp       = new phpipamSNMP ();

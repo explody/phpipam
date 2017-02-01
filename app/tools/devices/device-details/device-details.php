@@ -5,7 +5,7 @@
  */
 
 // verify that user is logged in
-$User->check_user_session();
+
 
 // check
 is_numeric($_GET['id']) ?: $Result->show('danger', _('Invalid ID: '.$_GET['id']), true);

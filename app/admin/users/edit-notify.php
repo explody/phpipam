@@ -4,8 +4,8 @@
  *	Send notification mail to user if selected
  ***********************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch users to receive notification and filter
 $users = $Admin->fetch_multiple_objects ("users", "role", "Administrator");

@@ -4,8 +4,8 @@
  *	Print all available VRFs and configurations
  ************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all vrfs
 $all_vrfs = $Admin->fetch_all_objects("vrf", "name");

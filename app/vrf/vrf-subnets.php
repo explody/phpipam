@@ -4,8 +4,8 @@
  * Script to display all slave IP addresses and subnets in content div of subnets table!
  ***************************************************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all subnets in vrf in this section
 $slaves = $Subnets->fetch_vrf_subnets ($_GET['subnetId'], $_GET['section']);

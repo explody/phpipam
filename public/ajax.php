@@ -57,7 +57,7 @@ $path = $_GET['a'];
 // dispose of the path elements from _GET
 unset($_GET['a']);
 
-# verify that user is logged in, unless it's a login or captcha call, or if setup is incomplete
+# ensure that user is logged in, unless it's a login or captcha call, or if setup is incomplete
 if ($path[1] != 'login_check' && !$Database->setup_required()) {
     $User->check_user_session();
 }

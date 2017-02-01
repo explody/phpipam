@@ -4,8 +4,8 @@
  * Script to display available VLANs
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all l2 domains
 $vlan_domains = $Tools->fetch_all_objects("vlanDomains", "id");

@@ -4,8 +4,8 @@
  * List of scanned networks
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all agents
 $agents = $Subnets->fetch_scanning_agents ();

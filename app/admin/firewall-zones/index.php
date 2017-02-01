@@ -5,7 +5,7 @@
  ******************************************/
 
 # validate session parameters
-$User->check_user_session();
+
 
 ?>
 

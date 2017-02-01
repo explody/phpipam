@@ -2,8 +2,8 @@
 <hr>
 
 <?php
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 
 # NAT search

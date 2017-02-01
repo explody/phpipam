@@ -4,8 +4,8 @@
  * Settings for external HTTP auth
  *****************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # ID must be numeric */
 if($_POST['action'] != "add") {

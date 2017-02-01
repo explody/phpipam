@@ -4,8 +4,8 @@
  * Script to display temporary shares
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all shares
 $temp_shares = json_decode($User->settings->tempAccess);

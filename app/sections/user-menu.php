@@ -4,8 +4,8 @@
  * Display usermenu on top right
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 // set parameters form cookie
 if (isset($_COOKIE['search_parameters'])) {

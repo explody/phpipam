@@ -12,8 +12,8 @@ $('body').tooltip({ selector: '[rel=tooltip]' });
 # direct call, set default direction for sorting
 if(!isset($_POST['direction'])) {
 
-	# verify that user is logged in
-	$User->check_user_session();
+	
+	
 }
 
 # We need DNS object

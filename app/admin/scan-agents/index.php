@@ -4,8 +4,8 @@
  * Script to edit / add / delete scan agents
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all APIs
 $all_agents = $Admin->fetch_all_objects("scanAgents");

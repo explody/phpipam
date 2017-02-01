@@ -4,8 +4,8 @@
  * Script to display IP address info and history
  ***********************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 
 # check if it exists, otherwise print error

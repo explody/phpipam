@@ -1,7 +1,7 @@
 <?php
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all auth methods
 $all_methods = $Admin->fetch_all_objects("usersAuthMethod");

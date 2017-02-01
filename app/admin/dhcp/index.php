@@ -1,6 +1,6 @@
 <?php
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 // valid tabs
 $tabs = array("subnets", "leases", "reservations", "settings", "config");

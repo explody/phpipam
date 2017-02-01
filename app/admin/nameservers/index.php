@@ -4,8 +4,8 @@
  *	Print all available nameserver sets
  ************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all vrfs
 $all_nameservers = $Admin->fetch_all_objects("nameservers", "id");

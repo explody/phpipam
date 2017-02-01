@@ -4,8 +4,8 @@
  * Script to display last changelogs
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # header
 print "<h4>"._('Changelog')."</h4>";

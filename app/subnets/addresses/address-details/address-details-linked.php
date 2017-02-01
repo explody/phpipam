@@ -1,6 +1,6 @@
 <?php
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 // now search for similar addresses if chosen
 if (strlen($User->settings->link_field)>0) {

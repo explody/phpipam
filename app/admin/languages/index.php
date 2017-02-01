@@ -4,8 +4,8 @@
  * Script to manage languages
  ****************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all APIs
 $languages = $Admin->fetch_all_objects("lang", "l_id");

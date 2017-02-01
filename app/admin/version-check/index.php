@@ -3,8 +3,8 @@
  * Script to check for new version!
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 print "<h4>phpIPAM version check</h4><hr>";
 

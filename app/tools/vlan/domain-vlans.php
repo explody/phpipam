@@ -4,8 +4,8 @@
  * Print all vlans
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch l2 domain
 $vlan_domain = $Tools->fetch_object("vlanDomains", "id", $_GET['subnetId']);

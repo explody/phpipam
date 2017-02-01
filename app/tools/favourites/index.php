@@ -4,8 +4,8 @@
  * Script to display favourite networks
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch favourite subnets
 $favourite_subnets = $User->fetch_favourite_subnets();

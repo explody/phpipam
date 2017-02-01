@@ -21,8 +21,8 @@
  * Script to print locations
  ***************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # check that location support isenabled
 if ($User->settings->enableLocations!="1") {

@@ -4,8 +4,8 @@
  * Script to edit / add / delete groups
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # create csrf token
 $csrf = $User->csrf_create('pdns_defaults');

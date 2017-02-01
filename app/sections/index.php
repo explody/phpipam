@@ -21,8 +21,8 @@
  * Script to print sections and admin link on top of page
  ********************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all sections
 $sections = $Sections->fetch_all_sections ();

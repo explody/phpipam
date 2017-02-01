@@ -4,8 +4,8 @@
  * Script to display changelog entries
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # validate subnetId parameter - meaning cfilter
 if(isset($_REQUEST['subnetId'])) {

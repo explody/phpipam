@@ -4,8 +4,8 @@
  * Script to print devices
  ***************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all devices
 $deviceTypes = $Admin->fetch_all_objects("deviceTypes", "id");

@@ -4,8 +4,8 @@
  * Script to edit / add / delete groups
  *************************************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all APIs
 $groups = $Admin->fetch_all_objects("userGroups", "g_name");

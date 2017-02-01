@@ -6,8 +6,8 @@
  
 $csrf = $User->csrf_create('ripe-import');
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 // TODO: select2 on the ripe-import dropdowns
 ?>
 

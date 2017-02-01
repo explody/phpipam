@@ -4,8 +4,8 @@
  * Script to print devices
  ***************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all Devices
 $Snmp = new phpipamSNMP ();

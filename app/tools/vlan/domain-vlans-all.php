@@ -4,8 +4,8 @@
  * Print all vlans
  */
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch l2 domain
 $vlan_domain = new StdClass();

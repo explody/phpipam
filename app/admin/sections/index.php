@@ -4,8 +4,8 @@
  * Script to manage sections
  *****************************/
 
-# verify that user is logged in
-$User->check_user_session();
+
+
 
 # fetch all sections
 $sections = $Sections->fetch_all_sections();

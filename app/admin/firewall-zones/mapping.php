@@ -12,7 +12,7 @@ $Result 	= new Result ();
 $Zones 		= new FirewallZones($Database);
 
 # validate session parameters
-$User->check_user_session();
+
 
 # fetch all zone mappings
 $firewallZoneMapping = $Zones->get_zone_mappings();

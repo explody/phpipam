@@ -3,7 +3,7 @@
  * Print Admin menu pn left if user is admin
  *************************************************/
 
-# verify that user is logged in and admin
+# verify that user is an admin
 $User->is_admin();
 
 # print
