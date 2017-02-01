@@ -4,12 +4,14 @@ $('body').tooltip({ selector: '[rel=tooltip]' });
 </script>
 <?php
 
+$visible_fields = [];
 # set visible fields
-foreach ($custom_fields as $cf) {
+foreach ($cfs as $cf) {
     if ($cf->visible) {
         $visible_fields[$cf->name] = $cf;
     }
 }
+
 # set colspan
 $colspan_subnets = 5 + sizeof($visible_fields);
 
@@ -32,11 +34,11 @@ print "	<th class='small'>"._('VLAN')."</th>";
 print "	<th class='small description'>"._('Subnet description')."</th>";
 print "	<th>"._('Subnet')."</th>";
 # custom
-if(isset($visible_fields)) {
-foreach ($visible_fields as $f) {
-print "	<th class='hidden-xs hidden-sm hidden-md'>$f[name]</th>";
+
+foreach ($visible_fields as $vf) {
+    print "	<th class='hidden-xs hidden-sm hidden-md'>$vf->name</th>";
 }
-}
+
 print "	<th class='small hidden-xs hidden-sm hidden-md'>"._('Used')."</th>";
 print "	<th class='small hidden-xs hidden-sm hidden-md'>% "._('Free')."</th>";
 print "	<th class='small hidden-xs hidden-sm hidden-md'>"._('Requests')."</th>";
@@ -95,19 +97,20 @@ foreach ($slave_subnets as $slave_subnet) {
     print "	<td><a href='".create_link("subnets",$section['id'],$slave_subnet['id'])."'>".$Subnets->transform_address($slave_subnet['subnet'],"dotted")."/$slave_subnet[mask]</a> $fullinfo</td>";
 
     # custom
-    if(isset($visible_fields)) {
-    foreach ($visible_fields as $key=>$field) {
+    foreach ($visible_fields as $vf) {
 		#booleans
-		if($field['type']=="tinyint(1)")	{
-			if($slave_subnet[$key] == "0")		{ $html_custom = _("No"); }
-			elseif($slave_subnet[$key] == "1")	{ $html_custom = _("Yes"); }
+		if($vf->type == "boolean") {
+			if($slave_subnet[$vf->name]) {
+                $html_custom = _("Yes");
+            } else {
+                $html_custom = _("No");
+            }
 		}
 		else {
-			$html_custom = $Result->create_links($slave_subnet[$key]);
+			$html_custom = $Result->create_links($slave_subnet[$vf->name]);
 		}
 
         print "<td>".$html_custom."</td>";
-    }
     }
 
     print ' <td class="small hidden-xs hidden-sm hidden-md">'. $calculate['used'] .'/'. $calculate['maxhosts'] .'</td>'. "\n";

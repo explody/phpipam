@@ -344,8 +344,9 @@ class Sections_controller extends Common_api_functions {
 	private function read_subnet_usage ($subnetId) {
 		# check that section exists
 		$subnet = $this->Subnets->fetch_subnet ("id", $subnetId);
-		if($subnet===false)
-														{ $this->Response->throw_exception(400, "Subnet does not exist"); }
+		if($subnet===false) { 
+            $this->Response->throw_exception(400, "Subnet does not exist"); 
+        }
         # calculate
         $subnet_usage = $this->Subnets->calculate_subnet_usage ($subnet, true);     //Calculate free/used etc
 

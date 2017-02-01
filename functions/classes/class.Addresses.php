@@ -1144,12 +1144,12 @@ class Addresses extends Common_functions {
 		# custom fields, append to array
 		$m=9;
 		$custom_fields = $this->set_custom_fields();
-		if(sizeof($custom_fields) > 0) {
-			foreach($custom_fields as $c) {
-				$address_insert[$c['name']] = $address[$m];
-				$m++;
-			}
+
+		foreach($custom_fields as $cf) {
+			$address_insert[$cf->name] = $address[$m];
+			$m++;
 		}
+
 
 		# insert
 		return $this->modify_address_add ($address_insert);

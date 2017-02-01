@@ -27,7 +27,7 @@ class Vlan_controller extends Common_api_functions {
 	 */
 	public function __construct($Database, $Tools, $params, $Response) {
 		// include
-		require("Vlans.php");
+		require(dirname(__FILE__) . "/Vlans.php");
 		// subnets
 		$this->Vlans_controller = new vlans_controller ($Database, $Tools, $params, $Response);
 	}

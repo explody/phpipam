@@ -99,7 +99,7 @@ else {
     		}
 
     		//custom
-	   		foreach($custom_fields as $field) {
+	   		foreach($custom_fields as $cf) {
 		   		# hidden?
 		   		if($cf->visible) {
 

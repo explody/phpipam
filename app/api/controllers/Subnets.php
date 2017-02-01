@@ -219,8 +219,6 @@ class Subnets_controller extends Common_api_functions {
                 $ipv6 = false;
                 $ipv4 = false;
                 
-                require_once( FUNCTIONS . '/PEAR/Net/IPv6.php' );
-                require_once( FUNCTIONS . '/PEAR/Net/IPv4.php' );
                 $this->Net_IPv6 = new Net_IPv6();
                 $this->Net_IPv4 = new Net_IPv4();
                 
@@ -792,8 +790,9 @@ class Subnets_controller extends Common_api_functions {
         		$gateway = $this->transform_address ($gateway);
         		$result->gateway = $gateway;
     		}
-
-    		$result->calculation = $this->Tools->calculate_ip_calc_results($this->Subnets->transform_address($result->subnet,"dotted")."/".$result->mask);
+            if (!$result->isFolder) {
+        		$result->calculation = $this->Tools->calculate_ip_calc_results($this->Subnets->transform_address($result->subnet,"dotted")."/".$result->mask);
+            }
 		}
 
 		# result

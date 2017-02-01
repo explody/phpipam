@@ -428,20 +428,23 @@ else {
 
 	<?php
 	# custom subnet fields
-	if(sizeof($custom_fields) > 0) {
-		foreach($custom_fields as $key=>$field) {
-			if(strlen($subnet[$key])>0) {
-				$subnet[$key] = str_replace(array("\n", "\r\n"), "<br>",$subnet[$key]);
+	if(sizeof($cfs) > 0) {
+		foreach($cfs as $cf) {
+			if(strlen($subnet[$cf->name])>0) {
+				$subnet[$cf->name] = str_replace(array("\n", "\r\n"), "<br>",$subnet[$cf->name]);
 				$html_custom[] = "<tr>";
-				$html_custom[] = "	<th>$key</th>";
+				$html_custom[] = "	<th>$cf->name</th>";
 				$html_custom[] = "	<td>";
 				#booleans
-				if($field['type']=="tinyint(1)")	{
-					if($subnet[$key] == "0")		{ $html_custom[] = _("No"); }
-					elseif($subnet[$key] == "1")	{ $html_custom[] = _("Yes"); }
+				if($cf->type == "boolean")	{
+					if($subnet[$cf->name]) {
+                        $html_custom[] = _("Yes");
+                    } else {
+                        $html_custom[] = _("No");
+                    }
 				}
 				else {
-					$html_custom[] = $Result->create_links($subnet[$key]);
+					$html_custom[] = $Result->create_links($subnet[$cf->name]);
 				}
 				$html_custom[] = "	</td>";
 				$html_custom[] = "</tr>";

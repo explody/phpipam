@@ -247,7 +247,7 @@ class Subnets extends Common_functions {
 
 	/**
 	 * Deletes subnet and truncates all IP addresses in that subnet
-	 *
+	 * TODO: this should support recursive delete
 	 * @access private
 	 * @param mixed $id
 	 * @return bool
@@ -840,10 +840,22 @@ class Subnets extends Common_functions {
 		$slaves = $this->fetch_multiple_objects ("subnets", "masterSubnetId", $subnetId, "subnet_int", true, false, $result_fields);
 		# save to subnets cache
         if ($slaves!==false) {
+            $i = 0;
 			foreach($slaves as $slave) {
     			unset($slave->subnet_int);
+                // Never ever return a list of slaves with the specified subnetId as one of the slaves 
+                // This should not ever happens but I've seen it twice where a subnet entry has its own 
+                // id as the masterSubnetId.
+                // This will stop infinite recursion until we find the source of the problem.
+                if ($slave->id == $subnetId) {
+                    unset($slaves[$i]);
+                    $i++;
+                    continue;
+                }
                 $this->cache_write ("subnets", $slave->id, $slave);
+                $i++;
 			}
+            
 			return $slaves;
 		}
 		else {
@@ -859,13 +871,12 @@ class Subnets extends Common_functions {
 	 * @param mixed $subnetId
 	 * @return void
 	 */
-	public function fetch_subnet_slaves_recursive ($subnetId) {
+	public function fetch_subnet_slaves_recursive ($subnetId, $cnt=0) {
 		$end = false;							//loop break flag
 		# slaves array of id's, add current
 		$this->slaves[] = (int) $subnetId;		//id
-
 		# loop
-		while($end == false) {
+		while($end === false) {
 			# fetch all immediate slaves
 			$slaves2 = $this->fetch_subnet_slaves ($subnetId);
 
@@ -877,9 +888,11 @@ class Subnets extends Common_functions {
 					$this->slaves_full[$slave->id] = $slave;
 					$this->slaves[] = $slave->id;
 					# fetch possible new slaves
-					$this->fetch_subnet_slaves_recursive ($slave->id);
+                    
+					$this->fetch_subnet_slaves_recursive ($slave->id,$cnt);
 					$end = true;
 				}
+                
 			}
 			# no more slaves
 			else {

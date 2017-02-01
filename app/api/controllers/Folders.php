@@ -27,7 +27,7 @@ class Folders_controller extends Common_api_functions {
 	 */
 	public function __construct($Database, $Tools, $params, $Response) {
 		// include
-		require("Subnets.php");
+		require(dirname(__FILE__) ."/Subnets.php");
 		// subnets
 		$this->Subnets_controller = new Subnets_controller ($Database, $Tools, $params, $Response);
 	}
