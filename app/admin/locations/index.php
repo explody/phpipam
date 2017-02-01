@@ -7,5 +7,5 @@ $User->check_user_session();
 $User->is_admin(true);
 
 # show all nat objects
-include(dirname(__FILE__)."/../../tools/locations/index.php");
+include(APP . "/tools/locations/index.php");
 ?>

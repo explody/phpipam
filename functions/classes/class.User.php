@@ -458,135 +458,41 @@ class User extends Common_functions {
     }
 
     /**
-     * Checks if system is in maintaneance mode and exits if it is
+     * Checks if system is in maintenance mode and exits if it is
      *
-     * @method check_maintaneance_mode
+     * @method check_maintenance_mode
      * @param  bool    $is_popup (default: false)
      * @return void
      */
-    public function check_maintaneance_mode ($is_popup = false) {
-        if($this->settings->maintaneanceMode == "1" && $this->user->username!="Admin") {
+    public function check_maintenance_mode ($is_popup = false) {
+        if ($this->is_admin(false)) {
+            $die = false;
+        } else {
+            $die = true;
+        }
+        if($this->settings->maintenanceMode == "1") {
             if($is_popup) {
-                $this->Result->show("warning", "<i class='fa fa-info'></i> "._("System is running in maintenance mode")." !", true, true);
+                $this->Result->show("warning", "<i class='fa fa-info'></i> "._("System is running in maintenance mode")." !", $die, true);
             }
             else {
-                $this->Result->show("warning text-center nomargin", "<i class='fa fa-info'></i> "._("System is running in maintenance mode")." !", true);
+                $this->Result->show("warning text-center nomargin", "<i class='fa fa-info'></i> "._("System is running in maintenance mode")." !", $die);
             }
         }
     }
 
     /**
-     * Sets maintaneance mode
+     * Sets maintenance mode
      *
-     * @method set_maintaneance_mode
+     * @method set_maintenance_mode
      * @param  bool $on (default: false)
      */
-    public function set_maintaneance_mode ($on = false) {
+    public function set_maintenance_mode ($on = false) {
         # set mode status
-        $maintaneance_mode = $on ? "1" : "0";
+        $maintenance_mode = $on ? "1" : "0";
         # execute
-        try { $this->Database->updateObject("settings", array("id"=>1, "maintaneanceMode"=>$maintaneance_mode), "id"); }
+        try { $this->Database->updateObject("settings", array("id"=>1, "maintenanceMode"=>$maintenance_mode), "id"); }
         catch (Exception $e) {}
     }
-
-
-
-   /**
-     *    Check if migration of AD settings is required
-     *
-     *    must be deleted after 1.2 release
-     *    along with:
-     *        > `settings`.`authmigrated`
-     *        > `settings`.`domainAuth`
-     *        > `settingsDomain`
-     *        > `users`.`domainUser`
-     *
-     * @access public
-     * @return void
-     */
-    public function migrate_domain_settings () {
-        # if not already migrated migrate settings!
-        if($this->settings->authmigrated==0) {
-            # only if AD used
-            if($this->settings->domainAuth!=0) {
-                # fetch AD settings
-                $err = false;
-                try { $ad = $this->Database->getObject("settingsDomain",1); }
-                catch (Exception $e) { $err = true; }
-
-                if($err === false) {
-                    # remove editDate
-                    unset($ad->editDate);
-                    # save to json array
-                    $ad = json_encode($ad);
-                    # update usersAuthMethod
-                    $type = $this->settings->domainAuth==1 ? "AD" : "LDAP";
-                    # update
-                    try {
-                        $this->Database->insertObject("usersAuthMethod", array("type"=>$type, "params"=>$ad, "description"=>$type." authentication", "protected"=>"No"));
-                    }
-                    catch (Exception $e) {
-                        $err = true;
-                    }
-                    # set migrated flag
-                    if($err === false) {
-                        try {
-                            $this->Database->updateObject("settings", array("id"=>1,"authmigrated"=>1), 'id');
-                        }
-                        catch (Exception $e) {
-                            // no response on failure
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Check if migration of LDAP settings is required
-     *
-     * @access public
-     * @return void
-     */
-    public function migrate_ldap_settings () {
-        # fetch LDAP settings
-        $ldaps = $this->Database->getObjectsQuery("select * from usersAuthMethod where type = 'LDAP'");
-
-        foreach ($ldaps as $ldapobj) {
-            $ldap = json_decode($ldapobj->params);
-            if (!property_exists($ldap, 'ldap_security')) {
-                $ldap->ldap_security = 'none';
-            }
-
-            if (property_exists($ldap, 'use_ssl')) {
-                if ($ldap->use_ssl == '1') {
-                    $ldap->ldap_security = 'ssl';
-                }
-                unset($ldap->use_ssl);
-            }
-
-            if (property_exists($ldap, 'use_tls')) {
-                if ($ldap->use_tls == '1') {
-                    $ldap->ldap_security = 'tls';
-                }
-                unset($ldap->use_tls);
-            }
-
-            if (!property_exists($ldap, 'uid_attr')) {
-                $ldap->uid_attr = 'uid';
-            }
-
-            $ldapobj->params = json_encode($ldap);
-
-            $this->Database->updateObject("usersAuthMethod", $ldapobj);
-        }
-    }
-
-
-
-
-
-
 
 
     /**

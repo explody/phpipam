@@ -51,7 +51,7 @@ if (sizeof($addresses)>0) {
     $slaves = false;
     // print
     print '<div class="ipaddresses_overlay">';
-    include_once(dirname(__FILE__).'/../subnets/addresses/print-address-table.php');
+    include_once(APP . '/subnets/addresses/print-address-table.php');
     print '</div>';
 }
 

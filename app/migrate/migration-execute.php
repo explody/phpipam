@@ -19,12 +19,6 @@ if($migrate) {
     // re-init $Database post-migration
     $Database 	= new Database_PDO;
     $User		= new User ($Database);
-	
-    if (!$Database->bootstrap_required()) {
-    	# migrate settings
-    	$User->migrate_domain_settings ();
-        $User->migrate_ldap_settings ();
-    }
     
     if ($Database->setup_required()) {
         $return_to = "setup";

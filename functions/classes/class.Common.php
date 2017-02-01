@@ -756,9 +756,16 @@ class Common_functions  {
      * @return array|string
      */
     public function strip_input_tags ($input) {
+        // Don't strip passwords. They're not stored verbatim and may have tag-like text in them.
+        $do_not_strip = ['password','password1','password2','instructions'];
+
         if(is_array($input)) {
             foreach($input as $k=>$v) {
-                $input[$k] = $this->strip_input_tags($v);
+                if (in_array($k, $do_not_strip)) {
+                    continue;
+                } else {
+                    $input[$k] = $this->strip_input_tags($v);
+                }
             }
         }
         else {

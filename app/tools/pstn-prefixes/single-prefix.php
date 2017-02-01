@@ -179,14 +179,14 @@ else {
             // graph
             print "<div class='col-xs-12 col-sm-12 col-md-6 col-lg-4'>";
             print "<h4>"._('Utilization')."</h4><hr>";
-            include("single-prefix-graph.php");
+            include(dirname(__FILE__) . "/single-prefix-graph.php");
             print "</div>";
 
 
             # addresses
             print "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' style='margin-top:40px;'>";
             print "<h4>"._('Belonging Numbers')."</h4><hr>";
-            include("single-prefix-numbers.php");
+            include(dirname(__FILE__) . "/single-prefix-numbers.php");
             print "</div>";
         }
     }

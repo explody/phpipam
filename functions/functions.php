@@ -138,6 +138,6 @@ function create_link ($l0 = null, $l1 = null, $l2 = null, $l3 = null, $l4 = null
 
 // Moved to config.php so we can see the version data everywhere
 /* get version */
-// include('version.php');
+// include(dirname(__FILE__) . '/version.php');
 
 ?>

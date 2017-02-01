@@ -11,7 +11,7 @@ require( dirname(__FILE__) . '/../../../functions/functions.php');
 $User->csrf_validate("device", $_POST['csrf_cookie'], $Result);
 
 # get modified details
-$device = $Admin->strip_input_tags($_POST);
+$device = $_POST;
 
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['switchId']))			{ $Result->show("danger", _("Invalid ID"), true); }

@@ -63,25 +63,25 @@ if(isset($_GET['id'])) {
     <!-- details -->
     <?php
     if(!isset($_GET['sPage'])) {
-    	include("device-details/device-details.php");
+    	include(dirname(__FILE__) . "/device-details/device-details.php");
     }
     elseif(@$_GET['sPage']=="subnets") {
-        include("device-details/device-subnets.php");
+        include(dirname(__FILE__) . "/device-details/device-subnets.php");
     }
     elseif(@$_GET['sPage']=="addresses") {
-        include("device-details/device-addresses.php");
+        include(dirname(__FILE__) . "/device-details/device-addresses.php");
     }
     elseif($User->settings->enableNAT==1 && @$_GET['sPage']=="nat") {
-        include("device-details/device-nat.php");
+        include(dirname(__FILE__) . "/device-details/device-nat.php");
     }
     elseif(@$_GET['sPage']=="location") {
-        include("device-details/device-location.php");
+        include(dirname(__FILE__) . "/device-details/device-location.php");
     }
     elseif(@$_GET['sPage']=="pstn-prefixes") {
-        include("device-details/device-pstn.php");
+        include(dirname(__FILE__) . "/device-details/device-pstn.php");
     }
 } else {
-	include('all-devices.php');
+	include(dirname(__FILE__) . '/all-devices.php');
 }
 
 ?>

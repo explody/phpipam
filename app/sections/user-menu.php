@@ -4,9 +4,6 @@
  * Display usermenu on top right
  */
 
-# filter ip value
-$_GET['ip'] = $Subnets->strip_input_tags ($_GET['ip']);
-
 # verify that user is logged in
 $User->check_user_session();
 

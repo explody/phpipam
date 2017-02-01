@@ -37,7 +37,7 @@ $custom_subnet_fields  = $_REQUEST['subnets']=="on"   ? $Tools->fetch_custom_fie
 $custom_vlan_fields    = $_REQUEST['vlans']=="on"     ? $Tools->fetch_custom_fields ("vlans") : array();
 $custom_vrf_fields     = $_REQUEST['vrf']=="on"       ? $Tools->fetch_custom_fields ("vrf") : array();
 $custom_pstn_fields    = $_REQUEST['pstn']=="on"      ? $Tools->fetch_custom_fields ("pstnPrefixes") : array();
-$custom_pstnM_fields   = $_REQUEST['pstn']=="on"      ? $Tools->fetch_custom_fields ("pstnNumbers") : array();
+$custom_pstnn_fields   = $_REQUEST['pstn']=="on"      ? $Tools->fetch_custom_fields ("pstnNumbers") : array();
 
 # set selected address fields array
 $selected_ip_fields = $User->settings->IPfilter;
@@ -67,11 +67,11 @@ if(@$_REQUEST['pstn']=="on" && strlen($_REQUEST['ip'])>0) 		{ $result_pstnn     
 
 // all are off?
 if(!isset($_REQUEST['addresses']) && !isset($_REQUEST['subnets']) && !isset($_REQUEST['vlans']) && !isset($_REQUEST['vrf']) && !isset($_REQUEST['pstn']) ) {
-    include("search-tips.php");
+    include(dirname(__FILE__) . "/search-tips.php");
 }
 // empty request
 elseif(strlen($_REQUEST['ip'])==0)  {
-    include("search-tips.php");
+    include(dirname(__FILE__) . "/search-tips.php");
 }
 // ok, search results print
 else {

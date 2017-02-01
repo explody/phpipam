@@ -8,5 +8,5 @@
 $User->check_user_session();
 
 # print subnets
-include(dirname(__FILE__)."/../../tools/dhcp/subnets.php");
+include(APP . "/tools/dhcp/subnets.php");
 ?>

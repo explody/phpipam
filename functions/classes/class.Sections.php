@@ -100,8 +100,6 @@ class Sections extends Common_functions {
 	 * @return bool
 	 */
 	public function modify_section ($action, $values) {
-		# strip tags
-		$values = $this->strip_input_tags ($values);
 
 		# execute based on action
 		if($action=="add")			{ return $this->section_add ($values); }

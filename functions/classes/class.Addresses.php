@@ -340,8 +340,6 @@ class Addresses extends Common_functions {
 		$this->mail_changelog  = $mail_changelog;
 		# null empty values
 		$address = $this->reformat_empty_array_fields ($address, null);
-		# strip tags
-		$address = $this->strip_input_tags ($address);
 		# execute based on action
 		if($address['action']=="add")			{ return $this->modify_address_add ($address); }							//create new address
 		elseif($address['action']=="edit")		{ return $this->modify_address_edit ($address); }							//modify existing address

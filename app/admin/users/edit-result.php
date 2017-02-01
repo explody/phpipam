@@ -116,6 +116,6 @@ if(!$Admin->object_modify("users", $_POST['action'], "id", $values))	{ $Result->
 else																	{ $Result->show("success", _("User $_POST[action] successfull").'!', false); }
 
 # mail user
-if($Admin->verify_checkbox(@$_POST['notifyUser'])!="0") { include("edit-notify.php"); }
+if($Admin->verify_checkbox(@$_POST['notifyUser'])!="0") { include(dirname(__FILE__) . "/edit-notify.php"); }
 
 ?>

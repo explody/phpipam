@@ -523,7 +523,6 @@ class Components {
             
             // if the field allows null, add an option for 'none'
             if ($cf->null) {
-                print "HERE";
                 $html[] = "<option value=\"\">None</option>";
             }
             
@@ -587,7 +586,7 @@ class Components {
             
             if($index['boolean'] == 0) {
                 $html[] = '<script type="text/javascript">';
-                $html[] = '$(document).ready(function() { console.log("HERE");';
+                $html[] = '$(document).ready(function() { ';
                 $html[] = 'var switch_options = { onText: "Yes", offText: "No", onColor: "default", offColor: "default", size: "mini", inverse: true };';
                 // applying this to a class will allow it to trigger on all subsequent inputs
                 $html[] = '$(".input-switch").bootstrapSwitch(switch_options);';

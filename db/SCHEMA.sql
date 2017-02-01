@@ -76,6 +76,43 @@ LOCK TABLES `changelog` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `customFields`
+--
+
+DROP TABLE IF EXISTS `customFields`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `customFields` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `table` varchar(64) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `display_name` varchar(64) NOT NULL,
+  `type` varchar(32) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `limit` int(11) DEFAULT '128',
+  `order` int(11) NOT NULL DEFAULT '0',
+  `required` tinyint(1) NOT NULL DEFAULT '0',
+  `null` tinyint(1) NOT NULL DEFAULT '1',
+  `visible` tinyint(1) NOT NULL DEFAULT '1',
+  `default` varchar(64) DEFAULT NULL,
+  `params` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customFields`
+--
+
+LOCK TABLES `customFields` WRITE;
+/*!40000 ALTER TABLE `customFields` DISABLE KEYS */;
+INSERT INTO `customFields` VALUES (1,'deviceTypes','description','description','string',NULL,128,1,0,1,1,NULL,'[]');
+INSERT INTO `customFields` VALUES (2,'firewallZones','length','length','integer',NULL,2,1,0,1,1,NULL,'[]');
+INSERT INTO `customFields` VALUES (3,'settings','permitUserVlanCreate','permitUserVlanCreate','integer',NULL,1,1,0,0,1,NULL,'[]');
+/*!40000 ALTER TABLE `customFields` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `deviceTypes`
 --
 
@@ -83,10 +120,10 @@ DROP TABLE IF EXISTS `deviceTypes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `deviceTypes` (
-  `tid` int(11) NOT NULL AUTO_INCREMENT,
-  `tname` varchar(128) DEFAULT NULL,
-  `tdescription` varchar(128) DEFAULT NULL,
-  PRIMARY KEY (`tid`)
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `description` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -96,7 +133,15 @@ CREATE TABLE `deviceTypes` (
 
 LOCK TABLES `deviceTypes` WRITE;
 /*!40000 ALTER TABLE `deviceTypes` DISABLE KEYS */;
-INSERT INTO `deviceTypes` VALUES (1,'Switch','Switch'),(2,'Router','Router'),(3,'Firewall','Firewall'),(4,'Hub','Hub'),(5,'Wireless','Wireless'),(6,'Database','Database'),(7,'Workstation','Workstation'),(8,'Laptop','Laptop'),(9,'Other','Other');
+INSERT INTO `deviceTypes` VALUES (1,'Switch','Switch');
+INSERT INTO `deviceTypes` VALUES (2,'Router','Router');
+INSERT INTO `deviceTypes` VALUES (3,'Firewall','Firewall');
+INSERT INTO `deviceTypes` VALUES (4,'Hub','Hub');
+INSERT INTO `deviceTypes` VALUES (5,'Wireless','Wireless');
+INSERT INTO `deviceTypes` VALUES (6,'Database','Database');
+INSERT INTO `deviceTypes` VALUES (7,'Workstation','Workstation');
+INSERT INTO `deviceTypes` VALUES (8,'Laptop','Laptop');
+INSERT INTO `deviceTypes` VALUES (9,'Other','Other');
 /*!40000 ALTER TABLE `deviceTypes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -203,7 +248,7 @@ DROP TABLE IF EXISTS `firewallZones`;
 CREATE TABLE `firewallZones` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `generator` tinyint(1) NOT NULL,
-  `limit` int(2) DEFAULT NULL,
+  `length` int(2) DEFAULT NULL,
   `padding` tinyint(1) DEFAULT NULL,
   `zone` varchar(31) NOT NULL,
   `indicator` varchar(8) NOT NULL,
@@ -262,6 +307,7 @@ CREATE TABLE `ipTags` (
   `fgcolor` varchar(7) DEFAULT '#fff',
   `compress` set('No','Yes') NOT NULL DEFAULT 'No',
   `locked` set('No','Yes') NOT NULL DEFAULT 'No',
+  `updateTag` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -272,7 +318,10 @@ CREATE TABLE `ipTags` (
 
 LOCK TABLES `ipTags` WRITE;
 /*!40000 ALTER TABLE `ipTags` DISABLE KEYS */;
-INSERT INTO `ipTags` VALUES (1,'Offline',1,'#f59c99','#ffffff','No','Yes'),(2,'Used',0,'#a9c9a4','#ffffff','No','Yes'),(3,'Reserved',1,'#9ac0cd','#ffffff','No','Yes'),(4,'DHCP',1,'#c9c9c9','#ffffff','Yes','Yes');
+INSERT INTO `ipTags` VALUES (1,'Offline',1,'#f59c99','#ffffff','No','Yes',1);
+INSERT INTO `ipTags` VALUES (2,'Used',0,'#a9c9a4','#ffffff','No','Yes',1);
+INSERT INTO `ipTags` VALUES (3,'Reserved',1,'#9ac0cd','#ffffff','No','Yes',1);
+INSERT INTO `ipTags` VALUES (4,'DHCP',1,'#c9c9c9','#ffffff','Yes','Yes',1);
 /*!40000 ALTER TABLE `ipTags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,7 +388,15 @@ CREATE TABLE `lang` (
 
 LOCK TABLES `lang` WRITE;
 /*!40000 ALTER TABLE `lang` DISABLE KEYS */;
-INSERT INTO `lang` VALUES (1,'en_GB.UTF8','English'),(2,'sl_SI.UTF8','Slovenščina'),(3,'fr_FR.UTF8','Français'),(4,'nl_NL.UTF8','Nederlands'),(5,'de_DE.UTF8','Deutsch'),(6,'pt_BR.UTF8','Brazil'),(7,'es_ES.UTF8','Español'),(8,'cs_CZ.UTF8','Czech'),(9,'en_US.UTF8','English (US)');
+INSERT INTO `lang` VALUES (1,'en_GB.UTF8','English');
+INSERT INTO `lang` VALUES (2,'sl_SI.UTF8','Slovenščina');
+INSERT INTO `lang` VALUES (3,'fr_FR.UTF8','Français');
+INSERT INTO `lang` VALUES (4,'nl_NL.UTF8','Nederlands');
+INSERT INTO `lang` VALUES (5,'de_DE.UTF8','Deutsch');
+INSERT INTO `lang` VALUES (6,'pt_BR.UTF8','Brazil');
+INSERT INTO `lang` VALUES (7,'es_ES.UTF8','Español');
+INSERT INTO `lang` VALUES (8,'cs_CZ.UTF8','Czech');
+INSERT INTO `lang` VALUES (9,'en_US.UTF8','English (US)');
 /*!40000 ALTER TABLE `lang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -447,7 +504,15 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1000,'BaseSchema','2017-01-22 02:54:51','2017-01-22 02:54:52',0),(1001,'InitialData','2017-01-22 02:54:52','2017-01-22 02:54:52',0);
+INSERT INTO `migrations` VALUES (1000,'BaseSchema','2017-02-01 23:20:32','2017-02-01 23:20:33',0);
+INSERT INTO `migrations` VALUES (1001,'InitialData','2017-02-01 23:20:33','2017-02-01 23:20:33',0);
+INSERT INTO `migrations` VALUES (1002,'SetupCompletedFlag','2017-02-01 23:20:33','2017-02-01 23:20:33',0);
+INSERT INTO `migrations` VALUES (20170112000000,'DeviceGroupSettings','2017-02-01 23:20:33','2017-02-01 23:20:33',0);
+INSERT INTO `migrations` VALUES (20170112000001,'StandardizeDeviceTypes','2017-02-01 23:20:33','2017-02-01 23:20:33',0);
+INSERT INTO `migrations` VALUES (20170112000002,'DbSessions','2017-02-01 23:20:33','2017-02-01 23:20:33',0);
+INSERT INTO `migrations` VALUES (20170112171142,'CustomFieldsTable','2017-02-01 23:20:33','2017-02-01 23:20:33',0);
+INSERT INTO `migrations` VALUES (20170123062524,'CustomFieldConversion','2017-02-01 23:20:33','2017-02-01 23:20:33',0);
+INSERT INTO `migrations` VALUES (20170129170034,'Version129','2017-02-01 23:20:33','2017-02-01 23:20:34',0);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -688,8 +753,34 @@ CREATE TABLE `sections` (
 
 LOCK TABLES `sections` WRITE;
 /*!40000 ALTER TABLE `sections` DISABLE KEYS */;
-INSERT INTO `sections` VALUES (1,'Customers','Section for customers',0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}','0',NULL,NULL,NULL,0,0,NULL),(2,'IPv6','Section for IPv6 addresses',0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}','0',NULL,NULL,NULL,0,0,NULL);
+INSERT INTO `sections` VALUES (1,'Customers','Section for customers',0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}','0',NULL,NULL,NULL,0,0,NULL,0);
+INSERT INTO `sections` VALUES (2,'IPv6','Section for IPv6 addresses',0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}','0',NULL,NULL,NULL,0,0,NULL,0);
 /*!40000 ALTER TABLE `sections` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `session_data`
+--
+
+DROP TABLE IF EXISTS `session_data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `session_data` (
+  `session_id` varchar(32) NOT NULL DEFAULT '',
+  `hash` varchar(32) NOT NULL DEFAULT '',
+  `session_data` blob NOT NULL,
+  `session_expire` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`session_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `session_data`
+--
+
+LOCK TABLES `session_data` WRITE;
+/*!40000 ALTER TABLE `session_data` DISABLE KEYS */;
+/*!40000 ALTER TABLE `session_data` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -763,40 +854,8 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES (1,'phpipam IP address management','Sysadmin','admin@domain.local','domain.local','http://yourpublicurl.com',NULL,0,0,0,0,0,'{\"zoneLength\":3,\"ipType\":{\"0\":\"v4\",\"1\":\"v6\"},\"separator\":\"_\",\"indicator\":{\"0\":\"own\",\"1\":\"customer\"},\"zoneGenerator\":\"2\",\"zoneGeneratorType\":{\"0\":\"decimal\",\"1\":\"hex\",\"2\":\"text\"},\"deviceType\":\"3\",\"padding\":\"on\",\"strictMode\":\"on\"}',0,NULL,0,0,0,0,0,'0','1.1','0',0,'mac;owner;state;switch;note;firewallAddressObject',1,4096,'subnet,asc',24,0,0,'1800;3600',NULL,NULL,NULL,'0',1,'/bin/ping','/bin/fping','ping',128,'No',NULL,3600,0,0,NULL,'Database',0,1,1,'{\"type\":\"kea\",\"settings\":{\"file\":\"/etc/kea/kea.conf\"}}',0);
+INSERT INTO `settings` VALUES (1,'phpipam IP address management','Sysadmin','admin@domain.local','domain.local','http://yourpublicurl.com',NULL,0,0,0,0,0,'{\"zoneLength\":3,\"ipType\":{\"0\":\"v4\",\"1\":\"v6\"},\"separator\":\"_\",\"indicator\":{\"0\":\"own\",\"1\":\"customer\"},\"zoneGenerator\":\"2\",\"zoneGeneratorType\":{\"0\":\"decimal\",\"1\":\"hex\",\"2\":\"text\"},\"deviceType\":\"3\",\"padding\":\"on\",\"strictMode\":\"on\"}',0,NULL,0,0,0,0,0,'0','1.1','0',0,'mac;owner;state;switch;note;firewallAddressObject',1,4096,'subnet,asc',24,0,0,'1800;3600',NULL,NULL,NULL,'0',1,'/bin/ping','/bin/fping','ping',128,'No',NULL,3600,0,0,NULL,'Database',0,'No',1,1,'{\"type\":\"kea\",\"settings\":{\"file\":\"/etc/kea/kea.conf\"}}',0,0,0,'',0,0);
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `settingsDomain`
---
-
-DROP TABLE IF EXISTS `settingsDomain`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `settingsDomain` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `account_suffix` varchar(256) DEFAULT '@domain.local',
-  `base_dn` varchar(256) DEFAULT 'CN=Users,CN=Company,DC=domain,DC=local',
-  `domain_controllers` varchar(256) DEFAULT 'dc1.domain.local;dc2.domain.local',
-  `use_ssl` tinyint(1) DEFAULT '0',
-  `use_tls` tinyint(1) DEFAULT '0',
-  `ad_port` int(5) DEFAULT '389',
-  `adminUsername` varchar(64) DEFAULT NULL,
-  `adminPassword` varchar(64) DEFAULT NULL,
-  `editDate` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `settingsDomain`
---
-
-LOCK TABLES `settingsDomain` WRITE;
-/*!40000 ALTER TABLE `settingsDomain` DISABLE KEYS */;
-INSERT INTO `settingsDomain` VALUES (1,'@domain.local','CN=Users,CN=Company,DC=domain,DC=local','dc1.domain.local;dc2.domain.local',0,0,389,NULL,NULL,NULL);
-/*!40000 ALTER TABLE `settingsDomain` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -875,7 +934,12 @@ CREATE TABLE `subnets` (
 
 LOCK TABLES `subnets` WRITE;
 /*!40000 ALTER TABLE `subnets` DISABLE KEYS */;
-INSERT INTO `subnets` VALUES (1,'336395549904799703390415618052362076160','64',2,'Private subnet 1',NULL,0,0,1,1,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL),(2,'168427520','16',1,'Business customers',NULL,0,0,1,0,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL),(3,'168427776','24',1,'Customer 1',NULL,0,2,1,0,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL),(4,'168428032','24',1,'Customer 2',NULL,0,2,1,0,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL),(5,'0','',1,'My folder',NULL,0,0,0,0,0,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,1,0,2,0,NULL,NULL,NULL),(6,'172037632','24',1,'DHCP range',NULL,0,5,0,0,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL);
+INSERT INTO `subnets` VALUES (1,'336395549904799703390415618052362076160','64',2,'Private subnet 1',NULL,0,0,1,1,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `subnets` VALUES (2,'168427520','16',1,'Business customers',NULL,0,0,1,0,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `subnets` VALUES (3,'168427776','24',1,'Customer 1',NULL,0,2,1,0,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `subnets` VALUES (4,'168428032','24',1,'Customer 2',NULL,0,2,1,0,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `subnets` VALUES (5,'0','',1,'My folder',NULL,0,0,0,0,0,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,1,0,2,0,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `subnets` VALUES (6,'172037632','24',1,'DHCP range',NULL,0,5,0,0,1,0,'{\\\"3\\\":\\\"1\\\",\\\"2\\\":\\\"2\\\"}',0,'0',0,0,0,NULL,0,0,2,0,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `subnets` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -901,7 +965,8 @@ CREATE TABLE `userGroups` (
 
 LOCK TABLES `userGroups` WRITE;
 /*!40000 ALTER TABLE `userGroups` DISABLE KEYS */;
-INSERT INTO `userGroups` VALUES (2,'Operators','default Operator group',NULL),(3,'Guests','default Guest group (viewers)',NULL);
+INSERT INTO `userGroups` VALUES (2,'Operators','default Operator group',NULL);
+INSERT INTO `userGroups` VALUES (3,'Guests','default Guest group (viewers)',NULL);
 /*!40000 ALTER TABLE `userGroups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -914,7 +979,7 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(64) NOT NULL DEFAULT '',
+  `username` varchar(255) NOT NULL,
   `authMethod` int(2) DEFAULT '1',
   `password` char(128) DEFAULT NULL,
   `groups` varchar(1024) DEFAULT NULL,
@@ -952,7 +1017,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Admin',1,'password(\"admin\")','','Administrator','phpIPAM Admin','admin@domain.local','No','0','statistics;favourite_subnets;changelog;access_logs;error_logs;top10_hosts_v4',9,NULL,'No','No','Yes',NULL,NULL,NULL,'default',0,NULL,NULL,1,'Dynamic','No');
+INSERT INTO `users` VALUES (1,'admin',1,NULL,'','Administrator','phpIPAM Admin','admin@domain.local','No','0','statistics;favourite_subnets;changelog;access_logs;error_logs;top10_hosts_v4',9,NULL,'No','No','Yes',NULL,NULL,NULL,'default',0,NULL,NULL,1,'Dynamic','No');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -979,7 +1044,8 @@ CREATE TABLE `usersAuthMethod` (
 
 LOCK TABLES `usersAuthMethod` WRITE;
 /*!40000 ALTER TABLE `usersAuthMethod` DISABLE KEYS */;
-INSERT INTO `usersAuthMethod` VALUES (1,'local',NULL,'Yes','Local database'),(2,'HTTP',NULL,'Yes','Apache authentication');
+INSERT INTO `usersAuthMethod` VALUES (1,'local',NULL,'Yes','Local database');
+INSERT INTO `usersAuthMethod` VALUES (2,'HTTP',NULL,'Yes','Apache authentication');
 /*!40000 ALTER TABLE `usersAuthMethod` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1033,7 +1099,8 @@ CREATE TABLE `vlans` (
 
 LOCK TABLES `vlans` WRITE;
 /*!40000 ALTER TABLE `vlans` DISABLE KEYS */;
-INSERT INTO `vlans` VALUES (1,1,'IPv6 private 1',2001,'IPv6 private 1 subnets',NULL),(2,1,'Servers DMZ',4001,'DMZ public',NULL);
+INSERT INTO `vlans` VALUES (1,1,'IPv6 private 1',2001,'IPv6 private 1 subnets',NULL);
+INSERT INTO `vlans` VALUES (2,1,'Servers DMZ',4001,'DMZ public',NULL);
 /*!40000 ALTER TABLE `vlans` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1091,7 +1158,21 @@ CREATE TABLE `widgets` (
 
 LOCK TABLES `widgets` WRITE;
 /*!40000 ALTER TABLE `widgets` DISABLE KEYS */;
-INSERT INTO `widgets` VALUES (1,'Statistics','Shows some statistics on number of hosts, subnets','statistics',NULL,'no','4','no','yes'),(2,'Favourite subnets','Shows 5 favourite subnets','favourite_subnets',NULL,'yes','8','no','yes'),(3,'Top 10 IPv4 subnets by number of hosts','Shows graph of top 10 IPv4 subnets by number of hosts','top10_hosts_v4',NULL,'yes','6','no','yes'),(4,'Top 10 IPv6 subnets by number of hosts','Shows graph of top 10 IPv6 subnets by number of hosts','top10_hosts_v6',NULL,'yes','6','no','yes'),(5,'Top 10 IPv4 subnets by usage percentage','Shows graph of top 10 IPv4 subnets by usage percentage','top10_percentage',NULL,'yes','6','no','yes'),(6,'Last 5 change log entries','Shows last 5 change log entries','changelog',NULL,'yes','12','no','yes'),(7,'Active IP addresses requests','Shows list of active IP address request','requests',NULL,'yes','6','yes','yes'),(8,'Last 5 informational logs','Shows list of last 5 informational logs','access_logs',NULL,'yes','6','yes','yes'),(9,'Last 5 warning / error logs','Shows list of last 5 warning and error logs','error_logs',NULL,'yes','6','yes','yes'),(10,'Tools menu','Shows quick access to tools menu','tools',NULL,'yes','6','no','yes'),(11,'IP Calculator','Shows IP calculator as widget','ipcalc',NULL,'yes','6','no','yes'),(12,'IP Request','IP Request widget','iprequest',NULL,'no','6','no','yes'),(13,'Threshold','Shows threshold usage for top 5 subnets','threshold',NULL,'yes','6','no','yes'),(14,'Inactive hosts','Shows list of inactive hosts for defined period','inactive-hosts','86400','yes','6','yes','yes'),(15,'Locations','Shows map of locations','locations',NULL,'yes','6','no','yes');
+INSERT INTO `widgets` VALUES (1,'Statistics','Shows some statistics on number of hosts, subnets','statistics',NULL,'no','4','no','yes');
+INSERT INTO `widgets` VALUES (2,'Favourite subnets','Shows 5 favourite subnets','favourite_subnets',NULL,'yes','8','no','yes');
+INSERT INTO `widgets` VALUES (3,'Top 10 IPv4 subnets by number of hosts','Shows graph of top 10 IPv4 subnets by number of hosts','top10_hosts_v4',NULL,'yes','6','no','yes');
+INSERT INTO `widgets` VALUES (4,'Top 10 IPv6 subnets by number of hosts','Shows graph of top 10 IPv6 subnets by number of hosts','top10_hosts_v6',NULL,'yes','6','no','yes');
+INSERT INTO `widgets` VALUES (5,'Top 10 IPv4 subnets by usage percentage','Shows graph of top 10 IPv4 subnets by usage percentage','top10_percentage',NULL,'yes','6','no','yes');
+INSERT INTO `widgets` VALUES (6,'Last 5 change log entries','Shows last 5 change log entries','changelog',NULL,'yes','12','no','yes');
+INSERT INTO `widgets` VALUES (7,'Active IP addresses requests','Shows list of active IP address request','requests',NULL,'yes','6','yes','yes');
+INSERT INTO `widgets` VALUES (8,'Last 5 informational logs','Shows list of last 5 informational logs','access_logs',NULL,'yes','6','yes','yes');
+INSERT INTO `widgets` VALUES (9,'Last 5 warning / error logs','Shows list of last 5 warning and error logs','error_logs',NULL,'yes','6','yes','yes');
+INSERT INTO `widgets` VALUES (10,'Tools menu','Shows quick access to tools menu','tools',NULL,'yes','6','no','yes');
+INSERT INTO `widgets` VALUES (11,'IP Calculator','Shows IP calculator as widget','ipcalc',NULL,'yes','6','no','yes');
+INSERT INTO `widgets` VALUES (12,'IP Request','IP Request widget','iprequest',NULL,'no','6','no','yes');
+INSERT INTO `widgets` VALUES (13,'Threshold','Shows threshold usage for top 5 subnets','threshold',NULL,'yes','6','no','yes');
+INSERT INTO `widgets` VALUES (14,'Inactive hosts','Shows list of inactive hosts for defined period','inactive-hosts','86400','yes','6','yes','yes');
+INSERT INTO `widgets` VALUES (15,'Locations','Shows map of locations','locations',NULL,'yes','6','no','yes');
 /*!40000 ALTER TABLE `widgets` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

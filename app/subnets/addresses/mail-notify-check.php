@@ -10,10 +10,6 @@ foreach (explode(",", $_POST['recipients']) as $rec) {
 		$Result->show("danger", _("Invalid email address")." - ".$rec, true);
 	}
 }
-# strip html tags
-$_POST = $Tools->strip_input_tags($_POST);
-
-
 
 # fetch mailer settings
 $mail_settings = $Tools->fetch_object("settingsMail", "id", 1);

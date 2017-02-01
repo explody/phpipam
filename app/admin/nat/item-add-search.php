@@ -15,13 +15,13 @@ if(!is_numeric($_POST['id'])) { $Result->show("danger", _("Invalid NAT item ID")
 if($_POST['type']!=="src" && $_POST['type']!=="dst" ) { $Result->show("danger", _("Invalid NAT direction"), true); }
 
 # set searchterm
-if(isset($_REQUEST['ip'])) {
+if(isset($_POST['ip'])) {
 	// trim
-	$_REQUEST['ip'] = trim($_REQUEST['ip']);
+	$_POST['ip'] = trim($_POST['ip']);
 	// escape
-	$_REQUEST['ip'] = htmlspecialchars($_REQUEST['ip']);
+	$_POST['ip'] = htmlspecialchars($_POST['ip']);
 
-	$search_term = @$search_term=="search" ? "" : $_REQUEST['ip'];
+	$search_term = @$search_term=="search" ? "" : $_POST['ip'];
 }
 
 # change * to % for database wildchar
@@ -43,7 +43,7 @@ elseif($type == "IPv6") 	{ $search_term_edited = $Tools->reformat_IPv6_for_searc
 # search addresses
 $result_addresses = $Tools->search_addresses($search_term, $search_term_edited['high'], $search_term_edited['low'], array());
 # search subnets
-$result_subnets   = $Tools->search_subnets($search_term, $search_term_edited['high'], $search_term_edited['low'], $_REQUEST['ip']. array());
+$result_subnets   = $Tools->search_subnets($search_term, $search_term_edited['high'], $search_term_edited['low'], $_POST['ip']. array());
 
 # if some found print
 if(sizeof($result_addresses)>0 && sizeof($result_subnets)>0) {

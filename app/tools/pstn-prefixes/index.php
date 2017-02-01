@@ -20,17 +20,17 @@ if ($User->settings->enablePSTN!="1") {
 else {
     # all prefixes
     if(!isset($_GET['subnetId'])) {
-        include("all-prefixes.php");
+        include(dirname(__FILE__) . "/all-prefixes.php");
     }
     # single prefixes
     else {
         # slaves ?
         $cnt = $Tools->count_database_objects("pstnPrefixes", "master",$_GET['subnetId']);
         if ($cnt == 0) {
-            include("single-prefix.php");
+            include(dirname(__FILE__) . "/single-prefix.php");
         }
         else {
-            include("single-prefix-slaves.php");
+            include(dirname(__FILE__) . "/single-prefix-slaves.php");
         }
     }
 }

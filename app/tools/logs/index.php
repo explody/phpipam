@@ -49,7 +49,7 @@ else {
 
 <!-- show table -->
 <div class="normalTable logs">
-<?php include('show-logs.php'); ?>
+<?php include(dirname(__FILE__) . '/show-logs.php'); ?>
 </div>		<!-- end filter overlay div -->
 
 <?php

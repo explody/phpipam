@@ -10,5 +10,5 @@ $User->check_user_session();
 // set popup
 $popup = false;
 // table
-include('print-table.php');
+include(dirname(__FILE__) . '/print-table.php');
 ?>

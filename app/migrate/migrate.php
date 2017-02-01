@@ -29,7 +29,7 @@ if ($Database->migration_required()) {
 
 if ($migrate) {
     $title	  = "<h4>phpipam database migration required</h4>";
-    $title   .= "<hr><div class='text-muted' style='font-size:13px;padding-top:5px;'>Database needs to be migrated to version <strong>v" . $c->migration_version . "</strong>. Your database is currently at version <strong>v".$cmv."</strong>!</div>";
+    $title   .= "<hr><div class='text-muted' style='font-size:13px;padding-top:5px;'>Database needs to be migrated to version <strong>v" . $c->migration_version . "</strong>. Your database is currently at version <strong>v".$Database->currentMigrationVersion()."</strong>!</div>";
 
     // No need to warn about backup if there are no tables yet
     if (!$Database->bootstrap_required()) {

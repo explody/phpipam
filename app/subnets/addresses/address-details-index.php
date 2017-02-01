@@ -111,36 +111,36 @@ if(sizeof($address)>1) {
 
     // address details
     if(!isset($_GET['tab']))
-	include("address-details/address-details.php");
+	include(dirname(__FILE__) . "/address-details/address-details.php");
 
     // address details
     if($User->is_admin(false)) {
     if(@$_GET['tab']=="permissions")
-	include("address-details/address-details-permissions.php");
+	include(dirname(__FILE__) . "/address-details/address-details-permissions.php");
     }
 
     //nat
     if($User->settings->enableNAT==1) {
     if(@$_GET['tab']=="nat")
-	include("address-details/address-details-nat.php");
+	include(dirname(__FILE__) . "/address-details/address-details-nat.php");
     }
 
     // Linked addresses
     if(@$_GET['tab']=="linked")
-	include("address-details/address-details-linked.php");
+	include(dirname(__FILE__) . "/address-details/address-details-linked.php");
 
     // Multicast addresses
     if($mcast) {
     if(@$_GET['tab']=="multicast")
-	include("address-details/address-details-multicast.php");
+	include(dirname(__FILE__) . "/address-details/address-details-multicast.php");
     }
 
     if(@$_GET['tab']=="location")
-    include("address-details/address-details-location.php");
+    include(dirname(__FILE__) . "/address-details/address-details-location.php");
 
     // changelog
     if(@$_GET['tab']=="changelog")
-	include("address-details/address-changelog.php");
+	include(dirname(__FILE__) . "/address-details/address-changelog.php");
 }
 # not exisitng
 else {

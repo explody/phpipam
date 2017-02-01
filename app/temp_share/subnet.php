@@ -47,17 +47,17 @@ $subnet_usage  = $Subnets->calculate_subnet_usage ($subnet, true);		//Calculate 
 	<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
 		<!-- for adding IP address! -->
 		<div id="subnetId" style="display:none;"><?php print $subnet['id']; ?></div>
-		<?php include('subnet-details.php'); ?>
+		<?php include(dirname(__FILE__) . '/subnet-details.php'); ?>
 	</div>
 
 	<!-- subnet graph -->
 	<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-		<?php include('subnet-graph.php'); ?>
+		<?php include(dirname(__FILE__) . '/subnet-graph.php'); ?>
 	</div>
 
 	<!-- addresses -->
 	<div class="col-xs-12 ipaddresses_overlay">
-		<?php include('subnet-addresses.php'); ?>
+		<?php include(dirname(__FILE__) . '/subnet-addresses.php'); ?>
 	</div>
 
 	<!-- visual subnet display -->
@@ -66,7 +66,7 @@ $subnet_usage  = $Subnets->calculate_subnet_usage ($subnet, true);		//Calculate 
 	if($Subnets->identify_address($subnet['subnet']) == "IPv4") {
 		if($settings->visualLimit > 0) {
 			if($settings->visualLimit <= $subnet['mask'] && !$slaves) {
-				include('subnet-visual.php');
+				include(dirname(__FILE__) . '/subnet-visual.php');
 			}
 		}
 	}
@@ -82,7 +82,7 @@ $subnet_usage  = $Subnets->calculate_subnet_usage ($subnet, true);		//Calculate 
 			if(sizeof($addresses)>0) {
 				# set flag
 				$orphaned = true;
-				include('addresses/print-address-table.php');
+				include(dirname(__FILE__) . '/addresses/print-address-table.php');
 			}
 		}
 		?>

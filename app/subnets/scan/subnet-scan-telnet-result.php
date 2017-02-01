@@ -3,5 +3,5 @@
  * insert new hosts to database
  *******************************/
 
-include("subnet-scan-icmp-result.php");
+include(dirname(__FILE__) . "/subnet-scan-icmp-result.php");
 ?>

@@ -1,4 +1,4 @@
-$cfs<?php
+<?php
 
 /**
  * Function to add / edit / delete section

@@ -20,15 +20,15 @@ if ($User->settings->enableLocations!="1") {
 else {
     # all locations
     if(!isset($_GET['subnetId'])) {
-        include("all-locations-list.php");
+        include(dirname(__FILE__) . "/all-locations-list.php");
     }
     # map
     elseif ($_GET['subnetId']=="map") {
-        include("all-locations-map.php");
+        include(dirname(__FILE__) . "/all-locations-map.php");
     }
     # single location
     else {
-        include("single-location.php");
+        include(dirname(__FILE__) . "/single-location.php");
 
     }
 }

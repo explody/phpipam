@@ -7,9 +7,6 @@
 # validate csrf cookie
 $User->csrf_validate("replace_fields", $_POST['csrf_cookie'], $Result);
 
-# strip tags - XSS
-$_POST = $User->strip_input_tags ($_POST);
-
 //verify post
 if(empty($_POST['search'])) { $Result->show("danger", _('Please enter something in search field').'!', true); }
 //if device verify that it exists

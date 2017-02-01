@@ -61,7 +61,7 @@ if (isset($_COOKIE['search_parameters'])) {
 <div class="searchResult">
 <?php
 /* include results if IP address is posted */
-if ($searchTerm) 	{ include('search-results.php'); }
-else 				{ include('search-tips.php');}
+if ($searchTerm) 	{ include(dirname(__FILE__) . '/search-results.php'); }
+else 				{ include(dirname(__FILE__) . '/search-tips.php');}
 ?>
 </div>

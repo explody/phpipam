@@ -47,7 +47,11 @@ $sections = $Sections->fetch_all_sections();
 $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : false;
 ?>
 
+<!-- select2 -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
 
+<!-- common jquery plugins -->
+<script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
 
 <!-- header -->
 <div class="pHeader"><?php print ucwords(_("$_POST[action]")); ?> <?php print _('folder'); ?></div>
@@ -103,7 +107,11 @@ $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : fals
     <tr>
         <td><?php print _('Master Folder'); ?></td>
         <td>
-        	<?php $Subnets->print_mastersubnet_dropdown_menu($_POST['sectionId'], @$folder_old_details['masterSubnetId'], true); ?>
+        	<?php 
+            $Subnets->print_mastersubnet_dropdown_menu($_POST['sectionId'], @$folder_old_details['masterSubnetId'], true); 
+            Components::render_select2_js('#master-select',
+                                          ['templateResult' => '$(this).s2oneLine']);
+            ?>
         </td>
         <td class="info2"><?php print _('Enter master folder if you want to nest it under existing folder, or select root to create root folder'); ?>!</td>
     </tr>

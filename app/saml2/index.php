@@ -1,7 +1,7 @@
 <?php
 
 # verify php build
-include('functions/checks/check_php_build.php');		// check for support for PHP modules and database connection
+include(FUNCTIONS . '/checks/check_php_build.php');		// check for support for PHP modules and database connection
 define("TOOLKIT_PATH", dirname(__FILE__).'/../../functions/php-saml/');
 require_once(TOOLKIT_PATH . '_toolkit_loader.php');   // We load the SAML2 lib
 

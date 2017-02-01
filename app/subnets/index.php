@@ -101,19 +101,19 @@ if ($User->settings->enableNAT==1) {
         <!-- details -->
         <?php
         if(!isset($_GET['sPage'])) {
-        	include("subnet-details/subnet-details.php");
+        	include(dirname(__FILE__) . "/subnet-details/subnet-details.php");
         }
         if(@$_GET['sPage']=="permissions") {
-            include("subnet-details/subnet-permissions.php");
+            include(dirname(__FILE__) . "/subnet-details/subnet-permissions.php");
         }
         if($User->settings->enableNAT==1 && @$_GET['sPage']=="nat") {
-            include("subnet-details/subnet-nat.php");
+            include(dirname(__FILE__) . "/subnet-details/subnet-nat.php");
         }
         if(@$_GET['sPage']=="changelog") {
-            include("subnet-details/subnet-changelog.php");
+            include(dirname(__FILE__) . "/subnet-details/subnet-changelog.php");
         }
         if(@$_GET['sPage']=="location") {
-            include("subnet-details/subnet-location.php");
+            include(dirname(__FILE__) . "/subnet-details/subnet-location.php");
         }
     	?>
 
@@ -124,20 +124,20 @@ if ($User->settings->enableNAT==1) {
 	<!-- subnet graph -->
 	<?php if(@$_GET['sPage']!="location") { ?>
 	<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-		<?php include('subnet-details/subnet-graph.php'); ?>
+		<?php include(dirname(__FILE__) . '/subnet-details/subnet-graph.php'); ?>
 	</div>
 	<?php } ?>
 
 	<!-- subnet slaves list -->
 	<div class="col-xs-12 subnetSlaves">
-		<?php if($slaves) include('subnet-slaves.php'); ?>
+		<?php if($slaves) include(dirname(__FILE__) . '/subnet-slaves.php'); ?>
 	</div>
 
 	<!-- addresses -->
 	<div class="col-xs-12 ipaddresses_overlay">
 		<?php
 		if(!$slaves) {
-			include('addresses/print-address-table.php');
+			include(dirname(__FILE__) . '/addresses/print-address-table.php');
 		}
 		?>
 	</div>
@@ -148,7 +148,7 @@ if ($User->settings->enableNAT==1) {
 	if($Subnets->identify_address($subnet['subnet']) == "IPv4") {
 		if($User->settings->visualLimit > 0) {
 			if($User->settings->visualLimit <= $subnet['mask'] && !$slaves) {
-				include('subnet-visual.php');
+				include(dirname(__FILE__) . '/subnet-visual.php');
 			}
 		}
 	}
@@ -164,7 +164,7 @@ if ($User->settings->enableNAT==1) {
 			if(sizeof($addresses)>0) {
 				# set flag
 				$orphaned = true;
-				include('addresses/print-address-table.php');
+				include(dirname(__FILE__) . '/addresses/print-address-table.php');
 			}
 		}
 		?>

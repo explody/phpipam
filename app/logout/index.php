@@ -150,7 +150,7 @@ if ($auth_method->type == 'HTTP') {
 <div id="prettyLinks" style="display:none"><?php print $User->settings->prettyLinks; ?></div>
 
 <!-- Page footer -->
-<div class="footer"><?php include('app/footer.php'); ?></div>
+<div class="footer"><?php include(APP . '/footer.php'); ?></div>
 
 <!-- end body -->
 </body>

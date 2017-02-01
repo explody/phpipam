@@ -53,8 +53,8 @@ if ($User->settings->enableIPrequests==1) {
 }
 
 # get admin and tools menu items
-require( dirname(__FILE__) . '/../tools/tools-menu-config.php' );
-require( dirname(__FILE__) . '/../admin/admin-menu-config.php' );
+require( APP . '/tools/tools-menu-config.php' );
+require( APP . '/admin/admin-menu-config.php' );
 
 ?>
 
@@ -78,23 +78,23 @@ require( dirname(__FILE__) . '/../admin/admin-menu-config.php' );
         # static?
         if($User->user->menuType=="Static") {
             # static menu
-            include("menu/menu-static.php");
+            include(dirname(__FILE__) . "/menu/menu-static.php");
         }
         else {
             # dashboard, tools menu
             if ($_GET['page']=="dashboard" || $_GET['page']=="tools") {
-                include("menu/menu-tools.php");
+                include(dirname(__FILE__) . "/menu/menu-tools.php");
             }
             # admin menu
             elseif ($_GET['page']=="administration") {
-                include("menu/menu-administration.php");
+                include(dirname(__FILE__) . "/menu/menu-administration.php");
             }
             else {
-                include("menu/menu-sections.php");
+                include(dirname(__FILE__) . "/menu/menu-sections.php");
             }
 
             # tools and admin menu
-            include("menu/menu-tools-admin.php");
+            include(dirname(__FILE__) . "/menu/menu-tools-admin.php");
         }
         ?>
 	</div>	 <!-- end menu div -->

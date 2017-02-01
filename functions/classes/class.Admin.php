@@ -190,8 +190,6 @@ class Admin extends Common_functions {
 	 * @return void
 	 */
 	public function object_modify ($table, $action=null, $field="id", $values) {
-		# strip tags
-		$values = $this->strip_input_tags ($values);
 
 		# execute based on action
 		if($action=="add")					{ return $this->object_add ($table, $values); }

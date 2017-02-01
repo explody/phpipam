@@ -16,7 +16,7 @@ if(!is_numeric($_GET['section'])) { $Result->show("danger",_('Invalid ID'), true
 # Admin check, otherwise load requested subnets
 if ($_GET['section'] == 'Administration') {
     if (!$User->is_admin()) { $Result->show("danger",_('Sorry, must be admin'), true); }
-    else 					{ include('admin/admin-menu.php'); }
+    else 					{ include(dirname(__FILE__) . '/admin/admin-menu.php'); }
 }
 # load subnets
 else {

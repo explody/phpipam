@@ -190,13 +190,13 @@ else {
             // graph
             print "<div class='col-xs-12 col-sm-12 col-md-6 col-lg-4'>";
             print "<h4>"._('Utilization')."</h4><hr>";
-            include("single-prefix-graph.php");
+            include(dirname(__FILE__) . "/single-prefix-graph.php");
             print "</div>";
 
             # slave
             print "<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12' style='margin-top:40px;'>";
             print "<h4>"._('Belonging prefixes')."</h4><hr>";
-            include("single-prefix-slaves-list.php");
+            include(dirname(__FILE__) . "/single-prefix-slaves-list.php");
             print "</div>";
         }
     }

@@ -377,8 +377,6 @@ class PowerDNS extends Common_functions {
      * @return void
      */
     public function domain_edit ($action, $values) {
-        # strip tags
-        $values = $this->strip_input_tags ($values);
 
         # execute based on action
         if($action=="add")        { return $this->domain_add ($values); }

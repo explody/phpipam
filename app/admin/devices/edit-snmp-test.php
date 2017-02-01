@@ -11,7 +11,7 @@ error_reporting(E_ERROR);
 $User->csrf_validate("device_snmp", $_POST['csrf_cookie'], $Result);
 
 # get modified details
-$device = $Admin->strip_input_tags($_POST);
+$device = $_POST;
 
 # ID, port snd community must be numeric
 if(!is_numeric($_POST['device_id']))			              { $Result->show("danger", _("Invalid ID"), true, true, false, true); }

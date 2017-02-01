@@ -28,14 +28,14 @@ if(!file_exists($Scan->php_exec))	{ $Result->show("danger", _("Invalid ping path
 
 
 # scna
-if($_POST['type']=="scan-icmp")			   { include("subnet-scan-icmp.php"); }
-elseif($_POST['type']=="scan-telnet")	   { include("subnet-scan-telnet.php"); }
-elseif($_POST['type']=="snmp-route-all")   { include("subnet-scan-snmp-route-all.php"); }
-elseif($_POST['type']=="snmp-arp")	       { include("subnet-scan-snmp-arp.php"); }
-elseif($_POST['type']=="snmp-mac")	       { include("subnet-scan-snmp-mac.php"); }
+if($_POST['type']=="scan-icmp")			   { include(dirname(__FILE__) . "/subnet-scan-icmp.php"); }
+elseif($_POST['type']=="scan-telnet")	   { include(dirname(__FILE__) . "/subnet-scan-telnet.php"); }
+elseif($_POST['type']=="snmp-route-all")   { include(dirname(__FILE__) . "/subnet-scan-snmp-route-all.php"); }
+elseif($_POST['type']=="snmp-arp")	       { include(dirname(__FILE__) . "/subnet-scan-snmp-arp.php"); }
+elseif($_POST['type']=="snmp-mac")	       { include(dirname(__FILE__) . "/subnet-scan-snmp-mac.php"); }
 # discovery
-elseif($_POST['type']=="update-icmp")	   { include("subnet-update-icmp.php"); }
-elseif($_POST['type']=="update-snmp-arp")  { include("subnet-update-snmp-arp.php"); }
+elseif($_POST['type']=="update-icmp")	   { include(dirname(__FILE__) . "/subnet-update-icmp.php"); }
+elseif($_POST['type']=="update-snmp-arp")  { include(dirname(__FILE__) . "/subnet-update-snmp-arp.php"); }
 else									   { $Result->show("danger", _("Invalid scan type"), true); }
 
 ?>

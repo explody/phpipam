@@ -10,7 +10,7 @@ $Racks      = new phpipam_rack ($Database);
 $User->csrf_validate("rack", $_POST['csrf_cookie'], $Result);
 
 # get modified details
-$rack = $Tools->strip_input_tags($_POST);
+$rack = $_POST;
 
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['rackid']))			{ $Result->show("danger", _("Invalid ID"), true); }

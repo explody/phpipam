@@ -1,5 +1,5 @@
 <?php
 
-include("app/tools/powerDNS/host_records.php");
+include(APP . "/tools/powerDNS/host_records.php");
 
 ?>
