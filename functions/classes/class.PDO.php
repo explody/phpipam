@@ -832,10 +832,10 @@ abstract class DB {
 		if($result_fields!="*") {
     		$result_fields_arr = array();
     		foreach ($result_fields as $f) {
-        		$result_fields_arr[] = "`$f`";
+        		$result_fields_arr[] = $this->pdo-quote($f);
     		}
     		// implode
-    		$result_fields = implode(",", $result_fields);
+    		$result_fields = implode(",", $result_fields_arr);
 		}
 
         // subnets
@@ -843,7 +843,7 @@ abstract class DB {
     		return $this->getObjectsQuery('SELECT `'.$result_fields.'`,subnet*1 as subnet_int FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortFie    ld.'` ' . ($sortAsc ? '' : 'DESC') . ';', array($value));
         }
         else {
-    		return $this->getObjectsQuery('SELECT `'.$result_fields.'` FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortField.'` ' . ($sortAsc ? '    ' : 'DESC') . ';', array($value));
+    		return $this->getObjectsQuery('SELECT '.$result_fields.' FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortField.'` ' . ($sortAsc ? ''     : 'DESC') . ';', array($value));
         }
 	}
 
