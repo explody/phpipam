@@ -33,12 +33,18 @@ $('.show_popover').popover();
 /* Select2 things */
 
 $(document).on("click", ".select2-container", function (event) {
-    var h = $( window ).height() - $(this).offset().top - 200;
-    var ddh = $('.select2-dropdown').height();
+    var distance_to_bottom = $(window).height() - $(this).offset().top;
+    
+    // Only resize the dropdown if there's enough space for it to make sense. Otherwise, select2 
+    // will render it upwards anyway
+    if (distance_to_bottom > 400) {
+        var h = distance_to_bottom - 200;
+        var ddh = $('.select2-dropdown').height();
 
-    newh = ( ddh < h ? ddh : h );
-
-    $('.select2-results').css("height", newh);
+        newh = ( ddh < h ? ddh : h );
+    
+        $('.select2-results').css("height", newh);
+    }
     
     var cwidth = 0;
     $('.s2cust-container').each( function() {
