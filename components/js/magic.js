@@ -34,7 +34,7 @@ $('.show_popover').popover();
 
 $(document).on("click", ".select2-container", function (event) {
     var distance_to_bottom = $(window).height() - $(this).offset().top;
-    
+
     // Only resize the dropdown if there's enough space for it to make sense. Otherwise, select2 
     // will render it upwards anyway
     if (distance_to_bottom > 400) {
