@@ -10,16 +10,6 @@
 
 ?>
 
-<!-- jquery jclock is abandoned
-<script type="text/javascript">
-//show clock
-$(function($) {
-	$('span.jclock').jclock();
-});
-</script> 
--->
-
-
 <script>
 $(document).ready(function() {
 	// initialize sortable

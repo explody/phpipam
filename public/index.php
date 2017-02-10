@@ -142,7 +142,6 @@ else {
     <!-- js -->
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.ui.js"></script>
-    <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.jclock.js"></script>
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.datatables.js"></script>
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.stickytableheaders.js"></script>
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
