@@ -4,11 +4,9 @@
  * Script to display IP address info and history
  ***********************************************/
 
-
-
-
-# powerdns class
-$PowerDNS = new PowerDNS ($Database);
+if ($User->settings->enablePowerDNS==1) {
+    $PowerDNS = new PowerDNS ($Database);
+}
 
 # checks
 if(!is_numeric($_GET['subnetId']))		{ $Result->show("danger", _("Invalid ID"), true); }
