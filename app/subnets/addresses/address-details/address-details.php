@@ -220,20 +220,20 @@ if(sizeof($address)>1) {
 
     		foreach($cfs as $cf) {
     			if(strlen($address[$cf->name])>0) {
-    			$address[$cf->name] = str_replace(array("\n", "\r\n"), "<br>",$address[$cf->name]);
-    			print "<tr>";
-    			print "	<th>$cf->name</th>";
-    			print "	<td>";
-    			#booleans
-    			if($cf->type == "boolean")	{
-    				if($address[$cf->name] == 0)		{ print _("No"); }
-    				elseif($address[$cf->name] == 1)	{ print _("Yes"); }
-    			}
-    			else {
-    				print $Result->create_links($address[$cf->name]);
-    			}
-    			print "	</td>";
-    			print "</tr>";
+        			$address[$cf->name] = str_replace(array("\n", "\r\n"), "<br>",$address[$cf->name]);
+        			print "<tr>";
+        			print "	<th>$Components->custom_field_display_name($cf)</th>";
+        			print "	<td>";
+        			#booleans
+        			if($cf->type == "boolean")	{
+        				if($address[$cf->name] == 0)		{ print _("No"); }
+        				elseif($address[$cf->name] == 1)	{ print _("Yes"); }
+        			}
+        			else {
+        				print $Result->create_links($address[$cf->name]);
+        			}
+        			print "	</td>";
+        			print "</tr>";
     			}
     		}
     	}

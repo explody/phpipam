@@ -195,8 +195,8 @@ else {
     $Tools = new Tools ($Database);
     $cfs = $Tools->fetch_custom_fields ('ipaddresses');
     $required_fields = [];
-    foreach ($cfs as $k=>$f) {
-        if ($cfs->required) {
+    foreach ($cfs as $cf) {
+        if ($cf->required) {
             $required_fields[] = $cf;
         }
     }

@@ -52,9 +52,10 @@ if($_GET['page'] != "setup" ) {
 	$User		= new User ($Database);
 	$Sections	= new Sections ($Database);
 	$Subnets	= new Subnets ($Database);
-	$Tools	    = new Tools ($Database);
+	$Tools      = new Tools ($Database);
 	$Addresses	= new Addresses ($Database);
-	$Log 		= new Logging ($Database);
+    $Log 		= new Logging ($Database);
+	$Components = new Components ($Tools);
 
     # reset url for base
     $url = $User->createURL ();

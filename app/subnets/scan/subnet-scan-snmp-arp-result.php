@@ -20,8 +20,8 @@ if($Subnets->check_permission ($User->user, $_POST['subnetId']) != 3) 	{ $Result
 // fetch custom fields and check for required
 $cfs = $Tools->fetch_custom_fields ('ipaddresses');
 $required_fields = [];
-foreach ($cfs as $k=>$f) {
-    if ($cfs->required) {
+foreach ($cfs as $cf) {
+    if ($cf->required) {
         $required_fields[] = $cf;
     }
 }

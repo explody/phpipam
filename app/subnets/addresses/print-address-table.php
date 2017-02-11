@@ -132,9 +132,10 @@ else 				{ print _("IP addresses belonging to ALL nested subnets"); }
 	# owner
 	if(in_array('owner', $selected_ip_fields)) 	{ print "<th class='hidden-xs hidden-sm'><span rel='tooltip' title='"._('Sort by owner')."'>"._('Owner')."</span></th>"; }
 
-
+    
 	foreach($cfs as $cf) 	{
-		print $cf->visible ? "<th class='hidden-xs hidden-sm hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $cf->name'	>$cf->name</span></th>" : null;
+        $cfdisplay = $Components->custom_field_display_name($cf);
+		print $cf->visible ? "<th class='hidden-xs hidden-sm hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $cfdisplay'	>$cfdisplay</span></th>" : null;
 	}
 
 	?>
@@ -427,14 +428,16 @@ else {
 						$addresses[$n]->{$cf->name} = $Result->create_links($addresses[$n]->{$cf->name}, $cf->type);
 
 						//booleans
-						if($cf->type=="tinyint(1)")	{
-							if($addresses[$n]->{$cf->name} == "0")		{ print _("No"); }
-							elseif($addresses[$n]->{$cf->name} == "1")	{ print _("Yes"); }
+						if($cf->type=="boolean")	{
+                            print $addresses[$n]->{$cf->name} ? "Yes" : "No";
 						}
 						//text
 						elseif($cf->type=="text") {
-							if(strlen($addresses[$n]->{$cf->name})>0)	{ print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $addresses[$n]->{$cf->name})."'>"; }
-							else											{ print ""; }
+							if(strlen($addresses[$n]->{$cf->name})>0)	{ 
+                                print "<i class='fa fa-gray fa-comment' rel='tooltip' data-container='body' data-html='true' title='".str_replace("\n", "<br>", $addresses[$n]->{$cf->name})."'>"; 
+                            } else { 
+                                print "";
+                            }
 						}
 						else {
 							print $addresses[$n]->{$cf->name};

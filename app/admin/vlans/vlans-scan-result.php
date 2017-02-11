@@ -11,8 +11,8 @@ if(sizeof($_POST)>=ini_get("max_input_vars")) 							{ $Result->show("danger", _
 $cfs = $Tools->fetch_custom_fields ('vrf');
 
 $required_fields = [];
-foreach ($cfs as $k=>$f) {
-    if ($cfs->required) {
+foreach ($cfs as $cf) {
+    if ($cf->required) {
         $required_fields[] = $cf;
     }
 }
@@ -31,7 +31,7 @@ foreach($_POST as $key=>$line) {
 	elseif (isset($required_fields)) {
     	foreach ($required_fields as $r$f) {
         	if((strpos($key, $rf->name)) !== false) {
-                                                { $res[substr($key, strlen($rf->name))][$rf->name] = $line; }
+                $res[substr($key, strlen($rf->name))][$rf->name] = $line;
         	}
     	}
 	}

@@ -252,7 +252,7 @@ $selected_ip_fields = explode(";", $User->settings->IPfilter);
             else                                    { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $cf->name .'" maxlength="'.$size.'" value="'. @$details[$cf->name]. '" rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. "\n"; }
         }
         //boolean
-        elseif($cf->type == "tinyint(1)") {
+        elseif($cf->type == "boolean") {
             print "<select name='$cf->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$cf->display_name'>";
             $tmp = array(0=>"No",1=>"Yes");
             //null

@@ -738,4 +738,15 @@ class Components {
         );
     }
     
+    /**
+     * Returns a string appropriate for a display name for a custom field
+     *
+     * @access public
+     * @param mixed $cf Custom field object
+     * @return string Name for display
+     */
+    public function custom_field_display_name($cf) {
+        return empty(trim($cf->display_name)) ? $cf->name : $cf->display_name;
+    }
+    
 }

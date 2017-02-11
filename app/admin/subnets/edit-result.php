@@ -273,7 +273,7 @@ else {
 		if(isset($_POST[$cf->name])) { $_POST[$cf->name] = $_POST[$cf->name];}
 
 		//booleans can be only 0 and 1!
-		if($cf->type=="tinyint(1)") {
+		if($cf->type == "boolean") {
 			if($_POST[$cf->name]>1) {
 				$_POST[$cf->name] = 0;
 			}

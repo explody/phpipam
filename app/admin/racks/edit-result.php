@@ -33,7 +33,7 @@ elseif($rack['action']=="delete") {
 
 foreach($Tools->fetch_custom_fields('racks') as $cf) {
 	//booleans can be only 0 and 1!
-	if($cf->type=="tinyint(1)") {
+	if($cf->type == "boolean") {
 		if($rack[$cf->name]>1) {
 			$rack[$cf->name] = 0;
 		}
