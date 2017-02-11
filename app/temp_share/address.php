@@ -196,7 +196,7 @@ if(sizeof($address)>1) {
 			print "	<td>";
 			#booleans
 			if($cf->type == "boolean")	{
-                print $Components->boolean_display_value($address[$cf->name]);
+                print Components::boolean_display_value($address[$cf->name]);
 			}
 			else {
 				print $address[$cf->name];

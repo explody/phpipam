@@ -120,7 +120,7 @@ foreach ($custom_fields as $table=>$cf) {
             # Default value?
             print "<td>"; 
             if ($f->type == 'boolean') {
-                print $Components->boolean_display_value($f->default);
+                print Components::boolean_display_value($f->default);
             } else {
                 print empty($f->default) ? '-' : $f->default;
             }

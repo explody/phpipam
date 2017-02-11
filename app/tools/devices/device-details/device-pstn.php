@@ -93,7 +93,7 @@ else {
 		   			$html[] =  "<td class='hidden-xs hidden-sm hidden-md'>";
 		   			//booleans
 					if($cf->type == "boolean")	{
-                        $html[] = $Components->boolean_display_value($sp->{$cf->name});
+                        $html[] = Components::boolean_display_value($sp->{$cf->name});
 					}
 					//text
 					elseif($cf->type == "text") {

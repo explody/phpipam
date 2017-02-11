@@ -168,7 +168,7 @@ foreach ($users as $user) {
 			print "<td>";
 			//booleans
 			if($cf->type == "boolean")	{
-                print $Components->boolean_display_value($user[$cf->name]);
+                print Components::boolean_display_value($user[$cf->name]);
 			}
 			//text
 			elseif($cf->type == "text") {

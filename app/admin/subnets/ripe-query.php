@@ -61,9 +61,9 @@ $res = $Subnets->resolve_ripe_arin ($_POST['subnet']);
                     }
 
 					if (strtolower($cf->name) == strtolower($k)) {
-                        print "<option values='$cf->name' selected='selected'>$cf->display_name</option>";
+                        print "<option values='$cf->name' selected='selected'>" . Components::custom_field_display_name($cf) . "</option>";
                     } else {
-                        print "<option values='$cf->name'>$cf->display_name</option>";
+                        print "<option values='$cf->name'>" . Components::custom_field_display_name($cf) . "</option>";
                     }
 				}
 

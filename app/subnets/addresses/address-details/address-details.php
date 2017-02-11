@@ -222,11 +222,11 @@ if(sizeof($address)>1) {
     			if(strlen($address[$cf->name])>0) {
         			$address[$cf->name] = str_replace(array("\n", "\r\n"), "<br>",$address[$cf->name]);
         			print "<tr>";
-        			print "	<th>$Components->custom_field_display_name($cf)</th>";
+        			print "	<th>Components::custom_field_display_name($cf)</th>";
         			print "	<td>";
         			#booleans
         			if($cf->type == "boolean")	{
-                        print $Components->boolean_display_value($address[$cf->name]);
+                        print Components::boolean_display_value($address[$cf->name]);
         			}
         			else {
         				print $Result->create_links($address[$cf->name]);

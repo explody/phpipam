@@ -2128,7 +2128,7 @@ class Tools extends Common_functions {
 
 			   			//booleans
 						if($cf->type == "boolean")	{
-                            $html[] = $Components->boolean_display_value($option['value'][$cf->name]);
+                            $html[] = Components::boolean_display_value($option['value'][$cf->name]);
 						}
 						//text
 						elseif($cf->type == "text") {

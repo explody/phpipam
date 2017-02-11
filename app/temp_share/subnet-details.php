@@ -113,7 +113,7 @@
 				$html_custom[] = "	<td>";
 				#booleans
 				if($cf->type == "boolean")	{
-                    $html_custom = $Components->boolean_display_value($subnet[$cf->name]);
+                    $html_custom = Components::boolean_display_value($subnet[$cf->name]);
 				}
 				else {
 					$html_custom[] = $subnet[$cf->name];

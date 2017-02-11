@@ -63,14 +63,14 @@ print "<a class='btn btn-sm btn-default' href='".create_link($_GET['page'], $_GE
 
 			# fix for boolean
 			if($cf->type == "boolean") {
-                $vlan[$cf->name] = $Components->boolean_display_value($vlan[$cf->name]);
+                $vlan[$cf->name] = Components::boolean_display_value($vlan[$cf->name]);
 			}
 
 			// create links
 			$vlan[$cf->name] = $Result->create_links($vlan[$cf->name]);
 
 			print "<tr>";
-			print "	<th>" . $Components->custom_field_display_name($cf) . "</th>";
+			print "	<th>" . Components::custom_field_display_name($cf) . "</th>";
 			print "	<td style='vertical-align:top;align:left;'>" . $vlan[$cf->name] . "</td>";
 			print "</tr>";
 		}

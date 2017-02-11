@@ -34,6 +34,28 @@ class Components {
     }
     
     /**
+     * Returns a string appropriate for a display name for a custom field
+     *
+     * @access public
+     * @param mixed $cf Custom field object
+     * @return string Name for display
+     */
+    public static function custom_field_display_name($cf) {
+        return empty(trim($cf->display_name)) ? $cf->name : $cf->display_name;
+    }
+    
+    /**
+     * Returns language aware strings for boolean values
+     *
+     * @access public
+     * @param mixed $bool A value that will contain a truthy/falsey boolean
+     * @return string Translated string value for the true/false
+     */
+    public static function boolean_display_value($bool) {
+        return $bool ? _('Yes') : _('No');
+    }
+    
+    /**
      *	Takes an array of objects and returns an array of <option> elements
      *  for use in <selects>.
      * 
@@ -519,7 +541,7 @@ class Components {
                 $html[] =  '<script type="text/javascript" src="' . MEDIA .'/js/common.plugins.js"></script>';
             }
 
-            $html[] = "<select name='$cf->name' id='custom-select" . $index['select'] . "' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$cf->display_name'>";
+            $html[] = "<select name='$cf->name' id='custom-select" . $index['select'] . "' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='" . self::custom_field_display_name($cf) . "'>";
             
             // if the field allows null, add an option for 'none'
             if ($cf->null) {
@@ -566,9 +588,9 @@ class Components {
             $html[] = '<div class="'.$class.' input-group date">';
             //field
             if(!isset($object->{$cf->name}))	{ 
-                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="' . $cf->name . '" maxlength="' . $size . '" rel="tooltip" data-placement="right" title="' . $cf->display_name . '"></input>'. "\n"; 
+                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="' . $cf->name . '" maxlength="' . $size . '" rel="tooltip" data-placement="right" title="' . self::custom_field_display_name($cf) . '"></input>'. "\n"; 
             } else {
-                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="'. $cf->name .'" maxlength="' . $size . '" value="' . $object->{$cf->name} . '" rel="tooltip" data-placement="right" title="' . $cf->display_name . '"></input>'. "\n"; 
+                $html[] = ' <input type="text" id="datetimepicker' . $timepicker_index . '" class="form-control input-sm input-w-auto" name="'. $cf->name .'" maxlength="' . $size . '" value="' . $object->{$cf->name} . '" rel="tooltip" data-placement="right" title="' . self::custom_field_display_name($cf) . '"></input>'. "\n"; 
             }
             $html[] = '<span class="input-group-addon"><span class="glyphicon-calendar glyphicon"></span></span>';
             $html[] = '</div>';
@@ -736,28 +758,6 @@ class Components {
             "field" => implode("\n", $html),
             "timepicker_index" => $timepicker_index
         );
-    }
-    
-    /**
-     * Returns a string appropriate for a display name for a custom field
-     *
-     * @access public
-     * @param mixed $cf Custom field object
-     * @return string Name for display
-     */
-    public function custom_field_display_name($cf) {
-        return empty(trim($cf->display_name)) ? $cf->name : $cf->display_name;
-    }
-    
-    /**
-     * Returns language aware strings for boolean values
-     *
-     * @access public
-     * @param mixed $bool A value that will contain a truthy/falsey boolean
-     * @return string Translated string value for the true/false
-     */
-    public function boolean_display_value($bool) {
-        return $bool ? _('Yes') : _('No');
     }
     
 }

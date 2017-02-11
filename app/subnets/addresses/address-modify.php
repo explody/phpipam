@@ -542,7 +542,7 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
             
             // print
             print "<tr>";
-            print "	<td>" . (empty($cf->display_name) ? $cf->name : $cf->display_name) . " ".$custom_input['required']."</td>";
+            print "	<td>" . Components::custom_field_display_name($cf) . " ".$custom_input['required']."</td>";
             print "	<td>".$custom_input['field']."</td>";
             print " <td class=\"info2\">$cf->description</td>";
             print "</tr>";

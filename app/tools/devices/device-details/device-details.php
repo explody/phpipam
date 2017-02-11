@@ -134,7 +134,7 @@ if ($_GET['id'] != 0 && sizeof($device) > 0) {
                 $device[$cf->name] = $Result->create_links($device[$cf->name]);
 
             echo '<tr>';
-            echo '<th>' . ($cf->display_name ? $cf->display_name : $cf->name) . '</th>';
+            echo '<th>' . Components::custom_field_display_name($cf) . '</th>';
             echo '<td>'.$device[$cf->name].'</d>';
             echo '</tr>';
         }

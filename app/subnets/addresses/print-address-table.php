@@ -134,7 +134,7 @@ else 				{ print _("IP addresses belonging to ALL nested subnets"); }
 
     
 	foreach($cfs as $cf) 	{
-        $cfdisplay = $Components->custom_field_display_name($cf);
+        $cfdisplay = Components::custom_field_display_name($cf);
 		print $cf->visible ? "<th class='hidden-xs hidden-sm hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $cfdisplay'	>$cfdisplay</span></th>" : null;
 	}
 

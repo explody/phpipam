@@ -145,7 +145,7 @@ print '   <th>'._('Rack').'</th>';
 
 foreach($s->custom as $cf) {
   if($cf->visible) {
-        $field_header = empty($cf->display_name) ? $cf->name : $cf->display_name;
+      $field_header = Components::custom_field_display_name($cf);
       print "<th class='hidden-sm hidden-xs hidden-md'><span rel='tooltip' data-container='body' title='"._('Sort by')." $field_header'>".$field_header."</th>";
       $colspanCustom++;
   }
@@ -227,7 +227,7 @@ else {
 
 				//booleans
 				if($cf->type == "boolean")	{
-                    print $Components->boolean_display_value($device[$cf->name]);
+                    print Components::boolean_display_value($device[$cf->name]);
 				}
 				//text
 				elseif($cf->type == "text") {

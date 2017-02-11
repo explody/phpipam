@@ -216,7 +216,7 @@ $selected_ip_fields = explode(";", $User->settings->IPfilter);
             //null
             if($cf->null) { array_unshift($tmp, ""); }
 
-            print "<select name='$cf->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$cf->display_name'>";
+            print "<select name='$cf->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='" . Components::custom_field_display_name($cf) . "'>";
             foreach($tmp as $v) {
                 if($v==@$details[$cf->name])  { print "<option value='$v' selected='selected'>$v</option>"; }
                 else                                 { print "<option value='$v'>$v</option>"; }
@@ -248,12 +248,12 @@ $selected_ip_fields = explode(";", $User->settings->IPfilter);
             else                            { $size = 19; $class='datetimepicker';  $format = "yyyy-MM-dd"; }
 
             //field
-            if(!isset($details[$cf->name]))  { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $cf->name .'" maxlength="'.$size.'" rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. "\n"; }
-            else                                    { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $cf->name .'" maxlength="'.$size.'" value="'. @$details[$cf->name]. '" rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. "\n"; }
+            if(!isset($details[$cf->name]))  { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $cf->name .'" maxlength="'.$size.'" rel="tooltip" data-placement="right" title="' . Components::custom_field_display_name($cf) . '">'. "\n"; }
+            else                                    { print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $cf->name .'" maxlength="'.$size.'" value="'. @$details[$cf->name]. '" rel="tooltip" data-placement="right" title="' . Components::custom_field_display_name($cf) . '">'. "\n"; }
         }
         //boolean
         elseif($cf->type == "boolean") {
-            print "<select name='$cf->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$cf->display_name'>";
+            print "<select name='$cf->name' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='" . Components::custom_field_display_name($cf) . "'>";
             $tmp = array(0=>"No",1=>"Yes");
             //null
             if($cf->null) { $tmp[2] = ""; }
@@ -267,11 +267,11 @@ $selected_ip_fields = explode(";", $User->settings->IPfilter);
         }
         //text
         elseif($cf->type == "text") {
-            print ' <textarea class="form-control input-sm" name="'. $cf->name .'" placeholder="'. $cf->name .'" rowspan=3 rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. $details[$cf->name]. '</textarea>'. "\n";
+            print ' <textarea class="form-control input-sm" name="'. $cf->name .'" placeholder="'. $cf->name .'" rowspan=3 rel="tooltip" data-placement="right" title="' . Components::custom_field_display_name($cf) . '">'. $details[$cf->name]. '</textarea>'. "\n";
         }
         //default - input field
         else {
-            print ' <input type="text" class="ip_addr form-control input-sm" name="'. $cf->name .'" placeholder="'. $cf->name .'" value="'. @$details[$cf->name]. '" size="30" rel="tooltip" data-placement="right" title="'.$cf->display_name.'">'. "\n";
+            print ' <input type="text" class="ip_addr form-control input-sm" name="'. $cf->name .'" placeholder="'. $cf->name .'" value="'. @$details[$cf->name]. '" size="30" rel="tooltip" data-placement="right" title="' . Components::custom_field_display_name($cf) . '">'. "\n";
         }
 
         print ' </td>'. "\n";

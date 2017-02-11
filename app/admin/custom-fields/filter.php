@@ -59,7 +59,7 @@ $(".input-switch").bootstrapSwitch(switch_options);
         }
 		print "	</td>";
 		# name and comment
-		print "	<td>".$cf->name." (".$cf->display_name.")</td>";
+		print "	<td>".$cf->display_name." (".$cf->name.")</td>";
 		print "</tr>";
 	}
 

@@ -433,11 +433,11 @@ else {
 			if(strlen($subnet[$cf->name])>0) {
 				$subnet[$cf->name] = str_replace(array("\n", "\r\n"), "<br>",$subnet[$cf->name]);
 				$html_custom[] = "<tr>";
-				$html_custom[] = "	<th>$cf->name</th>";
+				$html_custom[] = "	<th>" . Components::custom_field_display_name($cf) . "</th>";
 				$html_custom[] = "	<td>";
 				#booleans
 				if($cf->type == "boolean")	{
-                    $html_custom[] = $Components->boolean_display_value($address[$cf->name]);
+                    $html_custom[] = Components::boolean_display_value($address[$cf->name]);
 				}
 				else {
 					$html_custom[] = $Result->create_links($subnet[$cf->name]);

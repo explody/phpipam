@@ -27,7 +27,7 @@ if(sizeof($sections) > 0) {
 	print "	<th>"._('Description')."</th>";
 	print "	<th>"._('VLAN')."</th>";
 	if($User->settings->enableVRF == 1) {
-	print "	<th>"._('VRF')."</th>";
+        print " <th>"._('VRF')."</th>";
 	}
 	print "	<th>"._('Master Subnet')."</th>";
 	print "	<th>"._('Device')."</th>";
@@ -36,7 +36,7 @@ if(sizeof($sections) > 0) {
 	foreach($cfs as $cf) {
 		# hidden?
 		if($cf->visible) {
-			print "	<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
+			print "	<th class='hidden-xs hidden-sm hidden-md'>". Components::custom_field_display_name($cf) . "</th>";
 		}
 	}
 

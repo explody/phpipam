@@ -37,7 +37,7 @@ $custom_fields_names = "";
 $custom_fields_boxes = "";
 
 foreach($Tools->fetch_custom_fields('ipaddresses') as $cf) {
-	$custom_fields_names .= "	<th>$cf->display_name</th>";
+	$custom_fields_names .= "	<th>" . Components::custom_field_display_name($cf) . "</th>";
 	$custom_fields_boxes .= "	<td><input type='checkbox' name='$cf->name' checked> </td>";
 }
 
