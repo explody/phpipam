@@ -17,13 +17,12 @@ class Version129 extends Ipam\Migration\RepeatableMigration
         }
         
         // https://github.com/phpipam/phpipam/commit/e514034b0b30fae8ad47dd331b05c61f2cd7e481
-        $this->table('sections')->addColumn('showSupernetOnly', 'boolean',['null'=>true,'default'=>'0'])
+        $this->table('sections')->addColumn('showSupernetOnly', 'boolean',['null'=>true,'default'=>'0','after'=>'showVRF'])
                                 ->save();
                                 
         // https://github.com/phpipam/phpipam/commit/af22f5484be949f73704c71be0a13becfe83464a
-        $this->table('subnets')->addColumn('lastScan', 'timestamp', ['null'=>true])
-                               ->addColumn('lastDiscovery', 'timestamp', ['null'=>true])
-                               ->save();
+        $this->table('subnets')->addColumn('lastScan', 'timestamp', ['null'=>true, 'after'=>'editDate'])->save();
+        $this->table('subnets')->addColumn('lastDiscovery', 'timestamp', ['null'=>true, 'after'=>'lastScan'])->save();
                                
         // https://github.com/phpipam/phpipam/commit/d33fbd4756d3ec04e410b60242061189d062173c
         $this->table('users')->addColumn('username','string',['limit'=>255])->save();
