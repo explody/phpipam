@@ -118,7 +118,13 @@ foreach ($custom_fields as $table=>$cf) {
             print "<td>" . ($f->null ? _('Yes') : _('No')) . "</td>";
 
             # Default value?
-            print "<td>" . ($f->default ? $f->default : '-') . "</td>";
+            print "<td>"; 
+            if ($f->type == 'boolean') {
+                print $Components->boolean_display_value($f->default);
+            } else {
+                print empty($f->default) ? '-' : $f->default;
+            }
+            print "</td>";
 
             # visible
             if ($f->visible) {

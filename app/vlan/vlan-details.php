@@ -57,7 +57,7 @@ $cfs = $Tools->fetch_custom_fields ('vlans');
 			// create links
 			$vlan[$cf->name] = $Result->create_links($vlan[$cf->name]);
 			print "<tr>";
-			print "	<th>$cf->name</th>";
+			print "	<th>$Components->custom_field_display_name($cf)</th>";
 			print "	<td style='vertical-align:top;align:left;'>" . $vlan[$cf->name] . "</td>";
 			print "</tr>";
 		}

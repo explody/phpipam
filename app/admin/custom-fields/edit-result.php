@@ -59,6 +59,11 @@ if (in_array($action, ['edit','add'])) {
         $cfield->limit = $_POST['limit'];
     }
 
+    // If limit is truly empty, set it to NULL. This handles '0' as a literal, not falsey
+    if ((string)$cfield->limit != "0" && empty($cfield->limit)) {
+        $cfield->limit = null;
+    }
+
     if (!is_numeric($_POST['null']) || $_POST['null'] > 1) {
         $errors[] = _('Invalid "NULL" value');
     }
