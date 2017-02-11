@@ -37,9 +37,15 @@ if (in_array($action, ['edit','delete'])) {
 if (in_array($action, ['edit','add'])) {
 
     $action === 'edit' ? $edit = true : $add = true;
-
-    $cfield->name = trim($_POST['name']);
-
+    $newname = false;
+    
+    if ($add) {
+        $cfield->name = trim($_POST['name']);
+    } else {
+        if (trim($_POST['name']) != $cfield->name) {
+            $newname = trim($_POST['name']);
+        }
+    }
     // Only certain types require limit to be set
     if ((!isset($_POST['limit']) || empty($_POST['limit'])) &&
           in_array($_POST['type'], ['string',
@@ -195,6 +201,12 @@ if (sizeof($errors) != 0) {
     $rt = new Ipam\Migration\RepeatableTable($cfield->table, [], $a);
 
     try {
+        // If the column is being renamed, do this first before other updates
+        if ($edit && $newname) {
+            $rt->renameColumn($cfield->name, $newname)->update();
+            $cfield->name = $newname;
+        }
+
         // add/edit RepeatableTable::addColumn will add if absent and update if the column exists
         ($add || $edit) ? $rt->addColumn($cfield->name, $cfield->type, $params)->update() : null;
 
