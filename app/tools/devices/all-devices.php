@@ -227,8 +227,7 @@ else {
 
 				//booleans
 				if($cf->type == "boolean")	{
-					if($device[$cf->name] == "0")		{ print _("No"); }
-					elseif($device[$cf->name] == "1")	{ print _("Yes"); }
+                    print $Components->boolean_display_value($device[$cf->name]);
 				}
 				//text
 				elseif($cf->type == "text") {

@@ -181,7 +181,7 @@ else {
     				else									{ print ' <input type="text" class="'.$class.' form-control input-sm input-w-auto" data-format="'.$format.'" name="'. $field['nameNew'].$m .'" maxlength="'.$size.'" value="'. $address[$field['name']]. '" '.$delete.' rel="tooltip" data-placement="right" title="'.$field['Comment'].'">'. "\n"; }
     			}
     			//boolean
-    			elseif($field['type'] == "tinyint(1)") {
+    			elseif($field['type'] == "boolean") {
     				print "<select name='$field[nameNew]$m' class='form-control input-sm input-w-auto' rel='tooltip' data-placement='right' title='$field[Comment]'>";
     				$tmp = array(0=>"No",1=>"Yes");
     				//null

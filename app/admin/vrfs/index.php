@@ -95,7 +95,7 @@ else {
 				$vrf[$cf->name] = $Result->create_links ($vrf[$cf->name], $cf->type);
 
 				//booleans
-				if($field['type']=="tinyint(1)")	{
+				if($field['type']=="boolean")	{
 					if($vrf[$cf->name] == "0")		{ print _("No"); }
 					elseif($vrf[$cf->name] == "1")	{ print _("Yes"); }
 				}

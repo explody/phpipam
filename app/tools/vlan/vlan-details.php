@@ -63,9 +63,7 @@ print "<a class='btn btn-sm btn-default' href='".create_link($_GET['page'], $_GE
 
 			# fix for boolean
 			if($cf->type == "boolean") {
-				if($vlan[$cf->name]==0)		{ $vlan[$cf->name] = "false"; }
-				elseif($vlan[$cf->name]==1)	{ $vlan[$cf->name] = "true"; }
-				else					{ $vlan[$cf->name] = ""; }
+                $vlan[$cf->name] = $Components->boolean_display_value($vlan[$cf->name]);
 			}
 
 			// create links

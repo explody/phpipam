@@ -3053,8 +3053,7 @@ class Subnets extends Common_functions {
 
 			   			//booleans
 						if($cf->type == "boolean")	{
-							if($option['value'][$cf->name] == "0")			{ $html[] = _("No"); }
-							elseif($option['value'][$cf->name] == "1")		{ $html[] = _("Yes"); }
+                            $html[] = $Components->boolean_display_value($option['value'][$cf->name]);
 						}
 						//text
 						elseif($cf->type == "text") {

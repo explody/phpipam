@@ -103,7 +103,7 @@ else {
     
     // custom
 	foreach ($required_fields as $rf) {
-        print "<th>"._($rf->name)."</th>";
+        print "<th>" . $Components->custom_field_display_name($rf) . "</th>";
 	}
 
 	print "	<th></th>";

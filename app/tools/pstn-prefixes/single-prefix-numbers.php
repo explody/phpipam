@@ -125,7 +125,7 @@ $colspan_dhcp = 4;
 					$n->{$cf->name} = $Result->create_links($n->{$cf->name}, $cf->type);
 
 					//booleans
-					if($cf->type=="tinyint(1)")	{
+					if($cf->type=="boolean")	{
 						if($n->{$cf->name} == "0")		{ print _("No"); }
 						elseif($n->{$cf->name} == "1")	{ print _("Yes"); }
 					}

@@ -150,8 +150,7 @@ else {
 								print "<td class='hidden-xs hidden-sm hidden-md'>";
 								//booleans
 								if($cf->type == "boolean")	{
-									if($v->{$cf->name} == "0")		{ print _("No"); }
-									elseif($v->{$cf->name} == "1")	{ print _("Yes"); }
+                                    print $Components->boolean_display_value($v->{$cf->name});
 								}
 								//text
 								elseif($cf->type == "text") {

@@ -183,8 +183,7 @@ foreach($Tools->fetch_custom_fields('users') as $cf) {
 	}
 	//booleans
 	elseif($cf->type == "boolean")	{
-		if($user->{$cf->name} == "0")		{ print _("No"); }
-		elseif($user->{$cf->name} == "1")	{ print _("Yes"); }
+        print $Components->boolean_display_value($user->{$cf->name});
 	}
 	else {
 		print $user->{$cf->name};

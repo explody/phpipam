@@ -437,11 +437,7 @@ else {
 				$html_custom[] = "	<td>";
 				#booleans
 				if($cf->type == "boolean")	{
-					if($subnet[$cf->name]) {
-                        $html_custom[] = _("Yes");
-                    } else {
-                        $html_custom[] = _("No");
-                    }
+                    $html_custom[] = $Components->boolean_display_value($address[$cf->name]);
 				}
 				else {
 					$html_custom[] = $Result->create_links($subnet[$cf->name]);

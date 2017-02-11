@@ -59,8 +59,7 @@ if($folder['sectionId']!=$_GET['section'])	{
     		print "	<td>";
     			# booleans
     			if($cf->type == "boolean")	{
-    				if($folder[$cf->name] == 0)		{ print _("No"); }
-    				elseif($folder[$cf->name] == 1)	{ print _("Yes"); }
+                    print $Components->boolean_display_value($folder[$cf->name]);
     			}
     			else {
     				print $folder[$cf->name];

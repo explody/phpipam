@@ -566,9 +566,8 @@ else {
     							$s->{$cf->name} = $Result->create_links($s->{$cf->name}, $cf->type);
 
     							//booleans
-    							if($cf->type=="tinyint(1)")	{
-    								if($s->{$cf->name} == "0")		{ print _("No"); }
-    								elseif($s->{$cf->name} == "1")	{ print _("Yes"); }
+    							if($cf->type=="boolean") {
+                                    print $s->{$cf->name} ? "Yes" : "No";
     							}
     							//text
     							elseif($cf->type=="text") {

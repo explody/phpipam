@@ -226,8 +226,7 @@ if(sizeof($address)>1) {
         			print "	<td>";
         			#booleans
         			if($cf->type == "boolean")	{
-        				if($address[$cf->name] == 0)		{ print _("No"); }
-        				elseif($address[$cf->name] == 1)	{ print _("Yes"); }
+                        print $Components->boolean_display_value($address[$cf->name]);
         			}
         			else {
         				print $Result->create_links($address[$cf->name]);

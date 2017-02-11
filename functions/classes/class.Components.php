@@ -749,4 +749,15 @@ class Components {
         return empty(trim($cf->display_name)) ? $cf->name : $cf->display_name;
     }
     
+    /**
+     * Returns language aware strings for boolean values
+     *
+     * @access public
+     * @param mixed $bool A value that will contain a truthy/falsey boolean
+     * @return string Translated string value for the true/false
+     */
+    public function boolean_display_value($bool) {
+        return $bool ? _('Yes') : _('No');
+    }
+    
 }

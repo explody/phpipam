@@ -168,8 +168,7 @@ foreach ($users as $user) {
 			print "<td>";
 			//booleans
 			if($cf->type == "boolean")	{
-				if($user[$cf->name] == "0")		{ print _("No"); }
-				elseif($user[$cf->name] == "1")	{ print _("Yes"); }
+                print $Components->boolean_display_value($user[$cf->name]);
 			}
 			//text
 			elseif($cf->type == "text") {

@@ -133,8 +133,7 @@ else {
 
 					//booleans
 					if($cf->type == "boolean")	{
-						if($r->{$cf->name} == "0")		{ print _("No"); }
-						elseif($r->{$cf->name} == "1")	{ print _("Yes"); }
+                        print $Components->boolean_display_value($r->{$cf->name});
 					}
 					//text
 					elseif($cf->type == "text") {
