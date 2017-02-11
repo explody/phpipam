@@ -832,7 +832,7 @@ abstract class DB {
 		if($result_fields!="*") {
     		$result_fields_arr = array();
     		foreach ($result_fields as $f) {
-        		$result_fields_arr[] = $this->pdo-quote($f);
+        		$result_fields_arr[] = $this->pdo->quote($f);
     		}
     		// implode
     		$result_fields = implode(",", $result_fields_arr);
