@@ -207,8 +207,8 @@ if (sizeof($errors) != 0) {
             $cfield->name = $newname;
         }
 
-        // add/edit RepeatableTable::addColumn will add if absent and update if the column exists
-        ($add || $edit) ? $rt->addColumn($cfield->name, $cfield->type, $params)->update() : null;
+        $edit ? $rt->changeColumn($cfield->name, $cfield->type, $params)->update() : null;
+        $add  ? $rt->addColumn($cfield->name, $cfield->type, $params)->update() : null;
 
         // delete
         $delete ? $rt->removeColumn($cfield->name)->update() : null;
