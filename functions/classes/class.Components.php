@@ -355,6 +355,10 @@ class Components {
      * @param array $options['selected'] Array of [k=>v] where if the option 
      *               object->k === v, we'll add 'selected'
      *               Default: []
+     * @param bool $options['dotIPs'] If true and displayField contains 'subnet' or 'ip_addr'
+     *               and these attributes are in integer format, we'll convert them to dotted
+     *               notation
+     *               Default: false
      * @return void|array  Directly prints options or returns an array of strings.
      */
     public function render_options($objs, $valueField, $displayField, $options = []) {
@@ -365,6 +369,7 @@ class Components {
                             'resolveGroupKey' => false,
                             'sort' => false,
                             'gsort' => true,
+                            'dotIPs' => true,
                             'extFields' => [], 
                             'oclasses' => [], 
                             'gclasses' => [],
@@ -372,6 +377,16 @@ class Components {
                       );
         $options = (object) array_merge($defoptions, $options);
         $output  = [];
+
+        if ($options->dotIPs) {
+            foreach ($objs as $id => $obj) {
+                foreach(['ip_addr','subnet'] as $prop) {
+                    if (property_exists($obj, $prop) && $this->Tools->identify_address_format($obj->{$prop}) == "decimal") {
+                        $objs[$id]->{$prop} = $this->Tools->transform_to_dotted($obj->{$prop});
+                    }
+                }
+            }
+        }
         
         if ($options->group && $options->groupby) {
             

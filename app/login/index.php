@@ -111,16 +111,25 @@ if (!empty($_SERVER[$user_variable])) {
 	<!-- title -->
 	<title><?php print $User->settings->siteTitle; ?> :: login</title>
 
-	<!-- css -->
-	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.css" />
-	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.custom.css" />
-	<link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/font-awesome.css" />
-	<link rel="shortcut icon" href="<?php print MEDIA; ?>/images/favicon.png">
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.switch.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/jquery.datatables.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/multi-select.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/select2.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/select2.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.custom.css" />
 
-	<!-- js -->
-	<script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
-	<script type="text/javascript" src="<?php print MEDIA; ?>/js/login.js"></script>
-	<script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
+    <!-- js -->
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.ui.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.switch.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/select2.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/common.plugins.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/login.js"></script>
+    <script type="text/javascript" src="<?php print MEDIA; ?>/js/magic.js"></script>
+    
 	<script type="text/javascript">
 	$(document).ready(function(){
 	     if ($("[rel=tooltip]").length) { $("[rel=tooltip]").tooltip(); }

@@ -76,8 +76,8 @@ else {
 </table>
 <script type="text/javascript">
 	$(document).ready(function() {
-    	if ($('#subnetId').children('option').length>0) {
-    		var subnetId = $('select#subnetId option:selected').attr('value');
+    	if ($('#subnet-select').children('option').length>0) {
+    		var subnetId = $('select#subnet-select option:selected').attr('value');
     		//post it via json to requestIPfirstFree.php
     		$.post('app/login/request_ip_first_free.php', { subnetId:subnetId}, function(data) {
     			$('input.ip_addr').val(data);

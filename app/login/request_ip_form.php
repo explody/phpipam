@@ -35,18 +35,26 @@ if($subnets===NULL) { ?>
 <tr>
 	<th><?php print _('Select subnet'); ?> *</th>
 	<td>
-		<select name="subnetId" id="subnetId" class="form-control">
+		<select name="subnetId" id="subnet-select" class="select2">
 		<?php
-		foreach($subnets as $subnet) {
-			# cast
-			$subnet = (array) $subnet;
-			# must not have any slave subnets
-			if(!$Subnets->has_slaves($subnet['id'])) {
-				print '<option value="'.$subnet['id'].'">'.$Subnets->transform_to_dotted($subnet['subnet']).'/'.$subnet['mask'].' ['.$subnet['description'].']</option>';
-			}
-		}
+        $Components->render_options($subnets, 
+              'id', 
+              ['subnet','mask','description'], 
+               array(
+                   'sort' => true,
+                   'group' => true,
+                   'groupby' => 'sectionId',
+                   'resolveGroupKey' => true,
+                   'extFields' => [ 'sectionId' => 'sections' ]
+               )
+           );
 		?>
 		</select>
+        <br />
+        <?php
+        Components::render_select2_js('#subnet-select',
+                                      ['templateResult' => '$(this).s2boldIPMaskDescOneLine']);
+        ?>
 	</td>
 </tr>
 
@@ -54,14 +62,14 @@ if($subnets===NULL) { ?>
 <tr>
 	<th><?php print _('Description'); ?></th>
 	<td>
-		<input type="text" name="description" class="form-control" size="30" placeholder="<?php print _('IP description'); ?>"></td>
+		<input type="text" name="description" class="form-control input-sm" size="30" placeholder="<?php print _('IP description'); ?>"></td>
 </tr>
 
 <!-- DNS name -->
 <tr>
 	<th><?php print _('Hostname'); ?></th>
 	<td>
-		<input type="text" name="dns_name" class="form-control" size="30" placeholder="<?php print _('device hostname'); ?>"></td>
+		<input type="text" name="dns_name" class="form-control input-sm" size="30" placeholder="<?php print _('device hostname'); ?>"></td>
 </tr>
 
 <!-- state -->
@@ -93,7 +101,7 @@ if(in_array('owner', $setFields)) {
 	print '<th>'._('Owner').'</th>'. "\n";
 	print '<td>	'. "\n";
 	print '</script> '. "\n";
-	print '<input type="text" name="owner" class="form-control" id="owner" size="30" placeholder="'._('Responsible person').'"></td>'. "\n";
+	print '<input type="text" name="owner" class="form-control input-sm" id="owner" size="30" placeholder="'._('Responsible person').'"></td>'. "\n";
 	print '</tr>'. "\n";
 }
 ?>
@@ -103,7 +111,7 @@ if(in_array('owner', $setFields)) {
 <tr>
 	<th><?php print _('Requester'); ?> *</th>
 	<td>
-		<input type="text" name="requester" class="form-control" size="30" placeholder="<?php print _('Your email address'); ?>"></textarea>
+		<input type="text" name="requester" class="form-control input-sm" size="30" placeholder="<?php print _('Your email address'); ?>"></textarea>
 	</td>
 </tr>
 
@@ -111,7 +119,7 @@ if(in_array('owner', $setFields)) {
 <tr>
 	<th><?php print _('Additional comment'); ?></th>
 	<td class="comment">
-		<textarea name="comment" rows="3" class="form-control" style="width:100%" placeholder="<?php print _('If there is anything else you want to say about request write it in this box'); ?>!"></textarea>
+		<textarea name="comment" rows="3" class="form-control input-sm" style="width:100%" placeholder="<?php print _('If there is anything else you want to say about request write it in this box'); ?>!"></textarea>
 	</td>
 </tr>
 

@@ -58,7 +58,7 @@ $path = $_GET['a'];
 unset($_GET['a']);
 
 # ensure that user is logged in, unless it's a login or captcha call, or if setup is incomplete
-if ($path[1] != 'login_check' && !$Database->setup_required()) {
+if (!in_array($path[1], ['login_check','request_ip_result']) && !$Database->setup_required()) {
     $User->check_user_session();
 }
 
