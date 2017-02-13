@@ -33,7 +33,7 @@ include(FUNCTIONS . '/checks/check_php_build.php');		# check for support for PHP
 	<!-- js -->
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/jquery.js"></script>
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/login.js"></script>
-	<script type="text/javascript" src="<?php print MEDIA; ?>/js/install.js"></script>
+	<script type="text/javascript" src="<?php print MEDIA; ?>/js/setup.js"></script>
 	<script type="text/javascript" src="<?php print MEDIA; ?>/js/bootstrap.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
