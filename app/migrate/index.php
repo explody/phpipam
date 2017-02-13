@@ -1,12 +1,7 @@
 <?php
-
 # make migration and php build checks
 include(FUNCTIONS . '/checks/check_php_build.php');		# check for support for PHP modules and database connection
-
-
-
 ?>
-
 <!DOCTYPE HTML>
 <html lang="en">
 
