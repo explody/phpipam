@@ -4,17 +4,11 @@
  * validate mac address for multicast
  */
 
-# include required scripts
-require( FUNCTIONS . '/functions.php' );
-
 # initialize required objects
 $Database 	= new Database_PDO;
 $Result		= new Result;
 $User		= new User ($Database);
 $Subnets	= new Subnets ($Database);
-
-
-
 
 # check that multicast is enabled
 if ($User->settings->enableMulticast!="1")          { die("True"); }

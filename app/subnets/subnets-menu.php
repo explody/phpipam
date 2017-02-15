@@ -39,7 +39,7 @@ else {
 
 		foreach($subsections as $ss) {
 			print "<tr>";
-			print "	<td><h5 style='padding-left:10px;'><i class='fa fa-gray fa-angle-right'></i> <a href='".create_link("subnets",$ss->id)."' rel='tooltip' data-placement='right' title='$ss->description'>$ss->name</a></h5></td>";
+			print "	<td><h5 style='padding-left:10px;margin:0;'><i class='fa fa-gray fa-angle-right'></i> <a href='".create_link("subnets",$ss->id)."' rel='tooltip' data-placement='right' title='$ss->description'>$ss->name</a></h5></td>";
 			print "</tr>";
 		}
 		print "</table>";

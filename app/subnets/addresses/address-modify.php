@@ -122,7 +122,7 @@ $(".input-switch-danger").bootstrapSwitch(switch_options_danger);
 <?php if (($act=="add"||$act=="edit") && $User->settings->enableMulticast==1) { ?>
 $("input[name=ip_addr]").focusout(function() {
     // update mac
-    $.post('app/tools/multicast-networks/create_mac.php', {ip:$(this).val()}, function(data) {
+    $.post('/ajx/tools/multicast-networks/create_mac', {ip:$(this).val()}, function(data) {
         if (data!="False") {
             $("input[name=mac]").val(data);
             validate_mac ( $("input[name=ip_addr]").val(), data, $("input[name=section]").val(), $("input[name=subnetvlan]").val(), $("input[name=addressId]").val());
@@ -135,7 +135,7 @@ $("input[name=mac]").focusout(function() {
 });
 //validatemac
 function validate_mac (ip, mac, sectionId, vlanId, id) {
-    $.post('app/tools/multicast-networks/validate_mac.php', {ip:ip, mac:mac, sectionId:sectionId, vlanId:vlanId, id:id}, function(data) {
+    $.post('/ajx/tools/multicast-networks/validate_mac', {ip:ip, mac:mac, sectionId:sectionId, vlanId:vlanId, id:id}, function(data) {
         if (data==="True") {
             $("input[name=mac]").parent().removeClass("has-error");
             $('#helpBlock2').remove();
@@ -159,7 +159,7 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
 <div class="pContent editIPAddress">
 
     <!-- IP address modify form -->
-    <form class="editipaddress" role="form" name="editipaddress">
+    <form class="editipaddress" id="editipaddress" role="form" name="editipaddress">
     <!-- edit IP address table -->
     <table id="editipaddress" class="table table-noborder table-condensed">
 
@@ -314,6 +314,7 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
                                'gsort' => true,
                                'extFields' => Devices::$extRefs,
                                'selected' => array('id' => $address['switch']),
+                               'data' => ['mac_addr']
                            )
                        );
 
