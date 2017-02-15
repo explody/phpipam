@@ -69,18 +69,27 @@ class Components {
      *  @param array $selected Array in {k=>v} where if object.k === v, we'll 
      *                         add 'selected'
      *  @param array $classes List of classes to add to the <option>
+     *  @param array $data List of object attributes to add as 'data-*' attrs in the <option>
      */
      public static function generate_options($objects, 
                                              $valprop,
                                              $contprop = false, 
                                              $selected = false, 
-                                             $classes = false) {
+                                             $classes = false,
+                                             $data = []) {
                                                  
           $options = [];
           foreach ($objects as $obj) {
               $o = '<option value="' . $obj->$valprop . '"';
               if ($classes) {
                   $o = $o . 'class="' . implode(" ", $classes) . '"';
+              }
+              if ($data) {
+                  foreach ($data as $attr) {
+                      if (property_exists($obj, $attr)) {
+                          $o .= " data-${attr}=\"" . $obj->$attr . "\"";
+                      }
+                  }
               }
               if ($selected) {
                   // This enables passing multiple possible values to check 
@@ -143,14 +152,15 @@ class Components {
                                                     $contprop = false, 
                                                     $selected = false,
                                                     $gclasses = false,
-                                                    $oclasses = false) {
+                                                    $oclasses = false,
+                                                    $data = []) {
 
            $optgroups = [];
            foreach ($objgroups as $grp=>$objects) {
-               $options = self::generate_options($objects,$valprop,$contprop,$selected,$oclasses);
+               $options = self::generate_options($objects,$valprop,$contprop,$selected,$oclasses,$data);
                $og = '<optgroup label="' . $grp . '" ';
                if ($gclasses) {
-                   $og = $og . 'class="' . implode(" ", $classes) . '" ';
+                   $og = $og . 'class="' . implode(" ", $gclasses) . '" ';
                }
                $og = $og . '>';
                $optgroups[$og] = $options;
@@ -359,6 +369,8 @@ class Components {
      *               and these attributes are in integer format, we'll convert them to dotted
      *               notation
      *               Default: false
+     * @param array $options['data'] A list of object attributes to add as "data-*" fields to the options
+     *               Default: false
      * @return void|array  Directly prints options or returns an array of strings.
      */
     public function render_options($objs, $valueField, $displayField, $options = []) {
@@ -373,7 +385,8 @@ class Components {
                             'extFields' => [], 
                             'oclasses' => [], 
                             'gclasses' => [],
-                            'selected' => []
+                            'selected' => [],
+                            'data' => []
                       );
         $options = (object) array_merge($defoptions, $options);
         $output  = [];
@@ -439,7 +452,8 @@ class Components {
                                                 $displayField, 
                                                 $options->selected, 
                                                 $options->gclasses, 
-                                                $options->oclasses);
+                                                $options->oclasses,
+                                                $options->data);
             
             foreach ($ogs as $og=>$os) {
                 $output[] = "$og";
@@ -461,7 +475,9 @@ class Components {
             $opts = self::generate_options($objs, 
                                            $valueField, 
                                            $displayField, 
-                                           $options->selected);
+                                           $options->selected,
+                                           $options->oclasses,
+                                           $options->data);
             foreach ($opts as $o) {
                 $output[] = "$o";
             }

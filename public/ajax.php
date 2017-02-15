@@ -11,6 +11,7 @@ ob_start();
 | so if you reorganize the structure, update the next line.
 |
 */
+//header("Content-Type: application/json");
 
 require_once dirname(__FILE__) . "/../paths.php";
 

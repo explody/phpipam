@@ -42,7 +42,6 @@ $(document).on("click", ".select2-container", function (event) {
         var ddh = $('.select2-dropdown').height();
 
         newh = ( ddh < h ? ddh : h );
-        console.log("WTF");
         $('.select2-results').css("height", newh);
     }
     
@@ -529,6 +528,12 @@ $(document).on("click", ".ping_ipaddress", function() {
 		hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 	return false;
+});
+
+//auto-suggest first available IP in selected subnet
+$(document).on("change", "select#ip-device-select", function() {
+    var device_mac = $('select#ip-device-select option:selected').data('mac_addr');
+    $('form#editipaddress input[name=mac]').val(device_mac);
 });
 
 //auto-suggest first available IP in selected subnet

@@ -55,6 +55,7 @@ class BaseSchema extends Ipam\Migration\RepeatableMigration
                 ['hostname', 'string', ['limit'=>32,'null'=>true]],
                 ['ip_addr', 'string', ['limit'=>100,'null'=>true]],
                 ['type', 'integer', ['limit'=>2,'default'=>0,'null'=>true]],
+                ['location', 'integer', ['null'=>true]],
                 ['description', 'string', ['limit'=>256,'null'=>true]],
                 ['version', 'string', ['limit'=>64,'null'=>true]],
                 ['sections', 'string', ['limit'=>128,'null'=>true]],
