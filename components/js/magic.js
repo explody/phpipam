@@ -38,7 +38,7 @@ $(document).on("click", ".select2-container", function (event) {
     // Only resize the dropdown if there's enough space for it to make sense. Otherwise, select2 
     // will render it upwards anyway
     if (distance_to_bottom > 400) {
-        var h = distance_to_bottom - 200;
+        var h = distance_to_bottom - 100;
         var ddh = $('.select2-dropdown').height();
 
         newh = ( ddh < h ? ddh : h );
@@ -455,23 +455,19 @@ $('#expandfolders').click(function() {
 //show form
 $(document).on("click", ".modIPaddr", function() {
     showSpinner();
-    var action    = $(this).attr('data-action');
-    var id        = $(this).attr('data-id');
-    var subnetId  = $(this).attr('data-subnetId');
-    var stopIP    = $(this).attr('data-stopIP');
-    //format posted values
-    var postdata = "action="+action+"&id="+id+"&subnetId="+subnetId+"&stopIP="+stopIP;
-    $.post('/ajx/subnets/addresses/address-modify', postdata, function(data) {
-        $('#popupOverlay div.popup_w500').html(data);
-        showPopup('popup_w500');
-        hideSpinner();
-    }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
+    var postdata = {
+        action: $(this).attr('data-action'),
+        id: $(this).attr('data-id'),
+        subnetId: $(this).attr('data-subnetId'),
+        stopIP: $(this).attr('data-stopIP')
+    }
+    open_popup("600", "ajx/subnets/addresses/address-modify", postdata);
     return false;
 });
 //move orphaned IP address
 $(document).on("click", "a.moveIPaddr", function() {
     showSpinner();
-    var action      = $(this).attr('data-action');
+    var action    = $(this).attr('data-action');
     var id        = $(this).attr('data-id');
     var subnetId  = $(this).attr('data-subnetId');
     //format posted values

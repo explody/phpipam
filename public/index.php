@@ -150,7 +150,7 @@ else {
     <script type="text/javascript" src="<?php print MEDIA; ?>/js/magic.js"></script>
     <script type="text/javascript">
     $.ajaxSetup({
-      cache: true
+      cache: false
     });
     </script>
 <?php

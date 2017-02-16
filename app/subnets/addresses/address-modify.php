@@ -302,7 +302,8 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
                             'hostname',
                             false
                         );
-
+print  $User->settings->devicegrouping;
+print $User->settings->devicegroupfield;
                     $Components->render_options($devs, 
                           'id', 
                           'hostname', 

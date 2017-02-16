@@ -115,7 +115,7 @@ $(document).ready(function() {
 	<td class="info2"><?php print _('Select default language'); ?></td>
 </tr>
 
-<!-- Mex session duration -->
+<!-- Max session duration -->
 <tr>
 	<td class="title"><?php print _('Inactivity timeout'); ?></td>
 	<td>
@@ -131,6 +131,24 @@ $(document).ready(function() {
 		</select>
 	</td>
 	<td class="info2"><?php print _('Select inactive timeout for user sessions. Please note that if default php session settings in php.ini are lower they will override this'); ?></td>
+</tr>
+
+<!-- Database Sesssions -->
+<tr>
+       <td class="title"><?php print _('Database Sessions'); ?></td>
+       <td>
+               <select name="dbSessions" class="form-control input-sm input-w-auto">
+               <?php
+                       print "<option value='No'>"._('No')."</option>";
+                       if($settings['dbSessions']=="Yes") { print "<option value='Yes' selected='selected'>"._('Yes')."</option>"; }
+                       else                                                            { print "<option value='Yes'>"._('Yes')."</option>"; }
+               ?>
+               </select>
+       </td>
+       <td class="info2">
+               <?php print _('Use the database to store sessions?'); ?>?<br>
+               <?php print _("The session table must be created manually first for this to work."); ?><br>
+       </td>
 </tr>
 
 <!-- Max VLAN number -->
