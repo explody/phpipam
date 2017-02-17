@@ -37,7 +37,7 @@ $(document).on("click", ".select2-container", function (event) {
 
     // Only resize the dropdown if there's enough space for it to make sense. Otherwise, select2 
     // will render it upwards anyway
-    if (distance_to_bottom > 400) {
+    if (distance_to_bottom > 200) {
         var h = distance_to_bottom - 100;
         var ddh = $('.select2-dropdown').height();
 
