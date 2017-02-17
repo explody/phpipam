@@ -73,7 +73,7 @@ if($permission != 0) {
  
         foreach($cfs as $cf) {
             if($cf->visible) {
-                print " <th class='hidden-xs hidden-sm'>$field[name]</th>";
+                print " <th class='hidden-xs hidden-sm'>" . Components::custom_field_display_name($cf) . "</th>";
             }
         }
  

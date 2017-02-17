@@ -42,7 +42,7 @@ else {
 
 	foreach($cfs as $cf) {
 		if($cf->visible) {
-			print "<th class='hidden-xs hidden-sm hidden-md'>$field[name]</th>";
+			print "<th class='hidden-xs hidden-sm hidden-md'>" . Components::custom_field_display_name($cf) . "</th>";
 			$colspan++;
 		}
 	}
