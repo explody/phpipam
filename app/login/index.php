@@ -110,6 +110,8 @@ if (!empty($_SERVER[$user_variable])) {
 
 	<!-- title -->
 	<title><?php print $User->settings->siteTitle; ?> :: login</title>
+    
+    <link rel="shortcut icon" href="<?php print MEDIA; ?>/images/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="<?php print MEDIA; ?>/css/bootstrap.switch.css" />
