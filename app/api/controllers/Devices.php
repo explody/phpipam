@@ -193,9 +193,6 @@ class Devices_controller extends Common_api_functions
                 
                 if ($this->_params->id2 == 'addresses') {
                     $result = $this->Tools->fetch_multiple_objects("ipaddresses", 'switch', $this->_params->id, 'id', true);
-                    if (!$result) {
-                        $result = [];
-                    }
                 } else {
                     $result = $this->Tools->fetch_object('devices', 'id', $this->_params->id);
                     if (!$result) {

@@ -150,9 +150,6 @@ class L2domains_controller extends Common_api_functions
                 $this->validate_domain();
                 // save result
                 $result = $this->Tools->fetch_multiple_objects("vlans", "domainId", $this->_params->id, 'vlanId', true);
-                if (!$result) {
-                    $result = [];
-                }
                 return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
             }
             // id

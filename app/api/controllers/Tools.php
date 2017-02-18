@@ -268,20 +268,20 @@ class Tools_controller extends Common_api_functions {
 				// fetch
 				$result = $this->Tools->fetch_multiple_objects ("subnets", "vlanId", $this->_params->id2, "id", true);
                 // add gateway
-    			if($result!=false) {
-    				foreach ($result as $k=>$r) {
-        				//gateway
-                		$gateway = $this->read_subnet_gateway ($r->id);
-                		if ( $gateway!== false) {
-                    		$result[$k]->gatewayId = $gateway->id;
-                		}
-                    	//nameservers
-                		$ns = $this->read_subnet_nameserver ();
-                        if ($ns!==false) {
-                            $result[$k]->nameservers = $ns;
-                        }
-    				}
-    			}
+
+				foreach ($result as $k=>$r) {
+    				//gateway
+            		$gateway = $this->read_subnet_gateway ($r->id);
+            		if ( $gateway!== false) {
+                		$result[$k]->gatewayId = $gateway->id;
+            		}
+                	//nameservers
+            		$ns = $this->read_subnet_nameserver ();
+                    if ($ns!==false) {
+                        $result[$k]->nameservers = $ns;
+                    }
+				}
+
 			}
 			// vrfs
 			elseif ($this->_params->id == "vrf" && $this->_params->id3=="subnets") {
