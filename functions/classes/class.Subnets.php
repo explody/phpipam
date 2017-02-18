@@ -853,30 +853,19 @@ class Subnets extends Common_functions {
 	public function fetch_subnet_slaves ($subnetId, $result_fields = "*") {
     	// fetch
 		$slaves = $this->fetch_multiple_objects ("subnets", "masterSubnetId", $subnetId, "subnet_int", true, false, $result_fields);
-		# save to subnets cache
-        if ($slaves!==false) {
-            $i = 0;
-			foreach($slaves as $slave) {
-    			unset($slave->subnet_int);
-                // Never ever return a list of slaves with the specified subnetId as one of the slaves 
-                // This should not ever happens but I've seen it twice where a subnet entry has its own 
-                // id as the masterSubnetId.
-                // This will stop infinite recursion until we find the source of the problem.
-                if ($slave->id == $subnetId) {
-                    unset($slaves[$i]);
-                    $i++;
-                    continue;
-                }
-                $this->cache_write ("subnets", $slave->id, $slave);
-                $i++;
-			}
-            
-			return $slaves;
+		foreach($slaves as $i=>$slave) {
+			unset($slave->subnet_int);
+            // Never ever return a list of slaves with the specified subnetId as one of the slaves 
+            // This should not ever happens but I've seen it twice where a subnet entry has its own 
+            // id as the masterSubnetId.
+            // This will stop infinite recursion until we find the source of the problem.
+            if ($slave->id == $subnetId) {
+                unset($slaves[$i]);
+                continue;
+            }
+            $this->cache_write ("subnets", $slave->id, $slave);
 		}
-		else {
-    		# no subnets
-    		return false;
-		}
+		return $slaves;
 	}
 
 	/**
@@ -887,33 +876,17 @@ class Subnets extends Common_functions {
 	 * @return void
 	 */
 	public function fetch_subnet_slaves_recursive ($subnetId, $cnt=0) {
-		$end = false;							//loop break flag
 		# slaves array of id's, add current
-		$this->slaves[] = (int) $subnetId;		//id
-		# loop
-		while($end === false) {
-			# fetch all immediate slaves
-			$slaves2 = $this->fetch_subnet_slaves ($subnetId);
+		$this->slaves[] = (int) $subnetId;		# TODO This seems like a terrible idea
 
-			# we have more slaves
-			if($slaves2) {
-				# recursive
-				foreach($slaves2 as $slave) {
-					# save to full array of slaves
-					$this->slaves_full[$slave->id] = $slave;
-					$this->slaves[] = $slave->id;
-					# fetch possible new slaves
-                    
-					$this->fetch_subnet_slaves_recursive ($slave->id,$cnt);
-					$end = true;
-				}
-                
-			}
-			# no more slaves
-			else {
-				$end = true;
-			}
+		foreach($this->fetch_subnet_slaves($subnetId) as $slave) {
+			# save to full array of slaves
+			$this->slaves_full[$slave->id] = $slave;
+			$this->slaves[] = $slave->id;
+			# fetch possible new slaves
+			$this->fetch_subnet_slaves_recursive ($slave->id,$cnt);
 		}
+
 	}
 
 	/**
@@ -1599,6 +1572,7 @@ class Subnets extends Common_functions {
 	 * @param int $masterSubnetId (default: 0)
 	 * @return string|false
 	 */
+     # TODO this looks broken. where does $section_subnets come from?
 	public function verify_nested_subnet_overlapping ($sectionId, $new_subnet, $vrfId = 0, $masterSubnetId = 0) {
     	# fetch all slave subnets
     	$slave_subnets = $this->fetch_subnet_slaves ($masterSubnetId);
@@ -1794,33 +1768,31 @@ class Subnets extends Common_functions {
 						}
 						//fetch all slave subnets and validate
 						$slave_subnets = $this->fetch_subnet_slaves ($parent_subnet->id);
-						if ($slave_subnets!==false) {
-							foreach ($slave_subnets as $ss) {
-								// not self
-								if ($ss->id != $subnetId) {
-									if($this->verify_overlapping ( $this->transform_to_dotted($subnet)."/".$mask, $this->transform_to_dotted($ss->subnet)."/".$ss->mask)) {
-										$this->Result->show("danger", _("Subnet overlaps with")." ".$this->transform_to_dotted($ss->subnet)."/".$ss->mask, true);
-									}
+						foreach ($slave_subnets as $ss) {
+							// not self
+							if ($ss->id != $subnetId) {
+								if($this->verify_overlapping ( $this->transform_to_dotted($subnet)."/".$mask, $this->transform_to_dotted($ss->subnet)."/".$ss->mask)) {
+									$this->Result->show("danger", _("Subnet overlaps with")." ".$this->transform_to_dotted($ss->subnet)."/".$ss->mask, true);
 								}
 							}
 						}
+
 					}
 					//folder
 					else {
 						//fetch all folder subnets, remove old subnet and verify overlapping!
 						$folder_subnets = $this->fetch_subnet_slaves ($parent_subnet->id);
 						//check
-						if(sizeof(@$folder_subnets)>0) {
-							foreach($folder_subnets as $fs) {
-								//dont check against old
-								if($fs->id!=$subnetId) {
-									//verify that all nested are inside its parent
-									if($this->verify_overlapping ( $this->transform_to_dotted($subnet)."/".$mask, $this->transform_to_dotted($fs->subnet)."/".$fs->mask)) {
-										$this->Result->show("danger", _("Subnet overlaps with")." ".$this->transform_to_dotted($fs->subnet)."/".$fs->mask, true);
-									}
+						foreach($folder_subnets as $fs) {
+							//dont check against old
+							if($fs->id!=$subnetId) {
+								//verify that all nested are inside its parent
+								if($this->verify_overlapping ( $this->transform_to_dotted($subnet)."/".$mask, $this->transform_to_dotted($fs->subnet)."/".$fs->mask)) {
+									$this->Result->show("danger", _("Subnet overlaps with")." ".$this->transform_to_dotted($fs->subnet)."/".$fs->mask, true);
 								}
 							}
 						}
+
 					}
 				}
 				//root subnet, check overlapping !
@@ -1964,18 +1936,18 @@ class Subnets extends Common_functions {
 
 		# check if new overlap (e.g. was added twice)
 		$nested_subnets = $this->fetch_subnet_slaves ($subnet_old->id);
-		if($nested_subnets!==false) {
-			//loop through all current slaves and check
-			foreach($nested_subnets as $nested_subnet) {
-				//check all new
-				foreach($newsubnets as $new_subnet) {
-					$new_subnet = (object) $new_subnet;
-					if($this->verify_overlapping ($this->transform_to_dotted($new_subnet->subnet)."/".$new_subnet->mask, $this->transform_to_dotted($nested_subnet->subnet)."/".$nested_subnet->mask)===true) {
-						$this->Result->show("danger", _("Subnet overlapping - ").$this->transform_to_dotted($new_subnet->subnet)."/".$new_subnet->mask." overlaps with ".$this->transform_to_dotted($nested_subnet->subnet)."/".$nested_subnet->mask, true);
-					}
+
+		//loop through all current slaves and check
+		foreach($nested_subnets as $nested_subnet) {
+			//check all new
+			foreach($newsubnets as $new_subnet) {
+				$new_subnet = (object) $new_subnet;
+				if($this->verify_overlapping ($this->transform_to_dotted($new_subnet->subnet)."/".$new_subnet->mask, $this->transform_to_dotted($nested_subnet->subnet)."/".$nested_subnet->mask)===true) {
+					$this->Result->show("danger", _("Subnet overlapping - ").$this->transform_to_dotted($new_subnet->subnet)."/".$new_subnet->mask." overlaps with ".$this->transform_to_dotted($nested_subnet->subnet)."/".$nested_subnet->mask, true);
 				}
 			}
 		}
+
 
 		# all good, return result array of newsubnets and addresses
 		return array(0=>$newsubnets, 1=>$addresses);
@@ -3367,11 +3339,10 @@ class Subnets extends Common_functions {
 		else 					{ $this->initialize_pear_net_IPv6 (); }
 
 		// if it has slaves
-		if($subnets) {
-			foreach ($subnets as $row ) {
-				$history_subnet[] =  $this->transform_to_dotted($row->subnet) .'/'. $row->mask;
-			}
+		foreach ($subnets as $row ) {
+			$history_subnet[] =  $this->transform_to_dotted($row->subnet) .'/'. $row->mask;
 		}
+
 
 		# prepare the entry into for loop
 		$subnetmask_start = $parent_subnetmask + 1;
@@ -3476,11 +3447,8 @@ class Subnets extends Common_functions {
 		if ($type == "IPv6")    { $mask_drill_down = 8; }
 		else                    { $mask_drill_down = 32 - $taken_subnet->mask; }
 
-		// if it has slaves
-		if($subnets) {
-			foreach ($subnets as $row ) {
-				$history_subnet[] =  $this->transform_to_dotted($row->subnet) .'/'. $row->mask;
-			}
+		foreach ($subnets as $row ) {
+			$history_subnet[] =  $this->transform_to_dotted($row->subnet) .'/'. $row->mask;
 		}
 
 		# prepare the entry into for loop
@@ -3587,10 +3555,8 @@ class Subnets extends Common_functions {
 		else 					{ $this->initialize_pear_net_IPv6 (); }
 
 		// if it has slaves
-		if($slave_subnets) {
-			foreach ($slave_subnets as $row ) {
-				$history_subnet[] =  $this->transform_to_dotted($row->subnet) .'/'. $row->mask;
-			}
+		foreach ($slave_subnets as $row ) {
+			$history_subnet[] =  $this->transform_to_dotted($row->subnet) .'/'. $row->mask;
 		}
 
 		// number of possible masks

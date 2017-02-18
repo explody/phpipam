@@ -891,10 +891,7 @@ class Subnets_controller extends Common_api_functions
 	 * @return array|false
 	 */
 	private function read_subnet_slaves () {
-		// fetch
-		$result = $this->Subnets->fetch_subnet_slaves ($this->_params->id);
-		# result
-		return $result===false ? NULL : $result;
+	    return $this->Subnets->fetch_subnet_slaves($this->_params->id);	
 	}
 
 	/**

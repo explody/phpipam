@@ -35,14 +35,14 @@ include_once("folder-details.php");
 print "</div>";
 
 # Subnets in Folder
-if ($slaves!==false) {
+if (!empty($slaves)) {
     print '<div class="ipaddresses_overlay">';
     include_once('folder-subnets.php');
     print '</div>';
 }
 
 # search for IP addresses in Folder
-if (sizeof($addresses)>0) {
+if (!empty($addresses)) {
     // set subnet
     $subnet = $folder;
     $subnet_permission = $folder_permission;
@@ -56,7 +56,7 @@ if (sizeof($addresses)>0) {
 }
 
 # empty
-if (sizeof($addresses)==0 && !$slaves) {
+if (empty($addresses) && empty($slaves)) {
     print "<hr>";
     $Result->show("info alert-absolute", _("Folder is empty"), false);
 }

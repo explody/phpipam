@@ -934,11 +934,11 @@ class Tools extends Common_functions {
 		# try to send
 		try {
 			$phpipam_mail->Php_mailer->setFrom($mail_settings->mAdminMail, $mail_settings->mAdminName);
-			if ($recipients!==false) {
-			foreach($recipients as $r) {
-			$phpipam_mail->Php_mailer->addAddress(addslashes(trim($r->email)));
-			}
-			$phpipam_mail->Php_mailer->AddCC(addslashes(trim($recipients_requester)));
+			if (!empty($recipients)) {
+    			foreach($recipients as $r) {
+                    $phpipam_mail->Php_mailer->addAddress(addslashes(trim($r->email)));
+    			}
+    			$phpipam_mail->Php_mailer->AddCC(addslashes(trim($recipients_requester)));
 			}
 			else {
 			$phpipam_mail->Php_mailer->addAddress(addslashes(trim($recipients_requester)));

@@ -33,7 +33,7 @@ $nameservers = (array) $Tools->fetch_object("nameservers", "id", $subnet['namese
 # fetch all addresses and calculate usage
 if($slaves) {
 	$addresses = $Addresses->fetch_subnet_addresses_recursive ($subnet['id'], false);
-	$slave_subnets = (array) $Subnets->fetch_subnet_slaves ($subnet['id']);
+	$slave_subnets = $Subnets->fetch_subnet_slaves ($subnet['id']);
 } else {
 	$addresses = $Addresses->fetch_subnet_addresses ($subnet['id']);
 }

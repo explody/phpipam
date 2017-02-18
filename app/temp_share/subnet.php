@@ -31,7 +31,7 @@ $vlan = (array) $Tools->fetch_object("vlans", "vlanId", $subnet['vlanId']);
 # fetch all addresses and calculate usage
 if($slaves) {
 	$addresses = $Addresses->fetch_subnet_addresses_recursive ($subnet['id'], false);
-	$slave_subnets = (array) $Subnets->fetch_subnet_slaves ($subnet['id']);
+	$slave_subnets = $Subnets->fetch_subnet_slaves ($subnet['id']);  # FIXME This appears to be unused
 } else {
 	$addresses = $Addresses->fetch_subnet_addresses ($subnet['id']);
 }
