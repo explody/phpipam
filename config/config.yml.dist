@@ -1,0 +1,26 @@
+environment: experimental
+
+debugging: false
+phpsessname: phpipam
+private_subpages: []
+gmaps_api_key: ""
+mcunique: section
+
+proxy:
+    proxy_enabled: false
+    proxy_server: host.domain.com
+    proxy_port: 8080
+    proxy_user: username
+    proxy_pass: password
+    proxy_use_auth: false
+
+db_defaults:
+    charset: utf8
+    collation: utf8_unicode_ci
+
+migrations:    
+    paths:
+        migrations: db/migrations  # Relative to IPAM_ROOT
+        seeds: db/seeds            # Relative to IPAM_ROOT
+    environments:
+        default_migration_table: migrations

@@ -1,18 +1,27 @@
+# DB
 db/bkp
 db/*dump
+
+# Dev junk
+.idea
+.remote-sync.json
+*.swp
+
+# Ignore configs that may contain credentials
+config/config.yml
+config/environments/*.yml
+
+# Ignore possible user-added files
 app/subnets/import-subnet/upload/
+functions/scripts/custom/
+
+# Ignore generated things
+vendor
+public/static
+bower_components
+node_modules
+
+# Legacy config stuff
 config.php
 config/config.php
 config/database.php
-.idea
-vendor
-css/1.2/images/logo/logo.png
-functions/scripts/custom/
-api/_lock.txt
-.remote-sync.json
-bower_components
-node_modules
-commit-message
-*.swp
-config/environments/*.yml
-public/static
