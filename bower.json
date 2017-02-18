@@ -1,0 +1,44 @@
+{
+  "name": "phpipam",
+  "homepage": "https://github.com/explody/phpipam",
+  "authors": [
+    "explody <explody@explody.io>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "multiselect": "multi-select#^0.9.12",
+    "datatables": "DataTables#^1.10.13",
+    "jquery-colorpicker": "^1.0.2",
+    "jquery-slider": "*",
+    "bootstrap-switch": "^3.3.2",
+    "StickyTableHeaders": "jquery-sticky-table-headers#^0.1.19",
+    "blueimp-file-upload": "fileupload#^9.14.2",
+    "jquery-ui": "jquery.ui#^1.12.1",
+    "Flot": "flot#^0.8.3",
+    "ckeditor": "^4.6.1",
+    "bootstrap": "^3.3.7",
+    "bootstrap-slider": "*",
+    "gmaps": "^0.4.24",
+    "font-awesome": "^4.7.0",
+    "SourceSansPro": "*",
+    "bootstrap-colorpicker": "^2.4.0",
+    "chosen": "^1.6.2",
+    "bootstrap-select": "^1.12.1",
+    "select2": "^4.0.3",
+    "select2-bootstrap-theme": "^0.1.0-beta.9",
+    "jquery-md5": "*",
+    "moment": "^2.17.1",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.45"
+  }
+}
