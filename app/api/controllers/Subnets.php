@@ -5,214 +5,224 @@
  *
  *
  */
-class Subnets_controller extends Common_api_functions {
+class Subnets_controller extends Common_api_functions
+{
 
-	/**
-	 * _params provided
-	 *
-	 * @var mixed
-	 * @access public
-	 */
-	public $_params;
+    /**
+     * _params provided
+     *
+     * @var mixed
+     * @access public
+     */
+    public $_params;
 
-	/**
-	 * custom_fields
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	public $custom_fields;
+    /**
+     * custom_fields
+     *
+     * @var mixed
+     * @access protected
+     */
+    public $custom_fields;
 
-	/**
-	 * settings
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	protected $settings;
+    /**
+     * settings
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $settings;
 
-	/**
-	 * Database object
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	protected $Database;
+    /**
+     * Database object
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $Database;
 
-	/**
-	 * Response handler
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	protected $Response;
+    /**
+     * Response handler
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $Response;
 
-	/**
-	 * Master Subnets object
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	protected $Subnets;
+    /**
+     * Master Subnets object
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $Subnets;
 
-	/**
-	 * Master  Addresses object
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	protected $Addresses;
+    /**
+     * Master  Addresses object
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $Addresses;
 
-	/**
-	 * Master Tools object
-	 *
-	 * @var mixed
-	 * @access protected
-	 */
-	protected $Tools;
-
-
-	/**
-	 * __construct function
-	 *
-	 * @access public
-	 * @param class $Database
-	 * @param class $Tools
-	 * @param mixed $params		// post/get values
-	 */
-	public function __construct($Database, $Tools, $params, $Response) {
-		$this->Database = $Database;
-		$this->Tools 	= $Tools;
-		$this->_params 	= $params;
-		$this->Response = $Response;
-		// init required objects
-		$this->init_object ("Subnets", $Database);
-		$this->init_object ("Addresses", $Database);
-		$this->init_object ("User", $Database);
-		// set valid keys
-		$this->set_valid_keys ("subnets");
-	}
+    /**
+     * Master Tools object
+     *
+     * @var mixed
+     * @access protected
+     */
+    protected $Tools;
 
 
-
-
-
-	/**
-	 * Returns json encoded options
-	 *
-	 * @access public
-	 * @return array
-	 */
-	public function OPTIONS () {
-		// validate
-		$this->validate_options_request ();
-
-		// methods
-		$result = array();
-		$result['methods'] = array(
-								array("href"=>"/api/".$this->_params->app_id."/subnets/", 		"methods"=>array(array("rel"=>"options", "method"=>"OPTIONS"))),
-								array("href"=>"/api/".$this->_params->app_id."/subnets/{id}/", 	"methods"=>array(array("rel"=>"read", 	"method"=>"GET"),
-																												 array("rel"=>"create", "method"=>"POST"),
-																												 array("rel"=>"update", "method"=>"PATCH"),
-																												 array("rel"=>"delete", "method"=>"DELETE"))),
-							);
-		# result
-		return array("code"=>200, "data"=>$result);
-	}
+    /**
+     * __construct function
+     *
+     * @access public
+     * @param class $Database
+     * @param class $Tools
+     * @param mixed $params		// post/get values
+     */
+    public function __construct($Database, $Tools, $params, $Response)
+    {
+        $this->Database = $Database;
+        $this->Tools    = $Tools;
+        $this->_params    = $params;
+        $this->Response = $Response;
+        // init required objects
+        $this->init_object("Subnets", $Database);
+        $this->init_object("Addresses", $Database);
+        $this->init_object("User", $Database);
+        // set valid keys
+        $this->set_valid_keys("subnets");
+    }
 
 
 
 
-	/**
-	 * Creates new subnet
-	 *
-	 *	required params : subnet, mask, name
-	 *	optional params : all subnet values
-	 *
-	 *      - /subnets/{id}/first_subnet/{mask}/       // creates first free subnet under master with specified mask
-	 *
-	 * @access public
-	 * @return array
-	 */
-	public function POST () {
-		# add required parameters
-		if(!isset($this->_params->isFolder)) { $this->_params->isFolder = "0"; }
-		elseif($this->_params->isFolder==1)	 { unset($this->_params->subnet, $this->_params->mask); }
 
-		// first free
-		if($this->_params->id2=="first_subnet")   {
-    		$subnet_tmp = explode("/", $this->subnet_first_free (false));
+    /**
+     * Returns json encoded options
+     *
+     * @access public
+     * @return array
+     */
+    public function OPTIONS()
+    {
+        // validate
+        $this->validate_options_request();
 
-    		// get master subnet
-    		$master = $this->read_subnet ();
+        // methods
+        $result = array();
+        $result['methods'] = array(
+                                array("href"=>"/api/".$this->_params->app_id."/subnets/",        "methods"=>array(array("rel"=>"options", "method"=>"OPTIONS"))),
+                                array("href"=>"/api/".$this->_params->app_id."/subnets/{id}/",    "methods"=>array(array("rel"=>"read",    "method"=>"GET"),
+                                                                                                                 array("rel"=>"create", "method"=>"POST"),
+                                                                                                                 array("rel"=>"update", "method"=>"PATCH"),
+                                                                                                                 array("rel"=>"delete", "method"=>"DELETE"))),
+                            );
+        # result
+        return array("code"=>200, "data"=>$result);
+    }
 
-    		$this->_params->subnet = $subnet_tmp[0];
-    		$this->_params->mask = $subnet_tmp[1];
-    		$this->_params->sectionId = $master->sectionId;
-    		$this->_params->masterSubnetId = $master->id;
-    		$this->_params->permissions = $master->permissions;
-    		unset($this->_params->id2, $this->_params->id3);
+
+
+
+    /**
+     * Creates new subnet
+     *
+     *	required params : subnet, mask, name
+     *	optional params : all subnet values
+     *
+     *      - /subnets/{id}/first_subnet/{mask}/       // creates first free subnet under master with specified mask
+     *
+     * @access public
+     * @return array
+     */
+    public function POST()
+    {
+        # add required parameters
+        if (!isset($this->_params->isFolder)) {
+            $this->_params->isFolder = "0";
+        } elseif ($this->_params->isFolder==1) {
+            unset($this->_params->subnet, $this->_params->mask);
+        }
+
+        // first free
+        if ($this->_params->id2=="first_subnet") {
+            $subnet_tmp = explode("/", $this->subnet_first_free(false));
+
+            // get master subnet
+            $master = $this->read_subnet();
+
+            $this->_params->subnet = $subnet_tmp[0];
+            $this->_params->mask = $subnet_tmp[1];
+            $this->_params->sectionId = $master->sectionId;
+            $this->_params->masterSubnetId = $master->id;
+            $this->_params->permissions = $master->permissions;
+            unset($this->_params->id2, $this->_params->id3);
             // description
-            if(!isset($this->_params->description))    { $this->_params->description = "API autocreated"; }
-		}
+            if (!isset($this->_params->description)) {
+                $this->_params->description = "API autocreated";
+            }
+        }
 
-		# validate parameters
-        $this->validate_create_parameters ();
+        # validate parameters
+        $this->validate_create_parameters();
         # check for valid keys
-        $values = $this->validate_keys ();
+        $values = $this->validate_keys();
 
         # transform subnet to decimal format
-        $values['subnet'] = $this->Addresses->transform_address($values['subnet'] ,"decimal");
+        $values['subnet'] = $this->Addresses->transform_address($values['subnet'], "decimal");
 
-		# execute
-		if(!$this->Subnets->modify_subnet ("add", $values)) {
-			$this->Response->throw_exception(500, "Failed to create subnet");
-		}
-		else {
+        # execute
+        if (!$this->Subnets->modify_subnet("add", $values)) {
+            $this->Response->throw_exception(500, "Failed to create subnet");
+        } else {
             # Return the added subnet
             $result = $this->Tools->fetch_object('subnets', 'id', $this->Subnets->lastInsertId);
             return array('code' => 201, 'data' => $this->prepare_result($result, 'subnets', true, false));
-		}
-	}
+        }
+    }
 
 
 
 
 
-	/**
-	 * Reads subnet functions
-	 *
-	 *	Identifier can be:
-	 *		- /{id}/
-	 *		- /custom_fields/				// returns custom fields
-	 *		- /cidr/{subnet}/				// subnets in CIDR format
-	 *		- /search/{subnet}/				// subnets in CIDR format (same as above)
-	 *		- /{id}/usage/				    // returns subnet usage
-	 *		- /{id}/slaves/ 			    // returns all immediate slave subnets
-	 *		- /{id}/slaves_recursive/ 	    // returns all slave subnets recursively
-	 *		- /{id}/addresses/			    // returns all IP addresses in subnet
-	 *      - /{id}/addresses/{ip}/         // returns IP address from subnet
-	 *		- /{id}/first_free/			    // returns first free address in subnet
-	 *      - /{id}/first_subnet/{mask}/    // returns first available subnets with specified mask
-	 *      - /{id}/all_subnets/{mask}/     // returns all available subnets with specified mask
-	 *		- /all/							// returns all subnets in all sections
-	 *
-	 * @access public
-	 * @return array
-	 */
-	public function GET () {
-		// cidr check
-		// check if id2 is set ?
-		if(isset($this->_params->id2)) {
-			// is IP address provided
-			if($this->_params->id=="cidr") {
-				$result = $this->read_search_subnet ();
-				// check result
-				if($result==false)						{ $this->Response->throw_exception(404, "No subnets found"); }
-				else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, null, true, true)); }
-			}
-            elseif($this->_params->id=="search") {
-                
+    /**
+     * Reads subnet functions
+     *
+     *	Identifier can be:
+     *		- /{id}/
+     *		- /custom_fields/				// returns custom fields
+     *		- /cidr/{subnet}/				// subnets in CIDR format
+     *		- /search/{subnet}/				// subnets in CIDR format (same as above)
+     *		- /{id}/usage/				    // returns subnet usage
+     *		- /{id}/slaves/ 			    // returns all immediate slave subnets
+     *		- /{id}/slaves_recursive/ 	    // returns all slave subnets recursively
+     *		- /{id}/addresses/			    // returns all IP addresses in subnet
+     *      - /{id}/addresses/{ip}/         // returns IP address from subnet
+     *		- /{id}/first_free/			    // returns first free address in subnet
+     *      - /{id}/first_subnet/{mask}/    // returns first available subnets with specified mask
+     *      - /{id}/all_subnets/{mask}/     // returns all available subnets with specified mask
+     *		- /all/							// returns all subnets in all sections
+     *
+     * @access public
+     * @return array
+     */
+    public function GET()
+    {
+        // cidr check
+        // check if id2 is set ?
+        if (isset($this->_params->id2)) {
+            // is IP address provided
+            if ($this->_params->id=="cidr") {
+                $result = $this->read_search_subnet();
+                // check result
+                if ($result==false) {
+                    $this->Response->throw_exception(404, "No subnets found");
+                } else {
+                    return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
+                }
+            } elseif ($this->_params->id=="search") {
                 $recursive = false;
                 
                 $search_term = $this->_params->id2;
@@ -224,24 +234,22 @@ class Subnets_controller extends Common_api_functions {
                 
                 if ($this->Net_IPv6->checkIPv6($search_term)) {
                     $ipv6 = true;
-                } 
-                elseif ($this->Net_IPv4->validateIP($search_term)) {
+                } elseif ($this->Net_IPv4->validateIP($search_term)) {
                     $ipv4 = true;
                 }
                 
                 if ($ipv4) {
-                    $search_term_edited = $this->Tools->reformat_IPv4_for_search ($search_term);
-                }
-                elseif ($ipv6) {
-                    $search_term_edited = $this->Tools->reformat_IPv6_for_search ($search_term);
+                    $search_term_edited = $this->Tools->reformat_IPv4_for_search($search_term);
+                } elseif ($ipv6) {
+                    $search_term_edited = $this->Tools->reformat_IPv6_for_search($search_term);
                 }
                 
-                $result_subnets = $this->Tools->search_subnets($search_term, 
-                                                               $search_term_edited['high'], 
-                                                               $search_term_edited['low'], 
+                $result_subnets = $this->Tools->search_subnets($search_term,
+                                                               $search_term_edited['high'],
+                                                               $search_term_edited['low'],
                                                                $search_term);
                 
-                # A problem arises that search_subnets returns every net that contains an IP 
+                # A problem arises that search_subnets returns every net that contains an IP
                 # including parents all the way up the chain.  While it's technically true that
                 # a parent net contains its children nets' IPs, returning the hierarchy by default
                 # can be confusing as the IP has only one subnet, its immediate parent, declared
@@ -249,7 +257,6 @@ class Subnets_controller extends Common_api_functions {
                 # return only subnets that directly contain the searched-for IP.
                 # This only applies to ipv4/ipv6 searches.
                 if (count($result_subnets) > 0 && !$recursive && ($ipv4 || $ipv6)) {
-                        
                     $results_by_id = array();
                     foreach ($result_subnets as $subnet) {
                         $results_by_id[$subnet->id] = $subnet;
@@ -257,10 +264,10 @@ class Subnets_controller extends Common_api_functions {
                     
                     foreach ($results_by_id as $sid => $subnet) {
                         # If this is true, the current subnet has a master and that master
-                        # is in the subnet list. So, remove the master. Do this for all 
-                        # nets and only the nets directly containing the searched IP 
+                        # is in the subnet list. So, remove the master. Do this for all
+                        # nets and only the nets directly containing the searched IP
                         # will remain
-                        if (!empty($subnet->masterSubnetId) && 
+                        if (!empty($subnet->masterSubnetId) &&
                             array_key_exists($subnet->masterSubnetId, $results_by_id)) {
                             unset($results_by_id[$subnet->masterSubnetId]);
                         }

@@ -19,7 +19,7 @@ if ($domain===false)                            { $Result->show("danger", _("Inv
 $scan_devices = $Tools->fetch_multiple_objects ("devices", "snmp_queries", "%get_vlan_table%", "id", true, true);
 
 // if none set die
-if ($scan_devices===false)                      { $Result->show("danger", _("No devices for SNMP VLAN query available"), true, true); }
+if (empty($scan_devices))                      { $Result->show("danger", _("No devices for SNMP VLAN query available"), true, true); }
 
 ?>
 

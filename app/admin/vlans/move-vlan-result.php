@@ -19,11 +19,9 @@ if($vlan===false)					{ $Result->show("danger", _("Invalid ID"), true); }
 // check that it is not already set !
 if($User->settings->vlanDuplicate==0) {
 	$check_vlan = $Admin->fetch_multiple_objects ("vlans", "domainId", $vlan_domain->id, "vlanId");
-	if($check_vlan!==false) {
-		foreach($check_vlan as $v) {
-			if($v->number == $vlan->number) {
-									{ $Result->show("danger", _("VLAN already exists"), true); }
-			}
+	foreach($check_vlan as $v) {
+		if($v->number == $vlan->number) {
+								{ $Result->show("danger", _("VLAN already exists"), true); }
 		}
 	}
 }

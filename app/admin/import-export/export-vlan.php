@@ -73,9 +73,8 @@ foreach ($vlan_domains as $vlan_domain) {
 	if( (isset($_GET['exportDomain__'.str_replace(" ", "_",$vlan_domain['name'])])) && ($_GET['exportDomain__'.str_replace(" ", "_",$vlan_domain['name'])] == "on") ) {
 		// get all VLANs in VLAN domain
 		$all_vlans = $Admin->fetch_multiple_objects("vlans", "domainId", $vlan_domain['id'], "number");
-		$all_vlans = (array) $all_vlans;
 		// skip empty domains
-		if (sizeof($all_vlans)==0) { continue; }
+		if (empty($all_vlans)) { continue; }
 		//write all VLAN entries
 		foreach ($all_vlans as $vlan) {
 			//cast

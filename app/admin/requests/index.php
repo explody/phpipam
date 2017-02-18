@@ -70,7 +70,7 @@ else {
 <?php
 }
 # print resolved if present
-if($inactive_requests!==false) { ?>
+if(!empty($inactive_requests)) { ?>
 
 <h4 style="margin-top:50px;"><?php print _('List of all processes IP addresses requests'); ?></h4>
 <hr><br>

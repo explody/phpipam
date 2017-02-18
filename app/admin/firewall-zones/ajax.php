@@ -121,7 +121,7 @@ if ($_POST['operation'] == 'checkMapping') {
 					<option value="0"><?php print _('Select firewall'); ?></option>
 					<?php
                     // DRY - repeat in mapping-edit.php
-					if ($devices) {
+					if(!empty($devices)) {
                         $Components->render_options($devices, 
                               'id', 
                               ['name','description'], 

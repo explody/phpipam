@@ -99,7 +99,7 @@ if ($_POST['action'] != 'add') {
 			<option value="0"><?php print _('Select firewall'); ?></option>
 			<?php
             // DRY - repeat in ajax.php
-            if ($devices) {
+            if(!empty($devices)) {
                 $Components->render_options($devices, 
                       'id', 
                       ['hostname','description'], 

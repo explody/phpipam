@@ -470,8 +470,7 @@ class Common_functions  {
                     $this->cache_write ($table, $r->id, $r);
                 }
             }
-            # result
-            return sizeof($res)>0 ? $res : false;
+            return $res;
         }
     }
 

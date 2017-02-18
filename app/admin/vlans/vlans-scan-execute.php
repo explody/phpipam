@@ -24,11 +24,10 @@ if ($domain===false)                            { $Result->show("danger", _("Inv
 
 # get existing vlans
 $existing_vlans = $Tools->fetch_multiple_objects ("vlans", "domainId", $domain->id, "vlanId");
-if ($existing_vlans!==false) {
-    foreach ($existing_vlans as $v) {
-        $ex_vlans[$v->number] = $name;
-    }
+foreach ($existing_vlans as $v) {
+    $ex_vlans[$v->number] = $name;
 }
+
 
 // no errors
 error_reporting(E_ERROR);

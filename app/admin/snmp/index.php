@@ -55,7 +55,7 @@ else {
 
         // devices
         print " <td>";
-        if ($devices_used===false) {
+        if(empty($devices_used)) {
             $Result->show("info", _('No devices'), false);
         }
         else {

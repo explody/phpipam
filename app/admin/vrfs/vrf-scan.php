@@ -13,7 +13,7 @@ if($User->is_admin()!==true) 	                { $Result->show("danger", _('Admin
 $scan_devices = $Tools->fetch_multiple_objects ("devices", "snmp_queries", "%get_vrf_table%", "id", true, true);
 
 // if none set die
-if ($scan_devices===false)                      { $Result->show("danger", _("No devices for SNMP VRF query available"), true, true); }
+if (empty($scan_devices))                      { $Result->show("danger", _("No devices for SNMP VRF query available"), true, true); }
 
 ?>
 

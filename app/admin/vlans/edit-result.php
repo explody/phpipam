@@ -18,13 +18,13 @@ $cfs = $Tools->fetch_custom_fields('vlans');
 //if it already exist die
 if($User->settings->vlanDuplicate==0 && $_POST['action']=="add") {
 	$check_vlan = $Admin->fetch_multiple_objects ("vlans", "domainId", $_POST['domainId'], "vlanId");
-	if($check_vlan!==false) {
-		foreach($check_vlan as $v) {
-			if($v->number == $_POST['number']) {
-																			{ $Result->show("danger", _("VLAN already exists"), true); }
-			}
+
+	foreach($check_vlan as $v) {
+		if($v->number == $_POST['number']) {
+																		{ $Result->show("danger", _("VLAN already exists"), true); }
 		}
 	}
+
 }
 
 // if unique required

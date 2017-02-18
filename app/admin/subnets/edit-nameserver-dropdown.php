@@ -9,6 +9,7 @@ $permitted_nameservers = $Sections->fetch_section_nameserver_sets ($_POST['secti
 
 # fetch all belonging nameserver set
 $cnt = 0;
+$nsout = [];
 
 # Only parse nameserver if any exists
 if($permitted_nameservers != false) {
@@ -23,7 +24,7 @@ if($permitted_nameservers != false) {
 		$cnt++;
 	}
 	//filter out empty
-	$permitted_nameservers = isset($nsout) ? array_filter($nsout) : false;
+	$permitted_nameservers = array_filter($nsout);
 }
 
 ?>
