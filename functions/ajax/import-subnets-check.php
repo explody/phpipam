@@ -20,7 +20,6 @@ foreach ($vlan_domains as $vlan_domain) {
 	$vlan_domain = (array) $vlan_domain;
 	// read vlans
 	$all_vlans = $Admin->fetch_multiple_objects("vlans", "domainId", $vlan_domain['id'], "number");
-	$all_vlans = (array) $all_vlans;
 	// skip empty domains
 	if (sizeof($all_vlans)==0) {
 		# create entry for domain check

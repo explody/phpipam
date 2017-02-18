@@ -43,15 +43,14 @@ else {
             $subprefixes = $Tools->fetch_all_prefixes ($prefix->id);
             $subprefixes_cnt = $Tools->fetch_all_prefixes ($prefix->id, true);
 
-            if($subprefixes_cnt !== false) {
-                $numbers = array();
-                foreach ($subprefixes_cnt as $sp) {
-                    $subprefix_numbers = $Tools->fetch_multiple_objects ("pstnNumbers", "prefix", $sp->id, "number", true);
-                    if ($subprefix_numbers!==false) {
-                        $numbers = array_merge($numbers, $subprefix_numbers);
-                    }
+            $numbers = array();
+            foreach ($subprefixes_cnt as $sp) {
+                $subprefix_numbers = $Tools->fetch_multiple_objects ("pstnNumbers", "prefix", $sp->id, "number", true);
+                if ($subprefix_numbers!==false) {
+                    $numbers = array_merge($numbers, $subprefix_numbers);
                 }
             }
+
             # get count
             $details = $Tools->calculate_prefix_usege( $prefix, $numbers);
 

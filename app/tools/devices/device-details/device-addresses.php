@@ -15,7 +15,6 @@ $device = (array) $Tools->fetch_object ("devices", "id", $_GET['id']);
 
 # fetch all addresses on switch
 $addresses     = $Tools->fetch_multiple_objects("ipaddresses", "switch", $device['id']);
-if ($addresses===false) { $addresses = array(); }
 
 # title - hosts
 print "<h4>"._("Belonging addresses")."</h4><hr>";

@@ -559,7 +559,7 @@ class Sections extends Common_functions {
     	// fetch section subnets
     	$section_subnets = $this->fetch_multiple_objects ("subnets", "sectionId", $sectionId);
     	// loop
-    	if ($section_subnets!==false) {
+    	if (!empty($section_subnets)) {
         	foreach ($section_subnets as $s) {
                 // to array
                 $s_old_perm = json_decode($s->permissions, true);

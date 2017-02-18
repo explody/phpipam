@@ -9,6 +9,30 @@ phpipam is an open-source web IP address management application. Its goal is to 
 It is ajax-based using jQuery libraries, it uses php scripts and javascript and some HTML5/CSS3 features, so some modern browser is preferred
 to be able to display javascript quickly and correctly.
 
+### Intentions of this fork
+
+* Consistent coding standards across the board (where possible)
+* Move all external PHP dependencies under composer
+* Move all external JS/CSS dependencies under npm
+* Manage static assets with grunt
+* Semantic versioning
+* Manageable database via Phinx migrations
+* DRY
+ * Consolidate frequently repeated code into central methods
+* Less code, less text, less whitespace
+ * Remove unnecessary conditionals, comments
+* Consistent output from internal and REST API methods
+ * Don't intermix return types where avoidable (e.g. return [], not 'false')
+* php-cs-fixer code formatting
+ * Consistent indentiation and formatting
+* Better handling of large data sets
+* Drop backwards support for excessively old PHP, DB, etc.
+* Move towards actual OOP as possible
+
+### Where the fork is going
+
+
+
 Features and tools:
 - https://phpipam.net/documents/features/
 

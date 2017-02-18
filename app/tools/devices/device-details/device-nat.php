@@ -29,7 +29,7 @@ print "<tr>";
 print " <td colspan='4'>";
 print "     <div class='btn-group' role='group'>";
 print "         <a href='' class='btn btn-sm btn-default editNat' data-action='add' data-id='' style='margin-bottom:10px;'><i class='fa fa-plus'></i> Add new nat</a>";
-if($all_nats!==false) {
+if(!empty($all_nats)) {
 print "         <div class='btn-group' role='group'>";
 print "             <button type='button' class='btn btn-sm btn-default dropdown-toggle' data-toggle='dropdown' aria-expanded='false'>"._("Map to existing NAT")." <span class='caret'></span></button>";
 print "             <ul class='dropdown-menu' style='z-index:50'>";
@@ -47,17 +47,17 @@ print "</tr>";
 
 
 # print
-if($all_nats!==false) {
-    foreach ($all_nats as $n) {
-        print $Tools->print_nat_table ($n, $User->is_admin(false), false, false, false, false);
-    }
-}
-else {
+if(empty($all_nats)) {
     print "<tr>";
     print " <td colspan='4'>";
     print $Result->show("info", _("No NAT translations for this device"), false, false, true);
     print " </td>";
     print "</tr>";
+}
+else {
+    foreach ($all_nats as $n) {
+        print $Tools->print_nat_table ($n, $User->is_admin(false), false, false, false, false);
+    }
 }
 print "</table>";
 

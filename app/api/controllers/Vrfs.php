@@ -155,22 +155,17 @@ class Vrfs_controller extends Common_api_functions {
 				// fetch
 				$result = $this->Tools->fetch_multiple_objects ("subnets", "vrfId", $this->_params->id, 'subnet', true);
 				// add gateway if present
-    			if($result!=false) {
-    				foreach ($result as $k=>$r) {
-                		$gateway = $this->read_subnet_gateway ($r->id);
-                		if ( $gateway!== false) {
-                    		$result[$k]->gatewayId = $gateway->id;
-                		}
-    				}
-    			}
-
-				// check result
-				if($result===false)					{ $this->Response->throw_exception(404, 'No subnets belonging to this vrf'); }
-				else								{ return array("code"=>200, "data"=>$this->prepare_result ($result, "subnets", true, true)); }
+				foreach ($result as $k=>$r) {
+            		$gateway = $this->read_subnet_gateway ($r->id);
+            		if ( $gateway!== false) {
+                		$result[$k]->gatewayId = $gateway->id;
+            		}
+				}
+				return array("code"=>200, "data"=>$this->prepare_result ($result, "subnets", true, true));
 			}
 			// error
 			else {
-													{ $this->Response->throw_exception(400, "Invalid identifier"); }
+				$this->Response->throw_exception(400, "Invalid identifier");
 			}
 		}
 		// by id

@@ -73,8 +73,9 @@ foreach($temp_shares as $s) {
 		//access logs
 		unset($logText);
 		$logs = $Tools->fetch_multiple_objects ("logs", "details", $s->code, "date", false);
-		if($logs===false)	{ $logText = "<span class='text-muted'>"._("No access")."</span>"; }
-		else {
+		if(empty($logs)) {
+            $logText = "<span class='text-muted'>"._("No access")."</span>";
+        } else {
 			foreach($logs as $l) {
 				$logText[] = $l->date." <span class='text-muted'>(IP $l->ipaddr)</span>";
 			}

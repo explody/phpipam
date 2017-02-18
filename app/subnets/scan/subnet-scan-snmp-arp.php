@@ -45,16 +45,15 @@ error_reporting(E_ERROR);
 $devices_used = $Tools->fetch_multiple_objects ("devices", "snmp_queries", "%get_arp_table%", "id", true, true);
 
 # filter out not in this section
-if ($devices_used !== false) {
-    foreach ($devices_used as $d) {
-        // get possible sections
-        $permitted_sections = explode(";", $d->sections);
-        // check
-        if (in_array($subnet->sectionId, $permitted_sections)) {
-            $permitted_devices[] = $d;
-        }
+foreach ($devices_used as $d) {
+    // get possible sections
+    $permitted_sections = explode(";", $d->sections);
+    // check
+    if (in_array($subnet->sectionId, $permitted_sections)) {
+        $permitted_devices[] = $d;
     }
 }
+
 
 // if none set die
 if (!isset($permitted_devices))                 { $Result->show("danger", _("No devices for SNMP ARP query available"), true); }

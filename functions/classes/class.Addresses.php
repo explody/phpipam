@@ -581,7 +581,7 @@ class Addresses extends Common_functions {
                 	$Tools = new Tools ($this->Database);
                 	$admins        = $Tools->fetch_multiple_objects ("users", "role", "Administrator");
                 	// if some recipients
-                	if ($admins !== false) {
+                	if (!empty($admins)) {
                     	// mail settings
                         $mail_settings = $Tools->fetch_object ("settingsMail", "id", 1);
                     	// mail class

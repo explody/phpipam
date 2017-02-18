@@ -11,18 +11,13 @@
 $requests   = $Tools->fetch_multiple_objects ("requests", "processed", 0, "id", false);
 
 # validate permissions
-if ($requests !== false) {
-	foreach ($requests as $k=>$r) {
-		// check permissions
-		if($Subnets->check_permission($User->user, $r->subnetId) != 3) {
-			unset($requests[$k]);
-		}
-	}
-	# null
-	if (sizeof($requests)==0) {
-		$requests=false;
+foreach ($requests as $k=>$r) {
+	// check permissions
+	if($Subnets->check_permission($User->user, $r->subnetId) != 3) {
+		unset($requests[$k]);
 	}
 }
+
 ?>
 
 <h4><?php print _('List of unprocessed IP addresses requests'); ?></h4>
@@ -30,7 +25,7 @@ if ($requests !== false) {
 
 <?php
 # none
-if($requests===false) { print "<div class='alert alert-info'>"._('No IP address requests available')."!</div>"; }
+if(empty($requests)) { print "<div class='alert alert-info'>"._('No IP address requests available')."!</div>"; }
 else {
 ?>
 <table id="requestedIPaddresses" class="table sorted table-striped table-condensed table-hover table-top">

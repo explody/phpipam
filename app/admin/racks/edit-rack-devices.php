@@ -129,14 +129,13 @@ $(document).ready(function(){
                         $available[] = $m;
                     }
 
-                    if($rack_devices!==false) {
-                        foreach ($rack_devices as $d) {
-                            for($m=$d->rack_start; $m<=($d->rack_start+($d->rack_size-1)); $m++) {
-                                $pos = array_search($m, $available);
-                                unset($available[$pos]);
-                            }
+                    foreach ($rack_devices as $d) {
+                        for($m=$d->rack_start; $m<=($d->rack_start+($d->rack_size-1)); $m++) {
+                            $pos = array_search($m, $available);
+                            unset($available[$pos]);
                         }
                     }
+
                     // print available spaces
                     foreach ($available as $a) {
                         print "<option value='$a'>$a</option>";

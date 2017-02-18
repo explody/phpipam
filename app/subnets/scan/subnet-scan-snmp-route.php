@@ -23,7 +23,7 @@ $devices_used = $Tools->fetch_multiple_objects ("devices", "snmp_queries", "%get
 $masks =  $Subnets->get_ipv4_masks ();
 
 // if none set die
-if ($devices_used===false)                      { $Result->show("danger", _("No devices for SNMP route table query available")."!", true, true, false, true); }
+if (empty($devices_used))                      { $Result->show("danger", _("No devices for SNMP route table query available")."!", true, true, false, true); }
 
 // ok, we have devices, connect to each device and do query
 foreach ($devices_used as $d) {

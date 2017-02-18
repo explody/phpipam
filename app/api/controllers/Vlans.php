@@ -149,28 +149,22 @@ class Vlans_controller extends Common_api_functions {
 
 			// only 1 section ?
 			if(isset($this->_params->id3)) {
-				if($result!=NULL) {
-					foreach ($result as $k=>$r) {
-						if($r->sectionId!=$this->_params->id3) {
-							unset($result[$k]);
-						}
+				foreach ($result as $k=>$r) {
+					if($r->sectionId!=$this->_params->id3) {
+						unset($result[$k]);
 					}
 				}
 			}
 
 			// add gateway
-			if($result!=NULL) {
-				foreach ($result as $k=>$r) {
-            		$gateway = $this->read_subnet_gateway ($r->id);
-            		if ( $gateway!== false) {
-                		$result[$k]->gatewayId = $gateway->id;
-            		}
-				}
+			foreach ($result as $k=>$r) {
+        		$gateway = $this->read_subnet_gateway ($r->id);
+        		if ( $gateway!== false) {
+            		$result[$k]->gatewayId = $gateway->id;
+        		}
 			}
 
-			// check result
-			if($result==NULL)						{ $this->Response->throw_exception(404, "No subnets found"); }
-			else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, "subnets", true, true)); }
+			return array("code"=>200, "data"=>$this->prepare_result ($result, "subnets", true, true));
 		}
 		// custom fields
 		elseif (@$this->_params->id=="custom_fields") {
@@ -181,9 +175,7 @@ class Vlans_controller extends Common_api_functions {
 		// search
 		elseif (@$this->_params->id=="search") {
 			$result = $this->Tools->fetch_multiple_objects ("vlans", "number", $this->_params->id2, "vlanId");
-			// check result
-			if($result==NULL)						{ $this->Response->throw_exception(404, "Vlans not found"); }
-			else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, null, true, true)); }
+			return array("code"=>200, "data"=>$this->prepare_result ($result, null, true, true));
 		}
 		// read vlan details
 		else {
@@ -340,11 +332,9 @@ class Vlans_controller extends Common_api_functions {
 		//if it already exist die
 		if($this->settings->vlanDuplicate==0 && $_SERVER['REQUEST_METHOD']=="POST") {
 			$check_vlan = $this->Admin->fetch_multiple_objects ("vlans", "domainId", $this->_params->domainId, "vlanId");
-			if($check_vlan!==false) {
-				foreach($check_vlan as $v) {
-					if($v->number == $this->_params->number) {
-																							{ $this->Response->throw_exception(409, "Vlan already exists"); }
-					}
+			foreach($check_vlan as $v) {
+				if($v->number == $this->_params->number) {
+                    $this->Response->throw_exception(409, "Vlan already exists");
 				}
 			}
 		}

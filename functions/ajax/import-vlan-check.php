@@ -20,9 +20,8 @@ foreach ($vlan_domains as $vlan_domain) {
 	$vdomid[$vlan_domain['name']] = $vlan_domain['id'];
 	// read vlans
 	$all_vlans = $Admin->fetch_multiple_objects("vlans", "domainId", $vlan_domain['id'], "number");
-	$all_vlans = (array) $all_vlans;
 	// skip empty domains
-	if (sizeof($all_vlans)==0) { continue; }
+	if (empty($all_vlans)) { continue; }
 	//write all VLAN entries
 	foreach ($all_vlans as $vlan) {
 		//cast

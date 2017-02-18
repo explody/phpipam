@@ -462,7 +462,7 @@ class Common_functions  {
             try { $res = $this->Database->findObjects($table, $field, $value, $sortField, $sortAsc, $like, false, $result_fields); }
             catch (Exception $e) {
                 $this->Result->show("danger", _("Error: ").$e->getMessage());
-                return false;
+                return [];
             }
             # save to cach
             if (sizeof($res)>0) {
@@ -508,7 +508,7 @@ class Common_functions  {
         // recipients array
         $recipients = array();
         // any ?
-        if ($notification_users!==false) {
+        if (!empty($notification_users)) {
              // if subnetId is set check who has permissions
             if (isset($subnetId)) {
                  foreach ($notification_users as $u) {

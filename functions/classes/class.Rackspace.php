@@ -204,21 +204,20 @@ class phpipam_rack extends Tools {
         $this->rack_size = $rack->size;
 
         // set content
-        if ($devices!==false) {
-            foreach ($devices as $d) {
-                // add initial location
-                $rd = array("id"=>$d->id,
-                            "name"=>$d->hostname,
-                            "startLocation"=>$d->rack_start,
-                            "size"=>$d->rack_size,
-                            "rackName"=>$rack->name
-                            );
-                // if startlocation is not set
-                $rd['startLocation'] -= 1;
-                // save content
-                $this->rack_content[] = new RackContent ($rd);
-            }
+        foreach ($devices as $d) {
+            // add initial location
+            $rd = array("id"=>$d->id,
+                        "name"=>$d->hostname,
+                        "startLocation"=>$d->rack_start,
+                        "size"=>$d->rack_size,
+                        "rackName"=>$rack->name
+                        );
+            // if startlocation is not set
+            $rd['startLocation'] -= 1;
+            // save content
+            $this->rack_content[] = new RackContent ($rd);
         }
+
 
         // create rack
         $this->set_rack ();

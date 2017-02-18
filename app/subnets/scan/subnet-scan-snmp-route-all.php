@@ -61,7 +61,9 @@ foreach ($devices_used as $d) {
 }
 
 // if none set die
-if ($devices_used===false)                      { $Result->show("danger", "No devices for SNMP route table query available"."!", true, $ajax_loaded); }
+if (empty($devices_used)) { 
+    $Result->show("danger", "No devices for SNMP route table query available"."!", true, $ajax_loaded); 
+}
 
 // ok, we have devices, connect to each device and do query
 foreach ($devices_used as $d) {

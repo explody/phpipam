@@ -51,32 +51,28 @@ $devices_used_arp = $Tools->fetch_multiple_objects ("devices", "snmp_queries", "
 $devices_used_mac = $Tools->fetch_multiple_objects ("devices", "snmp_queries", "%get_mac_table%", "id", true, true);
 
 # filter out devices not in this section - ARP
-if ($devices_used_arp !== false) {
-    foreach ($devices_used_arp as $d) {
-        // get possible sections
-        $permitted_sections = explode(";", $d->sections);
-        // check
-        if (in_array($subnet->sectionId, $permitted_sections)) {
-            $permitted_devices_arp[] = $d;
-        }
+foreach ($devices_used_arp as $d) {
+    // get possible sections
+    $permitted_sections = explode(";", $d->sections);
+    // check
+    if (in_array($subnet->sectionId, $permitted_sections)) {
+        $permitted_devices_arp[] = $d;
     }
 }
+
 # filter out not in this section
-if ($devices_used_mac !== false) {
-    foreach ($devices_used_mac as $d) {
-        // get possible sections
-        $permitted_sections = explode(";", $d->sections);
-        // check
-        if (in_array($subnet->sectionId, $permitted_sections)) {
-            $permitted_devices_mac[] = $d;
-        }
+foreach ($devices_used_mac as $d) {
+    // get possible sections
+    $permitted_sections = explode(";", $d->sections);
+    // check
+    if (in_array($subnet->sectionId, $permitted_sections)) {
+        $permitted_devices_mac[] = $d;
     }
 }
 
 // if none set die
 if (!isset($permitted_devices_arp))                 { $Result->show("danger", _("No devices for SNMP ARP query available"), true); }
 if (!isset($permitted_devices_mac))                 { $Result->show("danger", _("No devices for SNMP MAC address query available"), true); }
-
 
 // first we need ARP table to fetchIP <> MAC mappings
 foreach ($permitted_devices_arp as $d) {

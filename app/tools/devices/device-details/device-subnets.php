@@ -30,33 +30,29 @@ print "	<th>"._('Description')."</th>";
 print "	<th>"._('VLAN')."</th>";
 print "</tr>";
 
-// loop
 $ipcnt = 0;
-if ($subnets !== false ) {
-	// loop
-	foreach ($subnets as $s) {
-		// permission check
-		$subnet_permission  = $Subnets->check_permission($User->user, $s->id);
 
-		if($subnet_permission>0) {
-			# fetch section
-			$section = (array) $Sections->fetch_section (null, $s->sectionId);
-			$vlan	 = $Tools->fetch_object ("vlans", 'vlanId', $s->vlanId);
+foreach ($subnets as $s) {
 
-			# print
-			print "<tr>";
-			print "	<td class='ip'><a href='".create_link("subnets",$section['id'])."'>"; 
-            print  (empty($section['name']) ? $section['description'] : $section['name']);
-            print "</a></td>";
-			print "	<td class='ip'><a href='".create_link("subnets",$section['id'],$s->id)."'>".$Subnets->transform_to_dotted($s->subnet)."/".$s->mask."</a></td>";
-			print "	<td class='port'>".$s->description."</td>";
-			print "	<td class='description'>".@$vlan->number ." ".@$vlan->description."</td>";
+	$subnet_permission  = $Subnets->check_permission($User->user, $s->id);
 
-			// add count
-			$ipcnt++;
-		}
+	if($subnet_permission>0) {
+
+		$section = (array) $Sections->fetch_section (null, $s->sectionId);
+		$vlan	 = $Tools->fetch_object ("vlans", 'vlanId', $s->vlanId);
+
+		print "<tr>";
+		print "	<td class='ip'><a href='".create_link("subnets",$section['id'])."'>"; 
+        print  (empty($section['name']) ? $section['description'] : $section['name']);
+        print "</a></td>";
+		print "	<td class='ip'><a href='".create_link("subnets",$section['id'],$s->id)."'>".$Subnets->transform_to_dotted($s->subnet)."/".$s->mask."</a></td>";
+		print "	<td class='port'>".$s->description."</td>";
+		print "	<td class='description'>".@$vlan->number ." ".@$vlan->description."</td>";
+
+		$ipcnt++;
 	}
 }
+
 
 # empty
 if($ipcnt == 0) {

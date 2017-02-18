@@ -85,7 +85,7 @@ else {
             print " <td>$r->size U</td>";
             print " <td>$r->description</td>";
             // devices
-            if ($rack_devices===false) {
+            if (empty($rack_devices)) {
                 print "<td>";
                 print " <span class='text-muted'>"._("Rack is empty")."</span>";
                 if($admin) {

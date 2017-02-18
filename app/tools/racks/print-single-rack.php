@@ -140,7 +140,7 @@ if (isset($error)) { ?>
         	print " <td>";
 
             // devices
-            if ($rack_devices===false) {
+            if (empty($rack_devices)) {
                 print " <span class='text-muted'>"._("Rack is empty")."</span>";
             }
             else {

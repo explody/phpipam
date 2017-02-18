@@ -674,8 +674,7 @@ class Tools extends Common_functions {
 	 * @return array
 	 */
 	public function fetch_custom_fields($table) {
-        $fields = $this->fetch_multiple_objects('customFields', 'table', $table, 'order');
-        return $fields ? $fields : [];
+        return $this->fetch_multiple_objects('customFields', 'table', $table, 'order');
 	}
 
 	/**
