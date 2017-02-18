@@ -36,7 +36,7 @@ print "	<th>"._('Subnet')."</th>";
 # custom
 
 foreach ($visible_fields as $vf) {
-    print "	<th class='hidden-xs hidden-sm hidden-md'>$vf->name</th>";
+    print "	<th class='hidden-xs hidden-sm hidden-md'>" . Components::custom_field_display_name($vf) . "</th>";
 }
 
 print "	<th class='small hidden-xs hidden-sm hidden-md'>"._('Used')."</th>";

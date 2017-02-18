@@ -63,7 +63,7 @@ if($permission != 0) {
 		print "	<th>"._('Description')."</th>";
 		print "	<th>"._('VLAN')."</th>";
 		if($User->settings->enableVRF == 1) {
-		print "	<th class='hidden-xs hidden-sm'>"._('VRF')."</th>";
+            print "	<th class='hidden-xs hidden-sm'>"._('VRF')."</th>";
 		}
 		print "	<th>"._('Master Subnet')."</th>";
 		print "	<th>"._('Device')."</th>";
