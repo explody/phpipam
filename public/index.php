@@ -200,20 +200,20 @@ else {
 
 <!-- Popups -->
 <div id="popupOverlay" class="popupOverlay">
-	<div id="popup" class="popup popup_w400"></div>
-	<div id="popup" class="popup popup_w500"></div>
-    <div id="popup" class="popup popup_w600"></div>
-	<div id="popup" class="popup popup_w700"></div>
-	<div id="popup" class="popup popup_wmasks"></div>
-	<div id="popup" class="popup popup_max"></div>
+	<div id="popup400" class="popup popup_w400"></div>
+	<div id="popup500" class="popup popup_w500"></div>
+    <div id="popup600" class="popup popup_w600"></div>
+	<div id="popup700" class="popup popup_w700"></div>
+	<div id="popupMasks" class="popup popup_wmasks"></div>
+	<div id="popupMax" class="popup popup_max"></div>
 </div>
 <div id="popupOverlay2">
-	<div id="popup" class="popup popup_w400"></div>
-	<div id="popup" class="popup popup_w500"></div>
-    <div id="popup" class="popup popup_w600"></div>
-	<div id="popup" class="popup popup_w700"></div>
-	<div id="popup" class="popup popup_wmasks"></div>
-	<div id="popup" class="popup popup_max"></div>
+	<div id="popup2-400" class="popup popup_w400"></div>
+	<div id="popup2-500" class="popup popup_w500"></div>
+    <div id="popup2-600" class="popup popup_w600"></div>
+	<div id="popup2-700" class="popup popup_w700"></div>
+	<div id="popup2Masks" class="popup popup_wmasks"></div>
+	<div id="popup2Max" class="popup popup_max"></div>
 </div>
 
 <!-- loader -->

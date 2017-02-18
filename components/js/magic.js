@@ -33,14 +33,15 @@ $('.show_popover').popover();
 /* Select2 things */
 
 $(document).on("click", ".select2-container", function (event) {
-    var distance_to_bottom = $(window).height() - $(this).offset().top;
+    // $(this).get(0).getBoundingClientRect().top gets the distance from the top of the element
+    // to the top of the viewport. '30' is the height of the element
+    var distance_to_bottom = $(window).height() - ($(this).get(0).getBoundingClientRect().top + 30)
+    var ddh = $('.select2-dropdown').height();
 
-    // Only resize the dropdown if there's enough space for it to make sense. Otherwise, select2 
+    // Only resize the dropdown if there's enough space for it to make sense. Otherwise, select2
     // will render it upwards anyway
-    if (distance_to_bottom > 200) {
-        var h = distance_to_bottom - 100;
-        var ddh = $('.select2-dropdown').height();
-
+    if (ddh > distance_to_bottom) {
+        var h = distance_to_bottom - 40;
         newh = ( ddh < h ? ddh : h );
         $('.select2-results').css("height", newh);
     }
