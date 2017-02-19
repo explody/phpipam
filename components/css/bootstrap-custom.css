@@ -2617,7 +2617,6 @@ div.jqueryError a {
 .navbar .navbar-nav > li.active > a {
     background: #272b30;
 }
-@media (min-width: 768px)
 .navbar-collapse {
     padding-right: 0px !important;
 }
