@@ -17,9 +17,21 @@ var copy_js = [
     { src: ['bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js'],       dest: '<%= grunt.config("static_dir") %>/js/bootstrap.switch.js' },
     { src: ['bower_components/gmaps/gmaps.min.js'],                                     dest: '<%= grunt.config("static_dir") %>/js/gmaps.js' },
     { src: ['bower_components/moment/min/moment.min.js'],                               dest: '<%= grunt.config("static_dir") %>/js/moment.js' },
-    { src: ['bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js'], dest: '<%= grunt.config("static_dir") %>/js/bootstrap.datetimepicker.js' },
-    { src: ['bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js'], dest: '<%= grunt.config("static_dir") %>/js/bootstrap.colorpicker.js' },
+    { src: ['bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js'], 
+          dest: '<%= grunt.config("static_dir") %>/js/bootstrap.datetimepicker.js' },
+    { src: ['bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js'], 
+          dest: '<%= grunt.config("static_dir") %>/js/bootstrap.colorpicker.js' },
     { src: ['bower_components/Flot/excanvas.min.js'],                                   dest: '<%= grunt.config("static_dir") %>/js/excanvas.js' }
+];
+
+var copy_css = [
+    { src: ['bower_components/bootstrap/dist/css/bootstrap.min.css'],                           dest: '<%= grunt.config("static_dir") %>/css/bootstrap.css' },
+    { src: ['bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css'],  dest: '<%= grunt.config("static_dir") %>/css/bootstrap.switch.css' },
+    { src: ['bower_components/datatables/media/css/jquery.dataTables.min.css'],                 dest: '<%= grunt.config("static_dir") %>/css/jquery.datatables.css' },
+    { src: ['bower_components/font-awesome/css/font-awesome.min.css'],                          dest: '<%= grunt.config("static_dir") %>/css/font-awesome.css' },
+    { src: ['bower_components/select2/dist/css/select2.min.css'],                               dest: '<%= grunt.config("static_dir") %>/css/select2.css', },
+    { src: ['bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css'],       
+          dest: '<%= grunt.config("static_dir") %>/css/bootstrap.datetimepicker.css' },
 ];
 
 var uglify_bower = {
@@ -47,14 +59,9 @@ var uglify_local = [
 ];
 
 var cssmin_bower = {
-    '<%= grunt.config("static_dir") %>/css/bootstrap.css':                ['bower_components/bootstrap/dist/css/bootstrap.css'],
-    '<%= grunt.config("static_dir") %>/css/bootstrap.switch.css':         ['bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css'],
     '<%= grunt.config("static_dir") %>/css/bootstrap.slider.css':         ['bower_components/bootstrap-slider/slider.css'],
-    '<%= grunt.config("static_dir") %>/css/jquery.datatables.css':        ['bower_components/datatables/media/css/jquery.dataTables.css'],
-    '<%= grunt.config("static_dir") %>/css/font-awesome.css':             ['bower_components/font-awesome/css/font-awesome.css'],
-    '<%= grunt.config("static_dir") %>/css/bootstrap.datetimepicker.css': ['bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css'],
+    '<%= grunt.config("static_dir") %>/css/multi-select.css':             ['bower_components/multiselect/css/multi-select-fixed.css'],
     '<%= grunt.config("static_dir") %>/css/bootstrap.custom.css':         ['components/css/bootstrap-custom.css'],
-    '<%= grunt.config("static_dir") %>/css/multi-select.css':             ['bower_components/multiselect/css/multi-select-fixed.css']
 };
 
 module.exports = function(grunt) {
@@ -144,10 +151,7 @@ module.exports = function(grunt) {
             },
             css: {
                 files: [
-                    {
-                        src: ['bower_components/select2/dist/css/select2.min.css'],
-                        dest: '<%= grunt.config("static_dir") %>/css/select2.css',
-                    }
+                    copy_css,
                 ]
             },
             bs_fonts: {

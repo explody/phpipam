@@ -9,7 +9,6 @@ include(FUNCTIONS . '/checks/check_php_build.php');		# check for support for PHP
 try {
     # database object
     $Database 	= new Database_PDO;
-    $Database->connect();
 } catch (Exception $e) {
     header("Location: /broken/");
 }
@@ -20,8 +19,8 @@ if (!$Database->setup_required()) {
 } 
 
 $Result		= new Result;
-$Tools	    = new Tools ($Database);
-$Install 	= new Install ($Database);
+$Tools	    = new Tools($Database);
+$Install 	= new Install($Database);
 
 $_GET     = $Tools->strip_input_tags($_GET);
 $_POST    = $Tools->strip_input_tags($_POST);
@@ -34,7 +33,7 @@ if (!$Database->bootstrap_required()) {
 
 # If User is not available create fake user object for create_link!
 if(!is_object(@$User)) {
-	$User = new StdClass ();
+	$User = new StdClass();
 	@$User->settings->prettyLinks = "Yes";
 }
 

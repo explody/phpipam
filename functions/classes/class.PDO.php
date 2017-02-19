@@ -1125,6 +1125,8 @@ class Database_PDO extends DB {
 		# construct
 		parent::__construct($this->dsn, $this->username, $this->password, $this->pdo_options);
         
+        $this->connect();
+
         // This will verify that the setup has been completed and the database *should* be in a usable state
         $this->check_setup();
 	}

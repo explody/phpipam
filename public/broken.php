@@ -1,5 +1,4 @@
 <?php
-
 /**
  *	The app is broken. Try things and report back how/why it's not working.
  *  This code it not especially groovy
@@ -14,8 +13,8 @@
      die();
  }
  
- if (file_exists(dirname(__FILE__) . "/../paths.php")) {
-     require_once dirname(__FILE__) . "/../paths.php";
+ if (file_exists(dirname(__FILE__) . "/../../paths.php")) {
+     require_once dirname(__FILE__) . "/../../paths.php";
  } else {
      broken("Application Error", "Cannot find my paths.php. Can't proceed");
  }
@@ -117,20 +116,21 @@ try {
     broken('Application Error', '<br />Error loading config<br /> The config loader reports: ' . $e );
 }
 
-/* site functions */
+// Explicitly require and check the database before functions
+require_once( FUNCTIONS . '/classes/class.PDO.php' );
 
+try {
+    $Database 	= new Database_PDO;
+} catch (PDOException $e) { 
+    broken ("Database Error", "<pre>$e</pre>");
+}
+
+// Then, include the entire functions stack to try and trigger other errors
 // TODO: consider E_PARSE error handling, maybe a prepend script 
 try {
     require FUNCTIONS . '/functions.php';
 } catch (Exception $e) {
     broken("Application Error", $e->getMessage());
-}
-
-try {
-    $Database 	= new Database_PDO;
-    $Database->connect();
-} catch (PDOException $e) { 
-    broken ("Database Error", $e->getMessage());
 }
 
 // If we make it down here, the app does not appear to be broken 

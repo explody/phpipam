@@ -1,4 +1,4 @@
-environment: experimental
+environment: vagrant
 
 debugging: false
 phpsessname: phpipam

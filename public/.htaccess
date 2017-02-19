@@ -1,5 +1,21 @@
 #CGIPassAuth On
 
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/plain
+AddOutputFilterByType DEFLATE text/html
+AddOutputFilterByType DEFLATE text/xml
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE application/xml
+AddOutputFilterByType DEFLATE application/xhtml+xml
+AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+<IfModule mod_headers.c>
+Header set Cache-Control "max-age=86400, public"
+</IfModule>
+
 <IfModule mod_rewrite.c>
 
 # apache auth basic auth example
@@ -17,10 +33,9 @@ RewriteEngine on
 RewriteRule ^static/.*$ - [L]
 RewriteRule ^api/.*$ - [L]
 RewriteRule ^saml/.*$ - [L]
-RewriteRule ^index.php$ - [L]
-RewriteRule ^ajax.php$ - [L]
-RewriteRule ^broken/?$ broken.php [L]
-RewriteRule ^(css|js|site|test)/.*$ - [L]
+RewriteRule ^broken/?$ - [L]
+
+# TODO: fix this, no way it works right now
 RewriteRule login/captcha/captchashow.php - [L]
 
 # redirect errors
@@ -28,6 +43,7 @@ ErrorDocument 400 /error/400/
 ErrorDocument 401 /error/401/
 ErrorDocument 403 /error/403/
 ErrorDocument 404 /error/404/
+ErrorDocument 405 /error/405/
 ErrorDocument 500 /error/500/
 
 # IE login dashboard fix

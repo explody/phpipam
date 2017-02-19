@@ -79,8 +79,6 @@ class Install extends Common_functions {
                                                            'configuration' => CONFIG_DIR . '/phinx.php', 
                                                            'parser' => 'php']);
 
-		# Log object
-		try { $this->Database->connect(); } catch ( Exception $e ) {}
 	}
 
 	/**

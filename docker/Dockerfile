@@ -6,12 +6,10 @@ ENV PHPIPAM_VERSION docker
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y install apache2 libapache2-mod-php5 php5-mysql vim curl php5-gmp php5-ldap php-pear && apt-get clean
 
 ADD ${PHPIPAM_SOURCE}/${PHPIPAM_VERSION}.tar.gz /tmp/
-RUN mkdir -p /var/www/html/
-RUN rm -rf /var/www/html/*
-RUN tar -xzf /tmp/${PHPIPAM_VERSION}.tar.gz -C /var/www/html/ --strip-components=1
-COPY config.php /var/www/html/config.php
-COPY env.php /var/www/html/env.php
-COPY pivotal-combined.pem /etc/pivotal-combined.pem
+RUN mkdir -p /var/www/ipam/
+RUN rm -rf /var/www/ipam/*
+RUN tar -xzf /tmp/${PHPIPAM_VERSION}.tar.gz -C /var/www/ipam/ --strip-components=1
+COPY config/config.yml /var/www/ipam/config/config.yml
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 
 RUN a2enmod php5

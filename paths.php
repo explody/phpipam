@@ -14,6 +14,19 @@
 define('IPAM_ROOT', realpath(dirname(__FILE__)));
 
 /**
+ *  Full path to the config directory. 
+ *  WARNING: If you change this, you have to change the version constant in version.php
+ *  Default: IPAM_ROOT/config
+ **/
+define('CONFIG_DIR', IPAM_ROOT . '/config');
+
+/**
+ *  Full path to the main config file
+ *  Default: IPAM_ROOT/config
+ **/
+define('CONFIG', CONFIG_DIR . '/loader.php');
+
+/**
  *  Full path to web server document root. Generally the same as $_SERVER['DOCUMENT_ROOT'].
  *  Default: IPAM_ROOT/public
  **/
@@ -35,42 +48,24 @@ define('FUNCTIONS', IPAM_ROOT . '/functions');
  *  Default: IPAM_ROOT/vendor
  **/
 define('VENDOR', IPAM_ROOT . '/vendor');
-
+ 
 /**
- *  Full path to the config directory
+ *  Full path to the environments config directory
+ *  Default: CONFIG_DIR/environments
+ **/
+define('ENV_DIR', CONFIG_DIR . '/environments');
+ 
+/**
+ *  Full path to the migrations directory
  *  Default: IPAM_ROOT/config
  **/
-define('CONFIG_DIR', IPAM_ROOT . '/config');
+define('DB_DIR', IPAM_ROOT . '/db');
 
 /**
- *  Full path to the config directory
- *  Default: APP_ROOT/config
- **/
- define('CONFIG_DIR', APP_ROOT . '/config');
-
-/**
- *  Full path to the main config file
+ *  Full path to the migrations directory
  *  Default: IPAM_ROOT/config
  **/
-define('CONFIG', CONFIG_DIR . '/loader.php');
- 
- /**
-  *  Full path to the environments config directory
-  *  Default: CONFIG_DIR/environments
-  **/
- define('ENV_DIR', CONFIG_DIR . '/environments');
- 
- /**
-  *  Full path to the migrations directory
-  *  Default: IPAM_ROOT/config
-  **/
- define('DB_DIR', IPAM_ROOT . '/db');
-
- /**
-  *  Full path to the migrations directory
-  *  Default: IPAM_ROOT/config
-  **/
- define('MIGRATION_DIR', DB_DIR . '/migrations');
+define('MIGRATION_DIR', DB_DIR . '/migrations');
 
 # With basic paths set, we can require our version info 
 require_once CONFIG_DIR . '/version.php';

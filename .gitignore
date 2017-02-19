@@ -6,6 +6,7 @@ db/*dump
 .idea
 .remote-sync.json
 *.swp
+.vagrant
 
 # Ignore configs that may contain credentials
 config/config.yml
@@ -20,6 +21,7 @@ vendor
 public/static
 bower_components
 node_modules
+composer.lock
 
 # Legacy config stuff
 config.php
