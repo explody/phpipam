@@ -1,3 +1,4 @@
+/* VERSION 1.1 */
 /* VERSION 1.11 */
 UPDATE `settings` set `version` = '1.11';
 
@@ -216,7 +217,6 @@ ALTER TABLE `logs` ENGINE = InnoDB;
 ALTER TABLE `requests` ENGINE = InnoDB;
 ALTER TABLE `sections` ENGINE = InnoDB;
 ALTER TABLE `settings` ENGINE = InnoDB;
-ALTER TABLE `settingsDomain` ENGINE = InnoDB;
 ALTER TABLE `settingsMail` ENGINE = InnoDB;
 ALTER TABLE `subnets` ENGINE = InnoDB;
 ALTER TABLE `userGroups` ENGINE = InnoDB;
@@ -226,6 +226,7 @@ ALTER TABLE `vlanDomains` ENGINE = InnoDB;
 ALTER TABLE `vlans` ENGINE = InnoDB;
 ALTER TABLE `vrf` ENGINE = InnoDB;
 ALTER TABLE `widgets` ENGINE = InnoDB;
+ALTER TABLE `settingsDomain` ENGINE = InnoDB;
 
 /* add new widgets */
 INSERT INTO `widgets` (`wtitle`, `wdescription`, `wfile`, `wparams`, `whref`, `wsize`, `wadminonly`, `wactive`)

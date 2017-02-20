@@ -526,7 +526,9 @@ class User extends Common_functions {
 
 
 
-    /**
+
+
+   /**
      *    Check if migration of AD settings is required
      *
      *    must be deleted after 1.2 release
