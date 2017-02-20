@@ -36,7 +36,8 @@ if($_POST['action']=="edit"||$_POST['action']=="delete") {
 }
 
 # if password changes check and hash passwords
-if(strlen(@$_POST['password1'])>0 || (@$_POST['action']=="add" && $auth_method->type=="local")) {
+if($auth_method->type != "local") { $_POST['password1'] = ""; $_POST['password2'] = ""; }
+if((strlen(@$_POST['password1'])>0 || (@$_POST['action']=="add") && $auth_method->type=="local")) {
 	//checks
 	if($_POST['password1']!=$_POST['password2'])						{ $Result->show("danger", _("Passwords do not match"), true); }
 	if(strlen($_POST['password1'])<8)									{ $Result->show("danger", _("Password must be at least 8 characters long!"), true); }
@@ -78,7 +79,7 @@ if(sizeof($myFields) > 0) {
 		//booleans can be only 0 and 1!
 		if($myField['type']=="tinyint(1)") {
 			if($_POST[$myField['name']]>1) {
-				$$_POST[$myField['name']] = "";
+				$_POST[$myField['name']] = "";
 			}
 		}
 		//not null!
@@ -99,8 +100,19 @@ $values = array("id"=>@$_POST['userId'],
 				"lang"=>$_POST['lang'],
 				"mailNotify"=>$_POST['mailNotify'],
 				"mailChangelog"=>$_POST['mailChangelog'],
+				"editVlan"=>$_POST['editVlan'],
+				"pstn"=>$_POST['pstn'],
 				"pdns"=>$_POST['pdns']
 				);
+# custom fields
+if (sizeof($myFields)>0) {
+    foreach($myFields as $myField) {
+		# replace possible ___ back to spaces!
+		$myField['nameTest']      = str_replace(" ", "___", $myField['name']);
+
+		if(isset($_POST[$myField['nameTest']])) { $values[$myField['name']] = $_POST[$myField['nameTest']];}
+    }
+}
 # update pass ?
 if(strlen(@$_POST['password1'])>0 || (@$_POST['action']=="add" && $auth_method->type=="local")) {
 	$values['password'] = $_POST['password1'];

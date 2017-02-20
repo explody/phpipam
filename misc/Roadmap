@@ -1,15 +1,24 @@
+Feature candidates for 1.4:
+
+    + Modules
+        + Customers module;
+
+    + CSV import tab with fields;
+
+    GitHub enhancement requests:
+        https://github.com/phpipam/phpipam/milestone/2
+
+
 features for next releases:
 ---------------------------
 
+    + PowerDNS API;
+
+    + KEA management (DHCP integration);
+
     + Modules:
         + BGP support;
-        + DHCP integration;
         + Inventory management;
-    	+ NAT module
-    		- Link individual ip addresses (eg public <> private) - static NAT, destination NAT
-    		- Ability to create NAT pools and link subnet / address to that pool - source NAT
-    		- Show bindings under tools and next to IP address
-        + Customers module;
 
     + User
     	+ LDAP auth without local user;
@@ -23,7 +32,6 @@ features for next releases:
     + Tools enhancements
         + Devices permissions;
         + custom fields for IP requests;
-        + IP request section dropdown;
         + Changelog for VLANs, l2-domains, devices or vrf's, nameservers and firewallzones;
 
     + DNS enhancements
@@ -31,14 +39,6 @@ features for next releases:
         + DNS scripts (nsupdate,...)
 
     + Subnet, addresses
-        + Multiple levels of sections;
     	+ assign a state to a subnet, vlan;
-        + pagination for available subnets;
-
-	+ Mail subnet details;
-
-	+ Notificaitons;
-
-	+ Add subtitle and page title;
 
 	+ Map/Link MPLS VRF to VLAN;

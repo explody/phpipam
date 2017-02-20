@@ -16,6 +16,9 @@ else { $subnet = (array) $subnet; }
 $subnet_detailed = $Subnets->get_network_boundaries ($subnet['subnet'], $subnet['mask']);			//set network boundaries
 $slaves = $Subnets->has_slaves ($subnet['id']) ? true : false;										//check if subnet has slaves and set slaves flag true/false
 
+# if subnet is requested but is folder redirect
+if ($subnet['isFolder']==1) { header("Location: ".create_link("folder", $_GET['section'], $_GET['subnetId'])); }
+
 # permissions
 $subnet_permission  = $Subnets->check_permission($User->user, $subnet['id']);						//subnet permission
 $section_permission = $Sections->check_permission($User->user, $subnet['sectionId']);				//section permission
@@ -31,30 +34,12 @@ $nameservers = (array) $Tools->fetch_object("nameservers", "id", $subnet['namese
 if($slaves) {
 	$addresses = $Addresses->fetch_subnet_addresses_recursive ($subnet['id'], false);
 	$slave_subnets = (array) $Subnets->fetch_subnet_slaves ($subnet['id']);
-	// save count
-	$addresses_cnt = gmp_strval(sizeof($addresses));
-
-	# full ?
-	if (sizeof($slave_subnets)>0) {
-    	foreach ($slave_subnets as $ss) {
-        	if ($ss->isFull==1) {
-            	# calculate max
-            	$max_hosts = $Subnets->get_max_hosts ($ss->mask, $Subnets->identify_address($ss->subnet), true);
-            	# count
-            	$count_hosts = $Addresses->count_subnet_addresses ($ss->id);
-            	# add
-            	$addresses_cnt = gmp_strval(gmp_add($addresses_cnt, gmp_sub($max_hosts, $count_hosts)));
-        	}
-    	}
-	}
-
-	$subnet_usage  = $Subnets->calculate_subnet_usage ($addresses_cnt, $subnet['mask'], $subnet['subnet'], $subnet['isFull'] );		//Calculate free/used etc
 } else {
 	$addresses = $Addresses->fetch_subnet_addresses ($subnet['id']);
-	// save count
-	$addresses_cnt = gmp_strval(sizeof($addresses));
-	$subnet_usage  = $Subnets->calculate_subnet_usage ($addresses_cnt, $subnet['mask'], $subnet['subnet'], $subnet['isFull'] );		//Calculate free/used etc
 }
+
+// get usage
+$subnet_usage  = $Subnets->calculate_subnet_usage ($subnet, true);
 
 # verify that is it displayed in proper section, otherwise warn!
 if($subnet['sectionId']!=$_GET['section'])	{
@@ -64,22 +49,84 @@ if($subnet['sectionId']!=$_GET['section'])	{
 
 # set title
 $location = "subnets";
+
+# NAT search
+$all_nats = array();
+$all_nats_per_object = array();
+
+if ($User->settings->enableNAT==1) {
+    # fetch all object
+    $all_nats = $Tools->fetch_all_objects ("nat", "name");
+
+    if ($all_nats!==false) {
+        foreach ($all_nats as $n) {
+            $out[$n->id] = $n;
+        }
+        $all_nats = $out;
+
+        # reindex
+        $all_nats_per_object = $Tools->reindex_nat_objects ($all_nats);
+    }
+}
 ?>
 
 <!-- content print! -->
 <div class="row" style="margin-bottom: 40px;">
 
 	<!-- subnet details -->
-	<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+	<div class="col-sm-12 col-xs-12 <?php if(@$_GET['sPage']=="changelog" || @$_GET['sPage']=="location") { print "col-lg-12 col-md-12";} else { print "col-lg-8 col-md-8"; } ?>">
 		<!-- for adding IP address! -->
 		<div id="subnetId" style="display:none;"><?php print $subnet['id']; ?></div>
-		<?php include('subnet-details.php'); ?>
+
+        <!-- subnet details upper table -->
+        <h4><?php print _('Subnet details'); ?></h4>
+        <hr>
+
+        <!-- tabs -->
+        <ul class='nav nav-tabs ip-det-switcher' style='margin-bottom:20px;'>
+            <li role='presentation' <?php if(!isset($_GET['sPage'])) print " class='active'"; ?>> <a href='<?php print create_link("subnets", $subnet['sectionId'], $subnet['id']); ?>'><?php print _("Subnet details"); ?></a></li>
+            <?php if($User->is_admin(false)) { ?>
+            <li role='presentation' <?php if(@$_GET['sPage']=="permissions") print "class='active'"; ?>><a href='<?php print create_link("subnets", $subnet['sectionId'], $subnet['id'], "permissions"); ?>'><?php print _("Permissions"); ?></a></li>
+            <?php } ?>
+            <?php if($User->settings->enableNAT==1) { ?>
+            <li role='presentation' <?php if(@$_GET['sPage']=="nat") print "class='active'"; ?>> <a href='<?php print create_link("subnets", $subnet['sectionId'], $subnet['id'], "nat"); ?>'><?php print _("NAT"); ?></a></li>
+            <?php } ?>
+            <?php if($User->settings->enableLocations==1) { ?>
+            <li role='presentation' <?php if(@$_GET['sPage']=="location") print "class='active'"; ?>> <a href='<?php print create_link("subnets", $subnet['sectionId'], $subnet['id'], "location"); ?>'><?php print _("Location"); ?></a></li>
+            <?php } ?>
+
+            <li role='presentation' <?php if(@$_GET['sPage']=="changelog") print " class='active'"; ?>> <a href='<?php print create_link("subnets", $subnet['sectionId'], $subnet['id'], "changelog"); ?>'><?php print _("Changelog"); ?></a></li>
+        </ul>
+
+        <!-- details -->
+        <?php
+        if(!isset($_GET['sPage'])) {
+        	include("subnet-details/subnet-details.php");
+        }
+        if(@$_GET['sPage']=="permissions") {
+            include("subnet-details/subnet-permissions.php");
+        }
+        if($User->settings->enableNAT==1 && @$_GET['sPage']=="nat") {
+            include("subnet-details/subnet-nat.php");
+        }
+        if(@$_GET['sPage']=="changelog") {
+            include("subnet-details/subnet-changelog.php");
+        }
+        if(@$_GET['sPage']=="location") {
+            include("subnet-details/subnet-location.php");
+        }
+    	?>
+
 	</div>
 
+    <?php if(@$_GET['sPage']!="changelog") { ?>
+
 	<!-- subnet graph -->
+	<?php if(@$_GET['sPage']!="location") { ?>
 	<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-		<?php include('subnet-graph.php'); ?>
+		<?php include('subnet-details/subnet-graph.php'); ?>
 	</div>
+	<?php } ?>
 
 	<!-- subnet slaves list -->
 	<div class="col-xs-12 subnetSlaves">
@@ -118,5 +165,8 @@ $location = "subnets";
 		}
 		?>
 	</div>
+	<?php } ?>
 
 </div>
+
+

@@ -336,7 +336,7 @@ class PowerDNS extends Common_functions {
         $ttl[1800]     = "30 minutes";
         $ttl[2700]    = "45 minutes";
         $ttl[3600]     = "1 hour";
-        $ttl[7400]    = "2 hours";
+        $ttl[7200]    = "2 hours";
         $ttl[21600] = "6 hours";
         $ttl[43200]    = "12 hours";
         $ttl[86400]    = "24 hours";
@@ -585,7 +585,7 @@ class PowerDNS extends Common_functions {
      *
      * @access public
      * @param mixed $name
-     * @return void
+     * @return array|false
      */
     public function fetch_domain_by_name ($name) {
         # fetch
@@ -831,6 +831,9 @@ class PowerDNS extends Common_functions {
         # null empty values
         $record = $this->reformat_empty_array_fields ($record, null);
 
+        # checks
+        $this->validate_record_content ($record);
+
         # execute
         try { $this->Database_pdns->insertObject("records", $record); }
         catch (Exception $e) {
@@ -865,6 +868,9 @@ class PowerDNS extends Common_functions {
     public function update_domain_record ($domain_id, $content, $print_success=true) {
         // validate domain
         if ($this->fetch_domain ($domain_id)===false)    { $this->Result->show("danger", "Invalid domain id", true); }
+
+        # checks
+        $this->validate_record_content ($record);
 
         // remove domain_id if set !
         unset($content->domain_id);
@@ -1134,6 +1140,31 @@ class PowerDNS extends Common_functions {
         if (!is_null($disabled))$record->disabled    = $disabled;                                         // enables of disables record
         // return record
         return (array) $record;
+    }
+
+    /**
+     * Validates record content.
+     *
+     * @access private
+     * @param mixed $record
+     * @return void
+     */
+    private function validate_record_content ($record) {
+        // to object
+        $record = (object) $record;
+
+        // a record check
+        if($record->type=="A") {
+            if (filter_var($record->content, FILTER_VALIDATE_IP) === false) {
+                $this->Result->show("danger", _("A record must be an IP address"), true);
+            }
+        }
+        // AAA records check
+        elseif($record->type=="AAAA") {
+            if (filter_var($record->content, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+                $this->Result->show("danger", _("AAAA record must be an IP address"), true);
+            }
+        }
     }
 
     /**

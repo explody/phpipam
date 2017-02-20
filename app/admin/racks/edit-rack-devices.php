@@ -21,13 +21,16 @@ $User->check_user_session();
 # strip input tags
 $_POST = $Admin->strip_input_tags($_POST);
 
+# validate action
+$Admin->validate_action ($_POST['action'], true);
+
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['rackid']))		{ $Result->show("danger", _("Invalid ID"), true, true); }
 
 # remove or add ?
 if ($_POST['action']=="remove") {
     # validate csrf cookie
-    $User->csrf_cookie ("validate", "rack_devices", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true) : "";
+    $User->csrf_cookie ("validate", "rack_devices", $_POST['csrf_cookie']) === false ? $Result->show("danger", _("Invalid CSRF cookie"), true, true) : "";
     # set values
     $values = array("id"=>$_POST['deviceid'],
                     "rack"=>"",

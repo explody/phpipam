@@ -215,6 +215,17 @@ $(document).ready(function() {
 	</td>
 </tr>
 
+<!-- nat -->
+<tr>
+	<td class="title"><?php print _('Enable NAT'); ?></td>
+	<td>
+		<input type="checkbox" class="input-switch" value="1" name="enableNAT" <?php if($settings['enableNAT'] == 1) print 'checked'; ?>>
+	</td>
+	<td class="info2">
+		<?php print _('Enable or disable NAT module'); ?>
+	</td>
+</tr>
+
 <!-- powerdns -->
 <tr>
 	<td class="title"><?php print _('Enable PowerDNS'); ?></td>
@@ -225,6 +236,19 @@ $(document).ready(function() {
 		<?php print _('Enable or disable PowerDNS module'); ?>
 	</td>
 </tr>
+
+<!-- dHCP -->
+<!--
+<tr>
+	<td class="title"><?php print _('Enable DHCP'); ?></td>
+	<td>
+		<input type="checkbox" class="input-switch" value="1" name="enableDHCP" <?php if($settings['enableDHCP'] == 1) print 'checked'; ?>>
+	</td>
+	<td class="info2">
+		<?php print _('Enable or disable DHCP module'); ?>
+	</td>
+</tr>
+-->
 
 <!-- firewall zone management -->
 <tr>
@@ -303,7 +327,18 @@ $(document).ready(function() {
 	</td>
 </tr>
 
-<!-- Rack -->
+<!-- Locations -->
+<tr>
+	<td class="title"><?php print _('Locations module'); ?></td>
+	<td>
+		<input type="checkbox" class="input-switch" value="1" name="enableLocations" <?php if($settings['enableLocations'] == 1) print 'checked'; ?>>
+	</td>
+	<td class="info2">
+		<?php print _('Enable or disable locations module'); ?>
+	</td>
+</tr>
+
+<!-- SNMP -->
 <tr>
 	<td class="title"><?php print _('SNMP module'); ?></td>
 	<td>
@@ -311,6 +346,48 @@ $(document).ready(function() {
 	</td>
 	<td class="info2">
 		<?php print _('Enable or disable SNMP module for devices'); ?>
+	</td>
+</tr>
+
+
+<!-- pstn -->
+<tr>
+	<td class="title"><?php print _('PSTN module'); ?></td>
+	<td>
+		<input type="checkbox" class="input-switch" value="1" name="enablePSTN" <?php if($settings['enablePSTN'] == 1) print 'checked'; ?>>
+	</td>
+	<td class="info2">
+		<?php print _('Enable or disable PSTN module to manage phone numbers'); ?>
+	</td>
+</tr>
+
+<!-- Link fields -->
+<tr>
+	<td class="title"><?php print _('Link addresses'); ?></td>
+	<td>
+		<select name="link_field" class="form-control input-sm input-w-auto">
+		<?php
+        # fetch all custom IP fields
+        $custom_fields = $Tools->fetch_custom_fields ('ipaddresses');
+        $custom_fields2[]['name'] = "None";
+        $custom_fields2[]['name'] = "ip_addr";
+        $custom_fields2[]['name'] = "dns_name";
+        $custom_fields2[]['name'] = "mac";
+        $custom_fields2[]['name'] = "owner";
+        // merge
+        $custom_fields = array_merge($custom_fields2, $custom_fields);
+
+		//default
+		foreach($custom_fields as $k=>$d) {
+			if($d['name']==$settings['link_field'])     { print "<option value='$d[name]' selected='selected'>$d[name]</option>"; }
+			else						                { print "<option value='$d[name]' 				     >$d[name]</option>"; }
+		}
+		?>
+		</select>
+
+	</td>
+	<td class="info2">
+		<?php print _('Display linked addresses from another subnet if it matches selected field'); ?>
 	</td>
 </tr>
 
@@ -510,6 +587,17 @@ $(document).ready(function() {
 	</td>
 	<td class="info2">
 		<?php print _('Select which view you would prefer on the menu'); ?>
+	</td>
+</tr>
+
+<!-- Logo -->
+<tr>
+	<td class="title"><?php print _('Upload logo'); ?></td>
+	<td>
+	    <a class="btn btn-sm btn-default" id="upload-logo"><i class="fa fa-upload"></i> <?php print _("Upload"); ?></a>
+	</td>
+	<td class="info2">
+		<?php print _('Upload custom logo'); ?>
 	</td>
 </tr>
 

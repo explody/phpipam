@@ -44,7 +44,7 @@ if($permission != 0) {
 			$sizeMyFields[$field['name']] = 0;				// default value
 			# check against each IP address
 			foreach($section_subnets as $subn) {
-				if(strlen($subn->$field['name']) > 0) {
+				if(strlen($subn->{$field['name']}) > 0) {
 					$sizeMyFields[$field['name']]++;		// +1
 				}
 			}
@@ -85,7 +85,7 @@ if($permission != 0) {
         print "<tbody>";
 
 		# add new link
-		if ($permission>2) {
+		if ($permission>1) {
 		print "<tr>";
 		print "	<td colspan='$colCount'>";
 		print "		<button class='btn btn-sm btn-default editSubnet' data-action='add' data-sectionid='$section[id]' data-subnetId='' rel='tooltip' data-placement='right' title='"._('Add new subnet to section')." $section[name]'><i class='fa fa-plus'></i> "._('Add subnet')."</button>";

@@ -18,6 +18,14 @@ class Vrfs_controller extends Common_api_functions {
 	public $_params;
 
 	/**
+	 * Custom address fields
+	 *
+	 * @var mixed
+	 * @access public
+	 */
+	public $custom_fields;
+
+	/**
 	 * Database object
 	 *
 	 * @var mixed
@@ -115,9 +123,10 @@ class Vrfs_controller extends Common_api_functions {
 	 * Read vrf
 	 *
 	 *	identifiers:
-	 *		- NONE				// returns all VRFs
-	 *		- {id}				// returns VRF by id
-	 *		- {id}/subnets/		// subnets inside vrf
+	 *		- /				        // returns all VRFs
+	 *		- /custom_fields/		// returns all VRF custom fields
+	 *		- /{id}/				// returns VRF by id
+	 *		- /{id}/subnets/		// subnets inside vrf
 	 *
 	 *
 	 * @access public
@@ -130,6 +139,12 @@ class Vrfs_controller extends Common_api_functions {
 			// check result
 			if($result===false)						{ $this->Response->throw_exception(404, 'No vrfs configured'); }
 			else									{ return array("code"=>200, "data"=>$this->prepare_result ($result, null, true, true)); }
+		}
+		// custom fields
+		if($this->_params->id=="custom_fields") {
+			// check result
+			if(sizeof($this->custom_fields)==0)			{ $this->Response->throw_exception(404, 'No custom fields defined'); }
+			else										{ return array("code"=>200, "data"=>$this->custom_fields); }
 		}
 		// subnets
 		elseif (isset($this->_params->id2)) {
@@ -206,7 +221,7 @@ class Vrfs_controller extends Common_api_functions {
 													{ $this->Response->throw_exception(500, "VRF creation failed"); }
 		else {
 			//set result
-			return array("code"=>201, "data"=>"VRF created", "location"=>"/api/".$this->_params->app_id."/vrfs/".$this->Admin->lastId."/");
+			return array("code"=>201, "message"=>"VRF created", "id"=>$this->Admin->lastId, "location"=>"/api/".$this->_params->app_id."/vrfs/".$this->Admin->lastId."/");
 		}
 	}
 
@@ -238,7 +253,7 @@ class Vrfs_controller extends Common_api_functions {
 													{ $this->Response->throw_exception(500, "Vrf edit failed"); }
 		else {
 			//set result
-			return array("code"=>200, "data"=>"VRF updated");
+			return array("code"=>200, "message"=>"VRF updated");
 		}
 	}
 
@@ -269,7 +284,7 @@ class Vrfs_controller extends Common_api_functions {
 			$this->Admin->remove_object_references ("subnets", "vrfId", $this->_params->id);
 
 			// set result
-			return array("code"=>200, "data"=>"VRF deleted");
+			return array("code"=>200, "message"=>"VRF deleted");
 		}
 	}
 
@@ -294,11 +309,11 @@ class Vrfs_controller extends Common_api_functions {
 	 */
 	private function validate_vrf () {
 		// validate id
-		if(!isset($this->_params->id))														{ $this->Response->throw_exception(400, "Vrf Id is required");  }
+		if(!isset($this->_params->id))														{ $this->Response->throw_exception(409, "Vrf Id is required");  }
 		// validate number
-		if(!is_numeric($this->_params->id))													{ $this->Response->throw_exception(400, "Vrf Id must be numeric"); }
+		if(!is_numeric($this->_params->id))													{ $this->Response->throw_exception(409, "Vrf Id must be numeric"); }
 		// check that it exists
-		if($this->Tools->fetch_object ("vrf", "vrfId", $this->_params->id) === false )		{ $this->Response->throw_exception(400, "Invalid VRF id"); }
+		if($this->Tools->fetch_object ("vrf", "vrfId", $this->_params->id) === false )		{ $this->Response->throw_exception(404, "Invalid VRF id"); }
 	}
 
 
@@ -312,9 +327,9 @@ class Vrfs_controller extends Common_api_functions {
 		// check for POST method
 		if($_SERVER['REQUEST_METHOD']=="POST") {
 			// check name
-			if(strlen($this->_params->name)==0)												{ $this->Response->throw_exception(400, "VRF name is required"); }
+			if(strlen($this->_params->name)==0)												{ $this->Response->throw_exception(409, "VRF name is required"); }
 			// check that it exists
-			if($this->Tools->fetch_object ("vrf", "name", $this->_params->name) !== false )	{ $this->Response->throw_exception(400, "VRF with that name already exists"); }
+			if($this->Tools->fetch_object ("vrf", "name", $this->_params->name) !== false )	{ $this->Response->throw_exception(409, "VRF with that name already exists"); }
 		}
 		// update check
 		else {
@@ -323,7 +338,7 @@ class Vrfs_controller extends Common_api_functions {
 
 			if(isset($this->_params->name)) {
 				if ($this->_params->name != $vrf_old->name) {
-					if($this->Tools->fetch_object ("vrf", "name", $this->_params->name))	{ $this->Response->throw_exception(400, "VRF with that name already exists"); }
+					if($this->Tools->fetch_object ("vrf", "name", $this->_params->name))	{ $this->Response->throw_exception(409, "VRF with that name already exists"); }
 				}
 			}
 		}

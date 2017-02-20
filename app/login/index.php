@@ -1,4 +1,5 @@
 <?php
+header('X-XSS-Protection:1; mode=block');
 # verify php build
 include('functions/checks/check_php_build.php');		# check for support for PHP modules and database connection
 
@@ -9,6 +10,7 @@ if( !empty($_SERVER['PHP_AUTH_USER']) ) {
 	// Redirect user where he came from, if unknown go to dashboard.
 	if( isset($_COOKIE['phpipamredirect']) )    { header("Location: ".$_COOKIE['phpipamredirect']); }
 	else                                        { header("Location: ".create_link("dashboard")); }
+	exit();
 }
 ?>
 
@@ -22,7 +24,7 @@ if( !empty($_SERVER['PHP_AUTH_USER']) ) {
 	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 
 	<meta name="Description" content="">
-	<meta name="title" content="<?php print $User->settings->siteTitle; ?>">
+	<meta name="title" content="<?php print $User->settings->siteTitle; ?> :: login">
 	<meta name="robots" content="noindex, nofollow">
 	<meta http-equiv="X-UA-Compatible" content="IE=9" >
 
@@ -32,7 +34,7 @@ if( !empty($_SERVER['PHP_AUTH_USER']) ) {
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 
 	<!-- title -->
-	<title><?php print $User->settings->siteTitle; ?></title>
+	<title><?php print $User->settings->siteTitle; ?> :: login</title>
 
 	<!-- css -->
 	<link rel="stylesheet" type="text/css" href="css/1.2/bootstrap/bootstrap.min.css">
@@ -78,10 +80,22 @@ if( !empty($_SERVER['PHP_AUTH_USER']) ) {
 
 <!-- header -->
 <div class="row header-install" id="header">
-	<div class="col-xs-12">
-		<div class="hero-unit" style="padding:20px;margin-bottom:10px;">
-			<a href="<?php print create_link(null); ?>"><?php print $User->settings->siteTitle." | "._('login');?></a>
+    <!-- logo -->
+	<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+    <?php
+	if(file_exists( "css/1.2/images/logo/logo.png")) {
+    	print "<img style='width:220px;margin:10px;margin-top:20px;' src='css/1.2/images/logo/logo.png'>";
+	}
+    ?>
+	</div>
+	<!-- title -->
+	<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+		<div class="hero-unit" style="padding:20px;margin-bottom:10px;margin-top: 10px;">
+			<a href="<?php print create_link(null); ?>"><?php print $User->settings->siteTitle;?></a>
+            <p class="muted"><?php print _("Login"); ?></p>
 		</div>
+	</div>
+	<div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
 	</div>
 </div>
 
@@ -124,6 +138,13 @@ if( !empty($_SERVER['PHP_AUTH_USER']) ) {
 			# destroy session
 			$User->destroy_session();
 		}
+
+		//check if SAML2 login is possible
+		$saml2settings=$Tools->fetch_object("usersAuthMethod", "type", "SAML2");
+		if($saml2settings!=false){
+			$Result->show("success", _('You can login with SAML2 <a href="'.create_link('saml2').'">here</a>'));
+		}
+
 		?>
 	</div>
 

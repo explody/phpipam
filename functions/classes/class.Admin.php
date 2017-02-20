@@ -319,10 +319,11 @@ class Admin extends Common_functions {
 	 * @param mixed $table
 	 * @param mixed $field
 	 * @param mixed $old_value
+	 * @param mixed $new_value (Default: NULL)
 	 * @return null|false
 	 */
-	public function remove_object_references ($table, $field, $old_value) {
-		try { $this->Database->runQuery("update `$table` set `$field` = NULL where `$field` = ?;", array($old_value)); }
+	public function remove_object_references ($table, $field, $old_value, $new_value = NULL) {
+		try { $this->Database->runQuery("update `$table` set `$field` = ? where `$field` = ?;", array($new_value, $old_value)); }
 		catch (Exception $e) {
 			$this->Result->show("danger", _("Error: ").$e->getMessage(), false);
 			return false;
@@ -620,7 +621,6 @@ class Admin extends Common_functions {
 	public function replace_fields ($field, $search, $replace) {
 		# check number of items
 		$count = $this->count_database_objects ("ipaddresses", $field, "%$search%", true);
-		var_dump($count);
 		# if some exist update
 		if($count>0) {
 			# update

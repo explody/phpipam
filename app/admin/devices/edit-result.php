@@ -62,6 +62,11 @@ if (strlen(@$device['rack']>0)) {
 $custom = $Tools->fetch_custom_fields('devices');
 if(sizeof($custom) > 0) {
 	foreach($custom as $myField) {
+
+		//replace possible ___ back to spaces
+		$myField['nameTest'] = str_replace(" ", "___", $myField['name']);
+		if(isset($_POST[$myField['nameTest']])) { $_POST[$myField['name']] = $_POST[$myField['nameTest']];}
+
 		//booleans can be only 0 and 1!
 		if($myField['type']=="tinyint(1)") {
 			if($device[$myField['name']]>1) {
@@ -69,11 +74,10 @@ if(sizeof($custom) > 0) {
 			}
 		}
 		//not null!
-		if($myField['Null']=="NO" && strlen($device[$myField['name']])==0) {
-																		{ $Result->show("danger", $myField['name'].'" can not be empty!', true); }
-		}
+		if($myField['Null']=="NO" && strlen($device[$myField['name']])==0) { $Result->show("danger", $myField['name'].'" can not be empty!', true); }
+
 		# save to update array
-		$update[$myField['name']] = $device[$myField['name']];
+		$update[$myField['name']] = $device[$myField['nameTest']];
 	}
 }
 
@@ -83,7 +87,8 @@ $values = array("id"=>@$device['switchId'],
 				"ip_addr"=>@$device['ip_addr'],
 				"type"=>@$device['type'],
 				"description"=>@$device['description'],
-				"sections"=>@$device['sections']
+				"sections"=>@$device['sections'],
+				"location"=>@$device['location_item']
 				);
 # custom fields
 if(isset($update)) {
@@ -105,6 +110,8 @@ if($_POST['action']=="delete"){
 	# remove all references from subnets and ip addresses
 	$Admin->remove_object_references ("subnets", "device", $values["id"]);
 	$Admin->remove_object_references ("ipaddresses", "switch", $values["id"]);
+	$Admin->remove_object_references ("pstnPrefixes", "deviceId", $values["id"]);
+	$Admin->remove_object_references ("pstnNumbers", "deviceId", $values["id"]);
 }
 
 ?>

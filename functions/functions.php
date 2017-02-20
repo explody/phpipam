@@ -3,6 +3,9 @@
 /* @config file ------------------ */
 require( dirname(__FILE__) . '/../config.php' );
 
+/* @http only cookies ------------------- */
+ini_set('session.cookie_httponly', 1);
+
 /* @debugging functions ------------------- */
 ini_set('display_errors', 1);
 if (!$debugging) { error_reporting(E_ERROR ^ E_WARNING); }
@@ -41,7 +44,7 @@ require( dirname(__FILE__) . '/classes/class.Admin.php' );		//Class for Administ
 require( dirname(__FILE__) . '/classes/class.Mail.php' );		//Class for Mailing
 require( dirname(__FILE__) . '/classes/class.Rackspace.php' );	//Class for Racks
 require( dirname(__FILE__) . '/classes/class.SNMP.php' );	    //Class for SNMP queries
-
+require( dirname(__FILE__) . '/classes/class.DHCP.php' );	    //Class for DHCP
 
 # save settings to constant
 if($_GET['page']!="install" ) {
@@ -67,7 +70,7 @@ function create_link ($l0 = null, $l1 = null, $l2 = null, $l3 = null, $l4 = null
 	global $User;
 
 	# set normal link array
-	$el = array("page", "section", "subnetId", "sPage", "ipaddrid");
+	$el = array("page", "section", "subnetId", "sPage", "ipaddrid", "tab");
 	// override for search
 	if ($l0=="tools" && $l1=="search")
     $el = array("page", "section", "addresses", "subnets", "vlans", "ip");
@@ -82,6 +85,11 @@ function create_link ($l0 = null, $l1 = null, $l2 = null, $l3 = null, $l4 = null
 		elseif(!is_null($l1))	{ $link = "$l0/$l1/"; }
 		elseif(!is_null($l0))	{ $link = "$l0/"; }
 		else					{ $link = ""; }
+
+		# IP search fix
+		if ($l0=="tools" && $l1=="search" && isset($l2) && substr($link,-1)=="/") {
+    		$link = substr($link, 0, -1);
+		}
 	}
 	# normal
 	else {

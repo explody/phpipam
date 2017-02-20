@@ -10,8 +10,6 @@
   src: local('Source Sans Pro Light'), local('SourceSansPro-Light'), url("../fonts/source_sans_pro/SourceSansPro-Light.woff2") format('woff2');
 }
 
-
-
 /* @general ---------- */
 body {
 	font-size: 13px;
@@ -20,6 +18,9 @@ body {
 input,
 select {
 	font-weight: 300;
+}
+div.checkbox {
+    padding-left: 0px;
 }
 table.table-full {
 	width: 100%;
@@ -68,6 +69,39 @@ table.multicast tr.subnets-title td {
     border-bottom: medium double #ddd !important;
 }
 
+table tr.similar td {
+    font-size: 11px;
+    color: #999;
+    background: white;
+    border: none !important;
+}
+table tr.similar-last td  {
+    border-bottom: 1px solid #eee !important;
+}
+table tr.similar td a {
+    color: #999;
+}
+table tr.similar td:nth-child(1) {
+    font-size: 11px;
+    padding-left: 35px !important;
+}
+table tr.similar-title td:nth-child(1) {
+    font-size: 11px;
+    padding-left: 12px !important;
+}
+table tr.similar td:nth-child(1) {
+    background: white url("../../1.2/images/li-dns.png") no-repeat 17px -5px !important;
+}
+table tr.similar-last td:nth-child(1) {
+    background: white url("../../1.2/images/li-dns-last.png") no-repeat 17px -5px !important;
+}
+table tr.similar-title td:nth-child(1) {
+    background: white !important;
+}
+table td.stats-badge {
+    text-align: right !important;
+    border-radius: 3px;
+}
 
 hr {
   margin: 5px;
@@ -356,9 +390,24 @@ ul.submenu-dns li:last-child {
 }
 ul.submenu-dns li i {
 	color: #e1e1e1 !important;
-	padding-top:8px !important;
+	padding-top: 9px !important;
 	padding-left: 3px !important;
 }
+
+ul.submenu-linked li {
+	list-style: none;
+	background: url("../../1.2/images/li-dns.png") no-repeat 4px -1px !important;
+}
+ul.submenu-linked li:last-child {
+	list-style: none;
+	background: url("../../1.2/images/li-dns-last.png") no-repeat 4px -1px !important;
+}
+ul.submenu-linked li i {
+	color: #e1e1e1 !important;
+	padding-top: 9px !important;
+	padding-left: 3px !important;
+}
+
 table.ipaddresses tr:hover ul.submenu-dns li i {
 /* 	color: #ffffff !important; */
 	text-shadow: 1px 1px 0px white;
@@ -368,6 +417,15 @@ table.ipaddresses hr {
 }
 table.ipaddresses td {
     vertical-align: top !important;
+}
+table.ipaddresses td.unused {
+    background: rgba(223, 240, 216, 0.35) !important;
+    text-shadow: 1px 1px 1px white;
+    color: #aaa;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+
+    text-shadow: 1px 1px 0px white;
 }
 
 
@@ -454,7 +512,7 @@ td.info2 {
 
 	padding: 0px;
 	padding-top: 0px;
-	padding-bottom: 10px;
+	padding-bottom: 0px;
 	padding-right: 50px;
 
 	margin-bottom: 0px;
@@ -468,7 +526,7 @@ td.info2 {
 	padding-right: 0px;
 }
 .hero-pusher {
-	height: 30px;
+	height: 10px;
 	color: white;
 }
 .hero-unit,
@@ -479,6 +537,23 @@ td.info2 {
 	color: white;
 	text-shadow: black 2px 2px 2px;
 /* 	white-space: nowrap;	 */
+}
+.hero-unit p.muted {
+    text-shadow: none;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 10px;
+}
+.hero-unit span.divider {
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #636e74;
+}
+.hero-unit span {
+    color: #636e74;
+}
+span.strong {
+    font-weight: bold;
 }
 
 /* @usermenu top */
@@ -686,10 +761,10 @@ table#subnetsMenu td#subnetsLeft .menu-tools {
 	background: #282b2e
 }
 #menu-navbar .navbar-nav>li>a {
-	padding: 10px 12px;
+	padding: 12px 12px;
 }
 #menu-navbar ul.navbar-nav li.active a {
-	padding-bottom: 11px;
+/* 	padding-bottom: 11px; */
 }
 #menu-navbar ul li.active a,
 #menu-navbar ul li.dropdown.open a,
@@ -815,6 +890,10 @@ table#subnetsMenu td#subnetsLeft .menu-tools {
     margin: 0px !important;
 }
 
+#gmap {
+    border: 5px solid white;
+}
+
 
 
 
@@ -897,6 +976,7 @@ table#subnetsMenu td#subnetsContent {
 	margin-bottom: 0px;
 }
 #dashboard .hContent {
+    border-top: 1px solid #ddd;
 }
 #dashboard h4 i {
 	font-size: 12px;
@@ -922,6 +1002,9 @@ table#subnetsMenu td#subnetsContent {
 }
 #dashboard .table th,
 #dashboard .table td {
+}
+#dashboard .table th {
+    border-top: none;
 }
 #dashboard .drag.widget-dash .inner {
 	border: 1px solid #468847;
@@ -1213,7 +1296,14 @@ ul.dropdown-subnets li a {
 	background: rgba(225,225,225,0.01);
 }
 table.ipaddresses {
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #eee;
+}
+table.ipaddresses td {
+    border-bottom: 1px solid #eee !important;
+}
+table.ipaddresses tr.th td {
+    border-top: 1px solid #eee !important;
+    border-bottom: 1px solid #eee !important;;
 }
 
 /* vlans */
@@ -1335,6 +1425,13 @@ table.ipaddress_subnet .alert {
 }
 table.ipaddress_subnet i.pull-left {
     padding-top: 3px;
+}
+span.badge.badge1 {
+    border-color: #ddd;
+}
+span.alert-success {
+    color: #3c763d;
+    border-color: #d6e9c6;
 }
 a.createfromfree {
 	padding: 1px 4px;
@@ -2410,4 +2507,112 @@ div.jqueryError a {
 #page-rows-form {
     margin-right: 10px;
     margin-left: 5px;
+}
+
+
+
+
+
+
+
+/* @navigation ----------- */
+.navbar.navbar-default.navbar-inverse {
+    background-color: #3a3f44;
+}
+.navbar.navbar-default.navbar-inverse {
+    border: none;
+    border-radius: 0px;
+    border-bottom: 1px solid black !important;
+}
+
+.navbar .navbar-nav li {
+/*     text-align: center; */
+/*     min-width: 85px; */
+}
+.navbar .navbar-nav.icon-ul li {
+    min-width: 0px;
+    white-space: nowrap;
+}
+.navbar-nav.navbar-right:last-child {
+    margin-right: 0px;
+}
+.navbar .navbar-nav li.dropdown > ul > li {
+    text-align: left;
+}
+.navbar .navbar-nav li.dropdown > ul > li:hover a {
+    background: #272b30;
+    color: white;
+}
+.navbar .navbar-nav li.dropdown > ul > li a {
+    color: #878b90;
+}
+.navbar .navbar-nav li.dropdown > ul {
+    background-color: #3a3f44;
+}
+.navbar .navbar-nav > li > a {
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+.navbar .navbar-nav.icon-ul > li > a {
+    border-right: none;
+    border-left: none;
+}
+.navbar .navbar-nav > li > a:hover {
+    background: rgba(39, 43, 49, 0.7);
+}
+.navbar .navbar-nav > li.active > a {
+    background: #272b30;
+}
+@media (min-width: 768px)
+.navbar-collapse {
+    padding-right: 0px !important;
+}
+.navbar-default .navbar-nav > li > a {
+    color: #c8c8c8;
+}
+.navbar i {
+    margin-right: 3px;
+}
+.navbar .icon-ul i  {
+    margin-right: 0px;
+}
+.dropdown-header {
+    font-size: 14px;
+}
+ul.dropdown-menu li a {
+    font-size: 12px;
+}
+.navbar ul.icons li i {
+    color: #636e74;
+}
+.navbar ul.icons li:hover i,
+.navbar ul.icons li.active i {
+    color: white;
+}
+
+.navbar ul li.first-item a,
+.navbar ul li.first-item a:hover {
+    background: #4b7387 !important;
+    color: white;
+}
+.navbar ul li.first-item.administration a,
+.navbar ul li.first-item.administraton a:hover {
+    background: #d9534f !important;
+    color: white;
+}
+.navbar ul li.first-item i {
+    color: white;
+    margin-right: 2px;
+}
+
+
+
+.table.ipaddresses tbody tr:hover td table.popover_table tbody td {
+    background: white !important;
+}
+table.popover_table {
+    margin: 0px;
+}
+table.popover_table td {
+    border: none !important;
 }

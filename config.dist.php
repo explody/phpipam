@@ -53,9 +53,27 @@ define('BASE', "/");
 /**
  * Multicast unique mac requirement - section or vlan
  */
+
 if(!defined('MCUNIQUE'))
 define('MCUNIQUE', "section");
 
+/**
+ * Permit private subpages - private apps under /app/custon/<custom_app_name>/index.php
+ *
+ * (default value: false)
+ *
+ * @var bool
+ * @access public
+ */
+$private_subpages = array();
+
+/**
+ * Google MAPs API key for locations to display map
+ *
+ *  Obtain key: Go to your Google Console (https://console.developers.google.com) and enable "Google Maps JavaScript API"
+ *  from overview tab, so go to Credentials tab and make an API key for your project.
+ */
+$gmaps_api_key = "";
 
 /*  proxy connection details
  ******************************/
