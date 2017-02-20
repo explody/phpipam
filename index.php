@@ -278,8 +278,16 @@ else {
 					if (!isset($_GET['section']))										{ include("app/tools/index.php"); }
 					else {
                         if (!in_array($_GET['section'], $tools_menu_items))             { header("Location: ".create_link("error","400")); die(); }
-						elseif (!file_exists("app/tools/$_GET[section]/index.php")) 	{ header("Location: ".create_link("error","404")); die(); }
-						else 															{ include("app/tools/$_GET[section]/index.php"); }
+						elseif (!file_exists("app/tools/$_GET[section]/index.php") && !file_exists("app/tools/custom/$_GET[section]/index.php"))
+						                                                                { header("Location: ".create_link("error","404")); die(); }
+						else 															{
+    						if(file_exists("app/tools/$_GET[section]/index.php")) {
+        						include("app/tools/$_GET[section]/index.php");
+    						}
+    						else {
+        					    include("app/tools/custom/$_GET[section]/index.php");
+    						}
+                        }
 					}
 				}
 				# admin

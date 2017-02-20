@@ -361,9 +361,9 @@ class Prefix_controller extends Common_api_functions {
      *  GET /prefix/{customer_address_type}/address/
      *  GET /prefix/{customer_address_type}/address/4/
      *
-     * @access private
+     * @access public
      */
-    private function set_query_type () {
+    public function set_query_type () {
         // get subnets in address selection query
         if ( $this->_params->id2 == "address" || $this->_params->id2 == "addresses" || $this->_params->id2 == "ip") {
             // set query type
@@ -507,16 +507,14 @@ class Prefix_controller extends Common_api_functions {
             // find first subnet or address
             if($this->query_type == "address") {
                 $available = $this->find_first_available_address ($subnets);
-                $data_type = "ip";
             }
             else {
                 $available = $this->find_first_available_subnet ($subnets);
-                $data_type = "data";
             }
 
             // response
             if($available===false)      { $this->Response->throw_exception(404, "No $this->query_type found"); }
-            else                        { return array("code"=>200, $data_type=>$available); }
+            else                        { return array("code"=>200, "data"=>$available); }
         }
     }
 
@@ -647,7 +645,7 @@ class Prefix_controller extends Common_api_functions {
 		}
 		else {
     		//set result
-            return array("code"=>201, "message"=>"Address created", "id"=>$this->Addresses->lastId, "subnetId"=>$this->master_subnet->id, "ip"=>$this->Addresses->transform_address ($this->_params->ip_addr, "dotted"), "location"=>"/api/".$this->_params->app_id."/addresses/".$this->Addresses->lastId."/");
+            return array("code"=>201, "message"=>"Address created", "id"=>$this->Addresses->lastId, "subnetId"=>$this->master_subnet->id, "data"=>$this->Addresses->transform_address ($this->_params->ip_addr, "dotted"), "location"=>"/api/".$this->_params->app_id."/addresses/".$this->Addresses->lastId."/");
 		}
     }
 
@@ -835,21 +833,8 @@ class Prefix_controller extends Common_api_functions {
 		$subnet = $this->Subnets->fetch_subnet ("id", $id);
 		if($subnet===false)
 														{ $this->Response->throw_exception(400, "Subnet does not exist"); }
-
-		# set slaves
-		$slaves = $this->Subnets->has_slaves ($id) ? true : false;
-
-		# init controller
-		$this->init_object ("Addresses", $this->Database);
-
-		# fetch all addresses and calculate usage
-		if($slaves) {
-			$addresses = $this->Addresses->fetch_subnet_addresses_recursive ($id, false);
-		} else {
-			$addresses = $this->Addresses->fetch_subnet_addresses ($id);
-		}
-		// calculate
-		$subnet_usage  = $this->Subnets->calculate_subnet_usage (gmp_strval(sizeof($addresses)), $subnet->mask, $subnet->subnet, $subnet->isFull );		//Calculate free/used etc
+        # get usage
+		$subnet_usage = $this->Subnets->calculate_subnet_usage ($subnet, true);
 
 		# return
 		return $subnet_usage;
@@ -948,6 +933,31 @@ class Prefix_controller extends Common_api_functions {
         catch (Exception $e) { $this->Response->throw_exception(500, "Error: ".$e->getMessage()); }
         // result
         return sizeof($objects)>0 ? $objects : false;
+    }
+
+    /**
+     * Returns subnet select parameters.
+     *
+     * @access public
+     * @param string $type (default: "subnets")
+     * @return void
+     */
+    public function get_subnet_select_parameters ($type = "subnets") {
+        // subnets or addresses
+        if($type=="subnets") {
+            return array(
+                        "name"=>$this->custom_field_name,
+                        "order"=>$this->custom_field_orderby,
+                        "direction"=>$this->custom_field_order_direction
+                        );
+        }
+        else {
+            return array(
+                        "name"=>$this->custom_field_name_addr,
+                        "order"=>$this->custom_field_orderby_addr,
+                        "direction"=>$this->custom_field_order_direction_addr
+                        );
+        }
     }
 }
 

@@ -49,7 +49,7 @@ class Responses {
 	 *
 	 * (default value: false)
 	 *
-	 * @var bool
+	 * @var bool|int|double
 	 * @access public
 	 */
 	public $time = false;
@@ -141,6 +141,7 @@ class Responses {
 		// 401 - add location
 		if ($this->result['code']==401) {
 			$this->set_location_header ("/api/".$_REQUEST['app_id']."/user/");
+			header("HTTP/1.1 ".$this->result['code']." ".$this->errors[$this->result['code']]);
 		}
 	}
 

@@ -7,7 +7,6 @@
  */
 class Subnets_controller extends Common_api_functions {
 
-
 	/**
 	 * _params provided
 	 *
@@ -187,7 +186,7 @@ class Subnets_controller extends Common_api_functions {
 	 *		- /custom_fields/				// returns custom fields
 	 *		- /cidr/{subnet}/				// subnets in CIDR format
 	 *		- /search/{subnet}/				// subnets in CIDR format (same as above)
-	 *		- /{id}/usage//				    // returns subnet usage
+	 *		- /{id}/usage/				    // returns subnet usage
 	 *		- /{id}/slaves/ 			    // returns all immediate slave subnets
 	 *		- /{id}/slaves_recursive/ 	    // returns all slave subnets recursively
 	 *		- /{id}/addresses/			    // returns all IP addresses in subnet
@@ -695,19 +694,8 @@ class Subnets_controller extends Common_api_functions {
 		$subnet = $this->Subnets->fetch_subnet ("id", $this->_params->id);
 		if($subnet===false)
 														{ $this->Response->throw_exception(400, "Subnet does not exist"); }
-
-		# set slaves
-		$slaves = $this->Subnets->has_slaves ($this->_params->id) ? true : false;
-
-		# fetch all addresses and calculate usage
-		if($slaves) {
-			$addresses = $this->Addresses->fetch_subnet_addresses_recursive ($this->_params->id, false);
-		} else {
-			$addresses = $this->Addresses->fetch_subnet_addresses ($this->_params->id);
-		}
-		// calculate
-		$subnet_usage  = $this->Subnets->calculate_subnet_usage (gmp_strval(sizeof($addresses)), $subnet->mask, $subnet->subnet, $subnet->isFull );		//Calculate free/used etc
-
+		# get usage
+		$subnet_usage = $this->Subnets->calculate_subnet_usage ($subnet, true);
 		# return
 		return $subnet_usage;
 	}
