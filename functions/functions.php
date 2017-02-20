@@ -61,7 +61,7 @@ require( dirname(__FILE__) . '/classes/class.Components.php' );
 require( dirname(__FILE__) . '/classes/class.Devices.php' );
 
 # save settings to constant
-if($_GET['page']!="install" ) {
+if(@$_GET['page']!="install" ) {
 	# database object
 	$Database 	= new Database_PDO;
 	# try to fetch settings
