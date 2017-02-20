@@ -22,6 +22,9 @@
  *
  */
 
+/* config */
+require( dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.php' );
+include( dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.php');
 
 # include required scripts
 require( FUNCTIONS . '/functions.php' );
@@ -45,12 +48,11 @@ $Scan->reset_debugging(false);
 // set ping statuses
 $statuses = explode(";", $Scan->settings->pingStatus);
 // set mail override flag
-$send_mail = true;
+$send_mail = $config['discovery_check_send_mail'];
 
 // set now for whole script
 $now     = time();
 $nowdate = date ("Y-m-d H:i:s");
-
 
 // response for mailing
 $address_change = array();			// Array with differences, can be used to email to admins
