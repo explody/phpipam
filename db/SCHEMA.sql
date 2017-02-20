@@ -161,7 +161,7 @@ CREATE TABLE `settings` (
   `subnetOrdering` varchar(16) DEFAULT 'subnet,asc',
   `visualLimit` int(2) NOT NULL DEFAULT '0',
   `autoSuggestNetwork` TINYINT(1)  NOT NULL  DEFAULT '0',
-  `pingStatus` VARCHAR(12)  NOT NULL  DEFAULT '1800;3600',
+  `pingStatus` VARCHAR(32)  NOT NULL  DEFAULT '1800;3600',
   `defaultLang` INT(3)  NULL  DEFAULT NULL,
   `editDate` TIMESTAMP  NULL  ON UPDATE CURRENT_TIMESTAMP,
   `vcheckDate` DATETIME  NULL  DEFAULT NULL ,
@@ -172,10 +172,11 @@ CREATE TABLE `settings` (
   `scanPingType` SET('ping','pear','fping')  NOT NULL  DEFAULT 'ping',
   `scanMaxThreads` INT(4)  NULL  DEFAULT '128',
   `prettyLinks` SET("Yes","No")  NOT NULL  DEFAULT 'No',
-  `hiddenCustomFields` VARCHAR(1024)  NULL  DEFAULT NULL,
+  `hiddenCustomFields` text NULL,
   `inactivityTimeout` INT(5)  NOT NULL  DEFAULT '3600',
   `updateTags` TINYINT(1)  NULL  DEFAULT '0',
   `authmigrated` TINYINT  NOT NULL  DEFAULT '0',
+  `maintaneanceMode` TINYINT(1)  NULL  DEFAULT '0',
   `tempShare` TINYINT(1)  NULL  DEFAULT '0',
   `tempAccess` TEXT  NULL,
   `log` SET('Database','syslog', 'both')  NOT NULL  DEFAULT 'Database',
@@ -762,4 +763,4 @@ CREATE TABLE `pstnNumbers` (
 
 # update version
 # ------------------------------------------------------------
-UPDATE `settings` set `version` = '1.27';
+UPDATE `settings` set `version` = '1.29';

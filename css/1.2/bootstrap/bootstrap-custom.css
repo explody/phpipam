@@ -1959,6 +1959,9 @@ td.groups input[type=checkbox] {
 	padding: 0px !important;
 	margin: 0px;
 }
+.nomargin {
+	margin: 0px;
+}
 .noborder input {
 	margin: 0px;
 }
@@ -2647,4 +2650,20 @@ table.popover_table td {
 table.dataTable {
     margin-left: 0 !important;
     margin-right: 0 !important;
+}
+.btn-group.nowrap {
+    white-space: nowrap; // prevent buttons from wrapping when in tight spaces (e.g., the table on the tests page)
+    > .btn {
+        float: inherit;
+    }
+    > .btn + .btn {
+        margin-left: -4px;
+    }
+}
+.btn-group.nowrap .btn,
+.btn-group.nowrap a {
+    float: inherit;
+}
+.btn-group.nowrap .btn + .btn  {
+        margin-left: -4px;
 }

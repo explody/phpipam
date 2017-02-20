@@ -1,5 +1,3 @@
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-
 <table class="donate">
 <tr>
 	<td>
@@ -30,7 +28,5 @@ print '	<td id="donate" class="hidden-xs hidden-sm" rel="tooltip" data-html="tru
 	}
 	}
 	?>
-
 </tr>
 </table>
-</form>

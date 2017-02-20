@@ -302,7 +302,7 @@ class User extends Common_functions {
         // not for api
         if ($this->api !== true) {
             # update user object
-            $this->fetch_user_details ($this->username);
+            $this->fetch_user_details ($this->username, true);
             $_SESSION['ipamlanguage'] = $this->fetch_lang_details ();
         }
     }
@@ -455,6 +455,38 @@ class User extends Common_functions {
             bindtextdomain("phpipam", "./functions/locale");    // Specify location of translation tables
             textdomain("phpipam");                                // Choose domain
         }
+    }
+
+    /**
+     * Checks if system is in maintaneance mode and exits if it is
+     *
+     * @method check_maintaneance_mode
+     * @param  bool    $is_popup (default: false)
+     * @return void
+     */
+    public function check_maintaneance_mode ($is_popup = false) {
+        if($this->settings->maintaneanceMode == "1" && $this->user->username!="Admin") {
+            if($is_popup) {
+                $this->Result->show("warning", "<i class='fa fa-info'></i> "._("System is running in maintenance mode")." !", true, true);
+            }
+            else {
+                $this->Result->show("warning text-center nomargin", "<i class='fa fa-info'></i> "._("System is running in maintenance mode")." !", true);
+            }
+        }
+    }
+
+    /**
+     * Sets maintaneance mode
+     *
+     * @method set_maintaneance_mode
+     * @param  bool $on (default: false)
+     */
+    public function set_maintaneance_mode ($on = false) {
+        # set mode status
+        $maintaneance_mode = $on ? "1" : "0";
+        # execute
+        try { $this->Database->updateObject("settings", array("id"=>1, "maintaneanceMode"=>$maintaneance_mode), "id"); }
+        catch (Exception $e) {}
     }
 
 
@@ -870,11 +902,12 @@ class User extends Common_functions {
      *
      * @access private
      * @param mixed $username
+     * @param bool $force
      * @return void
      */
-    private function fetch_user_details ($username) {
+    private function fetch_user_details ($username, $force = false) {
         # only if not already active
-        if(!is_object($this->user)) {
+        if(!is_object($this->user) || $force) {
             try { $user = $this->Database->findObject("users", "username", $username); }
             catch (Exception $e)     { $this->Result->show("danger", _("Error: ").$e->getMessage(), true);}
 
