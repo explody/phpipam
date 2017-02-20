@@ -2397,7 +2397,7 @@ $(document).on("click", "#add-subnets-to-section-snmp", function() {
 /* ---- Device types ----- */
 //load edit form
 $(document).on("click", ".editDevType", function() {
-	open_popup("400", "app/admin/device-types/edit.php", {tid:$(this).attr('data-tid'), action:$(this).attr('data-action')} );
+	open_popup("400", "app/admin/device-types/edit.php", {id:$(this).attr('data-id'), action:$(this).attr('data-action')} );
 });
 //submit form
 $(document).on("click", "#editDevTypeSubmit", function() {

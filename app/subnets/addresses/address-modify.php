@@ -17,6 +17,7 @@ $User		= new User ($Database);
 $Subnets	= new Subnets ($Database);
 $Tools	    = new Tools ($Database);
 $Addresses	= new Addresses ($Database);
+$Devices    = new Devices ($Database);
 
 # verify that user is logged in
 $User->check_user_session();
@@ -204,7 +205,9 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
 			<input type="hidden" name="addressId" 	value="<?php print $address['id']; ?>">
 			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 			<?php
-			if (strpos($_SERVER['HTTP_REFERER'], "verify-database")!=0) { print "<input type='hidden' name='verifydatabase' value='yes'>"; }
+			if (strpos($_SERVER['HTTP_REFERER'], "verify-database")!=0) { 
+                print "<input type='hidden' name='verifydatabase' value='yes'>"; 
+            }
 			?>
 
 			<?php if($action=="edit" || $action=="delete") { ?>
@@ -305,20 +308,54 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
 		print '<option disabled>'._('Select device').':</option>'. "\n";
 		print '<option value="0" selected>'._('None').'</option>'. "\n";
 
-		// fetch devices
-		$devices = $Tools->fetch_all_objects("devices", "hostname");
-        if ($devices!==false) {
-    		foreach($devices as $device) {
-    			$device = (array) $device;
-    			//check if permitted in this section!
-    			$sections=explode(";", $device['sections']);
-    			if(in_array($subnet['sectionId'], $sections)) {
-    			//if same
-    			if($device['id'] == $address['switch']) { print '<option value="'. $device['id'] .'" selected>'. $device['hostname'] .'</option>'. "\n"; }
-    			else 									{ print '<option value="'. $device['id'] .'">'. $device['hostname'] .'</option>'. "\n";			 }
-    			}
-    		}
-		}
+		// fetch devices for the section
+        $devs = $Devices->for_section(
+                                    $subnet['sectionId'],
+                                    'hostname',
+                                    ($User->settings->devicegrouping ? 
+                                     $User->settings->devicegroupfield : 
+                                     false)
+                                );
+                                
+        // This is a bit silly to do here but there is no consistent way 
+        // to do references between tables yet. 
+        // TODO: proper foreign keys. Consistent obect model
+
+        if ($User->settings->devicegrouping) {
+            $opts = Tools::generate_options($devs, 'id', 'hostname', 
+                                             array('id' => $address['switch']));
+            foreach ($opts as $o) {
+                print "$o\n";
+            }
+        } else {
+            
+            // the group keys will be IDs. Replace them with readable names
+            foreach(array_keys($devs) as $gid) {
+              if (array_key_exists($User->settings->devicegroupfield, Devices::$extRefs)) {
+                  $gobj = $Tools->fetch_object(Devices::$extRefs[$User->settings->devicegroupfield], 'id', $gid);
+                  if ($gobj) {
+                      
+                      if (!empty($gobj->name)) {
+                          $devs[$gobj->name] = $devs[$gid];
+                          unset($devs[$gid]);
+                      }
+                  } 
+              }
+            }
+
+            ksort($devs, SORT_NATURAL | SORT_FLAG_CASE);
+            
+            $ogs = Tools::generate_option_groups($devs, 'id', 'hostname', 
+                                                  array('id' => $address['switch']));
+            foreach ($ogs as $og=>$os) {
+                print "$og\n";
+                foreach ($os as $o) {
+                    print "    $o\n";
+                }
+                print "</optgroup>";
+            }
+        }
+        
 		print '</select>'. "\n";
 		print '	</td>'. "\n";
 		print '</tr>'. "\n";

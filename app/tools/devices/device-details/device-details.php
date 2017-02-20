@@ -32,7 +32,7 @@ if ($_GET['id'] != 0 && sizeof($device) > 0) {
     echo "<td style='vertical-align:top !important;'>";
 
     // set type
-    $device_type = $Tools->fetch_object('deviceTypes', 'tid', $device['type']);
+    $device_type = $Tools->fetch_object('deviceTypes', 'id', $device['type']);
 
     // device
     echo "<table class='ipaddress_subnet table-condensed table-auto'>";
@@ -51,7 +51,7 @@ if ($_GET['id'] != 0 && sizeof($device) > 0) {
     echo '</tr>';
     echo '<tr>';
     echo '	<th>'._('Type').'</th>';
-    echo "	<td>$device_type->tname</td>";
+    echo "	<td>$device_type->name</td>";
     echo '</tr>';
 
     if ($User->settings->enableLocations == '1') {

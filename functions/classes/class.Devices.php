@@ -53,6 +53,21 @@ class Devices extends Tools {
      * @access private
      */
     private $typetbl = 'deviceTypes';
+    
+    /**
+     * Columns in the device table that contain ID references to other tables
+     * and can be resolved to objects.  This maps column name in devices
+     * to the table name.
+     *
+     * @var array
+     * @access public
+     */
+    public static $extRefs = array(
+        'section' =>'sections',
+        'location'=>'locations',
+        'rack'    =>'racks',
+        'type'    =>'deviceTypes'
+    );
       
     /**
      * constructor
@@ -208,7 +223,7 @@ class Devices extends Tools {
 	 * @access public
 	 * @return array Device type objects
 	 */
-    public function types($sort='tname') {
+    public function types($sort='name') {
         return $this->fetch_all_objects($this->typetbl,$sort);
     }
     
@@ -220,12 +235,12 @@ class Devices extends Tools {
 	 * @return string|bool Device type name or false if no result
 	 */
     public function type_name($tid) {
-        $q = "SELECT tname from `" . $this->typetbl . "` where tid=?";
+        $q = "SELECT name from `" . $this->typetbl . "` where id=?";
         $ts = $this->_byquery($q,[$tid]);
         if (empty($ts)) {
             return false;
         } else {
-            return $ts[0]->tname;
+            return $ts[0]->name;
         }
     }
 }

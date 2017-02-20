@@ -12,6 +12,7 @@
         "stefangabos/zebra_session": "dev-master",
         "adldap/adldap": "5.0.0.x-dev",
         "php-excel-reader/spreadsheet-reader": "dev-master",
-        "onelogin/php-saml": "^2.10"
+        "onelogin/php-saml": "^2.10",
+        "robmorgan/phinx": "^0.6.5"
     }
 }

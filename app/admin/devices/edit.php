@@ -99,10 +99,10 @@ $('#switchManagementEdit').change(function() {
 		<td>
 			<select name="type" class="form-control input-sm input-w-auto">
 			<?php
-			$types = $Admin->fetch_all_objects("deviceTypes", "tid");
+			$types = $Admin->fetch_all_objects("deviceTypes", "id");
 			foreach($types as $name) {
-				if($device['type'] == $name->tid)	{ print "<option value='$name->tid' selected='selected'>$name->tname</option>"; }
-				else								{ print "<option value='$name->tid' >$name->tname</option>"; }
+				if($device['type'] == $name->id)	{ print "<option value='$name->id' selected='selected'>$name->name</option>"; }
+				else								{ print "<option value='$name->id' >$name->name</option>"; }
 			}
 			?>
 			</select>

@@ -58,9 +58,9 @@ if (!$firewallZoneSettings['subnetPatternValues']) {
 }
 
 # fetch device types and rekey
-$types = $Tools->fetch_all_objects("deviceTypes", "tid");
+$types = $Tools->fetch_all_objects("deviceTypes", "id");
 foreach($types as $t) {
-	$deviceTypes[$t->tid] = $t;
+	$deviceTypes[$t->id] = $t;
 }
 
 # build the array for name pattern
@@ -172,10 +172,10 @@ $(function() {
 		<td>
 			<select name="deviceType" class="form-control input-w-auto input-sm" style="width:110px;">
 				<?php foreach ($deviceTypes as $deviceType) {
-					if ($firewallZoneSettings['deviceType'] == $deviceType->tid) {
-						print '<option value='.$deviceType->tid.' selected>'.$deviceType->tname.'</option>';
+					if ($firewallZoneSettings['deviceType'] == $deviceType->id) {
+						print '<option value='.$deviceType->id.' selected>'.$deviceType->name.'</option>';
 					} else {
-						print '<option value='.$deviceType->tid.'>'.$deviceType->tname.'</option>';
+						print '<option value='.$deviceType->id.'>'.$deviceType->name.'</option>';
 					}
 				}?>
 			</select>

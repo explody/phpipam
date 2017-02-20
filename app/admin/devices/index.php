@@ -13,10 +13,10 @@ $table_name = 'devices';
 $s = new PagedSearch($Database, $table_name, $default_search_fields, "hostname", true);
 
 # fetch all Device types and reindex
-$device_types = $Admin->fetch_all_objects("deviceTypes", "tid");
+$device_types = $Admin->fetch_all_objects("deviceTypes", "id");
 if ($device_types !== false) {
 	foreach ($device_types as $dt) {
-		$device_types_i[$dt->tid] = $dt;
+		$device_types_i[$dt->id] = $dt;
 	}
 }
 
@@ -179,7 +179,7 @@ else {
         
 		print '	<td><a href="'.create_link("tools","devices",$device['id']).'">'. $device['hostname'] .'</a></td>'. "\n";
 		print '	<td>'. $device['ip_addr'] .'</td>'. "\n";
-		print '	<td>'. @$device_types_i[$device['type']]->tname .'</td>'. "\n";
+		print '	<td>'. @$device_types_i[$device['type']]->name .'</td>'. "\n";
 		print '	<td>'. $device['version'] .'</td>'. "\n";
 		print '	<td class="description">'. $device['description'] .'</td>'. "\n";
 

@@ -600,6 +600,47 @@ $(document).ready(function() {
 	</td>
 </tr>
 
+<!-- Enable device grouping in dropdowns -->
+<tr>
+	<td class="title"><?php print _('Device grouping'); ?></td>
+	<td>
+		<input type="checkbox" value="1" class="input-switch" name="devicegrouping" <?php if($settings['devicegrouping'] == 1) print 'checked'; ?>>
+	</td>
+	<td class="info2">
+		<?php print _('Arrange devices in groups in dropdown menus'); ?>
+	</td>
+</tr>
+
+<!-- Group devices by -->
+<tr>
+	<td class="title"><?php print _('Group Devices by field'); ?></td>
+	<td>
+		<select name="devicegroupfield" class="form-control input-sm input-w-auto">
+			<?php
+			$opts = array(
+                'type'    => 'Type',
+				'vendor'  => 'Vendor',
+                'model'   => 'Model',
+                'version' => 'Version',
+                'sections'=> 'Section',
+                'rack'    => 'Rack',
+                'location'=> 'Location'
+			);
+			foreach($opts as $key=>$line) {
+				if($settings['devicegroupfield'] == $key) { 
+                    print "<option value='$key' selected>$line</option>"; 
+                } else { 
+                    print "<option value='$key'>$line</option>"; 
+                }
+			}
+			?>
+		</select>
+	</td>
+	<td class="info2">
+		<?php print _('Group devices by this field, in the dropdown menus.'); ?>
+	</td>
+</tr>
+
 <!-- Logo -->
 <tr>
 	<td class="title"><?php print _('Upload logo'); ?></td>

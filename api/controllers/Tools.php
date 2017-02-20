@@ -167,8 +167,7 @@ class Tools_controller extends Common_api_functions {
 	 */
 	private function define_sort_key () {
 		// deviceTypes
-		if ($this->_params->id == "deviceTypes")	{ $this->sort_key = "tid"; }
-		elseif ($this->_params->id == "vlans")		{ $this->sort_key = "vlanId"; }
+		if ($this->_params->id == "vlans")		{ $this->sort_key = "vlanId"; }
 		elseif ($this->_params->id == "vrf")		{ $this->sort_key = "vrfId"; }
 		else										{ $this->sort_key = "id"; }
 	}
@@ -589,7 +588,7 @@ class Tools_controller extends Common_api_functions {
 			// numeric
 			if (!is_numeric($this->_params->type))							{ $this->Response->throw_exception(409, "Invalid devicetype identifier"); }
 			// check
-			if ($this->Tools->fetch_object ("deviceTypes", "tid", $this->_params->type)===false)
+			if ($this->Tools->fetch_object ("deviceTypes", "id", $this->_params->type)===false)
 																			{ $this->Response->throw_exception(404, "Device type does not exist"); }
 		}
 	}

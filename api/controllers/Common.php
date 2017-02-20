@@ -330,7 +330,6 @@ class Common_api_functions {
 				if($controller=="vlans")				{ $r->id = $r->vlanId; }
 				if($controller=="tools/vlans")			{ $r->id = $r->vlanId; }
 				if($controller=="vrfs")					{ $r->id = $r->vrfId; }
-				if($this->_params->id=="deviceTypes")	{ $r->id = $r->tid; }
 
 				$m=0;
 				// custom links
@@ -357,7 +356,6 @@ class Common_api_functions {
 				if($controller=="vlans")				{ $result->id = $result->vlanId; }
 				if($controller=="tools/vlans")			{ $result->id = $result->vlanId; }
 				if($controller=="vrfs")					{ $result->id = $result->vrfId; }
-				if($this->_params->id=="deviceTypes")	{ $result->id = $result->tid; }
 
 				$m=0;
 				// custom links
@@ -737,10 +735,6 @@ class Common_api_functions {
 		if($controller=="vrfs") { 
             $this->keys['vrfId'] = "id"; 
         }
-		if($this->_params->controller=="tools" && $this->_params->id=="deviceTypes") { 
-            $this->keys['tid'] = "id"; 
-        }
-        
 
 		// If we have been given result data, it's presumed to be outbound to a client so remap as results
 		if ($result) { 

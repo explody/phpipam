@@ -26,15 +26,15 @@ $_POST = $User->strip_input_tags ($_POST);
 $Admin->validate_action ($_POST['action'], true);
 
 # ID must be numeric
-if($_POST['action']!="add" && !is_numeric($_POST['tid'])) { $Result->show("danger", _("Invalid ID"), true, true); }
+if($_POST['action']!="add" && !is_numeric($_POST['id'])) { $Result->show("danger", _("Invalid ID"), true, true); }
 # set delete flag
 $readonly = $_POST['action']=="delete" ? "readonly" : "";
 
 # fetch device type details
 if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
-	$device = $Admin->fetch_object("deviceTypes", "tid", $_POST['tid']);
+	$deviceType = $Admin->fetch_object("deviceTypes", "id", $_POST['id']);
 	# fail if false
-	$device===false ? $Result->show("danger", _("Invalid ID"), true) : null;
+	$deviceType===false ? $Result->show("danger", _("Invalid ID"), true) : null;
 }
 ?>
 
@@ -53,12 +53,12 @@ if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
 	<tr>
 		<td><?php print _('Name'); ?></td>
 		<td>
-			<input type="text" name="tname" class="form-control input-sm" placeholder="<?php print _('Name'); ?>" value="<?php print @$device->tname; ?>" <?php print $readonly; ?>>
+			<input type="text" name="name" class="form-control input-sm" placeholder="<?php print _('Name'); ?>" value="<?php print @$deviceType->name; ?>" <?php print $readonly; ?>>
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
 			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 			<?php
 			if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
-				print '<input type="hidden" name="tid" value="'. $_POST['tid'] .'">'. "\n";
+				print '<input type="hidden" name="id" value="'. $_POST['id'] .'">'. "\n";
 			}
 			?>
 		</td>
@@ -68,7 +68,7 @@ if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
 	<tr>
 		<td><?php print _('Description'); ?></td>
 		<td>
-			<input type="text" name="tdescription" class="form-control input-sm" placeholder="<?php print _('Description'); ?>" value="<?php print @$device->tdescription; ?>" <?php print $readonly; ?>>
+			<input type="text" name="description" class="form-control input-sm" placeholder="<?php print _('Description'); ?>" value="<?php print @$deviceType->description; ?>" <?php print $readonly; ?>>
 		</td>
 	</tr>
 

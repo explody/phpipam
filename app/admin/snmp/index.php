@@ -11,10 +11,10 @@ $User->check_user_session();
 $Snmp = new phpipamSNMP ();
 
 # fetch all Device types and reindex
-$device_types = $Admin->fetch_all_objects("deviceTypes", "tid");
+$device_types = $Admin->fetch_all_objects("deviceTypes", "id");
 if ($device_types !== false) {
 	foreach ($device_types as $dt) {
-		$device_types_i[$dt->tid] = $dt;
+		$device_types_i[$dt->id] = $dt;
 	}
 }
 

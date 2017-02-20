@@ -146,7 +146,9 @@ class Common_functions  {
 
 
 
-
+    /**************************
+     * Static methods
+     **************************/
 
     /**
      * For use with usort as the callable. Will sort array of objects on $prop
@@ -159,6 +161,80 @@ class Common_functions  {
              return strnatcmp($a->$prop, $b->$prop);
          };
      }
+
+     /**
+ 	 *	Takes an array of objects and returns an array of <option> elements
+      *  for use in <selects>.
+ 	 * 
+      *  @access public
+      *  @param array $objects List of objects on which to iterate 
+      *  @param string $valprop Property of the objects to use for the <option> 
+      *                         value
+      *  @param string $nameprop Property of the objects to use for the content 
+      *                          of the <option>. Defaults to the same as $valprop
+      *  @param array $selected Array in {k=>v} where if object.k === v, we'll 
+      *                         add 'selected'
+      *  @param array $classes List of classes to add to the <option>
+ 	 */
+      public static function generate_options($objects, 
+                                              $valprop, 
+                                              $nameprop = false, 
+                                              $selected = false, 
+                                              $classes = false) {
+           $options = [];
+           foreach ($objects as $obj) {
+               $o = '<option value="' . $obj->$valprop . '"';
+               if ($classes) {
+                   $o = $o . 'class="' . implode(" ", $classes) . '"';
+               }
+               if ($selected) {
+                   // This enables passing multiple possible values to check 
+                   foreach ($selected as $k=>$v) {
+                       if ($obj->$k === $v) {
+                           $o = $o . ' selected';
+                       }
+                   }
+               } 
+               
+               $o = $o . '>' . ($nameprop ? $obj->$nameprop : $obj->valprop) . '</option>';
+               
+               $options[] = $o;
+           }
+           return $options;
+      }
+
+      /**
+       *  Takes an array of objects arranged in groups such as 
+       *   [ grp => array(obj1,obj2,obj3) ]
+       *  and generates an array of option groups and options such as
+       *   [ '<optgroup' => array('<option>','<option>','<option>') ]
+       *  WARN: does not generate or include a closing </optgroup> tag
+       *  See generate_options() for param details
+  	  * 
+       *  @access public
+       *  @param array $objects Array of objects as described above 
+       *  @param array $gclasses List of classes to add to the <optgroup>
+       *  @param array $oclasses List of classes to pass on to generate_options()
+  	 */
+       public static function generate_option_groups($objgroups, 
+                                                     $valprop, 
+                                                     $nameprop = false, 
+                                                     $selected = false,
+                                                     $gclasses = false,
+                                                     $oclasses = false) {
+            $optgroups = [];
+            foreach ($objgroups as $grp=>$objects) {
+                $options = self::generate_options($objects,$valprop,$nameprop,$selected,$oclasses);
+                $og = '<optgroup label="' . $grp . '" ';
+                if ($gclasses) {
+                    $og = $og . 'class="' . implode(" ", $classes) . '" ';
+                }
+                $og = $og . '>';
+                $optgroups[$og] = $options;
+            }
+            
+            return $optgroups;
+       }
 
 	/**
 	 *	@general fetch methods
@@ -1286,8 +1362,6 @@ class Common_functions  {
         	}
     	}
 	}
-
-
 
 
 
