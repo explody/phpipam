@@ -42,12 +42,15 @@ if (strtolower($filetype) == "csv") {
 	# open CSV file
 	$filehdl = fopen(IPAM_ROOT . '/upload/data_import.csv', 'r');
 
+	# set delimiter
+	$Tools->set_csv_delimiter ($filehdl);
+
 	# read header row
 	$row = 0;$col = 0;
 	$line = fgets($filehdl);
 	$row++;
 	$line = str_replace( array("\r\n","\r","\n") , "" , $line);	//remove line break
-	$cols = preg_split("/[;]/", $line); //split by comma or semi-colon
+	$cols = str_getcsv ($line, $Tools->csv_delimiter);
 	foreach ($cols as $val) {
 		$col++;
 		# map import columns to expected fields as per previous window
@@ -59,7 +62,7 @@ if (strtolower($filetype) == "csv") {
 	while (($line = fgets($filehdl)) !== false) {
 		$row++;$col = 0;
 		$line = str_replace( array("\r\n","\r","\n") , "" , $line);	//remove line break
-		$cols = preg_split("/[;]/", $line); //split by comma or semi-colon
+		$cols = str_getcsv ($line, $Tools->csv_delimiter);
 		$record = array();
 		foreach ($cols as $val) {
 			$col++;
