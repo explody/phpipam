@@ -76,7 +76,11 @@ if (!$Database->bootstrap_required()) {
 	try { $settings = $Database->getObject("settings", 1); }
 	catch (Exception $e) { $settings = false; }
 	if ($settings!==false) {
-		define(SETTINGS, json_encode($settings, JSON_UNESCAPED_UNICODE));
+		if (phpversion() < "5.4") {
+			define(SETTINGS, json_encode($settings));
+		}else{
+			define(SETTINGS, json_encode($settings, JSON_UNESCAPED_UNICODE));
+		}
 	}
     
     if ($settings->dbSessions == 'Yes') {

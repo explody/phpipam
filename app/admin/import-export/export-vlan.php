@@ -16,6 +16,7 @@ $cfs = $Tools->fetch_custom_fields('vlans');
 $today = date("Ymd");
 $filename = $today."_phpipam_VLAN_export.xls";
 $workbook = new Spreadsheet_Excel_Writer();
+$workbook->setVersion(8);
 
 //formatting headers
 $format_header =& $workbook->addFormat();
