@@ -318,15 +318,16 @@ class Subnets extends Common_functions {
 	/**
 	 * This function splits subnet into smaller subnets
 	 *
-	 * @access private
-	 * @param mixed $subnet_old
-	 * @param mixed $number
-	 * @param mixed $prefix
+	 * @access public
+	 * @param object $subnet_old
+	 * @param int $number
+	 * @param string $prefix
 	 * @param string $group (default: "yes")
 	 * @param string $strict (default: "yes")
+	 * @param string $copy_custom (default: "yes")
 	 * @return bool
 	 */
-	public function subnet_split ($subnet_old, $number, $prefix, $group="yes", $strict="yes") {
+	public function subnet_split ($subnet_old, $number, $prefix, $group="yes", $strict="yes", $copy_custom="yes") {
 
 		# we first need to check if it is ok to split subnet and get parameters
 		$check = $this->verify_subnet_split ($subnet_old, $number, $group, $strict);
@@ -335,29 +336,45 @@ class Subnets extends Common_functions {
 		$newsubnets = $check[0];
 		$addresses  = $check[1];
 
-		# admin object
+		# admin object and tools object
 		$Admin = new Admin ($this->Database, false);
+		$custom_fields = array ();
+		if($copy_custom=="yes") {
+			$Tools = new Tools ($this->Database);
+			$custom_fields = $Tools->fetch_custom_fields ("subnets");
+		}
 
 		# create new subnets and change subnetId for recalculated hosts
 		$m = 0;
 		foreach($newsubnets as $subnet) {
 			//set new subnet insert values
-			$values = array("description"=>strlen($prefix)>0 ? $prefix.($m+1) : "split_subnet_".($m+1),
-							"subnet"=>$subnet['subnet'],
-							"mask"=>$subnet['mask'],
-							"sectionId"=>$subnet['sectionId'],
-							"masterSubnetId"=>$subnet['masterSubnetId'],
-							"vlanId"=>@$subnet['vlanId'],
-							"vrfId"=>@$subnet['vrfId'],
-							"allowRequests"=>@$subnet['allowRequests'],
-							"showName"=>@$subnet['showName'],
-							"permissions"=>$subnet['permissions']
+			$values = array(
+							"description"    => strlen($prefix)>0 ? $prefix.($m+1) : "split_subnet_".($m+1),
+							"subnet"         => $subnet['subnet'],
+							"mask"           => $subnet['mask'],
+							"sectionId"      => $subnet['sectionId'],
+							"masterSubnetId" => $subnet['masterSubnetId'],
+							"vlanId"         => @$subnet['vlanId'],
+							"vrfId"          => @$subnet['vrfId'],
+							"allowRequests"  => @$subnet['allowRequests'],
+							"showName"       => @$subnet['showName'],
+							"permissions"    => $subnet['permissions'],
+							"nameserverId"   => $subnet_old->nameserverId,
+							"device"		 => $subnet_old->device,
 							);
+			// custom fields
+			if($copy_custom=="yes") {
+				if(sizeof($custom_fields)>0) {
+					foreach ($custom_fields as $myField) {
+						$values[$myField['name']] = $subnet_old->{$myField['name']};
+					}
+				}
+			}
 			//create new subnets
 			$this->modify_subnet ("add", $values);
 
 			//get all address ids
-			unset($ids);
+			$ids = array ();
 			foreach($addresses as $ip) {
 				if($ip->subnetId == $m) {
     				if(!isset($ids)) $ids = array();
@@ -366,7 +383,7 @@ class Subnets extends Common_functions {
 			}
 
 			//replace all subnetIds in IP addresses to new subnet
-			if(isset($ids)) {
+			if(sizeof($ids)>0) {
 				if(!$Admin->object_modify("ipaddresses", "edit-multiple", $ids, array("subnetId"=>$this->lastInsertId)))	{ $this->Result->show("danger", _("Failed to move IP address"), true); }
 			}
 
@@ -1468,15 +1485,20 @@ class Subnets extends Common_functions {
 	 * @param int $sectionId
 	 * @param mixed $new_subnet (cidr)
 	 * @param int $vrfId (default: 0)
+	 * @param int $masterSubnetId (default: 0)
 	 * @return string|false
 	 */
-	public function verify_subnet_overlapping ($sectionId, $new_subnet, $vrfId = 0) {
-	    # fetch section subnets
-	    $sections_subnets = $this->fetch_section_subnets ($sectionId);
+	public function verify_subnet_overlapping ($sectionId, $new_subnet, $vrfId = 0, $masterSubnetId = 0) {
 		# fix null vrfid
 		$vrfId = is_numeric($vrfId) ? $vrfId : 0;
+		// fix null masterSubnetId
+		$masterSubnetId = is_numeric($masterSubnetId) ? $masterSubnetId : 0;
+
+	    # fetch section subnets
+		$sections_subnets = $masterSubnetId==0 ? $this->fetch_section_subnets ($sectionId) : $this->fetch_subnet_slaves ($masterSubnetId);
+
 	    # verify new against each existing
-	    if (sizeof($sections_subnets)>0) {
+	    if (sizeof($sections_subnets)>0 && is_array($sections_subnets)) {
 	        foreach ($sections_subnets as $existing_subnet) {
 	            //only check if vrfId's match
 	            if($existing_subnet->vrfId==$vrfId || $existing_subnet->vrfId==null) {
@@ -1502,7 +1524,6 @@ class Subnets extends Common_functions {
 							}
 							 return _("Subnet $new_subnet overlaps with").' '. $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask." (".$existing_subnet->description.")";
 						}
-
 					}
 	            }
 	        }

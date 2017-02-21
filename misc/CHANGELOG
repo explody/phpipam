@@ -1,4 +1,4 @@
-== 1.29.011
+== 1.29.021
 
     New features:
     ------------
@@ -24,7 +24,6 @@
         + Google maps integration;
     + SAML2 authentication (SSO)
 
-
     Enhancements, changes:
     ----------------------------
     + Folders can now contain addresses;
@@ -42,6 +41,7 @@
         + Extensive first_free subnet calls search speedup;
         + POST transaction locking;
         + All first_free and first_address responses are now "data" instead of "ip" and "subnet" for consistency;
+        + Subnet splitting now copies over custom fields values by default (user custom_fields=no to revert);
         + New methods:
             + users:
                 GET    /user/expires/                         // returns token expiration date
@@ -86,6 +86,7 @@
     + Added last scan info to subnet details;
     + Added option to update address tags when address state change occurs (pingCheck) [#840];
     + Added mantaneance mode;
+    + Added inactive addresses removal script;
 
     Bugfixes:
     ----------------------------
