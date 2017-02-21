@@ -374,7 +374,7 @@ class RackDrawer extends Common_functions {
         $x = imagesx($img) - $width - 8;
         $y = Imagesy($img) +9;
         // imagestring($img, $font, $x/2, $y/2, $text, $color);
-        imagettftext($img, 8, 0, $x/2, $y/2, $color, dirname(__FILE__)."/../../css/1.2/fonts/MesloLGS-Regular.ttf", $text );
+        imagettftext($img, 8, 0, $x/2, $y/2, $color, dirname(__FILE__)."/../../css/".SCRIPT_PREFIX."/fonts/MesloLGS-Regular.ttf", $text );
     }
 
     /**
