@@ -24,3 +24,4 @@ $Subnets->subnet_split ($subnet_old, $_POST['number'], $_POST['prefix'], @$_POST
 $Result->show("success", _("Subnet splitted ok")."!", true);
 
 ?>
+

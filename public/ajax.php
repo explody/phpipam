@@ -49,6 +49,7 @@ if (!$Database->bootstrap_required()) {
     $Subnets	= new Subnets ($Database);
     $Devices    = new Devices ($Database);
     $Components = new Components ($Tools);
+    $Log 		= new Logging ($Database);
 }
 
 $Result 	= new Result ();
@@ -72,7 +73,8 @@ if(isset($_POST)) {
 }
 
 // $_GET will always be set
-$_GET = $Tools->strip_input_tags($_GET);
+$_GET     = $Tools->strip_input_tags($_GET);
+$_REQUEST = $Tools->strip_input_tags($_REQUEST);
 
 // die if our target script does not exist
 if (file_exists($path)) {

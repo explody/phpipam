@@ -110,7 +110,7 @@ class Addresses_controller extends Common_api_functions
     {
         $this->Database = $Database;
         $this->Tools    = $Tools;
-        $this->_params    = $params;
+        $this->_params  = $params;
         $this->Response = $Response;
         // init required objects
         $this->init_object("Subnets", $Database);
@@ -174,12 +174,7 @@ class Addresses_controller extends Common_api_functions
     {
         // subnet Id > read all addresses in subnet
         if ($this->_params->id=="custom_fields") {
-            // check result
-            if (sizeof($this->custom_fields)==0) {
-                $this->Response->throw_exception(404, 'No custom fields defined');
-            } else {
-                return array("code"=>200, "data"=>$this->custom_fields);
-            }
+            return array("code"=>200, "data"=>$this->custom_fields);
         }
         // first free
         elseif ($this->_params->id=="first_free") {
@@ -205,25 +200,19 @@ class Addresses_controller extends Common_api_functions
         elseif ($this->Tools->validate_ip($this->_params->id)!==false && isset($this->_params->id2)) {
             // fetch all in subnet
             $result = $this->Tools->fetch_multiple_objects("ipaddresses", "subnetId", $this->_params->id2);
-            if ($result!==false) {
-                foreach ($result as $k=>$r) {
-                    if ($r->ip !== $this->_params->id) {
-                        unset($result[$k]);
-                    } else {
-                        $result_filtered = $r;
-                    }
-                }
-                if (sizeof($result)==0) {
-                    $result = false;
+
+            foreach ($result as $k=>$r) {
+                if ($r->ip !== $this->_params->id) {
+                    unset($result[$k]);
                 } else {
-                    $result = $result_filtered;
+                    $result_filtered = $r;
                 }
             }
-            if ($result==false) {
-                $this->Response->throw_exception(404, 'No addresses found');
-            } else {
-                return array("code"=>200, "data"=>$result);
+            if (empty($result)) {
+                $result = $result_filtered;
             }
+
+            return array("code"=>200, "data"=>$result);
         }
         // tags
         elseif ($this->_params->id=="tags") {
@@ -235,29 +224,16 @@ class Addresses_controller extends Common_api_functions
                 $result = $this->Tools->fetch_multiple_objects("ipaddresses", "state", $this->_params->id2);
 
                 // filter by subnetId
-                if ($result!==false) {
-                    if (isset($this->_params->subnetId)) {
-                        if (is_numeric($this->_params->subnetId)) {
-                            // filter
-                            foreach ($result as $k=>$v) {
-                                if ($v->subnetId != $this->_params->subnetId) {
-                                    unset($result[$k]);
-                                }
-                            }
-                            // any left
-                            if (sizeof($result)==0) {
-                                $result = false;
-                            }
+                if (isset($this->_params->subnetId)) {
+                    // filter
+                    foreach ($result as $k=>$v) {
+                        if ($v->subnetId != $this->_params->subnetId) {
+                            unset($result[$k]);
                         }
                     }
                 }
 
-                // result
-                if ($result===false) {
-                    $this->Response->throw_exception(404, 'No addresses found');
-                } else {
-                    return array("code"=>200, "data"=>$this->prepare_result($result, "addresses", true, false));
-                }
+                return array("code"=>200, "data"=>$this->prepare_result($result, "addresses", true, false));
             }
             // tags
             else {
@@ -335,23 +311,13 @@ class Addresses_controller extends Common_api_functions
         // search host ?
         elseif (@$this->_params->id=="search_hostname") {
             $result = $this->Tools->fetch_multiple_objects("ipaddresses", "dns_name", $this->_params->id2);
-            // check result
-            if ($result===false) {
-                $this->Response->throw_exception(404, 'Host name not found');
-            } else {
-                return array("code"=>200, "data"=>$this->prepare_result($result, $this->_params->controller, false, false));
-            }
+            return array("code"=>200, "data"=>$this->prepare_result($result, $this->_params->controller, false, false));
         }
         // search host base (initial substring), return sorted by name
         elseif (@$this->_params->id=="search_hostbase") {
             $target = $this->_params->id2."%";
             $result = $this->Tools->fetch_multiple_objects("ipaddresses", "dns_name", $target, "dns_name", true, true);
-            // check result
-            if ($result===false) {
-                $this->Response->throw_exception(404, 'Host name not found');
-            } else {
-                return array("code"=>200, "data"=>$this->prepare_result($result, $this->_params->controller, false, false));
-            }
+            return array("code"=>200, "data"=>$this->prepare_result($result, $this->_params->controller, false, false));
         }
         // false
         else {
@@ -532,15 +498,15 @@ class Addresses_controller extends Common_api_functions
         if ($this->Tools->validate_ip($this->_params->id)!==false && isset($this->_params->id2)) {
             // find
             $result = $this->Tools->fetch_multiple_objects("ipaddresses", "ip_addr", $this->Tools->transform_address($this->_params->id, "decimal"));
-             foreach ($result as $k=>$r) {
-                 if ($r->subnetId !== $this->_params->id2) {
-                     unset($result[$k]);
-                 }
-             }
-             if (!empty($result)) {
-               $result = array_values($result);
-               $this->_params->id = $result[0]->id;
-             }
+            foreach ($result as $k=>$r) {
+                if ($r->subnetId !== $this->_params->id2) {
+                    unset($result[$k]);
+                }
+            }
+            if (!empty($result)) {
+                $result = array_values($result);
+                $this->_params->id = $result[0]->id;
+            }
         }
 
         // Check for id

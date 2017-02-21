@@ -38,15 +38,14 @@ if ($sections!==false) {
 	print "	<th>"._('Device')."</th>";
 	if($User->settings->enableIPrequests == 1) {
 	print "	<th class='hidden-xs hidden-sm'>"._('Requests')."</th>";
+
+	foreach($cfs as $cf) {
+		# hidden?
+		if($cf->visible) {
+			print "	<th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
+		}
 	}
 
-    foreach($cfs as $cf) {
-        # hidden?
-        if($cf->visible) {
-            print " <th class='hidden-xs hidden-sm hidden-md'>$cf->name</th>";
-        }
-    }
-  
 	# actions
 	print "<th class='actions' style='padding:0px;'></th>";
 	print "</tr>";

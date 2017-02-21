@@ -4,9 +4,6 @@
  * Edit switch result
  ***************************/
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
 # validate csrf cookie
 $User->csrf_validate("device", $_POST['csrf_cookie'], $Result);
 

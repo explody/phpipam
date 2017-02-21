@@ -4,9 +4,6 @@
  * Edit device result
  ***************************/
 
-# strip input tags
-$_POST = $Admin->strip_input_tags($_POST);
-
 # validate csrf cookie
 $User->csrf_validate("device_types", $_POST['csrf_cookie'], $Result);
 

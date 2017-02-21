@@ -48,12 +48,15 @@ $Tools	    = new Tools ($Database);
 $Response = new Responses ();
 
 # get phpipam settings
-if(SETTINGS===null)
+if (SETTINGS===null) {
 $settings 	= $Tools->fetch_object ("settings", "id", 1);
+}
 
 # set empty controller for options
 if($_SERVER['REQUEST_METHOD']=="OPTIONS") {
-	if( !isset($_GET['controller']) || $_GET['controller']=="")	{ $_GET['controller'] = "Tools"; }
+    if (!isset($_GET['controller']) || $_GET['controller']=="") {
+        $_GET['controller'] = "Tools";
+    }
 }
 
 /* wrap in a try-catch block to catch exceptions */
@@ -65,15 +68,21 @@ try {
 	/* Validate application ---------- */
 
 	// verify that API is enabled on server
-	if($settings->api!=1) 									{ $Response->throw_exception(503, "API server disabled");}
+    if ($settings->api!=1) {
+        $Response->throw_exception(503, "API server disabled");
+    }
 
 	# fetch app
 	$app = $Tools->fetch_object ("api", "app_id", $_GET['app_id']);
 
 	// verify app_id
-	if($app === false) 										{ $Response->throw_exception(400, "Invalid application id"); }
+    if ($app === false) {
+        $Response->throw_exception(400, "Invalid application id");
+    }
 	// check that app is enabled
-	if($app->app_permissions==="0") 						{ $Response->throw_exception(503, "Application disabled"); }
+    if ($app->app_permissions==="0") {
+        $Response->throw_exception(503, "Application disabled");
+    }
 
 
 	/* Check app security and prepare request parameters ---------- */
@@ -82,8 +91,9 @@ try {
 	if($app->app_security=="crypt") {
 		// verify php extensions
 		foreach (array("mcrypt") as $extension) {
-	    	if (!in_array($extension, get_loaded_extensions()))
-	    													{ $Response->throw_exception(500, 'php extension '.$extension.' missing'); }
+            if (!in_array($extension, get_loaded_extensions())) {
+                $Response->throw_exception(500, 'php extension '.$extension.' missing');
+            }
 		}
 		// decrypt request - to JSON
 		$params = json_decode(trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $app->app_code, base64_decode($_GET['enc_request']), MCRYPT_MODE_ECB)));
@@ -108,21 +118,23 @@ try {
 
 
 	// append POST parameters if POST or PATCH
-	if($_SERVER['REQUEST_METHOD']=="POST" || $_SERVER['REQUEST_METHOD']=="PATCH" || $_SERVER['REQUEST_METHOD']=="DELETE") {
+    if ($_SERVER['REQUEST_METHOD']=="POST" || $_SERVER['REQUEST_METHOD']=="PATCH") {
 		// if application tupe is JSON (application/json)
         if(strpos($_SERVER['CONTENT_TYPE'], "application/json")!==false){
             $rawPostData = file_get_contents('php://input');
             $json = json_decode($rawPostData,true);
-            if(is_array($json))
+            if (is_array($json)) {
             $params = array_merge((array) $params, $json);
+            }
             $params = (object) $params;
         }
 		// if application tupe is XML (application/json)
         elseif(strpos($_SERVER['CONTENT_TYPE'], "application/xml")!==false){
             $rawPostData = file_get_contents('php://input');
             $xml = $Response->xml_to_array($rawPostData);
-            if(is_array($xml))
+            if (is_array($xml)) {
             $params = array_merge((array) $params, $xml);
+            }
             $params = (object) $params;
         }
 		//if application type is default (application/x-www-form-urlencoded)

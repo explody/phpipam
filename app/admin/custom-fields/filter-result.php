@@ -29,3 +29,5 @@ if (sizeof($_POST['visible']) > 0) {
 } 
 
 $Result->show("success", _('Filter saved'));
+
+?>

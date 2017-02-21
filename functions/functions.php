@@ -36,29 +36,29 @@ if(!function_exists('gettext')) {
 // }
 
 /* @classes ---------------------- */
-require_once( dirname(__FILE__) . '/classes/class.Common.php' );		//Class common - common functions
-require_once( dirname(__FILE__) . '/classes/class.PDO.php' );		//Class PDO - wrapper for database
-require_once( dirname(__FILE__) . '/classes/class.User.php' );		//Class for active user management
-require_once( dirname(__FILE__) . '/classes/class.Log.php' );		//Class for log saving
-require_once( dirname(__FILE__) . '/classes/class.Result.php' );		//Class for result printing
-require_once( dirname(__FILE__) . '/classes/class.Install.php' );	//Class for Install
-require_once( dirname(__FILE__) . '/classes/class.Sections.php' );	//Class for sections
-require_once( dirname(__FILE__) . '/classes/class.Subnets.php' );	//Class for subnets
-require_once( dirname(__FILE__) . '/classes/class.Tools.php' );		//Class for tools
-require_once( dirname(__FILE__) . '/classes/class.Addresses.php' );	//Class for addresses
-require_once( dirname(__FILE__) . '/classes/class.Scan.php' );		//Class for Scanning and pinging
-require_once( dirname(__FILE__) . '/classes/class.DNS.php' );		//Class for DNS management
-require_once( dirname(__FILE__) . '/classes/class.PowerDNS.php' );	//Class for PowerDNS management
-require_once( dirname(__FILE__) . '/classes/class.FirewallZones.php' );	//Class for firewall zone management
-require_once( dirname(__FILE__) . '/classes/class.Admin.php' );		//Class for Administration
-require_once( dirname(__FILE__) . '/classes/class.Mail.php' );		//Class for Mailing
-require_once( dirname(__FILE__) . '/classes/class.Rackspace.php' );	//Class for Racks
-require_once( dirname(__FILE__) . '/classes/class.SNMP.php' );	    //Class for SNMP queries
-require_once( dirname(__FILE__) . '/classes/class.DHCP.php' );	    //Class for DHCP
-require_once( dirname(__FILE__) . '/classes/class.PaginationLinks.php' );	    //Class for generating pagination links
-require_once( dirname(__FILE__) . '/classes/class.PagedSearch.php' );
-require_once( dirname(__FILE__) . '/classes/class.Components.php' );
-require_once( dirname(__FILE__) . '/classes/class.Devices.php' );
+require_once( FUNCTIONS . '/classes/class.Common.php' );		//Class common - common functions
+require_once( FUNCTIONS . '/classes/class.PDO.php' );		//Class PDO - wrapper for database
+require_once( FUNCTIONS . '/classes/class.User.php' );		//Class for active user management
+require_once( FUNCTIONS . '/classes/class.Log.php' );		//Class for log saving
+require_once( FUNCTIONS . '/classes/class.Result.php' );		//Class for result printing
+require_once( FUNCTIONS . '/classes/class.Install.php' );	//Class for Install
+require_once( FUNCTIONS . '/classes/class.Sections.php' );	//Class for sections
+require_once( FUNCTIONS . '/classes/class.Subnets.php' );	//Class for subnets
+require_once( FUNCTIONS . '/classes/class.Tools.php' );		//Class for tools
+require_once( FUNCTIONS . '/classes/class.Addresses.php' );	//Class for addresses
+require_once( FUNCTIONS . '/classes/class.Scan.php' );		//Class for Scanning and pinging
+require_once( FUNCTIONS . '/classes/class.DNS.php' );		//Class for DNS management
+require_once( FUNCTIONS . '/classes/class.PowerDNS.php' );	//Class for PowerDNS management
+require_once( FUNCTIONS . '/classes/class.FirewallZones.php' );	//Class for firewall zone management
+require_once( FUNCTIONS . '/classes/class.Admin.php' );		//Class for Administration
+require_once( FUNCTIONS . '/classes/class.Mail.php' );		//Class for Mailing
+require_once( FUNCTIONS . '/classes/class.Rackspace.php' );	//Class for Racks
+require_once( FUNCTIONS . '/classes/class.SNMP.php' );	    //Class for SNMP queries
+require_once( FUNCTIONS . '/classes/class.DHCP.php' );	    //Class for DHCP
+require_once( FUNCTIONS . '/classes/class.PaginationLinks.php' );	    //Class for generating pagination links
+require_once( FUNCTIONS . '/classes/class.PagedSearch.php' );
+require_once( FUNCTIONS . '/classes/class.Components.php' );
+require_once( FUNCTIONS . '/classes/class.Devices.php' );
 
 if(!isset($Database)) {
     try {

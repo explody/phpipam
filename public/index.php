@@ -60,6 +60,9 @@ if($_GET['page'] != "setup" ) {
     # reset url for base
     $url = $User->createURL ();
     
+    $_GET     = $Tools->strip_input_tags($_GET);
+    $_POST    = $Tools->strip_input_tags($_POST);
+    $_REQUEST = $Tools->strip_input_tags($_REQUEST);
 }
 
 /** include proper subpage **/
@@ -77,7 +80,8 @@ elseif($_GET['page']=='temp_share')	{ require(APP . '/temp_share/index.php'); }
 elseif($_GET['page']=='request_ip')	{ require(APP . '/login/index.php'); }
 elseif($_GET['page']=='opensearch')	{ require(APP . '/tools/search/opensearch.php'); }
 else {
-	# verify that user is logged in
+    
+	# ensure that user is logged in
 	$User->check_user_session();
     
     if($_GET['page'] != "migrate" ) {
@@ -98,6 +102,7 @@ else {
 	if(!isset($_COOKIE['table-page-size'])) {
         setcookie("table-page-size", 50, time()+2592000, "/", false, false, false);
 	}
+    
 ?>
 <!DOCTYPE HTML>
 <html lang="en">
@@ -264,6 +269,8 @@ else {
 <div class="container-fluid" id="mainContainer">
         
 		<?php
+        $User->check_maintenance_mode();
+        
 		/* error */
 		if($_GET['page'] == "error") {
 			print "<div id='error' class='container'>";
@@ -309,7 +316,7 @@ else {
 			else {
 				# left menu
 				print '<td id="subnetsLeft">';
-				print '<div id="leftMenu" class="' . menu-$_GET[page] . '">';
+				print '<div id="leftMenu" class="menu-' . $_GET['page'] . '">';
 					if($_GET['page'] == 'subnets' || $_GET['page'] == 'vlan' ||
 					   $_GET['page'] == 'vrf' 	  || $_GET['page'] == 'folder')			{ include(APP . '/subnets/subnets-menu.php'); }
 					else if ($_GET['page'] == 'tools')									{ include(APP . '/tools/tools-menu.php'); }
@@ -320,7 +327,7 @@ else {
 			}
 			# content
 			print '<td id="subnetsContent">';
-			print '<div class="row menu-' . $_GET[page] . ' id="content">';
+			print '<div class="row menu-' . $_GET['page'] . '" id="content">';
 				# subnets
 				if ($_GET['page']=='subnets') {
 					if(@$_GET['sPage'] == 'address-details')							{ include(APP . '/subnets/addresses/address-details-index.php'); }

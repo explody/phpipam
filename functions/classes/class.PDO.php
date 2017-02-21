@@ -208,18 +208,6 @@ abstract class DB {
         // We've introduced depency on php >= 5.6. charset is in the DSN now, this was only required for < 5.3
 		// @$this->pdo->query('SET NAMES \'' . $this->charset . '\';');
 	}
-    
-    /**
-	 * returns the current sql_mode
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function sqlMode() {
-        $statement = $this->pdo->prepare('SELECT @@sql_mode');
-		$statement->execute();
-		return $statement->fetchColumn();
-	}
 
 	/**
 	 * resets conection.
@@ -840,10 +828,10 @@ abstract class DB {
 
         // subnets
         if ($table=="subnets" && $sortField=="subnet_int") {
-    		return $this->getObjectsQuery('SELECT `'.$result_fields.'`,subnet*1 as subnet_int FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortFie    ld.'` ' . ($sortAsc ? '' : 'DESC') . ';', array($value));
+    		return $this->getObjectsQuery('SELECT '.$result_fields.',CAST(subnet AS DECIMAL(39,0)) as subnet_int FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortField.'` ' . ($sortAsc ? '' : 'DESC') . ';', array($value));
         }
         else {
-    		return $this->getObjectsQuery('SELECT '.$result_fields.' FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortField.'` ' . ($sortAsc ? ''     : 'DESC') . ';', array($value));
+    		return $this->getObjectsQuery('SELECT '.$result_fields.' FROM `' . $table . '` WHERE `'. $field .'`'.$negate_operator. $operator .'? ORDER BY `'.$sortField.'` ' . ($sortAsc ? '' : 'DESC') . ';', array($value));
         }
 	}
 

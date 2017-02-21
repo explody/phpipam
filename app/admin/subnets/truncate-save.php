@@ -3,6 +3,7 @@
 /*
  * truncate subnet result
  *********************/
+
 # validate csrf cookie
 $User->csrf_validate("truncate", $_POST['csrf_cookie'], $Result);
 

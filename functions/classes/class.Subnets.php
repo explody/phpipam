@@ -1496,7 +1496,6 @@ class Subnets extends Common_functions {
 							if($this->verify_IPv6_subnet_overlapping ($new_subnet,  $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask)!==false) {
 								 return _("Subnet $new_subnet overlaps with").' '. $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask." (".$existing_subnet->description.")";
 							}
-							 return _("Subnet $new_subnet overlaps with").' '. $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask." (".$existing_subnet->description.")";
 						}
 					}
 					if($existing_subnet->isFolder!=1 && $parent->isFolder==1 && $folder_deny_overlapping) {
@@ -2858,14 +2857,12 @@ class Subnets extends Common_functions {
 	 * @param bool $showSupernetOnly
 	 * @return string
 	 */
-	public function print_subnets_tools( $user, $subnets, $cfs, $print = true ) {
+	public function print_subnets_tools( $user, $subnets, $cfs, $print = true, $showSupernetOnly = 0 ) {
 
 		# tools object
 		$Tools = new Tools ($this->Database);
 		# set hidden fields
 		$this->get_settings ();
-		$hidden_fields = json_decode($this->settings->hiddenCustomFields, true);
-		$hidden_fields = is_array($hidden_fields['subnets']) ? $hidden_fields['subnets'] : array();
 
 		# set html array
 		$html = array();
@@ -3784,7 +3781,7 @@ class Subnets extends Common_functions {
 	    curl_setopt($curl, CURLOPT_URL, $url);
 	    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-	    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Accept: application/json"));
+      curl_setopt($curl, CURLOPT_HTTPHEADER, array("Accept: application/json"));
 	    // fetch result
 		$result = json_decode(curl_exec ($curl));
 	    // http response code
