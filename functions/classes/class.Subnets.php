@@ -1486,9 +1486,10 @@ class Subnets extends Common_functions {
 	 * @param mixed $new_subnet (cidr)
 	 * @param int $vrfId (default: 0)
 	 * @param int $masterSubnetId (default: 0)
+	 * @param bool $folder_deny_overlapping (default: false)
 	 * @return string|false
 	 */
-	public function verify_subnet_overlapping ($sectionId, $new_subnet, $vrfId = 0, $masterSubnetId = 0) {
+	public function verify_subnet_overlapping ($sectionId, $new_subnet, $vrfId = 0, $masterSubnetId = 0, $folder_deny_overlapping = false) {
 		# fix null vrfid
 		$vrfId = is_numeric($vrfId) ? $vrfId : 0;
 		// fix null masterSubnetId
@@ -1522,6 +1523,12 @@ class Subnets extends Common_functions {
 							if($this->verify_IPv6_subnet_overlapping ($new_subnet,  $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask)!==false) {
 								 return _("Subnet $new_subnet overlaps with").' '. $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask." (".$existing_subnet->description.")";
 							}
+							 return _("Subnet $new_subnet overlaps with").' '. $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask." (".$existing_subnet->description.")";
+						}
+					}
+					if($existing_subnet->isFolder!=1 && $parent->isFolder==1 && $folder_deny_overlapping) {
+			            # check overlapping
+						if($this->verify_overlapping ($new_subnet,  $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask)!==false) {
 							 return _("Subnet $new_subnet overlaps with").' '. $this->transform_to_dotted($existing_subnet->subnet).'/'.$existing_subnet->mask." (".$existing_subnet->description.")";
 						}
 					}
