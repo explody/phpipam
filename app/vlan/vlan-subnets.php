@@ -66,7 +66,7 @@ else {
 				$Subnets->reset_subnet_slaves_recursive ();
 				$Subnets->fetch_subnet_slaves_recursive ($subnet['id']);		//fetch all slaves
 				foreach($Subnets->slaves as $s) {
-					$ipCount = $ipCount + $Addresses->count_subnet_addresses ($s['id']);
+					$ipCount = $ipCount + $Addresses->count_subnet_addresses ($s);
 					# subnet and broadcast add used
 					if($Subnets->get_ip_version ($s['subnet'])=="IPv4" && $s['mask']<31) {
 						$ipCount = $ipCount+2;
