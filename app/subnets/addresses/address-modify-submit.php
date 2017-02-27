@@ -13,7 +13,6 @@ $Ping		= new Scan ($Database);
 $User->csrf_validate("address", $_POST['csrf_cookie'], $Result);
 
 $action = $_POST['action'];
-
 //reset delete action form visual visual
 if(isset($_POST['action-visual'])) {
 	if(@$_POST['action-visual'] == "delete") { $action = "delete"; }
