@@ -42,14 +42,17 @@ $('form#login').submit(function() {
 
     $('div#loginCheck').hide();
     //post to check form
-    $.post('app/login/login_check.php', logindata, function(data) {
+    $.post('/ajx/login/login_check', logindata, function(data) {
         $('div#loginCheck').html(data).fadeIn('fast');
         //reload after 2 seconds if succeeded!
         if(data.search("alert alert-success") != -1) {
             showSpinner();
             //search for redirect
-            if($('form#login input#phpipamredirect').length > 0) { setTimeout(function (){window.location=$('form#login input#phpipamredirect').val();}, 1000); }
-            else 												 { setTimeout(loginRedirect, 1000);	}
+            if ($('form#login input#phpipamredirect').length > 0) { 
+                setTimeout(function (){window.location=$('form#login input#phpipamredirect').val();}, 1000); 
+            } else { 
+                setTimeout(loginRedirect, 1000);	
+            }
         }
         else {
 	        hideSpinner();
@@ -68,7 +71,7 @@ $(document).on("submit", "#requestIP", function() {
 	showSpinner();
 
     //post to check form
-    $.post('app/login/request_ip_result.php', postData, function(data) {
+    $.post('ajx/login/request_ip_result', postData, function(data) {
         $('div#requestIPresult').html(data).slideDown('fast');
         hideSpinner();
         //reset sender to prevent duplicates on success
