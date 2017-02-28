@@ -409,6 +409,11 @@ class Tools_controller extends Common_api_functions
         # remap keys
         $this->remap_keys();
 
+		# Get coordinates if locations
+		if($this->_params->id=="locations") {
+			$values = $this->format_location ();
+		}
+
         # check for valid keys
         $values = $this->validate_keys();
 
@@ -694,6 +699,22 @@ class Tools_controller extends Common_api_functions
             return(json_decode($obj, true));
         } else {
             return false;
+    	}
+	}
+
+	/**
+	 * Get latlng from Google
+	 *
+	 * @method format_location
+	 * @return [type]          [description]
+	 */
+	private function format_location () {
+		if((strlen(@$this->_params->lat)==0 || strlen(@$this->_params->long)==0) && strlen(@$this->_params->address)>0) {
+            $latlng = $this->Tools->get_latlng_from_address ($this->_params->address);
+            if($latlng['lat']!=NULL && $latlng['lng']!=NULL) {
+                $this->_params->lat  = $latlng['lat'];
+                $this->_params->long = $latlng['lng'];
+            }
         }
     }
 }
