@@ -11,8 +11,8 @@
             "url": "https://github.com/explody/Spreadsheet_Excel_Writer"
         },
         {
-            "type": "pear",
-            "url": "https://pear.php.net"
+            "type": "vcs",
+            "url": "https://github.com/pear/Net_IPv6"
         }
     ],
     "require-dev": {
@@ -25,12 +25,12 @@
         "robmorgan/phinx": "^0.6.5",
         "symfony/yaml": "~3.2",
         "symfony/finder": "~3.2",
-        "pear/pear-core-minimal": "~1.10",
+        "pear/pear-core-minimal": "~1.10.3",
         "stefangabos/zebra_session": "dev-master",
         "php-excel-reader/spreadsheet-reader": "dev-master",
         "pear/spreadsheet_excel_writer": "dev-master",
         "pear/net_ipv4": "dev-trunk",
-        "pear-pear.php.net/Net_IPv6": "^1.2",
-        "pear-pear.php.net/Net_DNS2": "^1.4"
+        "pear/Net_IPv6": "dev-master",
+        "pear/Net_DNS2": "^1.4"
     }
 }
