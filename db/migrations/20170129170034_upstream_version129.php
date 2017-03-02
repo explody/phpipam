@@ -4,7 +4,7 @@
 require_once(dirname(__FILE__) . '/../../paths.php');
 require_once(FUNCTIONS . '/classes/Migration/class.RepeatableMigration.php');
 
-class Version129 extends Ipam\Migration\RepeatableMigration
+class UpstreamVersion129 extends Ipam\Migration\RepeatableMigration
 {
     public function change()
     {
