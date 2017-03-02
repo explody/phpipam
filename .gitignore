@@ -18,7 +18,6 @@ functions/scripts/custom/
 
 # Ignore generated things
 vendor
-public/static
 bower_components
 node_modules
 composer.lock
