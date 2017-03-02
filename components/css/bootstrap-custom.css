@@ -63,7 +63,7 @@ table.table-threshold td:nth-child(1) {
 table.table-threshold td {
     border-bottom: 1px solid #eee !important;
 }
-table.table-threshold tr:last-child () {
+table.table-threshold tr:last-child {
     border-bottom: none !important;
 }
 table.multicast tr.subnets-title td {
@@ -2679,13 +2679,13 @@ table.popover_table td {
 }
 
 .btn-group.nowrap {
-    white-space: nowrap; // prevent buttons from wrapping when in tight spaces (e.g., the table on the tests page)
-    > .btn {
-        float: inherit;
-    }
-    > .btn + .btn {
-        margin-left: -4px;
-    }
+    white-space: nowrap; /* prevent buttons from wrapping when in tight spaces (e.g., the table on the tests page) */
+}
+.btn-group.nowrap > .btn {
+    float: inherit;
+}
+.btn-group.nowrap > .btn + .btn {
+    margin-left: -4px;
 }
 .btn-group.nowrap .btn,
 .btn-group.nowrap a {

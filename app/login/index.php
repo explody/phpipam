@@ -206,7 +206,7 @@ if (!empty($_SERVER[$user_variable])) {
 	# include proper subpage
 	if($_GET['page'] == "login") 				{ include_once('login_form.php'); }
 	else if ($_GET['page'] == "request_ip") 	{ include_once('request_ip_form.php'); }
-	else 										{ $_GET['subnetId'] = "404"; print "<div id='error'>"; include_once('app/error.php'); print "</div>"; }
+	else 										{ $_GET['code'] = "404"; print "<div id='error'>"; include_once('app/error.php'); print "</div>"; }
 	?>
 
 	<!-- login response -->

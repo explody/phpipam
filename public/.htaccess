@@ -57,6 +57,9 @@ RewriteRule ^ajx/([^/]+)/([^/]+)/?$ ajax.php?a[]=$1&a[]=$2 [L,QSA]
 RewriteRule ^ajx/([^/]+)/([^/]+)/([^/]+)/?$ ajax.php?a[]=$1&a[]=$2&a[]=$3 [L,QSA]
 RewriteRule ^ajx/([^/]+)/([^/]+)/([^/]+)/([^/]+)/?$ ajax.php?a[]=$1&a[]=$2&a[]=$3&a[]=$4 [L,QSA]
 
+# Errors
+RewriteRule ^error/([0-9]+)/?$ error/index.php?code=$1 [L]
+
 # search override
 RewriteRule ^tools/search/(.*)$ index.php?page=tools&section=search&ip=$1 [L]
 

@@ -12,7 +12,7 @@ elseif($Tools->fetch_object("widgets", "wfile", $_GET['section'])===false) {
 }
 else {
     # include requested widget file
-    if(!file_exists(dirname(__FILE__)."/".$_GET['section'].".php"))		{ $_REQUEST['section']="404"; print "<div id='error'>"; include_once(APP . '/error.php'); print "</div>"; }
+    if(!file_exists(dirname(__FILE__)."/".$_GET['section'].".php"))		{ $_REQUEST['code']="404"; print "<div id='error'>"; include_once(APP . '/error.php'); print "</div>"; }
     else																{ include(dirname(__FILE__) . "/".$_GET['section'].".php"); }
 }
 
