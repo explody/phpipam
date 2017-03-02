@@ -103,28 +103,28 @@ class Devices_controller extends Common_api_functions
         $app = $this->Tools->fetch_object('api', 'app_id', $this->_params->app_id);
 
         // methods
-		$result = array();
-		$result['methods'] = array(
-								array("href"=>"/api/".$this->_params->app_id."/devices/", 		
+        $result = array();
+        $result['methods'] = array(
+                                array("href"=>"/api/".$this->_params->app_id."/devices/",
                                       "methods"=>array(
-                                          array("rel"=>"options", 
+                                          array("rel"=>"options",
                                                 "method"=>"OPTIONS"))),
-                                array("href"=>"/api/".$this->_params->app_id."/devices/search/{search_term}", 		
+                                array("href"=>"/api/".$this->_params->app_id."/devices/search/{search_term}",
                                       "methods"=>array(
-                                          array("rel"=>"search", 
-                                                "method"=>"GET"))),                
-								array("href"=>"/api/".$this->_params->app_id."/devices/{id}/", 	
+                                          array("rel"=>"search",
+                                                "method"=>"GET"))),
+                                array("href"=>"/api/".$this->_params->app_id."/devices/{id}/",
                                       "methods"=>array(
                                           array("rel"=>"read", "method"=>"GET"),
-										  array("rel"=>"create", "method"=>"POST"),
-										  array("rel"=>"update", "method"=>"PATCH"),
-										  array("rel"=>"delete", "method"=>"DELETE")
+                                          array("rel"=>"create", "method"=>"POST"),
+                                          array("rel"=>"update", "method"=>"PATCH"),
+                                          array("rel"=>"delete", "method"=>"DELETE")
                                       )
                                 ),
                              );
         # Response
-        return array('code' => 200, 
-                     'data' => array('permissions' => $this->Subnets->parse_permissions($app->app_permissions), 
+        return array('code' => 200,
+                     'data' => array('permissions' => $this->Subnets->parse_permissions($app->app_permissions),
                                      'controllers' => $result));
     }
 
@@ -140,21 +140,16 @@ class Devices_controller extends Common_api_functions
      */
     public function GET()
     {
-
         if (!isset($this->_params->id)) {
-            $result = $this->Tools->fetch_all_objects('devices',  'id');
+            $result = $this->Tools->fetch_all_objects('devices', 'id');
             // result
             if (!$result) {
                 $result = [];  # empty set is not the same as a 404
-            } 
+            }
             return array('code' => 200, 'data' => $this->prepare_result($result, 'devices', true, false));
-            
         } else {
-            
             if ($this->_params->id == 'search') {
                 if (isset($this->_params->id2)) {
-                    
-                    
                     $base_query = "SELECT * from devices where ";
                     
                     # Search all custom fields
@@ -165,9 +160,9 @@ class Devices_controller extends Common_api_functions
                     
                     # Using the search fields, build a string to query parameters chained together with " or "
                     $search_term = $this->_params->id2;
-                    $extended_query = implode(' or ', array_map( 
-                                                         function($k) { 
-                                                             return " $k like ? "; 
+                    $extended_query = implode(' or ', array_map(
+                                                         function ($k) {
+                                                             return " $k like ? ";
                                                          }, $search_fields));
                     
                     # Set up an array of parameters to match the query we built
@@ -201,7 +196,6 @@ class Devices_controller extends Common_api_functions
                 }
 
                 return array('code' => 200, 'data' => $this->prepare_result($result, 'devices', true, false));
-
             }
         }
     }
@@ -251,7 +245,7 @@ class Devices_controller extends Common_api_functions
     {
 
         # Put incoming keys back in order
-        $this->remap_keys(); 
+        $this->remap_keys();
         
         # validations
         $this->validate_post_patch();
@@ -265,7 +259,7 @@ class Devices_controller extends Common_api_functions
         }
 
         # execute update
-        if (!$this->Admin->object_modify('devices', 'edit',  'id', $values)) {
+        if (!$this->Admin->object_modify('devices', 'edit', 'id', $values)) {
             $this->Response->throw_exception(500, $table_name.' object edit failed');
         } else {
             // fetch the updated object and hand it back to the client
@@ -324,18 +318,18 @@ class Devices_controller extends Common_api_functions
     }
     
     /**
-	 * Validates IP address
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function validate_ip () {
-		if (isset($this->_params->ip_addr)) {
-			// check
-			if(strlen($err = $this->Subnets->verify_cidr_address($this->_params->ip_addr."/32"))>1) { 
-                $this->Response->throw_exception(400, $err); 
+     * Validates IP address
+     *
+     * @access private
+     * @return void
+     */
+    private function validate_ip()
+    {
+        if (isset($this->_params->ip_addr)) {
+            // check
+            if (strlen($err = $this->Subnets->verify_cidr_address($this->_params->ip_addr."/32"))>1) {
+                $this->Response->throw_exception(400, $err);
             }
-
-		}
-	}
+        }
+    }
 }

@@ -33,7 +33,7 @@ if(!isset($_GET['page'])) {
 }
 
 # if not install fetch settings etc
-if($_GET['page'] != "setup" ) {
+if($_GET['page'] != "setup") {
 
     try {
         # database object
@@ -43,8 +43,8 @@ if($_GET['page'] != "setup" ) {
         header("Location: /broken/");
     }
     
-    // If setup is not complete, send to setup
-    if ($Database->setup_required()) {
+    // If setup is not complete, send to setup but let errors through
+    if ($Database->setup_required() && $_GET['page'] != "error") {
         header("Location: " . BASE . "setup/");
     }
 
@@ -66,7 +66,7 @@ if($_GET['page'] != "setup" ) {
 }
 
 /** include proper subpage **/
-if($_GET['page']=='setup')          { require(APP . '/setup/index.php'); }
+if($_GET['page']=='setup')	    { require(APP . '/setup/index.php'); }
 elseif($_GET['page']=='migrate')	{ require(APP . '/migrate/index.php'); }
 elseif($_GET['page']=='login')		{ 
     if ($_GET['section'] == 'captcha') {
@@ -83,7 +83,7 @@ else {
     
 	# ensure that user is logged in
 	$User->check_user_session();
-    
+
     if($_GET['page'] != "migrate" ) {
         if ($Database->migration_required()) {
             header("Location: /migrate/");
@@ -271,14 +271,7 @@ else {
 		<?php
         $User->check_maintenance_mode();
         
-		/* error */
-		if($_GET['page'] == "error") {
-			print "<div id='error' class='container'>";
-			include_once(APP . '/error.php');
-			print "</div>";
-		}
-		/* password reset required */
-		elseif($User->user->passChange=="Yes") {
+		if($User->user->passChange=="Yes") {
 			print "<div id='dashboard' class='container'>";
 			include_once(APP . '/tools/pass-change/form.php');
 			print "</div>";

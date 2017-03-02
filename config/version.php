@@ -14,6 +14,6 @@ define("REVISION", "030");		   // deprecated
 define("LAST_POSSIBLE", "1.29");	   // Minimum required version to be able to upgrade
 
 /* media version */
-define("MEDIA_VERSION", "1.9.10");  // Support media-specific versioning
+define("MEDIA_VERSION", VERSION);  // Support media-specific versioning
 
 ?>

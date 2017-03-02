@@ -190,6 +190,7 @@ function hidePopup(pClass, secondary) {
     $(oclass+' .'+pClass).fadeOut('fast');
 	// IMPORTANT: also empty loaded content to avoid issues on popup reopening
 	$(oclass+' > div').empty();
+    $('body').removeClass('stop-scrolling');        //enable scrolling back
 }
 function hidePopups() {
     $('#popupOverlay').fadeOut('fast');
@@ -209,6 +210,7 @@ function hidePopup2() {
 	// IMPORTANT: also empty loaded content to avoid issues on popup reopening
 	$('#popupOverlay2 > div').empty();
     hideSpinner();
+    $('body').removeClass('stop-scrolling');        //enable scrolling back
 }
 function hidePopupMasks() {
     $('.popup_wmasks').fadeOut('fast');
@@ -725,16 +727,65 @@ $(document).on("click", "input#csvImportYes", function() {
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
 });
-
-
 //download template
-$(document).on("click", "#downloadTemplate", function() {
-    var csrf = $(this).attr('data-csrf');
-    var tpl = $(this).attr('data-tpl');
+$(document).on("click", "#csvtemplate", function() {
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append('<div style="display:none" class="dl"><iframe src="ajx/admin/import-export/import-template/?type=' + tpl + '&csrf_cookie=' + csrf + '"></iframe></div>');
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/subnets/import-subnet/import-template.php'></iframe></div>");
 	return false;
 });
+//download vrf template
+$(document).on("click", "#vrftemplate", function() {
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=vrf'></iframe></div>");
+	return false;
+});
+
+//download domain template
+$(document).on("click", "#vlanstemplate", function() {
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=vlans'></iframe></div>");
+	return false;
+});
+
+
+//download vlan domain template
+$(document).on("click", "#vlandomaintemplate", function() {
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append('<div style="display:none" class="dl"><iframe src="/ajx/admin/import-export/import-template/?type=' + tpl + '&csrf_cookie=' + csrf + '"></iframe></div>');
+	return false;
+});
+
+
+//download subnet template
+$(document).on("click", "#subnetstemplate", function() {
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=subnets'></iframe></div>");
+	return false;
+});
+
+
+//download ip address template
+$(document).on("click", "#ipaddrtemplate", function() {
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=ipaddr'></iframe></div>");
+	return false;
+});
+
+
+//download device template
+$(document).on("click", "#devicestemplate", function() {
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=devices'></iframe></div>");	return false;
+});
+
+
+//download device types template
+$(document).on("click", "#devicetypestemplate", function() {
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=devicetypes'></iframe></div>");
+	return false;
+});
+
 
 
 /*    export IP addresses
@@ -1546,6 +1597,10 @@ $('.log-tabs li a').click(function() {
 	return false;
 });
 
+// show changelog details popup
+$(document).on("click", ".openChangelogDetail", function() {
+    open_popup("700", "/ajx/tools/changelog/show-popup.php", {cid:$(this).attr('data-cid')})
+})
 
 
 /*    Sections
@@ -3024,26 +3079,29 @@ $('button#searchReplaceSave').click(function() {
 
 /*  Data Import / Export
 *************************/
-// MySQL/Hosts/XLS exports
-$('button.dataDump').click(function () {
+// XLS exports
+$('button#XLSdump').click(function () {
     showSpinner();
     var csrf = $(this).attr('data-csrf');
     var type = $(this).attr('data-type');
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append('<div style="display:none" class="dl"><iframe id="dataExport" src="ajx/admin/import-export/generate-' + type + '/?csrf_cookie=' + csrf + '"></iframe></div>');
-    
-    // TODO: make the spinner work correctly. Below might work.
-    // var ifr=$('<iframe/>', {
-    //         id:'dataExport',
-    //         src:'/ajx/admin/import-export/generate-' + type + '/?action=' + action + '&csrf_cookie=' + csrf,
-    //         style:'display:none',
-    //         load:function(){
-    //             hideSpinner();
-    //         }
-    //     });
-    // $('div.exportDIV').append(ifr);
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-xls.php'></iframe></div>");
+    hideSpinner();
 });
-
+// MySQL export
+$('button#MySQLdump').click(function () {
+    showSpinner();
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-mysql.php'></iframe></div>");
+    hideSpinner();
+});
+// Hostfile export
+$('button#hostfileDump').click(function () {
+    showSpinner();
+    $("div.dl").remove();    //remove old innerDiv
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-hosts.php'></iframe></div>");
+    hideSpinner();
+});
 //Export Section
 $('button.dataExport').click(function () {
 	var implemented = ["vrf","vlan","subnets","ipaddr"]; var popsize = {};

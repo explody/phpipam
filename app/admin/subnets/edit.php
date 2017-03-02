@@ -163,15 +163,16 @@ $('.slider').slider().on('slide', function(ev){
                 $cidr = $Subnets->transform_to_dotted($subnet_old_details['subnet']).'/'.$subnet_old_details['mask'];
             } //editing existing
 
-        	# reset CIDR if $showDropMenuFull
-        	// if ($showDropMenuFull && strlen(@$dropdown_menu)>2) {
-	        // 	$cidr = explode("\n",$dropdown_menu);
-	        // 	$cidr = substr(strip_tags($cidr[1]), 2);
-	        // 	//validate
-	        // 	if ($Subnets->verify_cidr_address($cidr)===false) { unset($cidr); };
-	        // }
-        	?>
-
+          # reset CIDR if $showDropMenuFull
+          if ($showDropMenuFull && strlen(@$dropdown_menu)>2) {
+              $cidr = explode("\n",$dropdown_menu);
+              $cidr = substr(strip_tags($cidr[1]), 2);
+              //validate
+              if ($Subnets->verify_cidr_address($cidr)===false) {
+                    unset($cidr);
+                }
+          }
+          ?>
 
 			<?php  if (!$showDropMenuFull){ ?>
                 <input type="text" class="form-control input-sm input-w-200" name="subnet" placeholder="<?php print _('subnet in CIDR'); ?>"  value="<?php print @$cidr; ?>" <?php if ($readonly) print "readonly"; ?>>
