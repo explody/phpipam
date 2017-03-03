@@ -37,7 +37,7 @@ class InitialData extends AbstractMigration
         'settings' => [
             'columns' => ['id', 'siteTitle', 'siteAdminName', 'siteAdminMail', 'siteDomain', 'siteURL', 'domainAuth', 'enableIPrequests', 'enableVRF', 'enableDNSresolving', 'version', 'donate', 'IPfilter', 'vlanDuplicate', 'subnetOrdering', 'visualLimit'],
             'data' => [
-                [1, 'phpipam IP address management', 'Sysadmin', 'admin@domain.local', 'domain.local', 'http://yourpublicurl.com', 0, 0, 0, 0, '1.1', 0, 'mac;owner;state;switch;note;firewallAddressObject', 1, 'subnet,asc', 24]
+                [1, 'phpipam IP address management', 'Sysadmin', 'admin@domain.local', 'domain.local', 'http://phpipam.local', 0, 0, 0, 0, '1.3', 0, 'mac;owner;state;switch;note;firewallAddressObject', 1, 'subnet,asc', 24]
             ]
         ],
         'settingsDomain' => [
