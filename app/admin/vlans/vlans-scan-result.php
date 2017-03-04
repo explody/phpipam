@@ -29,7 +29,7 @@ foreach($_POST as $key=>$line) {
 	elseif(substr($key, 0,11)=="description") 	{ $res[substr($key, 11)]['description'] = $line; }
 	// custom fields
 	elseif (isset($required_fields)) {
-    	foreach ($required_fields as $r$f) {
+    	foreach ($required_fields as $rf) {
         	if((strpos($key, $rf->name)) !== false) {
                 $res[substr($key, strlen($rf->name))][$rf->name] = $line;
         	}
