@@ -1,19 +1,21 @@
-## WARNING
-This is a Pivotal-specific fork of phpipam. It may contain internal information so please be careful with sharing. 
-
-For a wholly public version that we can modify, go here: https://github.com/explody/phpipam
+This is a fork of phpipam
+=========================
+Original: https://github.com/phpipam/phpipam
 
 Description
 ===========
+
 phpipam is an open-source web IP address management application. Its goal is to provide light and simple IP address management application.
 It is ajax-based using jQuery libraries, it uses php scripts and javascript and some HTML5/CSS3 features, so some modern browser is preferred
 to be able to display javascript quickly and correctly.
 
-### Intentions of this fork
+Intentions of this fork
+=======================
 
-* Consistent coding standards across the board (where possible)
+* Consistent coding standards across the board (where possible, given current code)
+* Track the upstream as long as possible
 * Move all external PHP dependencies under composer
-* Move all external JS/CSS dependencies under npm
+* Move all external JS/CSS dependencies under bower
 * Manage static assets with grunt
 * Semantic versioning
 * Manageable database via Phinx migrations
@@ -29,8 +31,10 @@ to be able to display javascript quickly and correctly.
 * Drop backwards support for excessively old PHP, DB, etc.
 * Move towards actual OOP as possible
 
-### Where the fork is going
+Where the fork is going
+=======================
 
+TBD
 
 
 Features and tools:
