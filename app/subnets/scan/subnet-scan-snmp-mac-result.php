@@ -41,7 +41,7 @@ foreach($_POST as $key=>$line) {
 	// dns name
 	elseif(substr($key, 0,8)=="dns_name") 		{ $res[substr($key, 8)]['dns_name']  	= $line; }
 	// custom fields
-	elseif {
+	else {
     	foreach ($required_fields as $cf) {
         	if((strpos($key, $cf->name)) !== false) {
                                                 { $res[substr($key, strlen($cf->name))][$cf->name] = $line; }

@@ -4,8 +4,10 @@
  * Display usermenu on top right
  */
 
-
-
+# TODO: determine if we can urldecode and strip tags centrally rather than redoing it here
+# This is repetitive because we strip_input_tags in index.php but we need to urldecode to preserve the slashes
+# in CIDR formatted strings.  
+$_GET['ip'] = $Subnets->strip_input_tags(urldecode(trim($_GET['ip'])));
 
 // set parameters form cookie
 if (isset($_COOKIE['search_parameters'])) {

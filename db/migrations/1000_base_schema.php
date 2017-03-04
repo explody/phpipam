@@ -332,7 +332,7 @@ class BaseSchema extends Ipam\Migration\RepeatableMigration
                 ['scanFPingPath', 'string', ['limit'=>64,'default'=>'/bin/fping','null'=>true]],
                 ['scanPingType', 'set', ['values'=>[0=>'ping',1=>'pear',2=>'fping'],'default'=>'ping']],
                 ['scanMaxThreads', 'integer', ['limit'=>4,'default'=>128,'null'=>true]],
-                ['prettyLinks', 'set', ['values'=>[0=>'Yes',1=>'No'],'default'=>'No']],
+                ['prettyLinks', 'set', ['values'=>[0=>'Yes',1=>'No'],'default'=>'Yes']],
                 ['hiddenCustomFields', 'string', ['limit'=>1024,'null'=>true]],
                 ['inactivityTimeout', 'integer', ['limit'=>5,'default'=>3600]],
                 ['authmigrated', 'integer', ['limit'=>255,'default'=>0]],
