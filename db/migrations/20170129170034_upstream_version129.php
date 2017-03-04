@@ -43,6 +43,8 @@ class UpstreamVersion129 extends Ipam\Migration\RepeatableMigration
         
         // https://github.com/phpipam/phpipam/commit/0922e1380a3826c049488a90a984196a053b6386
         // Not applying this as we've rewritten custom fields
+        
+        $this->execute("UPDATE `settings` set `version` = '1.29'");
 
     }
 }

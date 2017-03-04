@@ -3,6 +3,7 @@
 // $Tools needs to be set in anything including this code.
 
 $migrate = false;
+$tooold  = false;
 $cmv = "0";
 
 if ($Database->migration_required()) {
@@ -10,8 +11,7 @@ if ($Database->migration_required()) {
         $migrate = true;
     } else {
        if ($User->settings->version < LAST_POSSIBLE) {
-           $title 	  = "Database migration check";
-           $content  = "<div class='alert alert-danger'>Your phpIPAM version is too old to be migrated. Please upgrade to phpipam version ".LAST_POSSIBLE." first.</div>";
+           $tooold = true;
        } else {
            $migrate = true;
        }
@@ -26,8 +26,10 @@ if ($Database->migration_required()) {
     header("Location: ".create_link('dashboard'));
 }
  
-
-if ($migrate) {
+if ($tooold) {
+    $title 	  = "Database migration check";
+    $content  = "<div class='alert alert-danger'>Your phpIPAM version is too old to be migrated. Please upgrade to the upstream phpipam version ".LAST_POSSIBLE." first.  (https://github.com/phpipam/phpipam)</div>";
+} elseif ($migrate) {
     $title	  = "<h4>phpipam database migration required</h4>";
     $title   .= "<hr><div class='text-muted' style='font-size:13px;padding-top:5px;'>Database needs to be migrated to version <strong>v" . $c->migration_version . "</strong>. Your database is currently at version <strong>v".$Database->currentMigrationVersion()."</strong>!</div>";
 

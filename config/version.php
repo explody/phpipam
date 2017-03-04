@@ -11,7 +11,7 @@ define("VERSION", json_decode(file_get_contents(dirname(__FILE__) . '/../package
 define("REVISION", "030");		   // deprecated
 
 /* set last possible upgrade */
-define("LAST_POSSIBLE", "1.29");	   // Minimum required version to be able to upgrade
+define("LAST_POSSIBLE", "1.26");	   // Minimum required version to be able to upgrade
 
 /* media version */
 define("MEDIA_VERSION", VERSION);  // Support media-specific versioning

@@ -197,6 +197,9 @@ class InitialData extends AbstractMigration
 
         }
         
+        // Set upstream version
+        $this->execute("UPDATE `settings` set `version` = '1.26'");
+        
     }
 
 }
