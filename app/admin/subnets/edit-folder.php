@@ -3,34 +3,44 @@
 /*
  * Print edit folder
  *********************/
-
-# create csrf token
-$csrf = $User->csrf_create('folder');
+ 
+$action = $_POST['action'];
 
 # ID must be numeric
-if($_POST['action']!="add") {
-	if(!is_numeric($_POST['subnetId']))										{ $Result->show("danger", _("Invalid ID"), true, true); }
+if($action != "add") {
+	if(!is_numeric($_POST['subnetId'])) { 
+        $Result->show("danger", _("Invalid ID"), true, true); 
+    } else {
+        $fid = $_POST['subnetId'];
+    }
 }
 
+# create csrf token
+$csrf = $User->csrf_create("folder_${fid}_${action}");
+
 # verify that user has permissions to add subnet
-if($_POST['action'] == "add") {
-	if($Sections->check_permission ($User->user, $_POST['sectionId']) != 3) { $Result->show("danger", _('You do not have permissions to add new subnet in this section')."!", true, true); }
+if($action == "add") {
+	if($Sections->check_permission ($User->user, $_POST['sectionId']) != 3) { 
+        $Result->show("danger", _('You do not have permissions to add new subnet in this section')."!", true, true); 
+    }
 }
 # otherwise check subnet permission
 else {
-	if($Subnets->check_permission ($User->user, $_POST['subnetId']) != 3) 	{ $Result->show("danger", _('You do not have permissions to add edit/delete this subnet')."!", true, true); }
+	if($Subnets->check_permission ($User->user, $fid) != 3) { 
+        $Result->show("danger", _('You do not have permissions to add edit/delete this subnet')."!", true, true);
+    }
 }
 
 
 # we are editing or deleting existing subnet, get old details
-if ($_POST['action'] != "add") {
-    $folder_old_details = (array) $Subnets->fetch_subnet(null, $_POST['subnetId']);
+if ($action != "add") {
+    $folder_old_details = (array) $Subnets->fetch_subnet(null, $fid);
 }
 # we are adding new folder - get folder details
 else {
 	# for selecting master subnet if added from subnet details!
-	if(strlen($_POST['subnetId']) > 0) {
-    	$subnet_old_temp = (array) $Subnets->fetch_subnet(null, $_POST['subnetId']);
+	if(strlen($fid) > 0) {
+    	$subnet_old_temp = (array) $Subnets->fetch_subnet(null, $fid);
     	$subnet_old_details['masterSubnetId'] 	= @$subnet_old_temp['id'];			// same master subnet ID for nested
     	$subnet_old_details['vlanId'] 		 	= @$subnet_old_temp['vlanId'];		// same default vlan for nested
     	$subnet_old_details['vrfId'] 		 	= @$subnet_old_temp['vrfId'];		// same default vrf for nested
@@ -44,7 +54,7 @@ $sections = $Sections->fetch_all_sections();
 
 
 # set readonly flag
-$readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : false;
+$readonly = $action=="edit" || $action=="delete" ? true : false;
 ?>
 
 <!-- select2 -->
@@ -72,7 +82,7 @@ $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : fals
         <td class="info2"><?php print _('Enter folder name'); ?></td>
     </tr>
 
-    <?php if($_POST['action'] != "add") { ?>
+    <?php if($action != "add") { ?>
     <!-- section -->
     <tr>
         <td class="middle"><?php print _('Section'); ?></td>
@@ -118,8 +128,8 @@ $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : fals
 
     <!-- hidden values -->
     <input type="hidden" name="sectionId"       value="<?php print $_POST['sectionId'];    ?>">
-    <input type="hidden" name="subnetId"        value="<?php print $_POST['subnetId'];     ?>">
-    <input type="hidden" name="action"    		value="<?php print $_POST['action']; ?>">
+    <input type="hidden" name="subnetId"        value="<?php print $fid;     ?>">
+    <input type="hidden" name="action"    		value="<?php print $action; ?>">
 	<input type="hidden" name="vlanId" 			value="0">
 	<input type="hidden" name="vrfId" 			value="0">
 	<input type="hidden" name="csrf_cookie"     value="<?php print $csrf; ?>">
@@ -135,6 +145,7 @@ $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : fals
 	    foreach($cfs as $cf) {
             
             // create input > result is array (required, input(html), timepicker_index)
+            print "ACTION: $action";
             $custom_input = $Components->render_custom_field_input($cf, $folder_old_details, $action, $index);
             $index = $custom_input['index'];
             
@@ -160,7 +171,7 @@ $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : fals
 
     <?php
     # warning if delete
-    if($_POST['action'] == "delete") {
+    if($action == "delete") {
 	    print "<div class='alert alert-warning' style='margin-top:0px;'><strong>"._('Warning')."</strong><br>"._('Removing subnets will delete ALL underlaying subnets and belonging IP addresses')."!</div>";
     }
     ?>
@@ -175,11 +186,11 @@ $readonly = $_POST['action']=="edit" || $_POST['action']=="delete" ? true : fals
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
 		<?php
 		//if action == edit and location = IPaddresses print also delete form
-		if(($_POST['action'] == "edit") && ($_POST['location'] == "IPaddresses") ) {
+		if(($action == "edit") && ($_POST['location'] == "IPaddresses") ) {
 			print "<button class='btn btn-sm btn-default btn-danger editFolderSubmitDelete' data-action='delete' data-subnetId='$folder_old_details[id]'><i class='fa fa-trash-o'></i> "._('Delete folder')."</button>";
 		}
 		?>
-		<button class="btn btn-sm btn-default editFolderSubmit <?php if($_POST['action']=="delete") print "btn-danger"; else print "btn-success"; ?>"><i class="<?php if($_POST['action']=="add") { print "fa fa-plus"; } else if ($_POST['action']=="delete") { print "fa fa-trash-o"; } else { print "fa fa-check"; } ?>"></i> <?php print ucwords(_($_POST['action'])); ?></button>
+		<button class="btn btn-sm btn-default editFolderSubmit <?php if($action=="delete") print "btn-danger"; else print "btn-success"; ?>"><i class="<?php if($action=="add") { print "fa fa-plus"; } else if ($action=="delete") { print "fa fa-trash-o"; } else { print "fa fa-check"; } ?>"></i> <?php print ucwords(_($action)); ?></button>
 	</div>
 
 	<div class="manageFolderEditResult"></div>
