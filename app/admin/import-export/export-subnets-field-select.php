@@ -4,8 +4,6 @@
  *	Subnets export
  */
 
-$csrf = $User->csrf_create('export-subnets');
-
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 
 # fetch all sections
@@ -88,7 +86,7 @@ print '</form>';
 
 # print section form
 print '<form id="selectExportSections">';
-
+$csrf->insertToken('/ajx/admin/import-export/export-subnets');
 # show sections
 if($all_sections!==false) {
 	print '<h4>Sections</h4>';
@@ -123,7 +121,6 @@ if($all_sections!==false) {
 	print '<div class="checkbox"><label><input type="checkbox" name="exportSections" checked>'._("Include the sections in a separate sheet.").'</label></div>';
 
 }
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
 print '</form>';
 ?>
 

@@ -4,7 +4,6 @@
  * set which custom field to display
  ************************/
 
-$csrf = $User->csrf_create('filter_fields');
 /*
 	provided values are:
 		table		= name of the table
@@ -40,7 +39,9 @@ $(".input-switch").bootstrapSwitch(switch_options);
 <!-- content -->
 <div class="pContent">
 
-	<form id="editCustomFieldsFilter">    
+	<form id="editCustomFieldsFilter">   
+    <?php $csrf->insertToken('/ajx/admin/custom-fields/filter-result'); ?>
+    
 	<table id="editCustomFields" class="table table-noborder table-condensed">
 
 	<?php
@@ -65,7 +66,6 @@ $(".input-switch").bootstrapSwitch(switch_options);
 
 	?>
 	</table>
-    <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 	</form>
 
 	<hr>

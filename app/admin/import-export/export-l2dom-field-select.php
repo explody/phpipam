@@ -3,8 +3,6 @@
 /**
  *	L2 Domain export
  */
- 
- $csrf = $User->csrf_create('export-l2domains');
 
 # prepare HTML variables
 $custom_fields_names = "";
@@ -21,23 +19,20 @@ $custom_fields_boxes = "";
 <?php
 
 # print
+// TOOD: not sure if this is supposed to work
 print '<form id="selectExportFields">';
-
+$csrf->insertToken('/ajx/admin/import-export/export-l2dom'); 
 # table
 print "	<table class='table table-striped table-condensed'>";
-
 print "	<tr>";
 print "	<th>"._('Name')."</th>";
 print "	<th>"._('Description')."</th>";
 print "	</tr>";
-
 print "	<tr>";
 print "	<td><input type='checkbox' name='name' checked title='"._('Mandatory')."'></td>";
 print "	<td><input type='checkbox' name='description' checked> </td>";
 print "	</tr>";
-
 print '</table>';
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
 print '</form>';
 
 ?>

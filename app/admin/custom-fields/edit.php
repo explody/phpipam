@@ -12,9 +12,6 @@
         fieldName	= field name to edit
  */
 
-# create csrf token
-$csrf = $User->csrf_create('custom_field');
-
 list($add, $edit, $delete) = array_fill(0, 3, false);
 
 $field_types = [ 
@@ -109,9 +106,9 @@ if ($action == "add") {
 			<input type="hidden" name="action" value="<?php print $action; ?>">
 			<input type="hidden" name="table" value="<?php print $add ? $table : $cfield->table; ?>">
             <input type="hidden" name="id" value="<?php print $add ? null : $cfield->id; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
-            <?php 
-            print $add ? "<input type=\"hidden\" name=\"order\" value=\"$order\" />\n" : null;
+			<?php 
+            $csrf->insertToken('/ajx/admin/custom-fields/edit-result');
+            print $add ? '<input type="hidden" name="order" value="' . $order . '" />' : null;
             ?>
 		</td>
 	</tr>

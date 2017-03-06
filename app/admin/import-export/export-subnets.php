@@ -4,7 +4,7 @@
  *	Generate XLS file for Subnets
  ************************************/
 
-$User->csrf_validate("export-subnets", $_GET['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
  
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 

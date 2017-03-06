@@ -32,6 +32,7 @@ print "<b>"._("Summary: ")."</b>".($counters['add'] > 0 ? $counters['add'] : "no
 		")._("Scroll down for details.");
 
 print "<form id='selectImportFields'>";
+$csrf->insertToken('/ajx/admin/import-export/import-l2dom');
 print "<input name='expfields' type='hidden' value='".implode('|',$expfields)."' style='display:none;'>";
 print "<input name='reqfields' type='hidden' value='".implode('|',$reqfields)."' style='display:none;'>";
 print $hiddenfields;

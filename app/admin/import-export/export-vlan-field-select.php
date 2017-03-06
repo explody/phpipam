@@ -3,8 +3,6 @@
 /**
  *	VLAN export
  */
- 
- $csrf = $User->csrf_create('export-vlans');
 
 # fetch all l2 domains
 $vlan_domains = $Admin->fetch_all_objects("vlanDomains", "id");
@@ -55,7 +53,7 @@ print '</form>';
 
 # print section form
 print '<form id="selectExportDomains">';
-
+$csrf->insertToken('/ajx/admin/import-export/export-vlan'); 
 if(sizeof($vlan_domains) > 0) {
 	print '<h4>L2 Domains</h4>';
 	print "	<table class='table table-striped table-condensed'>";

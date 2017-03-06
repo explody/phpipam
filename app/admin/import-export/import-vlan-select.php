@@ -4,8 +4,6 @@
  *	VLAN import form + upload
  */
 
-$csrf = $User->csrf_create('import-vlans');
-
 $tpl_field_names = "";
 $tpl_field_types = "";
 
@@ -69,6 +67,7 @@ foreach($Tools->fetch_custom_fields($mtable) as $cf) {
 
 # print template form
 print "<form id='selectImportFields'><div id='topmsg'>";
+$csrf->insertToken('/ajx/admin/import-export/import-vlan-preview');
 print '<h4>'._("Template").'</h4><hr>';
 print _("The import XLS/CSV should have the following fields and a <b>header row</b> for a succesful import:");
 print "</div>";
@@ -81,7 +80,6 @@ print "<tr>" . $tpl_field_types . "</tr>";
 print "</tbody></table>";
 print "<div id='bottommsg'>"._("The fields marked with * are mandatory.")."<br>"._("If no VLAN domain is specified the VLAN is added/changed in the default domain.")."</div>";
 ##print "<div class='checkbox'><label><input name='adddomain' type='checkbox' checked>"._("Add missing VLAN domains")."</label></div>";
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
 print "</form>";
 
 $templatetype = 'vlans';

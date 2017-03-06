@@ -41,9 +41,6 @@
 # 	"subnetPattern":"0"
 # }
 
-# create csrf token
-$csrf = $User->csrf_create('firewall-zones');
-
 # fetch module settings
 $firewallZoneSettings = json_decode($User->settings->firewallZoneSettings,true);
 
@@ -105,6 +102,9 @@ $(function() {
 
 <!-- database settings -->
 <form name="firewallZoneSettings" id="firewallZoneSettings">
+    
+<?php $csrf->insertToken('/ajx/admin/firewall-zones/settings-save'); ?>
+
 <table id="settings" class="table table-hover table-condensed table-auto">
 <!-- zone settings -->
 	<!-- zoneLength -->
@@ -327,7 +327,6 @@ $(function() {
 			} ?>
 		</td>
 		<td style="text-align: right">
-            <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 			<input type="submit" class="btn btn-default btn-sm" value="<?php print _("Save"); ?>">
 		</td>
 	</tr>

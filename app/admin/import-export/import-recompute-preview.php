@@ -23,6 +23,7 @@ print _("The entries marked with ")."<i class='fa ".$icons['edit']."'></i>, "._(
 	the ones marked with ")."<i class='fa ".$icons['skip']."'></i>, "._("didn't change the master.");
 
 print "<form id='selectImportFields'>";
+$csrf->insertToken('/ajx/admin/import-export/import-recompute');
 print $pass_inputs;
 print "<input name='csrf_cookie' type='hidden' value='" . $_POST['csrf_cookie'] . "' style='display:none;'>";
 print "</form>";

@@ -4,9 +4,6 @@
  *	VRF export
  */
 
- # create csrf token
- $csrf = $User->csrf_create('export-vrf');
-
 ?>
 
 <!-- header -->
@@ -19,7 +16,7 @@
 
 # print
 print '<form id="selectExportFields">';
-
+$csrf->insertToken('/ajx/admin/import-export/export-vrf'); 
 # table
 print "	<table class='table table-striped table-condensed'>";
 
