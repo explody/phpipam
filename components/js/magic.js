@@ -730,20 +730,20 @@ $(document).on("click", "input#csvImportYes", function() {
 //download template
 $(document).on("click", "#csvtemplate", function() {
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/subnets/import-subnet/import-template.php'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/subnets/import-subnet/import-template'></iframe></div>");
 	return false;
 });
 //download vrf template
 $(document).on("click", "#vrftemplate", function() {
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=vrf'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=vrf'></iframe></div>");
 	return false;
 });
 
 //download domain template
 $(document).on("click", "#vlanstemplate", function() {
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=vlans'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=vlans'></iframe></div>");
 	return false;
 });
 
@@ -759,7 +759,7 @@ $(document).on("click", "#vlandomaintemplate", function() {
 //download subnet template
 $(document).on("click", "#subnetstemplate", function() {
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=subnets'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=subnets'></iframe></div>");
 	return false;
 });
 
@@ -767,7 +767,7 @@ $(document).on("click", "#subnetstemplate", function() {
 //download ip address template
 $(document).on("click", "#ipaddrtemplate", function() {
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=ipaddr'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=ipaddr'></iframe></div>");
 	return false;
 });
 
@@ -775,14 +775,14 @@ $(document).on("click", "#ipaddrtemplate", function() {
 //download device template
 $(document).on("click", "#devicestemplate", function() {
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=devices'></iframe></div>");	return false;
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=devices'></iframe></div>");	return false;
 });
 
 
 //download device types template
 $(document).on("click", "#devicetypestemplate", function() {
     $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=devicetypes'></iframe></div>");
+    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=devicetypes'></iframe></div>");
 	return false;
 });
 
@@ -1366,15 +1366,15 @@ $(document).on("click", "#adsearchgroupsubmit", function() {
 $(document).on("click", ".groupselect", function() {
 	showSpinner();
 	var gid = $(this).attr("data-gid");
-	var csrf_data = JSON.parse($(this).attr("data-csrf_data"));
-    var group_data = {
+	var csrf = JSON.parse($(this).attr("data-csrf"));
+    var group = {
             action: 'add',
             g_name: $(this).attr("data-gname"),
             g_desc: $(this).attr("data-gdescription"),
             gmembers: $(this).attr("data-members")
         };
 
-	$.post('/ajx/admin/groups/edit-group-result', $.extend({}, group_data, csrf_data), function(data) {
+	$.post('/ajx/admin/groups/edit-group-result', $.extend({}, group, csrf), function(data) {
 		$('div.adgroup-'+gid).html(data)
 		hideSpinner();
 	});
@@ -1602,7 +1602,7 @@ $('.log-tabs li a').click(function() {
 
 // show changelog details popup
 $(document).on("click", ".openChangelogDetail", function() {
-    open_popup("700", "/ajx/tools/changelog/show-popup.php", {cid:$(this).attr('data-cid')})
+    open_popup("700", "/ajx/tools/changelog/show-popup/", {cid:$(this).attr('data-cid')})
 })
 
 
@@ -3082,29 +3082,26 @@ $('button#searchReplaceSave').click(function() {
 
 /*  Data Import / Export
 *************************/
-// XLS exports
-$('button#XLSdump').click(function () {
+function submit_export_form(b) {
     showSpinner();
-    var csrf = $(this).attr('data-csrf');
-    var type = $(this).attr('data-type');
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-xls.php'></iframe></div>");
-    hideSpinner();
+    var csrf = JSON.parse(b.attr("data-csrf"));
+    var type = b.attr("data-type");
+    $.each(csrf, function(k,v) {
+        $('form#exportform input[name=' + k + ']').val(v);
+    });
+    $('form#exportform').attr('action','/ajx/admin/import-export/generate-' + type);
+    $('form#exportform').submit();
+    setTimeout(function () {
+        hideSpinner();
+        window.location.reload(1);
+    }, 1000);
+}
+// MySQL/XLS/Hosts exports
+$('button.dataDump').click(function () {
+    submit_export_form($(this));
 });
-// MySQL export
-$('button#MySQLdump').click(function () {
-    showSpinner();
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-mysql.php'></iframe></div>");
-    hideSpinner();
-});
-// Hostfile export
-$('button#hostfileDump').click(function () {
-    showSpinner();
-    $("div.dl").remove();    //remove old innerDiv
-    $('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-hosts.php'></iframe></div>");
-    hideSpinner();
-});
+
+
 //Export Section
 $('button.dataExport').click(function () {
 	var implemented = ["vrf","vlan","subnets","ipaddr"]; var popsize = {};

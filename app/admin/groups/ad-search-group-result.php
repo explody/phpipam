@@ -83,7 +83,7 @@ if(sizeof($groups)==0) {
 		print "	<td>$g</td>";
 		//actions
 		print " <td style='width:10px;'>";
-		print "		<a href='' class='btn btn-sm btn-default btn-success groupselect' data-gname='$k' data-gdescription='$g' data-members='$members' data-gid='$k' data-csrf_data='" . htmlspecialchars($csrf->getTokenArray('/ajx/admin/groups/edit-group-result')) . "'>"._('Add group')."</a>";
+		print "		<a href='' class='btn btn-sm btn-default btn-success groupselect' data-gname='$k' data-gdescription='$g' data-members='$members' data-gid='$k' data-csrf='" . htmlspecialchars($csrf->getTokenArray('/ajx/admin/groups/edit-group-result')) . "'>"._('Add group')."</a>";
 		print "	</td>";
 		print "</tr>";
 

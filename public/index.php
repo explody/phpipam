@@ -405,9 +405,6 @@ else {
 <!-- Page footer -->
 <div class="footer"><?php include(APP . '/footer.php'); ?></div>
 
-<!-- export div -->
-<div class="exportDIV"></div>
-
 <!-- end body -->
 </body>
 </html>

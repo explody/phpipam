@@ -3,8 +3,7 @@
 /**
  *	Generate hostfile dump for /etc/hosts
  *********************************/
-
-$User->csrf_validate("import-export", $_GET['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 //set filename
 $filename = "phpipam_hosts_". date("Y-m-d");
