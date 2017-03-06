@@ -3,8 +3,6 @@
 /*
  * Print edit folder
  *********************/
- 
-$action = $_POST['action'];
 
 # ID must be numeric
 if($action != "add") {
@@ -14,9 +12,6 @@ if($action != "add") {
         $fid = $_POST['subnetId'];
     }
 }
-
-# create csrf token
-$csrf = $User->csrf_create("folder_${fid}_${action}");
 
 # verify that user has permissions to add subnet
 if($action == "add") {
@@ -132,10 +127,9 @@ $readonly = $action=="edit" || $action=="delete" ? true : false;
     <input type="hidden" name="action"    		value="<?php print $action; ?>">
 	<input type="hidden" name="vlanId" 			value="0">
 	<input type="hidden" name="vrfId" 			value="0">
-	<input type="hidden" name="csrf_cookie"     value="<?php print $csrf; ?>">
-
     <?php
-
+    $csrf->insertToken('/ajx/admin/subnets/edit-folder-result');
+    
     if(sizeof($cfs) > 0) {
 
     	print "<tr>";
@@ -145,7 +139,6 @@ $readonly = $action=="edit" || $action=="delete" ? true : false;
 	    foreach($cfs as $cf) {
             
             // create input > result is array (required, input(html), timepicker_index)
-            print "ACTION: $action";
             $custom_input = $Components->render_custom_field_input($cf, $folder_old_details, $action, $index);
             $index = $custom_input['index'];
             

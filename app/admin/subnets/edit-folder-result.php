@@ -3,8 +3,6 @@
 /**
  * Function to add / edit / delete folder
  ********************************************/
- 
-$action = $_POST['action'];
 
 # ID must be numeric
 if($action == "add") {
@@ -18,9 +16,6 @@ if($action == "add") {
         $fid = $_POST['subnetId'];
     }
 }
-
-# validate csrf cookie
-$User->csrf_validate("folder_${fid}_${action}", $_POST['csrf_cookie'], $Result);
 
 # verify that user has permissions to add subnet
 if($action=="add") {

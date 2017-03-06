@@ -557,17 +557,15 @@ class Common_functions  {
      * @param mixed $index
      * @return bool
      */
-    public function csrf_validate ($index, $value, $Result = false, $die = true) {
-        // set cookie suffix
-        $name = is_null($index) ? "csrf_cookie" : "csrf_cookie_".$index;
-        // check and return
-        if ($_SESSION[$name] != $value) {
+    public function csrf_validate ($csrf, $Result = false, $die = true) {
+        if ($csrf->validateRequest()) {
+            return true;
+        } else {        
             if ($Result) {
                 $Result->show("danger", _("Invalid CSRF cookie"), $die);
             }
             return false;
         }
-        return true; 
     }
 
 

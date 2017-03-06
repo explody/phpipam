@@ -7,12 +7,12 @@ if($Tools->check_prefix_permission ($User->user) <3)   { $Result->show("danger",
 $User->csrf_validate("pstn", $_POST['csrf_cookie'], $Result);
 
 # validations
-if($_POST['action']=="delete" || $_POST['action']=="edit") {
+if($action=="delete" || $action=="edit") {
     if($Admin->fetch_object ('pstnPrefixes', "id", $_POST['id'])===false) {
         $Result->show("danger",  _("Invalid PSTN object identifier"), false);
     }
 }
-if($_POST['action']=="add" || $_POST['action']=="edit") {
+if($action=="add" || $action=="edit") {
     // name
     if(strlen($_POST['name'])<3)                                        { $Result->show("danger",  _("Name must have at least 3 characters"), true); }
 
@@ -47,7 +47,7 @@ if($_POST['action']=="add" || $_POST['action']=="edit") {
     }
 }
 // root check
-if($_POST['action']=="add" && $_POST['master']==0) {
+if($action=="add" && $_POST['master']==0) {
     // set raw values
     $_POST['prefix_raw'] = $Tools->prefix_normalize ($_POST['prefix']);
     $_POST['prefix_raw_start'] = $Tools->prefix_normalize ($_POST['prefix'].$_POST['start']);
@@ -118,11 +118,11 @@ if(isset($update)) {
 }
 
 # execute update
-if(!$Admin->object_modify ("pstnPrefixes", $_POST['action'], "id", $values))    { $Result->show("danger",  _("Prefix $_POST[action] failed"), false); }
+if(!$Admin->object_modify ("pstnPrefixes", $action, "id", $values))    { $Result->show("danger",  _("Prefix $_POST[action] failed"), false); }
 else                                                                            { $Result->show("success", _("Prefix $_POST[action] successful"), false); }
 
 # if delete remove all slaves
-if ($_POST['action']=="delete") {
+if ($action=="delete") {
     $values['master'] =  $values['id'];
     # remove all references from prefixes and remove all numbers
     $Admin->remove_object_references ("pstnPrefixes", "master", $values["id"], 0);

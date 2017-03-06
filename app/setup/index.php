@@ -35,7 +35,11 @@ if (!$Database->bootstrap_required()) {
 if(!is_object(@$User)) {
 	$User = new StdClass();
 	@$User->settings->prettyLinks = "Yes";
+    session_start();
 }
+
+// Once we're sure we have a session.
+$csrf = new \ParagonIE\AntiCSRF\AntiCSRF;
 
 ?>
     

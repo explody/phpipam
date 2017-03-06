@@ -7,8 +7,6 @@
 # create csrf token
 $csrf = $User->csrf_create('subnet');
 
-$action = $_POST['action'];
-
 # verify that user has permissions to add subnet
 if($action == "add") {
 	if($Sections->check_permission ($User->user, $_POST['sectionId']) != 3) { $Result->show("danger", _('You do not have permissions to add new subnet in this section')."!", true, true); }
@@ -17,7 +15,6 @@ if($action == "add") {
 else {
 	if($Subnets->check_permission ($User->user, $_POST['subnetId']) != 3) 	{ $Result->show("danger", _('You do not have permissions to add edit/delete this subnet')."!", true, true); }
 }
-
 
 /**
  *	This script can be called from administration, subnet edit in IP details page and from IPCalc!
@@ -130,7 +127,7 @@ $('.slider').slider().on('slide', function(ev){
 
 
 <!-- header -->
-<div class="pHeader"><?php print ucwords(_("$_POST[action]")); ?> <?php print _('subnet'); ?></div>
+<div class="pHeader"><?php print ucwords(_("$action")); ?> <?php print _('subnet'); ?></div>
 
 <!-- content -->
 <div class="pContent">

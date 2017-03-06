@@ -15,8 +15,6 @@
 # create csrf token
 $csrf = $User->csrf_create('custom_field');
 
-$action = $_POST['action'];
-
 list($add, $edit, $delete) = array_fill(0, 3, false);
 
 $field_types = [ 

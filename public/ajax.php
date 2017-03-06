@@ -33,6 +33,13 @@ require FUNCTIONS . '/functions.php';
 /* composer */
 require_once VENDOR . '/autoload.php';
 
+// Pick some variables out of the request data,
+// for use in included files without needing to 
+// repeat this frequently in said files
+if(array_key_exists('action', $_REQUEST)) {
+    $action = $_REQUEST['action'];
+} 
+
 # Initialize objects
 $Database 	= new Database_PDO;
 $Tools		= new Tools ($Database);
@@ -54,9 +61,8 @@ if (!$Database->bootstrap_required()) {
 
 $Result 	= new Result ();
 
+// Extract the route path and dispose of the path elements from _GET
 $path = $_GET['a'];
-
-// dispose of the path elements from _GET
 unset($_GET['a']);
 
 # ensure that user is logged in, unless it's a login or captcha call, or if setup is incomplete
@@ -74,7 +80,12 @@ if(isset($_POST)) {
 
 // $_GET will always be set
 $_GET     = $Tools->strip_input_tags($_GET);
+// I know this is redundant
+// FIXME: make this not redundant
 $_REQUEST = $Tools->strip_input_tags($_REQUEST);
+
+// csrf instance available to all includes
+$csrf = new \ParagonIE\AntiCSRF\AntiCSRF;
 
 // die if our target script does not exist
 if (file_exists($path)) {

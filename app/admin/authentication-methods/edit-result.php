@@ -8,9 +8,6 @@
 # validate csrf cookie
 $User->csrf_validate("authmethods", $_POST['csrf_cookie'], $Result);
 
-# get action
-$action = $_POST['action'];
-
 //for adding remove id
 if($action=="add") {
 	unset($_POST['id']);
