@@ -4,9 +4,6 @@
  * Print edit subnet
  *********************/
 
-# create csrf token
-$csrf = $User->csrf_create('subnet');
-
 # verify that user has permissions to add subnet
 if($action == "add") {
 	if($Sections->check_permission ($User->user, $_POST['sectionId']) != 3) { $Result->show("danger", _('You do not have permissions to add new subnet in this section')."!", true, true); }
@@ -133,6 +130,8 @@ $('.slider').slider().on('slide', function(ev){
 <div class="pContent">
 
 	<form id="editSubnetDetails">
+    <?php $csrf->insertToken('/ajx/admin/subnets/edit-result'); ?>
+    
 	<table class="editSubnetDetails table table-noborder table-condensed">
 
     <!-- name -->
@@ -430,9 +429,9 @@ $('.slider').slider().on('slide', function(ev){
         <td class="middle"><?php print _('Resize'); ?> / <?php print _('split'); ?></td>
         <td>
 	    <div class="btn-group">
-        	<button class="btn btn-xs btn-default"										  id="resize" 	rel="tooltip" data-container='body' title="<?php print _('Resize subnet'); ?>"   data-subnetId="<?php print $_POST['subnetId']; ?>"><i class="fa fa-gray fa-arrows-v"></i></button>
-        	<button class="btn btn-xs btn-default <?php if($slaves) print "disabled"; ?>" id="split"    rel="tooltip" data-container='body' title="<?php print _('Split subnet'); ?>"    data-subnetId="<?php print $_POST['subnetId']; ?>"><i class="fa fa-gray fa-expand"></i></button>
-        	<button class="btn btn-xs btn-default"										  id="truncate" rel="tooltip" data-container='body' title="<?php print _('Truncate subnet'); ?>" data-subnetId="<?php print $_POST['subnetId']; ?>"><i class="fa fa-gray fa-trash-o"></i></button>
+        	<button class="btn btn-xs btn-default" id="resize" 	rel="tooltip" data-container='body' title="<?php print _('Resize subnet'); ?>"   data-subnetId="<?php print $_POST['subnetId']; ?>" ><i class="fa fa-gray fa-arrows-v"></i></button>
+        	<button class="btn btn-xs btn-default <?php if($slaves) print "disabled"; ?>" id="split"    rel="tooltip" data-container='body' title="<?php print _('Split subnet'); ?>" data-subnetId="<?php print $_POST['subnetId']; ?>"><i class="fa fa-gray fa-expand"></i></button>
+        	<button class="btn btn-xs btn-default" id="truncate" rel="tooltip" data-container='body' title="<?php print _('Truncate subnet'); ?>" data-subnetId="<?php print $_POST['subnetId']; ?>"><i class="fa fa-gray fa-trash-o"></i></button>
 	    </div>
         </td>
         <td class="info2"><?php print _('Resize, split or truncate this subnet'); ?></td>
@@ -529,7 +528,6 @@ $('.slider').slider().on('slide', function(ev){
             <input type="hidden" name="freespace"    	value="true">
             <?php } ?>
             <input type="hidden" name="vrfIdOld"        value="<?php print $subnet_old_details['vrfId'];    ?>">
-            <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 
         <?php
         print '	</td>' . "\n";

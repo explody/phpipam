@@ -4,9 +4,6 @@
  *	Print all available nameserver sets and configurations
  ************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('ns');
-
 # get Nameserver sets
 if($_POST['action']!="add") {
 	$nameservers = $Admin->fetch_object ("nameservers", "id", $_POST['nameserverId']);
@@ -29,6 +26,8 @@ $nameservers['namesrv1'] = !isset($nameservers) ? array(" ") : explode(";", $nam
 <div class="pContent">
 
 	<form id="nameserverManagementEdit">
+    <?php $csrf->insertToken('/ajx/admin/nameservers/edit-result'); ?>
+    
 	<table id="nameserverManagementEdit2" class="table table-noborder table-condensed">
 
 	<tbody>
@@ -79,7 +78,6 @@ $nameservers['namesrv1'] = !isset($nameservers) ? array(" ") : explode(";", $nam
 			if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) { print '<input type="hidden" name="nameserverId" value="'. $_POST['nameserverId'] .'">'. "\n";}
 			?>
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 			<input type="text" class="description form-control input-sm" name="description" placeholder="<?php print _('Description'); ?>" value="<?php print @$nameservers['description']; ?>" <?php print $readonly; ?>>
 		</td>
 		<td></td>

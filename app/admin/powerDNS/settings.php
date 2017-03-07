@@ -4,11 +4,6 @@
  * Script to edit / add / delete groups
  *************************************************/
 
-
-
-
-# create csrf token
-$csrf = $User->csrf_create('pdns_settings');
 ?>
 
 <script type="text/javascript">
@@ -26,6 +21,8 @@ $(document).ready(function() {
 
 <!-- database settings -->
 <form name="pdns" id="pdns-settings">
+<?php $csrf->insertToken('/ajx/admin/powerDNS/settings-save'); ?>
+
 <table id="settings" class="table table-hover table-condensed table-auto">
 
 <!-- site settings -->
@@ -38,7 +35,6 @@ $(document).ready(function() {
 	<td><?php print _('Host'); ?></th>
 	<td style="width:300px;">
 		<input type="text" class="form-control input-sm" name="host" value="<?php print $pdns->host; ?>">
-		<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 	</td>
 </tr>
 <!-- db -->

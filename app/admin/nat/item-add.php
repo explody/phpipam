@@ -13,8 +13,6 @@ if(!in_array($_POST['type'], array("src", "dst")))      { $Result->show("danger"
 $nat = $Admin->fetch_object ("nat", "id", $_POST['id']);
 $nat!==false ? : $Result->show("danger", _("Invalid ID"), true, true);
 
-// new cookie
-$csrf_cookie = $User->csrf_create('nat_add');
 ?>
 
 <!-- header -->
@@ -27,11 +25,11 @@ $csrf_cookie = $User->csrf_create('nat_add');
     <hr>
 
     <form id="search_nats" style="margin-bottom: 10px;" class="form-inline">
-            <input type="hidden" name="csrf_cookie" value="<?php print $csrf_cookie; ?>">
-            <input type="hidden" name="id" value="<?php print $nat->id; ?>">
-            <input type="hidden" name="type" value="<?php print $_POST['type']; ?>">
-            <input type="text" class='form-control input-sm' name="ip" placeholder="<?php print _('Enter subnet/IP'); ?>" style='width:60%;margin:0px;'>
-            <input type="submit" class="form-control input-sm" value="Search" style="width:20%">
+        <?php $csrf->insertToken('/ajx/admin/nat/item-add-search'); ?>
+        <input type="hidden" name="id" value="<?php print $nat->id; ?>">
+        <input type="hidden" name="type" value="<?php print $_POST['type']; ?>">
+        <input type="text" class='form-control input-sm' name="ip" placeholder="<?php print _('Enter subnet/IP'); ?>" style='width:60%;margin:0px;'>
+        <input type="submit" class="form-control input-sm" value="Search" style="width:20%">
     </form>
 
     <div id="nat_search_results" style="max-height: 300px;overflow-y: scroll;"></div>

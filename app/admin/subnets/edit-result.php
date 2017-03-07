@@ -5,7 +5,7 @@
  ********************************************/
 
 # validate csrf cookie
-$User->csrf_validate("subnet", $_POST['csrf_cookie'], $Result);
+$User->csrf_validate($csrf, $Result);
 
 # if show name than description must be set
 if(@$_POST['showName']==1 && strlen($_POST['description'])==0) 	{ $Result->show("danger", _("Please enter subnet description to show as name!"), true); }
@@ -397,10 +397,7 @@ else {
 
 		// POST DNSrecursive not set, fake it if old is also 0
 		if (!isset($_POST['DNSrecursive']) && @$old_subnet_details->DNSrecursive==0) { $_POST['DNSrecursive'] = 0; }
-
-		// recreate csrf cookie
-        $csrf = $User->csrf_create('domain');
-
+        
 		//delete
 		if ($_POST['action']=="delete") {
 			// if zone exists
@@ -415,7 +412,9 @@ else {
 
 				print _('Do you wish to delete DNS zone and all records')."?<br>";
 				print "	&nbsp;&nbsp; DNS zone <strong>$domain->name</strong></li>";
-				print " <form name='domainEdit' id='domainEdit'><input type='hidden' name='action' value='delete'><input type='hidden' name='id' value='$domain->id'><input type='hidden' name='csrf_cookie' value='$csrf'></form>";
+				print " <form name='domainEdit' id='domainEdit'><input type='hidden' name='action' value='delete'><input type='hidden' name='id' value='$domain->id'>";
+                $csrf->insertToken('/ajx/admin/powerDNS/domain-edit-result');
+                print " </form>";
 				print "	<div class='domain-edit-result'></div>";
 				print "</div>";
 			}
@@ -447,7 +446,9 @@ else {
 
 				print _('Do you wish to delete DNS zone and all records')."?<br>";
 				print "	&nbsp;&nbsp; DNS zone <strong>$domain->name</strong></li>";
-				print " <form name='domainEdit' id='domainEdit'><input type='hidden' name='action' value='delete'><input type='hidden' name='id' value='$domain->id'><input type='hidden' name='csrf_cookie' value='$csrf'></form>";
+				print " <form name='domainEdit' id='domainEdit'><input type='hidden' name='action' value='delete'><input type='hidden' name='id' value='$domain->id'>"; 
+                $csrf->insertToken('/ajx/admin/powerDNS/domain-edit-result');
+                print " </form>";
 				print "	<div class='domain-edit-result'></div>";
 				print "</div>";
 			}

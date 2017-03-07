@@ -4,15 +4,11 @@
  * Script to edit / add / delete groups
  *************************************************/
 
-
-
-
-# create csrf token
-$csrf = $User->csrf_create('pdns_defaults');
-
 ?>
 <!-- database settings -->
 <form name="pdns" id="pdns-defaults">
+<?php $csrf->insertToken('/ajx/admin/powerDNS/defaults-save'); ?>
+
 <table id="settings" class="table table-hover table-condensed table-auto">
 
 <!-- site settings -->
@@ -25,7 +21,6 @@ $csrf = $User->csrf_create('pdns_defaults');
 	<td><?php print _('Name servers'); ?></th>
 	<td style="width:300px;">
 		<input type="text" class="form-control input-sm" name="ns" value="<?php print $pdns->ns; ?>">
-		<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 	</td>
 	<td>
 		<span class="text-muted"><?php print _("Enter name servers, separate multiple with ;"); ?></span>

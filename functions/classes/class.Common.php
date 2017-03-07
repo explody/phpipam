@@ -344,16 +344,15 @@ class Common_functions  {
         try { $res = $this->Database->getObjects($table, $sortField, $sortAsc); }
         catch (Exception $e) {
             $this->Result->show("danger", _("Error: ").$e->getMessage());
-            return false;
+            return [];
         }
         # save
-        if (sizeof($res)>0) {
-            foreach ($res as $r) {
-                $this->cache_write ($table, $r->id, $r);
-            }
+        foreach ($res as $r) {
+            $this->cache_write ($table, $r->id, $r);
         }
+
         # result
-        return sizeof($res)>0 ? $res : false;
+        return $res;
     }
     
     /**
@@ -380,16 +379,15 @@ class Common_functions  {
         try { $res = $this->Database->getObjects($table, $sortField, $sortAsc, $limit, $offset); }
         catch (Exception $e) {
             $this->Result->show("danger", _("Error: ").$e->getMessage());
-            return false;
+            return [];
         }
         # save
-        if (sizeof($res)>0) {
-            foreach ($res as $r) {
-                $this->cache_write ($table, $r->id, $r);
-            }
+        foreach ($res as $r) {
+            $this->cache_write ($table, $r->id, $r);
         }
+
         # result
-        return sizeof($res)>0 ? $res : false;
+        return $res;
     }
 
     /**
@@ -465,11 +463,10 @@ class Common_functions  {
                 return [];
             }
             # save to cach
-            if (sizeof($res)>0) {
-                foreach ($res as $r) {
-                    $this->cache_write ($table, $r->id, $r);
-                }
+            foreach ($res as $r) {
+                $this->cache_write ($table, $r->id, $r);
             }
+
             return $res;
         }
     }

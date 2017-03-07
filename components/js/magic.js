@@ -1228,11 +1228,11 @@ $('select#mtype').change(function() {
 });
 
 /* test mail */
-$('.sendTestMail').click(function() {
+$('a#sendTestMail').click(function() {
     showSpinner();
-
-   //send mail
-    $.post('/ajx/admin/mail/test-mail', $('form#mailsettings').serialize(), function(data) {
+    var params = $.param(JSON.parse($(this).attr("data-csrf"))) + '&' + $('form#mailsettings').serialize();
+    //send mail
+    $.post('/ajx/admin/mail/test-mail', params, function(data) {
         $('div.settingsMailEdit').html(data).slideDown('fast');
         hideSpinner();
     }).fail(function(jqxhr, textStatus, errorThrown) { showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: "+errorThrown); });
