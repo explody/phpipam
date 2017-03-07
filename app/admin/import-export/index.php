@@ -63,23 +63,22 @@ $(document).on('change', "select#dataType", function() {
 
 <!-- export div -->
 <div class="exportDIV">
-    <form id="exportform" method="post">
+    <form id="dumpform" method="post">
         <input type="hidden" name="<?php print $csrf->getFormIndex(); ?>" />
         <input type="hidden" name="<?php print $csrf->getFormToken(); ?>" />
 
+        <!-- MySQL dump -->
+        <hr style="margin-top:50px;">
+        <h4><?php print _('Create MySQL database dump'); ?></h4>
+        <button class="btn btn-sm btn-default dataDump" id="MySQLdump" data-form="dumpform" data-type="mysql" data-action="generate" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/generate-mysql'))); ?>"><i class="fa fa-upload"></i> <?php print _('Prepare MySQL dump'); ?></button>
 
-<!-- MySQL dump -->
-<hr style="margin-top:50px;">
-<h4><?php print _('Create MySQL database dump'); ?></h4>
-<button class="btn btn-sm btn-default dataDump" id="MySQLdump" data-type="mysql" data-action="export" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/generate-mysql'))); ?>"><i class="fa fa-upload"></i> <?php print _('Prepare MySQL dump'); ?></button>
+        <!-- XLS dump -->
+        <h4><?php print _('Create XLS file of IP addresses'); ?></h4>
+        <button class="btn btn-sm btn-default dataDump" id="XLSdump" data-form="dumpform" data-type="xls" data-action="generate" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/generate-xls'))); ?>"><i class="fa fa-upload"></i> <?php print _('Prepare XLS dump'); ?></button>
 
-<!-- XLS dump -->
-<h4><?php print _('Create XLS file of IP addresses'); ?></h4>
-<button class="btn btn-sm btn-default dataDump" id="XLSdump" data-type="xls" data-action="export" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/generate-xls'))); ?>"><i class="fa fa-upload"></i> <?php print _('Prepare XLS dump'); ?></button>
-
-<!-- Hosts file dump -->
-<h4><?php print _('Create hostfile dump'); ?></h4>
-<button class="btn btn-sm btn-default dataDump" id="hostfileDump" data-type="hosts" data-action="export" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/generate-hosts'))); ?>"><i class="fa fa-upload"></i> <?php print _('Prepare hostfile dump'); ?></button>
+        <!-- Hosts file dump -->
+        <h4><?php print _('Create hostfile dump'); ?></h4>
+        <button class="btn btn-sm btn-default dataDump" id="hostfileDump" data-form="dumpform" data-type="hosts" data-action="generate" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/generate-hosts'))); ?>"><i class="fa fa-upload"></i> <?php print _('Prepare hostfile dump'); ?></button>
 
 </form>
 </div>

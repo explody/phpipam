@@ -12,7 +12,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://github.com/pear/Net_IPv6"
+            "url": "https://github.com/explody/Net_IPv6"
         }
     ],
     "require-dev": {

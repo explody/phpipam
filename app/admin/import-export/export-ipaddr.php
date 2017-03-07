@@ -3,9 +3,8 @@
 /**
  *	Generate XLS file for IP Addresses
  ************************************/
+ $Tools->csrf_validate($csrf, $Result);
  
- $User->csrf_validate("export-ipaddresses", $_GET['csrf_cookie'], $Result);
-
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 
 # fetch all sections

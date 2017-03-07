@@ -11,6 +11,7 @@ $filename = "phpipam_hosts_". date("Y-m-d");
 //fetch all addresses with hostname set
 $hosts = $Tools->fetch_addresses_for_export();
 
+$res = [];
 //loop
 if(sizeof($hosts)>0) {
 	//details
@@ -42,7 +43,6 @@ if(sizeof($hosts)>0) {
 
 # join content
 $content = implode("\n", $res);
-
 
 # headers
 header("Cache-Control: private");

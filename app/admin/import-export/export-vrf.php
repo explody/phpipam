@@ -3,9 +3,7 @@
 /**
  *	Generate XLS file for VRFs
  *********************************/
-
-# validate csrf cookie
-$User->csrf_validate("export-vrf", $_GET['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # fetch all vrfs
 $all_vrfs = $Admin->fetch_all_objects("vrf", "vrfId");

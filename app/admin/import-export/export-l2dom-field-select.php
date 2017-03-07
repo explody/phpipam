@@ -16,13 +16,12 @@ $custom_fields_boxes = "";
 <!-- content -->
 <div class="pContent" style="overflow:auto;">
 
-<?php
+<form id="selectExportTargets" method="post">;
+<input type="hidden" name="<?php print $csrf->getFormIndex(); ?>" />
+<input type="hidden" name="<?php print $csrf->getFormToken(); ?>" />
 
-# print
-// TOOD: not sure if this is supposed to work
-print '<form id="selectExportFields">';
-$csrf->insertToken('/ajx/admin/import-export/export-l2dom'); 
-# table
+<?php
+// TOOD: not sure if this is supposed to work but it's disabled in the JS
 print "	<table class='table table-striped table-condensed'>";
 print "	<tr>";
 print "	<th>"._('Name')."</th>";
@@ -33,16 +32,16 @@ print "	<td><input type='checkbox' name='name' checked title='"._('Mandatory')."
 print "	<td><input type='checkbox' name='description' checked> </td>";
 print "	</tr>";
 print '</table>';
-print '</form>';
-
 ?>
+</form>
 
 </div>
+
 
 <!-- footer -->
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-type="l2dom"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
+		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-form="selectExportTargets" data-type="l2dom" data-action="export" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/export-l2dom'))); ?>"></i> <?php print _('Export'); ?></button>
 	</div>
 </div>

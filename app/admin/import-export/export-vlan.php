@@ -3,8 +3,7 @@
 /***
  *	Generate XLS file for VLANs
  *********************************/
- 
-$User->csrf_validate("export-vlans", $_GET['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # fetch all l2 domains
 $vlan_domains = $Admin->fetch_all_objects("vlanDomains", "id");

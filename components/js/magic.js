@@ -3086,11 +3086,13 @@ function submit_export_form(b) {
     showSpinner();
     var csrf = JSON.parse(b.attr("data-csrf"));
     var type = b.attr("data-type");
+    var action = b.attr("data-action");
+    var form = 'form#' + b.attr("data-form");
     $.each(csrf, function(k,v) {
-        $('form#exportform input[name=' + k + ']').val(v);
+        $(form + ' input[name=' + k + ']').val(v);
     });
-    $('form#exportform').attr('action','/ajx/admin/import-export/generate-' + type);
-    $('form#exportform').submit();
+    $(form).attr('action','/ajx/admin/import-export/' + action +  '-' + type);
+    $(form).submit();
     setTimeout(function () {
         hideSpinner();
         window.location.reload(1);
@@ -3129,39 +3131,13 @@ $('button.dataExport').click(function () {
 	}
     return false;
 });
+
 //export buttons
 $(document).on("click", "button#dataExportSubmit", function() {
-    //get selected fields
-	var dataType = $(this).attr('data-type');
-    var exportFields = $('form#selectExportFields').serialize();
-	//show popup window
-	switch(dataType) {
-		case 'vrf':
-			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-vrf/?" + exportFields + "'></iframe></div>");
-			setTimeout(function (){hidePopups();}, 1500);
-			break;
-		case 'vlan':
-			var exportDomains = $('form#selectExportDomains').serialize();
-			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-vlan/?" + exportDomains + "&" + exportFields + "'></iframe></div>");
-			setTimeout(function (){hidePopups();}, 1500);
-			break;
-		case 'subnets':
-			var exportSections = $('form#selectExportSections').serialize();
-			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-subnets/?" + exportSections + "&" + exportFields + "'></iframe></div>");
-			setTimeout(function (){hidePopups();}, 1500);
-			break;
-		case 'ipaddr':
-			var exportSections = $('form#selectExportSections').serialize();
-			$("div.dl").remove();    //remove old innerDiv
-			$('div.exportDIV').append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-ipaddr/?" + exportSections + "&" + exportFields + "'></iframe></div>");
-			setTimeout(function (){hidePopups();}, 1500);
-			break;
-	}
+    submit_export_form($(this));
     return false;
 });
+
 // Check/uncheck all
 $(document).on("click", "input#exportSelectAll", function() {
 	if(this.checked) { // check select status

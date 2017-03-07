@@ -24,14 +24,12 @@ foreach($Tools->fetch_custom_fields('vlans') as $cf) {
 <!-- content -->
 <div class="pContent" style="overflow:auto;">
 
+<form id="selectExportTargets" method="post">
+<input type="hidden" name="<?php print $csrf->getFormIndex(); ?>" />
+<input type="hidden" name="<?php print $csrf->getFormToken(); ?>" />
+
 <?php
-
-# print
-print '<form id="selectExportFields">';
-
-# table
 print "	<table class='table table-striped table-condensed'>";
-
 print "	<tr>";
 print "	<th>"._('Name')."</th>";
 print "	<th>"._('Number')."</th>";
@@ -47,13 +45,8 @@ print "	<td><input type='checkbox' name='domain' checked> </td>";
 print "	<td><input type='checkbox' name='description' checked> </td>";
 print $custom_fields_boxes;
 print "	</tr>";
-
 print '</table>';
-print '</form>';
 
-# print section form
-print '<form id="selectExportDomains">';
-$csrf->insertToken('/ajx/admin/import-export/export-vlan'); 
 if(sizeof($vlan_domains) > 0) {
 	print '<h4>L2 Domains</h4>';
 	print "	<table class='table table-striped table-condensed'>";
@@ -75,13 +68,11 @@ if(sizeof($vlan_domains) > 0) {
 }
 
 print '</table>';
-
 print '<div class="checkbox"><label><input type="checkbox" name="exportVLANDomains" checked>'._("Include the L2 domains in a separate sheet.").'</label></div>';
 
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
-print '</form>';
-
 ?>
+
+</form>
 
 </div>
 
@@ -89,6 +80,6 @@ print '</form>';
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-type="vlan"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
+		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-form="selectExportTargets" data-type="vlan" data-action="export" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/export-vlan'))); ?>"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
 	</div>
 </div>

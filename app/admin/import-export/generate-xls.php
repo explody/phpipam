@@ -3,7 +3,7 @@
 /**
  *	Generate XLS file
  *********************************/
-//$Tools->csrf_validate($csrf, $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 // Create a workbook
 $filename = "phpipam_IP_adress_export_". date("Y-m-d") .".xls";
