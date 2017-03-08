@@ -12,6 +12,8 @@ ob_start();
 |
 */
 
+define(AJAX, false);
+
 require_once dirname(__FILE__) . "/../paths.php";
 
 /* config */

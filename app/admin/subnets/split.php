@@ -4,9 +4,6 @@
  * Print resize split
  *********************/
 
-# create csrf token
-$csrf = $User->csrf_create('split');
-
 # ID must be numeric
 if(!is_numeric($_POST['subnetId']))		{ $Result->show("danger", _("Invalid ID"), true, true); }
 
@@ -56,6 +53,8 @@ for($mask=($subnet->mask+1); $mask<=$max_new_mask; $mask++) {
 <div class="pContent">
 
 	<form id="subnetSplit">
+    <?php $csrf->insertToken('/ajx/admin/subnets/split-save'); ?>
+    
 	<table class="table table-noborder table-condensed">
 
     <!-- subnet -->

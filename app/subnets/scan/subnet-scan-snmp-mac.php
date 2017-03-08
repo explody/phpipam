@@ -4,12 +4,6 @@
  * Discover new hosts with snmp
  *******************************/
 
-
-
-
-# create csrf token
-$csrf = $User->csrf_create('scan');
-
 //title
 print "<h5>"._('Scan results').":</h5><hr>";
 
@@ -217,6 +211,8 @@ else {
 
 	//form
 	print "<form name='scan-snmp-mac-form' class='scan-snmp-mac-form'>";
+    $csrf->insertToken('/ajx/subnets/scan/subnet-scan-snmp-mac-result');
+    
 	print "<table class='table table-striped table-top table-condensed'>";
 
 	// titles
@@ -262,7 +258,6 @@ else {
     		print "	<input type='text' class='form-control input-sm' name='description$m'>";
     		print "	<input type='hidden' name='ip$m' value='$ip[ip]'>";
     		print "	<input type='hidden' name='device$m' value='$ip[device]'>";
-    		print " <input type='hidden' name='csrf_cookie' value='$csrf'>";
     		print "</td>";
     		// mac
     		print "<td>";

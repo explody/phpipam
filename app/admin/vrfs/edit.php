@@ -9,9 +9,6 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
     $Result->show("danger", _("Not allowed to change VRFs"), true, true);
 }
 
-# create csrf token
-$csrf = $User->csrf_create('vrf');
-
 # get VRF
 if($_POST['action']!="add") {
 	$vrf = $Admin->fetch_object ("vrf", "vrfId", $_POST['vrfId']);
@@ -34,6 +31,8 @@ $cfs = $Tools->fetch_custom_fields('vrf');
 <div class="pContent">
 
 	<form id="vrfManagementEdit">
+    <?php $csrf->insertToken('/ajx/admin/vrfs/edit-result'); ?>
+    
 	<table id="vrfManagementEdit2" class="table table-noborder table-condensed">
 
 	<!-- name  -->
@@ -58,7 +57,6 @@ $cfs = $Tools->fetch_custom_fields('vrf');
 			if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) { print '<input type="hidden" name="vrfId" value="'. $_POST['vrfId'] .'">'. "\n";}
 			?>
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 			<input type="text" class="description form-control input-sm" name="description" placeholder="<?php print _('Description'); ?>" value="<?php print @$vrf['description']; ?>" <?php print $readonly; ?>>
 		</td>
 	</tr>

@@ -4,9 +4,6 @@
  * Print edit subnet
  *********************/
 
-# create csrf token
-$csrf = $User->csrf_create('permissions');
-
 # ID must be numeric
 if(!is_numeric($_POST['subnetId']))	{ $Result->show("danger", _("Invalid ID"), true, true); }
 
@@ -54,6 +51,8 @@ $('.input-switch').on('switchChange.bootstrapSwitch', function (e, data) {
 	<hr>
 
 	<form id="editSubnetPermissions">
+    <?php $csrf->insertToken('/ajx/admin/subnets/permissions-submit'); ?>
+    
 	<table class="editSubnetPermissions table table-noborder table-condensed">
 
 	<?php
@@ -94,7 +93,6 @@ $('.input-switch').on('switchChange.bootstrapSwitch', function (e, data) {
 		print "</tr>";
 	}
 	?>
-	<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 
     <!-- set parameters to slave subnets -->
     <?php if($Subnets->has_slaves($_POST['subnetId'])) { ?>

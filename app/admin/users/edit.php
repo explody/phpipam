@@ -4,9 +4,6 @@
  * Script to print add / edit / delete users
  *************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('user');
-
 # fetch custom fields
 $cfs 	    = $Tools->fetch_custom_fields('users');
 # fetch all languages
@@ -58,6 +55,8 @@ $(document).ready(function(){
 <div class="pContent">
 
 	<form id="usersEdit" name="usersEdit">
+    <?php $csrf->insertToken('/ajx/admin/users/edit-result'); ?>
+    
 	<table class="usersEdit table table-noborder table-condensed">
 
 	<tbody>
@@ -97,7 +96,6 @@ $(document).ready(function(){
 
         <input type="hidden" name="userId" value="<?php print @$user['id']; ?>">
         <input type="hidden" name="action" value="<?php print $action; ?>">
-        <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 
         </td>
         <td class="info2"><?php print _('Select user role'); ?>

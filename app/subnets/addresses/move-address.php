@@ -6,10 +6,6 @@
  * Fetches info from database
  *************************************************/
 
-
-# create csrf token
-$csrf = $User->csrf_create('address');
-
 # validate post
 is_numeric($_POST['subnetId']) ?:						$Result->show("danger", _("Invalid ID"), true);
 is_numeric($_POST['id']) || strlen($_POST['id'])==0 ?:	$Result->show("danger", _("Invalid ID"), true);
@@ -30,6 +26,8 @@ $Subnets->fetch_subnet_slaves_recursive ($subnet['id']);
 
 	<!-- IP address modify form -->
 	<form class="editipaddress" name="editipaddress">
+    <?php $csrf->insertToken('/ajx/subnets/addresses/address-modify-submit'); ?>
+    
 	<!-- edit IP address table -->
 	<table id="editipaddress" class="table table-noborder table-condensed">
 
@@ -46,7 +44,6 @@ $Subnets->fetch_subnet_slaves_recursive ($subnet['id']);
 			<input type="hidden" name="subnetId" 	value="<?php print $subnet['id']; ?>">
 			<input type="hidden" name="section" 	value="<?php print $subnet['sectionId']; ?>">
 			<input type="hidden" name="state" 		value="">
-            <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
     	</td>
 	</tr>
 

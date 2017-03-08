@@ -4,9 +4,6 @@
  *    Print all available locations
  ************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('pstn');
-
 # check permissions
 if($Tools->check_prefix_permission ($User->user) < 3)   { $Result->show("danger", _('You do not have permission to manage PSTN prefixes'), true, true); }
 
@@ -62,6 +59,8 @@ $cfs = $Tools->fetch_custom_fields('pstnPrefixes');
 <div class="pContent">
 
     <form id="editPSTN">
+    <?php $csrf->insertToken('/ajx/tools/pstn-prefixes/edit-result'); ?>
+    
     <table id="editPSTN" class="table table-noborder table-condensed">
 
     <tbody>
@@ -90,7 +89,6 @@ $cfs = $Tools->fetch_custom_fields('pstnPrefixes');
             <th><?php print _('Name'); ?></th>
             <td>
                 <input type="text" class="form-control input-sm" name="name" value="<?php print $prefix->name; ?>" placeholder='<?php print _('Name'); ?>' <?php print $readonly; ?>>
-                <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
                 <input type="hidden" name="id" value="<?php print $prefix->id; ?>">
                 <input type="hidden" name="master" value="<?php print $prefix->master; ?>">
                 <input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
