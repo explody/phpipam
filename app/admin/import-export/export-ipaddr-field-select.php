@@ -4,9 +4,6 @@
  *	IP Addresses export
  */
 
- # create csrf token
- $csrf = $User->csrf_create('export-ipaddresses');
-
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 
 # fetch all sections
@@ -49,14 +46,13 @@ foreach($Tools->fetch_custom_fields('ipaddresses') as $cf) {
 <!-- content -->
 <div class="pContent">
 
+<form id="selectExportTargets" method="post">
+<input type="hidden" name="<?php print $csrf->getFormIndex(); ?>" />
+<input type="hidden" name="<?php print $csrf->getFormToken(); ?>" />
+
 <?php
-
-# print
-print '<form id="selectExportFields">';
 print '<h4>Fields</h4>';
-# table
 print "	<table class='table table-striped table-condensed'>";
-
 print "	<tr>";
 print "	<th>"._('Section')."</th>";
 print "	<th>"._('IP Address')."</th>";
@@ -88,12 +84,7 @@ print "	<td><input type='checkbox' name='tag'> </td>";
 print "	<td><input type='checkbox' name='gateway'> </td>";
 print $custom_fields_boxes;
 print "	</tr>";
-
 print '</table>';
-print '</form>';
-
-# print section form
-print '<form id="selectExportSections">';
 
 # show sections
 if($all_sections!==false) {
@@ -130,9 +121,10 @@ if($all_sections!==false) {
 //	print '<div class="checkbox"><label><input type="checkbox" name="separateSheets">'._("Export each section in a separate sheet.").'</label></div>';
 
 }
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
-print '</form>';
+
 ?>
+
+</form>
 
 </div>
 
@@ -140,6 +132,9 @@ print '</form>';
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-type="ipaddr"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
+		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-form="selectExportTargets" data-type="ipaddr" data-action="export" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/export-ipaddr'))); ?>"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
 	</div>
 </div>
+
+
+

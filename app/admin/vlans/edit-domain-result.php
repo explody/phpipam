@@ -5,7 +5,7 @@
  ***************************/
 
 # validate csrf cookie
-$User->csrf_validate("vlan_domain", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # we cannot delete default domain
 if(@$_POST['id']==1 && $_POST['action']=="delete")						{ $Result->show("danger", _("Default domain cannot be deleted"), true); }

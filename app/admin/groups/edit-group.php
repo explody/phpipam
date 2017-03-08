@@ -4,9 +4,6 @@
  * Script to print add / edit / delete group
  *************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('group');
-
 # fetch group and set title
 if($_POST['action']=="add") {
 	$title = _('Add new group');
@@ -30,6 +27,7 @@ if($_POST['action']=="add") {
 <div class="pContent">
 
 	<form id="groupEdit" name="groupEdit">
+    <?php $csrf->insertToken('/ajx/admin/groups/edit-group-result'); ?>
 	<table class="groupEdit table table-noborder table-condensed">
 
 	<!-- name -->
@@ -46,10 +44,8 @@ if($_POST['action']=="add") {
     	<td><?php print _('Description'); ?></td>
     	<td>
     		<input type="text" name="g_desc" class="form-control input-sm" value="<?php print @$group['g_desc']; ?>" <?php if($_POST['action'] == "delete") print "readonly"; ?>>
-
     		<input type="hidden" name="g_id" value="<?php print $_POST['id']; ?>">
     		<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-    		<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
     	</td>
     	<td class="info2"><?php print _('Enter description'); ?></td>
     </tr>

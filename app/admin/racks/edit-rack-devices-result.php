@@ -5,7 +5,7 @@
  ***************************/
 
 # validate csrf cookie
-$User->csrf_validate("rack_devices", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # ID must be numeric
 if(!is_numeric($_POST['rackid']))			                           { $Result->show("danger", _("Invalid ID"), true); }

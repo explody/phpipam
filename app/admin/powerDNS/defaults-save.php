@@ -5,7 +5,7 @@
  **************************/
 
 # validate csrf cookie
-$User->csrf_validate("pdns_defaults", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 // validations
 if(strlen($_POST['ttl'])==0)	{ $_POST['ttl'] = $PowerDNS->defaults->ttl; }

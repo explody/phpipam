@@ -12,7 +12,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://github.com/pear/Net_IPv6"
+            "url": "https://github.com/explody/Net_IPv6"
         }
     ],
     "require-dev": {
@@ -31,6 +31,7 @@
         "pear/spreadsheet_excel_writer": "dev-master",
         "pear/net_ipv4": "dev-trunk",
         "pear/Net_IPv6": "dev-master",
-        "pear/Net_DNS2": "^1.4"
+        "pear/Net_DNS2": "^1.4",
+        "paragonie/anti-csrf": "^1.0"
     }
 }

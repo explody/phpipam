@@ -3,6 +3,7 @@
 /**
  *	Mail settings
  **************************/
+ $Tools->csrf_validate($csrf, $Result);
 
 # fetch mailer settings
 $mail_settings = $Admin->fetch_object("settingsMail", "id", 1);

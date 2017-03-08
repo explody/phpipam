@@ -12,6 +12,8 @@ ob_start();
 |
 */
 
+define(AJAX, false);
+
 require_once dirname(__FILE__) . "/../paths.php";
 
 /* config */
@@ -26,6 +28,13 @@ require FUNCTIONS . '/functions.php';
 
 /* composer */
 require_once VENDOR . '/autoload.php';
+
+// Pick some variables out of the request data,
+// for use in included files without needing to 
+// repeat this frequently in said files
+if(array_key_exists('action', $_REQUEST)) {
+    $action = $_REQUEST['action'];
+}
 
 # set default page
 if(!isset($_GET['page'])) { 
@@ -63,7 +72,12 @@ if($_GET['page'] != "setup") {
     $_GET     = $Tools->strip_input_tags($_GET);
     $_POST    = $Tools->strip_input_tags($_POST);
     $_REQUEST = $Tools->strip_input_tags($_REQUEST);
+    
+    // csrf instance available to all includes
+    $csrf = new \ParagonIE\AntiCSRF\AntiCSRF;
 }
+
+
 
 /** include proper subpage **/
 if($_GET['page']=='setup')	    { require(APP . '/setup/index.php'); }
@@ -392,9 +406,6 @@ else {
 
 <!-- Page footer -->
 <div class="footer"><?php include(APP . '/footer.php'); ?></div>
-
-<!-- export div -->
-<div class="exportDIV"></div>
 
 <!-- end body -->
 </body>

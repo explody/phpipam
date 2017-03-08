@@ -5,7 +5,7 @@
 
 $type = $_GET['type'];
 
-$User->csrf_validate("import-$type", $_GET['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 // Create a workbook
 $filename = "phpipam_template_" . $type . ".xls";

@@ -12,7 +12,7 @@ if($_POST['action']!="add" && !is_numeric($_POST['rackid']))		{ $Result->show("d
 # remove or add ?
 if ($_POST['action']=="remove") {
     # validate csrf cookie
-    $User->csrf_validate("rack_devices", $_POST['csrf_cookie'], $Result);
+    $Tools->csrf_validate($csrf, $Result);
     # set values
     $values = array("id"=>$_POST['deviceid'],
                     "rack"=>"",
@@ -39,8 +39,7 @@ if ($_POST['action']=="remove") {
 }
 # add to rack
 else {
-    # create csrf token
-    $csrf = $User->csrf_create('rack_devices');
+
     # fetch rack details
     $rack = $Admin->fetch_object("racks", "id", $_POST['rackid']);
     # check
@@ -85,6 +84,7 @@ $(document).ready(function(){
     else {
     ?>
         <form id="rackDeviceManagementEdit">
+        <?php $csrf->insertToken('/ajx/admin/racks/edit-rack-devices-result'); ?>
 
     	<table class="table table-noborder table-condensed">
 
@@ -150,7 +150,6 @@ $(document).ready(function(){
         		<td><?php print _('Size'); ?></td>
         		<td>
         			<input type="text" name="rack_size" class="form-control input-sm" placeholder="<?php print _('Rack size in U'); ?>">
-        			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
                     <input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
         			<input type="hidden" name="rackid" value="<?php print $_POST['rackid']; ?>">
         		</td>

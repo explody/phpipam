@@ -5,7 +5,7 @@
  *********************/
 
 # validate csrf cookie
-$User->csrf_validate("split", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # id must be numeric
 if(!is_numeric($_POST['subnetId']))			{ $Result->show("danger", _("Invalid ID"), true); }

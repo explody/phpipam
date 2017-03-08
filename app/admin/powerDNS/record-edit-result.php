@@ -7,7 +7,7 @@
 $PowerDNS = new PowerDNS($Database);
 
 # validate csrf cookie
-$User->csrf_validate("record", $_GET['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # fetch old record
 if ($_POST['action'] != "add") {

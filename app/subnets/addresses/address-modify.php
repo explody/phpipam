@@ -6,9 +6,6 @@
  * Fetches info from database
  *************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('address');
-
 # validate post
 is_numeric($_POST['subnetId']) ?:						$Result->show("danger", _("Invalid subnet ID"), true, true);
 is_numeric($_POST['id']) || strlen($_POST['id'])==0 ?:	$Result->show("danger", _("Invalid ID"), true, true);
@@ -159,6 +156,8 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
 
     <!-- IP address modify form -->
     <form class="editipaddress" id="editipaddress" role="form" name="editipaddress">
+    <?php $csrf->insertToken('/ajx/subnets/addresses/address-modify-submit'); ?>
+    
     <!-- edit IP address table -->
     <table id="editipaddress" class="table table-noborder table-condensed">
 
@@ -178,7 +177,7 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
             </span>
             </div>
 
-               <input type="hidden" name="action" 	 	value="<?php print $act; 	?>">
+            <input type="hidden" name="action"      value="<?php print $act; ?>">
             <input type="hidden" name="id" 		 	value="<?php print $id; 		?>">
             <input type="hidden" name="subnet"   	value="<?php print $subnet['ip']."/".$subnet['mask']; 	?>">
             <input type="hidden" name="subnetId" 	value="<?php print $subnetId; 	?>">
@@ -188,7 +187,7 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
             <input type="hidden" name="mac_old"     value="<?php print @$address['mac_old']; ?>">
             <input type="hidden" name="PTR" 		value="<?php print $address['PTR']; ?>">
             <input type="hidden" name="addressId" 	value="<?php print $address['id']; ?>">
-            <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+
             <?php
             if (strpos($_SERVER['HTTP_REFERER'], "verify-database")!=0) { 
                 print "<input type='hidden' name='verifydatabase' value='yes'>"; 

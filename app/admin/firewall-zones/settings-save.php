@@ -6,7 +6,7 @@
  ********************************************************************************/
 
  # validate csrf cookie
- $User->csrf_validate("firewall-zones", $_POST['csrf_cookie'], $Result);
+ $Tools->csrf_validate($csrf, $Result);
 
 # validations
 

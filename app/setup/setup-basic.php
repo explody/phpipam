@@ -1,6 +1,5 @@
 <?php 
 
-$csrf = $Tools->csrf_create('setup-basic');
 $admin = $Tools->fetch_object ("users","username","Admin");
 $admin_exists = false;
 
@@ -22,7 +21,9 @@ if(!is_null($admin->password)) {
 		</div>
 		<hr>
 		<form name="setup-basic" id="setup-basic" class="form-inline" method="post">
-            <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+
+        <?php $csrf->insertToken('/ajx/setup/setup-basic-result'); ?>
+
 		<div class="row">
             
             <?php

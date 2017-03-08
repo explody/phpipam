@@ -1,8 +1,5 @@
 <?php
 
-
-
-
 # Make sure user is admin
 $User->is_admin(true);
 

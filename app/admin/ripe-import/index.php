@@ -3,10 +3,6 @@
 /**
  * Script to manage sections
  *************************************************/
- 
-$csrf = $User->csrf_create('ripe-import');
-
-
 
 // TODO: select2 on the ripe-import dropdowns
 ?>
@@ -18,11 +14,11 @@ $csrf = $User->csrf_create('ripe-import');
 <?php $Result->show("info alert-absolute",  _('This script imports subnets from RIPE database for specific AS. Enter desired AS to search for subnets'), false); ?>
 
 <form name="ripeImport" id="ripeImport" style="margin-top:50px;clear:both;" class="form-inline" role="form">
+    <?php $csrf->insertToken('/ajx/admin/ripe-import/ripe-telnet'); ?>
 	<div class="form-group">
 		<input class="search form-control input-sm" placeholder="<?php print _('AS number'); ?>" name="as" type="text">
 	</div>
 	<div class="form-group">
-        <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		<button type="submit" class="btn btn-sm btn-default"><?php print _('Search'); ?></button>
 	</div>
 </form>

@@ -6,9 +6,6 @@
 
 $PowerDNS 	= new PowerDNS ($Database);
 
-# create csrf token
-$csrf = $User->csrf_create('record');
-
 # save settings for powerDNS default
 $pdns = $PowerDNS->db_settings;
 
@@ -90,6 +87,8 @@ $readonly = $_POST['action']=="delete" ? "readonly" : "";
 <div class="pContent">
 
 	<form id="recordEdit">
+    <?php $csrf->insertToken('/ajx/admin/powerDNS/record-edit-result'); ?>
+    
 	<table class="table table-noborder table-condensed">
 
 	<!-- name  -->
@@ -100,7 +99,6 @@ $readonly = $_POST['action']=="delete" ? "readonly" : "";
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
 			<input type="hidden" name="id" value="<?php print @$_POST['id']; ?>">
 			<input type="hidden" name="domain_id" value="<?php print @$_POST['domain_id']; ?>">
-            <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 	</tr>
 

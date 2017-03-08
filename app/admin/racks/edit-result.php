@@ -7,7 +7,7 @@
 $Racks      = new phpipam_rack ($Database);
 
 # validate csrf cookie
-$User->csrf_validate("rack", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # get modified details
 $rack = $_POST;

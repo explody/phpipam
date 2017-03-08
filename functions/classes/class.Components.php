@@ -5,15 +5,7 @@
  */
 
 class Components {
-    
-    # Path relative to web server root. Do not include trailing slash.
-    # Will be appended with the type and version, e.g. '$media_path/css/1.0.0'
-    # empty string means server root or "/"
-    private $media_path = "static";
-    
-    # Path relative to this class file  Do not include trailing slash.
-    private $media_dir  = "../../static";
-    
+
     /**
      * Tools class
      *

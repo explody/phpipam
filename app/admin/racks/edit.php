@@ -6,9 +6,6 @@
 
 $Racks      = new phpipam_rack ($Database);
 
-# create csrf token
-$csrf = $User->csrf_create('rack');
-
 # fetch custom fields
 $cfs = $Tools->fetch_custom_fields('racks');
 
@@ -53,6 +50,8 @@ $(document).ready(function(){
 <div class="pContent">
 
 	<form id="rackManagementEdit">
+    <?php $csrf->insertToken('/ajx/admin/racks/edit-result'); ?>
+    
 	<table class="table table-noborder table-condensed">
 
 	<!-- hostname  -->
@@ -117,7 +116,6 @@ $(document).ready(function(){
 				print '<input type="hidden" name="rackid" value="'. $_POST['rackid'] .'">'. "\n";
 			} ?>
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 	</tr>
 

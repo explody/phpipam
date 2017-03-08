@@ -10,7 +10,7 @@ require_once(FUNCTIONS . '/classes/Migration/class.RepeatableTable.php');
  ************************/
 
 # validate csrf cookie
-$User->csrf_validate("custom_field", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 $action = $_POST['action'];
 $table  = $_POST['table'];

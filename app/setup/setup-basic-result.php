@@ -3,8 +3,7 @@
 /**
  *	Post-installation submit
  */
- 
-$Tools->csrf_validate("setup-basic", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 $Install  = new Install($Database);
 

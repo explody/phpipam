@@ -16,6 +16,7 @@ var copy_js = [
     { src: ['bower_components/bootstrap/dist/js/bootstrap.min.js'],                     dest: '<%= grunt.config("static_dir") %>/js/bootstrap.js' },
     { src: ['bower_components/bootstrap-switch/dist/js/bootstrap-switch.min.js'],       dest: '<%= grunt.config("static_dir") %>/js/bootstrap.switch.js' },
     { src: ['bower_components/gmaps/gmaps.min.js'],                                     dest: '<%= grunt.config("static_dir") %>/js/gmaps.js' },
+    { src: ['bower_components/gmaps/gmaps.min.js.map'],                                 dest: '<%= grunt.config("static_dir") %>/js/gmaps.min.js.map' },
     { src: ['bower_components/moment/min/moment.min.js'],                               dest: '<%= grunt.config("static_dir") %>/js/moment.js' },
     { src: ['bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js'], 
           dest: '<%= grunt.config("static_dir") %>/js/bootstrap.datetimepicker.js' },
@@ -26,6 +27,7 @@ var copy_js = [
 
 var copy_css = [
     { src: ['bower_components/bootstrap/dist/css/bootstrap.min.css'],                           dest: '<%= grunt.config("static_dir") %>/css/bootstrap.css' },
+    { src: ['bower_components/bootstrap/dist/css/bootstrap.min.css.map'],                       dest: '<%= grunt.config("static_dir") %>/css/bootstrap.min.css.map' },
     { src: ['bower_components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css'],  dest: '<%= grunt.config("static_dir") %>/css/bootstrap.switch.css' },
     { src: ['bower_components/datatables/media/css/jquery.dataTables.min.css'],                 dest: '<%= grunt.config("static_dir") %>/css/jquery.datatables.css' },
     { src: ['bower_components/font-awesome/css/font-awesome.min.css'],                          dest: '<%= grunt.config("static_dir") %>/css/font-awesome.css' },

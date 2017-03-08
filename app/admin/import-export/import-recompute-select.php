@@ -4,8 +4,6 @@
  *	Subnets master/nested recompute select form
  */
 
-$csrf = $User->csrf_create('recompute');
-
 $mtable = "subnets"; # main table where to check the fields
 # predefine field list
 $expfields = array ("section","subnet","mask","description","vrf");
@@ -71,6 +69,7 @@ if(sizeof($all_sections) > 0) {
 <?php
 
 print "<form id='selectImportFields'><div id='topmsg'>";
+$csrf->insertToken('/ajx/admin/import-export/import-recompute-preview');
 print '<h4>'._("Sections and IP versions").'</h4><hr>';
 print _("Please choose which section and IP version to recompute:");
 print "</div>";
@@ -83,7 +82,6 @@ print "<tr>	<th><input type='checkbox' id='recomputeSectionSelectAll' checked> "
 			<th><input type='checkbox' id='recomputeCVRFSelectAll' checked> Cross VRF</th></tr>";
 print $section_rows;
 print "</tbody></table>";
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
 print "</form>";
 ?>
 </div>

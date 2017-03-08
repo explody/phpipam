@@ -4,12 +4,6 @@
  * Set LDAP method
  *****************/
 
-
-
-
-# validate action
-$Admin->validate_action ($_POST['action'], $_SERVER['REQUEST_METHOD'], true);
-
 # ID must be numeric */
 if($_POST['action']!="add") {
 	if(!is_numeric($_POST['id']))	{ $Result->show("danger", _("Invalid ID"), true, true); }

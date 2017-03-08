@@ -4,14 +4,8 @@
  * Script to print racks
  ***************************/
 
-
-
-
 # fetch custom fields
 $cfs = $Tools->fetch_custom_fields('racks');
-
-# create csrf token
-$csrf = $User->csrf_create('rack_devices');
 
 # all racks or one ?
 if (isset($_GET['subnetId'])) {

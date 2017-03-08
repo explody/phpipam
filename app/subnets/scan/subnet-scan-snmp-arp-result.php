@@ -4,7 +4,7 @@
  *******************************/
 
 # validate csrf cookie
-$User->csrf_validate("scan", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # verify that user has write permissionss for subnet
 if($Subnets->check_permission ($User->user, $_POST['subnetId']) != 3) 	{ $Result->show("danger", _('You do not have permissions to modify hosts in this subnet')."!", true); }

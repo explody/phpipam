@@ -4,7 +4,7 @@
  * set which custom field to display
  ************************/
 
-$User->csrf_validate("filter_fields", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 // This is backwards compared to db values because 'on' means hidden
 $visibility = [ 'on' => 0, 'off' => 1];

@@ -5,7 +5,7 @@
  *************************************************/
 
 # validate csrf cookie
-$User->csrf_validate("permissions", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 // init
 $new_permissions = array();             // permissions posted

@@ -5,8 +5,6 @@
  *	add subnet (from detail view) to existing firewall zone
  *************************************************************/
 
-$csrf = $User->csrf_create('subnet-zone');
-
 $Zones    = new FirewallZones($Database);
 
 # validate $_POST['operation'] values
@@ -27,8 +25,9 @@ if($firewallZones===false)                              { $Result->show("danger"
 <div class="pContent">
 <!-- form -->
 <form id="subnet-to-zone-edit">
+    
+<?php $csrf->insertToken('/ajx/admin/firewall-zones/subnet-to-zone-save'); ?>
 
-<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 <input type="hidden" name="subnetId" value="<?php print $_POST['subnetId']; ?>">
 <!-- table -->
 <table class="table table-noborder table-condensed">

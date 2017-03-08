@@ -5,7 +5,7 @@
  ************************************************/
 
 # validate csrf cookie
-$User->csrf_validate("nat", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # get NAT object
 $nat = $Admin->fetch_object ("nat", "id", $_POST['id']);

@@ -4,9 +4,6 @@
  *	VRF export
  */
 
- # create csrf token
- $csrf = $User->csrf_create('export-vrf');
-
 ?>
 
 <!-- header -->
@@ -14,32 +11,27 @@
 
 <!-- content -->
 <div class="pContent">
+    
+<form id="selectExportTargets" method="post">
+<input type="hidden" name="<?php print $csrf->getFormIndex(); ?>" />
+<input type="hidden" name="<?php print $csrf->getFormToken(); ?>" />
 
 <?php
-
-# print
-print '<form id="selectExportFields">';
-
-# table
 print "	<table class='table table-striped table-condensed'>";
-
 print "	<tr>";
 print "	<th>"._('Name')."</th>";
 print "	<th>"._('RD')."</th>";
 print "	<th>"._('Description')."</th>";
 print "	</tr>";
-
 print "	<tr>";
 print "	<td><input type='checkbox' name='name' checked title='"._('Mandatory')."'></td>";
 print "	<td><input type='checkbox' name='rd' checked> </td>";
 print "	<td><input type='checkbox' name='description' checked> </td>";
 print "	</tr>";
-
 print '</table>';
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
-print '</form>';
-
 ?>
+
+</form>
 
 </div>
 
@@ -47,6 +39,6 @@ print '</form>';
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-type="vrf"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
+		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-form="selectExportTargets" data-type="vrf" data-action="export" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/export-vrf'))); ?>"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
 	</div>
 </div>

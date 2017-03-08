@@ -4,13 +4,6 @@
  *	Script to write instructions for users
  ******************************************/
 
-
-
-
-
-# create csrf token
-$csrf = $User->csrf_create('instructions');
-
 // default
 if(!isset($_GET['subnetId'])) { $_GET['subnetId'] = 1; }
 
@@ -49,7 +42,7 @@ if($_GET['subnetId']=="1" || $_GET['subnetId']="2")  {
     <form name="instructions" id="instructionsForm">
 
     	<textarea style="width:100%;" name="instructions" id="instructions" rows="<?php print $rowcount; ?>"><?php print stripslashes($instructions->instructions); ?></textarea>
-    	<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+    	<?php $csrf->insertToken('/ajx/admin/instructions/edit-result'); ?>
     	<input type="hidden" name="id" value="<?php print $_GET['subnetId']; ?>">
 
     	<script src="<?php print MEDIA; ?>/ckeditor/ckeditor.js"></script>

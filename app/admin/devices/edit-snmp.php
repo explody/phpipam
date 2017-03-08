@@ -4,9 +4,6 @@
  *	Edit device snmp
  ************************/
 
-# create csrf token
-$csrf = $User->csrf_create('device_snmp');
-
 # ID must be numeric
 if(!is_numeric($_POST['switchId']))		     { $Result->show("danger", _("Invalid ID"), true, true); }
 
@@ -44,6 +41,7 @@ $('#switchSNMPManagementEdit').change(function() {
 <div class="pContent">
 
 	<form id="switchSNMPManagementEdit">
+    <?php $csrf->insertToken('/ajx/admin/devices/edit-snmp-result'); ?>
 	<table class="table table-noborder table-condensed">
 
     <tbody id="version">
@@ -66,7 +64,6 @@ $('#switchSNMPManagementEdit').change(function() {
         		<option value="3" <?php if($device->snmp_version=="3") print "selected"; ?>>SNMP v3</option>
     		</select>
     		<input type="hidden" name="device_id" value="<?php print $device->id; ?>">
-    		<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 	</tr>
     </tbody>
