@@ -5,7 +5,7 @@
  ***************************/
 
 # validate csrf cookie
-$User->csrf_validate("device_types", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['id'])) 	{ $Result->show("danger", _("Invalid ID"), true); }

@@ -5,7 +5,7 @@
  ********************************************/
 
 # validate csrf cookie
-$User->csrf_validate($csrf, $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # if show name than description must be set
 if(@$_POST['showName']==1 && strlen($_POST['description'])==0) 	{ $Result->show("danger", _("Please enter subnet description to show as name!"), true); }

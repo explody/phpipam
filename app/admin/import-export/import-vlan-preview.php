@@ -4,7 +4,7 @@
  *	Preview data VLAN import data
  ************************************/
  
- $User->csrf_validate("import-vlans", $_POST['csrf_cookie'], $Result);
+ $Tools->csrf_validate($csrf, $Result);
 
 # load data from uploaded file
 include FUNCTIONS . '/ajax/import-load-data.php';

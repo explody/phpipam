@@ -5,7 +5,7 @@
  ***************************/
 
 # validate csrf cookie
-$User->csrf_validate("device", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # get modified details
 $device = $_POST;

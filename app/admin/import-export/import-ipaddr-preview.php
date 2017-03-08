@@ -4,7 +4,7 @@
  *	Preview data IP Addresses import data
  ************************************/
 
-$User->csrf_validate("import-ipaddr", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # TODO: figure out if we're putting things in this ajax directory or not
 # load data from uploaded file

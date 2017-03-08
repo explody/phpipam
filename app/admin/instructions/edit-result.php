@@ -5,7 +5,7 @@
  **********************************************/
 
 # validate csrf cookie
-$User->csrf_validate("instructions", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # validate ID
 if ($_POST['id']=="1" || $_POST['id']=="2") {

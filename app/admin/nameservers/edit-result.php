@@ -5,7 +5,7 @@
  ***************************/
 
 # validate csrf cookie
-$User->csrf_validate("ns", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 
 # Name and primary nameserver must be present!

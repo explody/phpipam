@@ -5,7 +5,7 @@
  *************************************/
 
 # validate csrf cookie
-$User->csrf_validate("user", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # fetch auth method
 $auth_method = $Admin->fetch_object ("usersAuthMethod", "id", $_POST['authMethod']);

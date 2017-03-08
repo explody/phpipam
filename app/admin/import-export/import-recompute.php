@@ -3,7 +3,7 @@
  * Subnets Master/Nested recompute save
  ****************************************/
  
- $User->csrf_validate("recompute", $_POST['csrf_cookie'], $Result);
+ $Tools->csrf_validate($csrf, $Result);
 
 # Load subnets and recompute the master/nested relations
 include FUNCTIONS . '/ajax/import-recompute-logic.php';

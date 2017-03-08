@@ -5,7 +5,7 @@
  *************************************************/
 
 # validate csrf cookie
-$User->csrf_validate("section", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # If confirm is not set print delete warning
 if ($_POST['action']=="delete" && !isset($_POST['deleteconfirm'])) {

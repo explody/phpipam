@@ -12,7 +12,7 @@ if($_POST['action']!="add" && !is_numeric($_POST['rackid']))		{ $Result->show("d
 # remove or add ?
 if ($_POST['action']=="remove") {
     # validate csrf cookie
-    $User->csrf_validate($csrf, $Result);
+    $Tools->csrf_validate($csrf, $Result);
     # set values
     $values = array("id"=>$_POST['deviceid'],
                     "rack"=>"",

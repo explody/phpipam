@@ -5,7 +5,7 @@
  *************************************/
 
 # validate csrf cookie
-$User->csrf_validate("languages", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # verify that description is present if action != delete
 if($_POST['action'] != "delete" && strlen($_POST['l_code']) < 2)		{ $Result->show("danger", _('Code must be at least 2 characters long'), true); }

@@ -6,7 +6,7 @@
  */
 
 # validate csrf cookie
-$User->csrf_validate("authmethods", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 //for adding remove id
 if($action=="add") {

@@ -10,7 +10,7 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
 }
 
 # validate csrf cookie
-$User->csrf_validate("vlan", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # fetch custom fields
 $cfs = $Tools->fetch_custom_fields('vlans');

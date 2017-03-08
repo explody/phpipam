@@ -5,7 +5,7 @@
  *************************************/
 
 # validate csrf cookie
-$User->csrf_validate("apiedit", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 /* checks */
 $error = array();

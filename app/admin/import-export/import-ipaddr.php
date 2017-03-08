@@ -3,7 +3,7 @@
  * IP Addresses Import
  ************************************************/
 
-$User->csrf_validate("import-ipaddr", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # load data from uploaded file
 include FUNCTIONS . '/ajax/import-load-data.php';
