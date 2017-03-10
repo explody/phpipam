@@ -2036,9 +2036,11 @@ $(document).on("click", "button#subnetSplitSubmit", function() {
 //truncate save
 $(document).on("click", "button#subnetTruncateSubmit", function() {
 	showSpinner();
-	var subnetId = $(this).attr('data-subnetId');
-    var csrf_cookie = $(this).attr('data-csrf_cookie');
-	$.post("/ajx/admin/subnets/truncate-save", {subnetId:subnetId, csrf_cookie:csrf_cookie}, function(data) {
+    var params = $.extend({},
+                      JSON.parse($(this).attr("data-csrf")),
+                      { subnetId: $(this).attr('data-subnetId') }
+                     );
+	$.post("/ajx/admin/subnets/truncate-save", params, function(data) {
 		$('div.subnetTruncateResult').html(data);
         //reload after 2 seconds if succeeded!
         reload_window (data);
@@ -2493,7 +2495,7 @@ $(document).on("click", "#editRacksubmit", function() {
 });
 //load edit rack devices form
 $(document).on("click", ".editRackDevice", function() {
-	open_popup("400", "/ajx/admin/racks/edit-rack-devices", {rackid:$(this).attr('data-rackid'), deviceid:$(this).attr('data-deviceid'), action:$(this).attr('data-action'),csrf_cookie:$(this).attr('data-csrf')} );
+	open_popup("400", "/ajx/admin/racks/edit-rack-devices", {rackid:$(this).attr('data-rackid'), deviceid:$(this).attr('data-deviceid'), action:$(this).attr('data-action')} );
 	return false;
 });
 //submit edit rack devices form
