@@ -1,20 +1,5 @@
 <?php
 
-/* functions */
-require( dirname(__FILE__) . '/../../../functions/functions.php');
-
-# initialize user object
-$Database = new Database_PDO;
-$User     = new User ($Database);
-$Subnets  = new Subnets ($Database);
-$Sections = new Sections ($Database);
-$Tools    = new Tools ($Database);
-$Log 	  = new Logging ($Database);
-$Result   = new Result ();
-
-# verify tdat user is logged in
-
-
 # validate numberic id
 if(!is_numeric($_POST['cid']))	{ $Result->show("danger", _("Invalid ID"), true, true); }
 
