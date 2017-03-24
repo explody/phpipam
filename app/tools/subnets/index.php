@@ -4,9 +4,6 @@
  * print subnets
  */
 
-
-
-
 # get all sections
 $sections = $Sections->fetch_all_sections();
 
@@ -32,12 +29,13 @@ if ($sections!==false) {
 	print "	<th>"._('Description')."</th>";
 	print "	<th>"._('VLAN')."</th>";
 	if($User->settings->enableVRF == 1) {
-	print "	<th>"._('VRF')."</th>";
+       print "	<th>"._('VRF')."</th>";
 	}
 	print "	<th>"._('Master Subnet')."</th>";
 	print "	<th>"._('Device')."</th>";
 	if($User->settings->enableIPrequests == 1) {
-	print "	<th class='hidden-xs hidden-sm'>"._('Requests')."</th>";
+    	print "	<th class='hidden-xs hidden-sm'>"._('Requests')."</th>";
+    }
 
 	foreach($cfs as $cf) {
 		# hidden?
