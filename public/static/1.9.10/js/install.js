@@ -1,5 +1,5 @@
 /*
- phpipam 1.9.10 2017-03-02-10:56:28 
+ phpipam 1.9.10 2017-03-24-11:15:32 
 */
 $(document).ready(function() {
     $("div.jqueryError").hide(), $("div.loading").hide(), $("#toggle-advanced").on("click", function() {
