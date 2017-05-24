@@ -16,7 +16,7 @@ $Tools->csrf_validate($csrf, $Result);
 $cfs = $Tools->fetch_custom_fields('vlans');
 
 //if it already exist die
-if($User->settings->vlanDuplicate==0 && $_POST['action']=="add") {
+if($User->settings->vlanDuplicate==0 && ($_POST['action']=="add" || $_POST['action']=="edit")) {
 	$check_vlan = $Admin->fetch_multiple_objects ("vlans", "domainId", $_POST['domainId'], "vlanId");
 
 	foreach($check_vlan as $v) {
@@ -67,3 +67,4 @@ if($_POST['action']=="delete") { $Admin->remove_object_references ("subnets", "v
 if($_POST['action']=="add")	   { print '<p id="vlanidforonthefly"    style="display:none">'.$Admin->lastId.'</p>'; }
 
 ?>
+
