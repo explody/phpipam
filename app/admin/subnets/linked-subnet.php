@@ -4,9 +4,6 @@
  * Print edit subnet
  *********************/
 
-# create csrf token
-$csrf = $User->csrf_create('linkedsubnet');
-
 # ID must be numeric
 if(!is_numeric($_POST['subnetId']))	{ $Result->show("danger", _("Invalid ID"), true, true); }
 
@@ -17,8 +14,6 @@ $ipv6_subnets = $Subnets->fetch_all_subnets_search ("IPv6");
 $subnet = $Subnets->fetch_subnet(null, $_POST['subnetId']);
 ?>
 
-
-
 <!-- header -->
 <div class="pHeader"><?php print _('Link IPv4 subnet to IPv6 subnet'); ?></div>
 
@@ -28,7 +23,7 @@ $subnet = $Subnets->fetch_subnet(null, $_POST['subnetId']);
 	<hr>
 
 	<form id="editLinkedSubnet">
-
+    <?php $csrf->insertToken('/ajx/admin/subnets/linked-subnet-submit'); ?>
     <select name="linked_subnet" class="form-control input-sm input-w-auto" style="margin-bottom: 20px;">
         <option value="0"><?php print _("Not linked"); ?></option>
     	<?php
@@ -44,7 +39,6 @@ $subnet = $Subnets->fetch_subnet(null, $_POST['subnetId']);
         }
     	?>
     </select>
-	<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 	<input type="hidden" name="subnetId" value="<?php print $subnet->id; ?>">
 
     </table>

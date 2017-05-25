@@ -10,7 +10,7 @@ $Zones 		= new FirewallZones($Database);
 $Ping		= new Scan ($Database);
 
 # validate csrf cookie
-$User->csrf_validate("address", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 $action = $_POST['action'];
 //reset delete action form visual visual
@@ -20,6 +20,9 @@ if(isset($_POST['action-visual'])) {
 
 # save $_POST to $address
 $address = $_POST;
+
+# remove all spaces in dns_name
+if (strlen($address['dns_name'])>0) { $address['dns_name'] = str_replace(" ", "", $address['dns_name']); }
 
 # required fields
 isset($address['action']) ?:		$Result->show("danger", _("Missing required fields"). " action", true);

@@ -1,6 +1,9 @@
 <div id="login">
 
 <form name="login" id="login" class="form-inline" method="post">
+
+<?php $csrf->insertToken('/ajx/login/login_check'); ?>
+
 <div class="loginForm row">
 
 	<!-- title -->
@@ -54,7 +57,7 @@
 	</div>
 
 </div>
-<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+
 </form>
 
 <?php

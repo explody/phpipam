@@ -10,7 +10,7 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
 }
 
 # validate csrf cookie
-$User->csrf_validate("vrf", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # Hostname must be present!
 if($_POST['name'] == "") { $Result->show("danger", _("Name is mandatory"), true); }

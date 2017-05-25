@@ -2,8 +2,6 @@
 
 header('X-XSS-Protection:1; mode=block');
 
-$csrf = $User->csrf_create('login');
-
 $http_auth = $User->fetch_object('usersAuthMethod', 'type', 'HTTP');
 $http_auth_settings = json_decode($http_auth->params);
 

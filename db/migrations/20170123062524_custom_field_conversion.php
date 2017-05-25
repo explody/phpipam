@@ -41,7 +41,8 @@ class CustomFieldConversion extends Ipam\Migration\RepeatableMigration
         'devicegrouping',
         'devicegroupfield',
         'id',
-        'name'
+        'name',
+        'location'
     ];
     
     public function change()

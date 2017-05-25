@@ -4,9 +4,6 @@
  * Edit tag
  *************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('tags');
-
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['id'])) { $Result->show("danger", _("Invalid ID"), true, true); }
 
@@ -40,6 +37,8 @@ $(function(){
 <div class="pContent">
 
 	<form id="editType" name="editType">
+    <?php $csrf->insertToken('/ajx/admin/tags/edit-result'); ?>
+    
 	<table class="table table-noborder table-condensed">
 
 	<!-- type -->
@@ -49,7 +48,6 @@ $(function(){
 		    <input type="text" name="type" class="form-control input-sm"  value="<?php print @$tag->type; ?>"  maxlength='32' <?php if($_POST['action'] == "delete") print "readonly"; ?>>
 			<input type="hidden" name="id" value="<?php print @$tag->id; ?>">
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
     </tr>
 

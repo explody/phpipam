@@ -7,47 +7,21 @@
  *
  *******************************/
 
-# TODO: handle ajax+non-ajax better
-# flag for ajax-loaded
-$ajax_loaded = false;
-
-# ajax check
-if (!function_exists("create_link")) {
-    /* functions */
-    require( FUNCTIONS . '/functions.php');
-
-    # initialize user object
-    $Database 	= new Database_PDO;
-    $User 		= new User ($Database);
-    $Tools	 	= new Tools ($Database);
-    $Sections	= new Sections ($Database);
-    $Subnets	= new Subnets ($Database);
-    $Snmp       = new phpipamSNMP ();
-    $Result 	= new Result ();
-
-    # set ajax
-    $ajax_loaded = true;
-}
-
-
-
-
-
 # snmp class
 $Snmp       = new phpipamSNMP ();
 
 # scan disabled
-if ($User->settings->enableSNMP!="1")           { $Result->show("danger", "SNMP module disbled", true, $ajax_loaded); }
+if ($User->settings->enableSNMP!="1")           { $Result->show("danger", "SNMP module disbled", true, AJAX); }
 
 # section check
-if (!is_numeric($_POST['sectionId']))           { $Result->show("danger", "Invalid section Id", true, $ajax_loaded); }
-if (!is_numeric($_POST['subnetId']))            { $Result->show("danger", "Invalid subnet Id", true, $ajax_loaded); }
+if (!is_numeric($_POST['sectionId']))           { $Result->show("danger", "Invalid section Id", true, AJAX); }
+if (!is_numeric($_POST['subnetId']))            { $Result->show("danger", "Invalid subnet Id", true, AJAX); }
 
 $section = $Subnets->fetch_object("sections", "id", $_POST['sectionId']);
-if ($section===false)                           { $Result->show("danger", "Invalid section Id", true, $ajax_loaded); }
+if ($section===false)                           { $Result->show("danger", "Invalid section Id", true, AJAX); }
 
 # check section permissions
-if($Subnets->check_permission ($User->user, $_POST['sectionId']) != 3) { $Result->show("danger", _('You do not have permissions to add new subnet in this section')."!", true, $ajax_loaded); }
+if($Subnets->check_permission ($User->user, $_POST['sectionId']) != 3) { $Result->show("danger", _('You do not have permissions to add new subnet in this section')."!", true, AJAX); }
 
 // no errors
 error_reporting(E_ERROR);
@@ -62,7 +36,7 @@ foreach ($devices_used as $d) {
 
 // if none set die
 if (empty($devices_used)) { 
-    $Result->show("danger", "No devices for SNMP route table query available"."!", true, $ajax_loaded); 
+    $Result->show("danger", "No devices for SNMP route table query available"."!", true, AJAX); 
 }
 
 // ok, we have devices, connect to each device and do query
@@ -88,9 +62,9 @@ foreach ($devices_used as $d) {
 	}
 }
 # none and errors
-if(sizeof($found)==0 && isset($errors))          { $Result->show("info", _("No new subnets found")."</div><hr><div class='alert alert-warning'>".implode("<hr>", $errors)."</div>", true, $ajax_loaded); }
+if(sizeof($found)==0 && isset($errors))          { $Result->show("info", _("No new subnets found")."</div><hr><div class='alert alert-warning'>".implode("<hr>", $errors)."</div>", true, AJAX); }
 # none
-elseif(sizeof($found)==0) 	                     { $Result->show("info", _("No new subnets found")."!", true, $ajax_loaded); }
+elseif(sizeof($found)==0) 	                     { $Result->show("info", _("No new subnets found")."!", true, AJAX); }
 # ok
 else {
     # fetch all permitted domains
@@ -140,23 +114,23 @@ else {
     if($User->settings->enableVRF==1)
     $vrfs  = $Tools->fetch_all_objects("vrf", "name");
 
-    # create csrf token
-    $csrf = $User->csrf_create('scan_all');
 ?>
 
 <!-- header -->
-<?php if ($ajax_loaded) { ?>
+<?php if (AJAX) { ?>
 <div class="pHeader"><?php print _('Scan results'); ?></div>
 <?php } ?>
 
 <!-- content -->
-<?php if ($ajax_loaded) { ?>
+<?php if (AJAX) { ?>
 <div class="pContent">
 <?php } ?>
         <?php
 
     	//table
         print '<form id="editSubnetDetailsSNMPall">';
+        $csrf->insertToken('/ajx/subnets/scan/subnet-scan-snmp-route-all-result');
+        
     	print "<table class='table table-striped table-top table-condensed' id='editSubnetDetailsSNMPallTable'>";
 
     	// titles
@@ -239,7 +213,6 @@ else {
                     		print " <input type='hidden' name='masterSubnetId-$m' value='$_POST[subnetId]'>";
                             else
                     		print " <input type='hidden' name='masterSubnetId-$m' value='0'>";
-                    		print " <input type='hidden' name='csrf_cookie' value='$csrf'>";
                     		print "</td>";
 
                     		//vlan
@@ -364,7 +337,7 @@ else {
     <!-- result -->
     <div class="add-subnets-to-section-snmp-result"></div>
 
-<?php if ($ajax_loaded) { ?>
+<?php if (AJAX) { ?>
 </div>
 
 

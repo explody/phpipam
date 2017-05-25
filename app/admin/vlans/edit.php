@@ -9,9 +9,6 @@ if ($User->is_admin(false)==false && $User->user->editVlan!="Yes") {
     $Result->show("danger", _("Not allowed to change VLANs"), true, true);
 }
 
-# create csrf token
-$csrf = $User->csrf_create('vlan');
-
 # fetch vlan details
 $vlan = $Admin->fetch_object ("vlans", "vlanId", @$_POST['vlanId']);
 $vlan = $vlan!==false ? (array) $vlan : array();
@@ -55,7 +52,8 @@ $(document).ready(function(){
 <!-- content -->
 <div class="pContent">
 	<form id="<?php print $formId; ?>">
-
+    <?php $csrf->insertToken('/ajx/admin/vlans/edit-result'); ?>
+    
 	<table id="vlanManagementEdit2" class="table table-noborder table-condensed">
 	<!-- domain -->
 	<tr>
@@ -104,7 +102,6 @@ $(document).ready(function(){
 			<input type="hidden" name="domainId" value="<?php print $vlan_domain->id; ?>">
 			<?php } ?>
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 	</tr>
 

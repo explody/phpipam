@@ -303,6 +303,7 @@ class Subnets_controller extends Common_api_functions
                 if ($result===false) {
                     $this->Response->throw_exception(404, "No addresses found");
                 } else {
+                    $this->custom_fields = $this->Tools->fetch_custom_fields('ipaddresses');
                     return array("code"=>200, "data"=>$this->prepare_result($result, "addresses", true, true));
                 }
             } elseif ($this->_params->id2=="gateway") {

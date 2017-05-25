@@ -4,9 +4,6 @@
  *	Edit device details
  ************************/
 
-# create csrf token
-$csrf = $User->csrf_create('device_types');
-
 # ID must be numeric
 if($_POST['action']!="add" && !is_numeric($_POST['id'])) { $Result->show("danger", _("Invalid ID"), true, true); }
 # set delete flag
@@ -29,6 +26,7 @@ if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
 <div class="pContent">
 
 	<form id="devTypeEdit">
+    <?php $csrf->insertToken('/ajx/admin/device-types/edit-result'); ?>
 	<table class="table table-noborder table-condensed">
 
 	<!-- hostname  -->
@@ -37,7 +35,6 @@ if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
 		<td>
 			<input type="text" name="name" class="form-control input-sm" placeholder="<?php print _('Name'); ?>" value="<?php print @$deviceType->name; ?>" <?php print $readonly; ?>>
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 			<?php
 			if( ($_POST['action'] == "edit") || ($_POST['action'] == "delete") ) {
 				print '<input type="hidden" name="id" value="'. $_POST['id'] .'">'. "\n";

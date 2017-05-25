@@ -4,8 +4,6 @@
  * Script to get all active IP requests
  ****************************************/
 
-$csrf = $User->csrf_create('filter-fields');
-
 # get all fields in IP table
 foreach($Tools->fetch_standard_fields("ipaddresses") as $s) {
 	$standard_fields[$s] = $s;
@@ -30,6 +28,7 @@ unset($standard_fields['id'], $standard_fields['state'], $standard_fields['subne
 
 
 <form id="filterIP" style="margin-top:50px;clear:both;">
+<?php $csrf->insertToken('/ajx/admin/filter-fields/filter-result'); ?>
 <table class="filterIP table table-auto table-striped table-top">
 
 <!-- headers -->
@@ -64,7 +63,6 @@ foreach($standard_fields as $field) {
 
 </table>
 
-<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 </form>
 
 

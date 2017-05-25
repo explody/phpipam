@@ -4,9 +4,6 @@
  *	Edit device details
  ************************/
 
-# create csrf token
-$csrf = $User->csrf_create('device');
-
 # fetch custom fields
 $cfs = $Tools->fetch_custom_fields('devices');
 
@@ -80,6 +77,7 @@ $('#rack-select').change(function() {
 <div class="pContent">
 
 	<form id="switchManagementEdit">
+    <?php $csrf->insertToken('/ajx/admin/devices/edit-result'); ?>
 	<table class="table table-noborder table-condensed">
 
 	<!-- hostname  -->
@@ -217,7 +215,6 @@ $('#rack-select').change(function() {
 				print '<input type="hidden" name="switchId" value="'. $_POST['switchId'] .'">'. "\n";
 			} ?>
 			<input type="hidden" name="action" value="<?php print $action; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 	</tr>
 

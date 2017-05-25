@@ -4,9 +4,6 @@
  *	Print all available nameserver sets and configurations
  ************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('nat');
-
 # get NAT object
 if($_POST['action']!="add") {
 	$nat = $Admin->fetch_object ("nat", "id", $_POST['id']);
@@ -31,6 +28,8 @@ $link = $readonly ? false : true;
 <div class="pContent">
 
 	<form id="editNat">
+    <?php $csrf->insertToken('/ajx/admin/nat/edit-result'); ?>
+    
 	<table id="editNat" class="table table-noborder table-condensed">
 
 	<tbody>
@@ -39,7 +38,6 @@ $link = $readonly ? false : true;
         	<th><?php print _('Name'); ?></th>
         	<td>
             	<input type="text" class="form-control input-sm" name="name" value="<?php print $nat->name; ?>" placeholder='<?php print _('Name'); ?>' <?php print $readonly; ?>>
-            	<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
             	<input type="hidden" name="id" value="<?php print $nat->id; ?>">
             	<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
         	</td>

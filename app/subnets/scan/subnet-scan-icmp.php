@@ -4,12 +4,6 @@
  * Discover new hosts with ping
  *******************************/
 
-
-
-
-# create csrf token
-$csrf = $User->csrf_create('scan');
-
 # validate subnetId and type
 if(!is_numeric($_POST['subnetId']))                        { $Result->show("danger", "Invalid subnet Id", true); die(); }
 if(!preg_match('/[^A-Za-z0-9-]*$/', $_POST['type']))       { $Result->show("danger", "Invalid scan type", true); die(); }
@@ -74,6 +68,7 @@ else {
 
 	//form
 	print "<form name='".$_POST['type']."-form' class='".$_POST['type']."-form'>";
+    $csrf->insertToken('/ajx/subnets/scan/subnet-' . $_POST['type'] . '-result');
 	print "<table class='table table-striped table-top table-condensed'>";
 
 	// titles
@@ -105,7 +100,6 @@ else {
 		print "<td>";
 		print "	<input type='text' class='form-control input-sm' name='description$m'>";
 		print "	<input type='hidden' name='ip$m' value=".$Subnets->transform_to_dotted($ip).">";
-		print " <input type='hidden' name='csrf_cookie' value='$csrf'>";
 		print "</td>";
 		//hostname
 		print "<td>";

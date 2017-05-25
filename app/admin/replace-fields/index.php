@@ -4,17 +4,14 @@
  *	Script to replace fields in IP address list
  ***********************************************/
 
-
-
-
-# create csrf token
-$csrf = $User->csrf_create('replace_fields');
 ?>
 
 <h4><?php print _('Search and replace fields in IP address list'); ?></h4>
 <hr><br>
 
 <form id="searchReplace">
+<?php $csrf->insertToken('/ajx/admin/replace-fields/result'); ?>
+
 <table class="table" style="width:auto">
 
 	<tr>
@@ -42,7 +39,6 @@ $csrf = $User->csrf_create('replace_fields');
 		<td><?php print _('Select search string'); ?></td>
 		<td>
 			<input type="text" name="search" class="form-control input-sm" placeholder="<?php print _('search string'); ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 	</tr>
 

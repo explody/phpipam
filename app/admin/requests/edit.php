@@ -4,9 +4,6 @@
  * Script to confirm / reject IP address request
  ***********************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('requests');
-
 # fetch request
 $request = $Admin->fetch_object("requests", "id", $_POST['requestId']);
 
@@ -69,6 +66,8 @@ $selected_ip_fields = explode(";", $User->settings->IPfilter);
 
 	<!-- IP address request form -->
 	<form class="manageRequestEdit" name="manageRequestEdit">
+    <?php $csrf->insertToken('/ajx/admin/requests/edit-result'); ?>
+    
 	<!-- edit IP address table -->
 	<table id="manageRequestEdit" class="table table-striped table-condensed">
 
@@ -102,7 +101,6 @@ $selected_ip_fields = explode(";", $User->settings->IPfilter);
 			<input type="text" name="ip_addr" class="ip_addr form-control input-sm" value="<?php print $ip_address; ?>" size="30">
 			<input type="hidden" name="requestId" value="<?php print $request['id']; ?>">
 			<input type="hidden" name="requester" value="<?php print $request['requester']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
     	</td>
 	</tr>
 	<!-- description -->

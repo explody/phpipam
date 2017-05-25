@@ -3,9 +3,7 @@
 /**
  *	Mail settings
  **************************/
-
-# validate csrf cookie
-$User->csrf_validate("mail", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # set update query
 $values = array("id"=>1,

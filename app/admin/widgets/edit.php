@@ -4,9 +4,6 @@
  * Script to print add / edit / delete widget
  *************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('widget');
-
 # fetch widget
 if($_POST['action']!="add") {
 	$w = $Admin->fetch_object ("widgets", "wid", $_POST['wid']);
@@ -22,6 +19,8 @@ if($_POST['action']!="add") {
 <div class="pContent">
 
 	<form id="widgetEdit" name="widgetEdit">
+    <?php $csrf->insertToken('/ajx/admin/widgets/edit-result'); ?>
+    
 	<table class="table table-noborder table-condensed">
 
 	<!-- name -->

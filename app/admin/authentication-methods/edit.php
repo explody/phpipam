@@ -1,8 +1,5 @@
 <?php
 
-# create csrf token
-$csrf = $User->csrf_create('authmethods');
-
 # Check if the method is protected
 if ($_POST['action'] == 'delete') {
     $auth_method = $Admin->fetch_object('usersAuthMethod', 'id', $_POST['id']);

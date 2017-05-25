@@ -8,7 +8,7 @@
  *
  */
 
-$User->csrf_validate("login", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # strip input tags form username only - password stip later because od LDAP
 $_POST['ipamusername'] = $User->strip_input_tags ($_POST['ipamusername']);

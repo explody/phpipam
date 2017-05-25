@@ -4,7 +4,7 @@
  *	Preview data VLAN import data
  ************************************/
  
- $User->csrf_validate("import-vlans", $_POST['csrf_cookie'], $Result);
+ $Tools->csrf_validate($csrf, $Result);
 
 # load data from uploaded file
 include FUNCTIONS . '/ajax/import-load-data.php';
@@ -32,11 +32,11 @@ print "<b>"._("Summary: ")."</b>".($counters['add'] > 0 ? $counters['add'] : "no
 		")._("Scroll down for details.");
 
 print "<form id='selectImportFields'>";
+$csrf->insertToken('/ajx/admin/import-export/import-vlan');
 print "<input name='expfields' type='hidden' value='".implode('|',$expfields)."' style='display:none;'>";
 print "<input name='reqfields' type='hidden' value='".implode('|',$reqfields)."' style='display:none;'>";
 print $hiddenfields;
 print "<input name='filetype' id='filetype' type='hidden' value='".$filetype."' style='display:none;'>";
-print "<input name='csrf_cookie' type='hidden' value='" . $_POST['csrf_cookie'] . "' style='display:none;'>";
 print "</form>";
 print "<table class='table table-condensed table-hover' id='previewtable'><tbody>";
 print "<tr class='active'>".$hrow."<th>Action</th></tr>";

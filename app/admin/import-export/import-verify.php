@@ -3,7 +3,7 @@
  * Data import verify and load header row
  *************************************************/
  
- $User->csrf_validate("import-" . $_POST['type'], $_POST['csrf_cookie'], $Result);
+ $Tools->csrf_validate($csrf, $Result);
 
 /* get extension */
 $filename = $_FILES['file']['name'];
@@ -76,9 +76,12 @@ if(isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
 	exit;
 	}
 }
+// error
+elseif (isset($_FILES['file']['error'])) {
+	echo '{"status":"error","error":"'.$_FILES['file']['error'].'"}';
+	exit;
+}
 
 /* default - error */
-echo '{"status":"error","error":"Empty file"}';
+echo '{"status":"error","error":"Empty or too big file (limit '.ini_get('post_max_size').')"}';
 exit;
-?>
-

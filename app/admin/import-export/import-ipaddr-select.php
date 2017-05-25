@@ -3,8 +3,6 @@
 /**
  *	IP Addresses import form + upload
  */
- 
-$csrf = $User->csrf_create('import-ipaddr');
 
 $tpl_field_names = "";
 $tpl_field_types = "";
@@ -99,6 +97,7 @@ foreach($Tools->fetch_custom_fields($mtable) as $cf) {
 
 # print template form
 print "<form id='selectImportFields'><div id='topmsg'>";
+$csrf->insertToken('/ajx/admin/import-export/import-ipaddr-preview');
 print '<h4>'._("Template").'</h4><hr>';
 print _("The import XLS/CSV should have the following fields and a <b>header row</b> for a succesful import:");
 print "</div>";
@@ -116,7 +115,6 @@ print "<div id='bottommsg'>"._("The fields marked with * are mandatory.")."
 print "<div class='checkbox'><label><input name='searchallvrfs' id='searchallvrfs' type='checkbox' unchecked>"._("Search for matching subnet in all VRFs (ignore provided VRF).")."</label></div>";
 #TODO# add option to hide php fields
 #print "<div class='checkbox'><label><input name='showspecific' id='showspecific' type='checkbox' unchecked>"._("Show PHPIPAM specific columns.")."</label></div>";
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
 print "</form>";
 
 $templatetype = 'ipaddr';

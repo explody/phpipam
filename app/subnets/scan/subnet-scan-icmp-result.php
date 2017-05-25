@@ -4,7 +4,7 @@
  *******************************/
 
 # validate csrf cookie
-$User->csrf_validate("scan", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # check for number of input values
 $max = ini_get("max_input_vars");

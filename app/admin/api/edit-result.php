@@ -5,7 +5,7 @@
  *************************************/
 
 # validate csrf cookie
-$User->csrf_validate("apiedit", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 /* checks */
 $error = array();
@@ -21,7 +21,7 @@ if($_POST['action']!="delete") {
 	if($_POST['app_security']!="user") {
 	if(!($_POST['app_permissions']==0 || $_POST['app_permissions']==1 || $_POST['app_permissions'] ==2 || $_POST['app_permissions'] ==3 ))	{ $error[] = "Invalid permissions"; }
 	}
-	# locak check
+	# lock check
 	if($_POST['app_lock']=="1") {
     	if(!is_numeric($_POST['app_lock_wait']))                                                            { $error[] = "Invalid wait value"; }
     	elseif ($_POST['app_lock_wait']<1)                                                                  { $error[] = "Invalid wait value"; }
@@ -41,6 +41,8 @@ else {
 					"app_security"=>@$_POST['app_security'],
 					"app_lock"=>@$_POST['app_lock'],
 					"app_lock_wait"=>@$_POST['app_lock_wait'],
+					"app_nest_custom_fields"=>@$_POST['app_nest_custom_fields'],
+					"app_show_links"=>@$_POST['app_show_links'],
 					"app_comment"=>@$_POST['app_comment']);
 
 	# execute

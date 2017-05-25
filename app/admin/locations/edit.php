@@ -4,9 +4,6 @@
  *	Print all available locations
  ************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('location');
-
 # get Location object
 if($_POST['action']!="add") {
 	$location = $Admin->fetch_object ("locations", "id", $_POST['id']);
@@ -38,7 +35,7 @@ $cfs = $Tools->fetch_custom_fields('locations');
         	<th><?php print _('Name'); ?></th>
         	<td>
             	<input type="text" class="form-control input-sm" name="name" value="<?php print $location->name; ?>" placeholder='<?php print _('Name'); ?>' <?php print $readonly; ?>>
-            	<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+            	<?php $csrf->insertToken('/ajx/admin/locations/edit-result'); ?>
             	<input type="hidden" name="id" value="<?php print $location->id; ?>">
             	<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
         	</td>

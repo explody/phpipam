@@ -1,7 +1,7 @@
 <?php
 
 # validate csrf cookie
-$User->csrf_validate("location", $_POST['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 # validations
 if($_POST['action']=="delete" || $_POST['action']=="edit") {

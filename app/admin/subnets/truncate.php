@@ -4,9 +4,6 @@
  * Print truncate subnet
  *********************/
 
-# create csrf token
-$csrf = $User->csrf_create('truncate');
-
 # id must be numeric
 if(!is_numeric($_POST['subnetId']))			{ $Result->show("danger", _("Invalid ID"), true, true); }
 
@@ -55,7 +52,7 @@ $subnet->description = $subnet->isFolder=="1" ? $subnet->description : $Subnets-
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopup2"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-default btn-danger" id="subnetTruncateSubmit" data-subnetId='<?php print $subnet->id; ?>' data-csrf_cookie="<?php print $csrf; ?>"><i class="fa fa-trash-o"></i> <?php print _('Truncate subnet'); ?></button>
+		<button class="btn btn-sm btn-default btn-danger" id="subnetTruncateSubmit" data-subnetId='<?php print $subnet->id; ?>' data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/subnets/truncate-save'))); ?>"><i class="fa fa-trash-o"></i> <?php print _('Truncate subnet'); ?></button>
 	</div>
 
 	<div class="subnetTruncateResult"></div>

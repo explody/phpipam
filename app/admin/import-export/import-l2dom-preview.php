@@ -4,7 +4,7 @@
  *	Preview data L2 Domain import data
  ************************************/
  
- $User->csrf_validate("import-l2dom", $_POST['csrf_cookie'], $Result);
+ $Tools->csrf_validate($csrf, $Result);
 
 # load data from uploaded file
 include FUNCTIONS . '/ajax/import-load-data.php';
@@ -32,6 +32,7 @@ print "<b>"._("Summary: ")."</b>".($counters['add'] > 0 ? $counters['add'] : "no
 		")._("Scroll down for details.");
 
 print "<form id='selectImportFields'>";
+$csrf->insertToken('/ajx/admin/import-export/import-l2dom');
 print "<input name='expfields' type='hidden' value='".implode('|',$expfields)."' style='display:none;'>";
 print "<input name='reqfields' type='hidden' value='".implode('|',$reqfields)."' style='display:none;'>";
 print $hiddenfields;

@@ -4,9 +4,6 @@
  *	Site settings
  **************************/
 
-# create csrf token
-$csrf = $User->csrf_create('settings');
-
 # fetch all languages
 $languages = $Admin->fetch_all_objects("lang", "l_id");
 
@@ -31,6 +28,8 @@ $(document).ready(function() {
 <hr>
 
 <form name="settings" id="settings">
+<?php $csrf->insertToken('/ajx/admin/settings/settings-save'); ?>
+
 <table id="settings" class="table table-hover table-condensed table-top">
 
 <!-- site settings -->
@@ -43,7 +42,6 @@ $(document).ready(function() {
 	<td><?php print _('Site title'); ?></th>
 	<td>
 		<input type="text" class="form-control input-sm" name="siteTitle" value="<?php print $settings['siteTitle']; ?>">
-        <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 	</td>
 	<td class="info2"><?php print _('Set site title'); ?></td>
 </tr>
@@ -462,6 +460,17 @@ $(document).ready(function() {
 	</td>
 	<td class="info2">
 		<?php print _('Require unique subnets accross all sections'); ?>
+	</td>
+</tr>
+
+<!-- vlanDuplicate -->
+<tr>
+	<td class="title"><?php print _("Allow duplicate vlans"); ?></td>
+	<td>
+		<input type="checkbox" class="input-switch" value="1" name="vlanDuplicate" <?php if($settings['vlanDuplicate'] == 1) print 'checked'; ?>>
+	</td>
+	<td class="info2">
+		<?php print _('Allow duplicated vlans inside L2 domain'); ?>
 	</td>
 </tr>
 

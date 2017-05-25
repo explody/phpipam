@@ -4,9 +4,6 @@
  * Print resize subnet
  *********************/
 
-# create csrf token
-$csrf = $User->csrf_create('resize');
-
 # ID must be numeric
 if(!is_numeric($_POST['subnetId']))									{ $Result->show("danger", _("Invalid ID"), true, true); }
 # verify that user has write permissions for subnet
@@ -23,6 +20,8 @@ $subnet = (array) $Subnets->fetch_subnet (null, $_POST['subnetId']);
 <div class="pContent">
 
 	<form id="subnetResize">
+    <?php $csrf->insertToken('/ajx/admin/subnets/resize-save'); ?>
+    
 	<table class="table table-noborder table-condensed">
     <!-- subnet -->
     <tr>

@@ -3,8 +3,7 @@
 /**
  *	Generate hostfile dump for /etc/hosts
  *********************************/
-
-$User->csrf_validate("import-export", $_GET['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 //set filename
 $filename = "phpipam_hosts_". date("Y-m-d");
@@ -12,6 +11,7 @@ $filename = "phpipam_hosts_". date("Y-m-d");
 //fetch all addresses with hostname set
 $hosts = $Tools->fetch_addresses_for_export();
 
+$res = [];
 //loop
 if(sizeof($hosts)>0) {
 	//details
@@ -43,7 +43,6 @@ if(sizeof($hosts)>0) {
 
 # join content
 $content = implode("\n", $res);
-
 
 # headers
 header("Cache-Control: private");

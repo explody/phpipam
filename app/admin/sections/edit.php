@@ -4,9 +4,6 @@
  * Print edit sections form
  *************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('section');
-
 # fetch all sections for master section
 $sections = $Sections->fetch_all_sections ();
 
@@ -27,7 +24,8 @@ $section  = (array) $Sections->fetch_section (null, @$_POST['sectionId']);
 
 	<!-- form -->
 	<form id="sectionEdit" name="sectionEdit">
-
+        <?php $csrf->insertToken('/ajx/admin/sections/edit-result'); ?>
+        
 		<!-- edit table -->
 		<table class="table table-condensed table-noborder sectionEdit">
 
@@ -39,7 +37,6 @@ $section  = (array) $Sections->fetch_section (null, @$_POST['sectionId']);
 				<!-- hidden -->
 				<input type="hidden" name="action" 	value="<?php print $_POST['action']; ?>">
 				<input type="hidden" name="id" 		value="<?php print $_POST['sectionId']; ?>">
-				<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 			</td>
 		</tr>
 		<!-- description -->

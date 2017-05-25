@@ -4,9 +4,6 @@
  * Script to print add / edit / delete users
  *************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('user');
-
 # fetch custom fields
 $cfs 	    = $Tools->fetch_custom_fields('users');
 # fetch all languages
@@ -18,7 +15,7 @@ $groups		= $Admin->fetch_all_objects ("userGroups", "g_id");
 
 
 # set header parameters and fetch user
-if($_POST['action']!="add") {
+if($action!="add") {
 	$user = $Admin->fetch_object ("users", "id", $_POST['id']);
 	//false
 	if($user===false)		{ $Result->show("danger", _("Invalid ID"), true, true); }
@@ -51,13 +48,15 @@ $(document).ready(function(){
 
 
 <!-- header -->
-<div class="pHeader"><?php print ucwords($_POST['action'])." "._('user'); ?></div>
+<div class="pHeader"><?php print ucwords($action)." "._('user'); ?></div>
 
 
 <!-- content -->
 <div class="pContent">
 
 	<form id="usersEdit" name="usersEdit">
+    <?php $csrf->insertToken('/ajx/admin/users/edit-result'); ?>
+    
 	<table class="usersEdit table table-noborder table-condensed">
 
 	<tbody>
@@ -71,7 +70,7 @@ $(document).ready(function(){
     <!-- username -->
     <tr>
     	<td><?php print _('Username'); ?></td>
-    	<td><input type="text" class="form-control input-sm" name="username" value="<?php print @$user['username']; ?>" <?php if($_POST['action']=="edit"||$_POST['action']=="delete") print 'readonly'; ?>></td>
+    	<td><input type="text" class="form-control input-sm" name="username" value="<?php print @$user['username']; ?>" <?php if($action=="edit"||$action=="delete") print 'readonly'; ?>></td>
     	<td class="info2">
     		<a class='btn btn-xs btn-default adsearchuser' rel='tooltip' title='Search AD for user details'><i class='fa fa-search'></i></a>
 			<?php print _('Enter username'); ?>
@@ -91,13 +90,12 @@ $(document).ready(function(){
     	<td>
         <select name="role" class="form-control input-sm input-w-auto">
             <option value="Administrator"   <?php if (@$user['role'] == "Administrator") print "selected"; ?>><?php print _('Administrator'); ?></option>
-            <option value="User" 			<?php if (@$user['role'] == "User" || $_POST['action'] == "add") print "selected"; ?>><?php print _('Normal User'); ?></option>
+            <option value="User" 			<?php if (@$user['role'] == "User" || $action == "add") print "selected"; ?>><?php print _('Normal User'); ?></option>
         </select>
 
 
         <input type="hidden" name="userId" value="<?php print @$user['id']; ?>">
-        <input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-        <input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+        <input type="hidden" name="action" value="<?php print $action; ?>">
 
         </td>
         <td class="info2"><?php print _('Select user role'); ?>
@@ -149,7 +147,7 @@ $(document).ready(function(){
     </tr>
 
     <!-- password change request -->
-    <?php if($_POST['action']=="add") { ?>
+    <?php if($action=="add") { ?>
     <tr class="password">
     	<td></td>
     	<td class="info2" colspan="2">
@@ -183,7 +181,7 @@ $(document).ready(function(){
     <!-- send notification mail -->
     <tr>
     	<td><?php print _('Notification'); ?></td>
-    	<td><input type="checkbox" name="notifyUser" value="on" <?php if($_POST['action'] == "add") { print 'checked'; } else if($_POST['action'] == "delete") { print 'disabled="disabled"';} ?>></td>
+    	<td><input type="checkbox" name="notifyUser" value="on" <?php if($action == "add") { print 'checked'; } else if($action == "delete") { print 'disabled="disabled"';} ?>></td>
     	<td class="info2"><?php print _('Send notification email to user with account details'); ?></td>
     </tr>
 	</tbody>
@@ -308,7 +306,7 @@ $(document).ready(function(){
 		# all my fields
 		foreach($cfs as $cf) {
     		// create input > result is array (required, input(html), timepicker_index)
-    		$custom_input = $Components->render_custom_field_input ($cf, $user, $_POST['action'], $index);
+    		$custom_input = $Components->render_custom_field_input ($cf, $user, $action, $index);
     		// add datepicker index
     		$index = $custom_input['index'];
             // print
@@ -332,7 +330,7 @@ $(document).ready(function(){
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-default <?php if($_POST['action']=="delete") { print "btn-danger"; } else { print "btn-success"; } ?>" id="editUserSubmit"><i class="fa <?php if($_POST['action']=="add") { print "fa-plus"; } else if ($_POST['action']=="delete") { print "fa-trash-o"; } else { print "fa-check"; } ?>"></i> <?php print ucwords(_($_POST['action'])); ?></button>
+		<button class="btn btn-sm btn-default <?php if($action=="delete") { print "btn-danger"; } else { print "btn-success"; } ?>" id="editUserSubmit"><i class="fa <?php if($action=="add") { print "fa-plus"; } else if ($action=="delete") { print "fa-trash-o"; } else { print "fa-check"; } ?>"></i> <?php print ucwords(_($action)); ?></button>
 	</div>
 
 	<!-- Result -->

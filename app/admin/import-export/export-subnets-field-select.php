@@ -4,8 +4,6 @@
  *	Subnets export
  */
 
-$csrf = $User->csrf_create('export-subnets');
-
 # Won't check per subnet/section rights since this is an admin section, where the admin user has full access
 
 # fetch all sections
@@ -49,14 +47,13 @@ foreach($Tools->fetch_custom_fields('subnets') as $cf) {
 <!-- content -->
 <div class="pContent">
 
+<form id="selectExportTargets" method="post">
+<input type="hidden" name="<?php print $csrf->getFormIndex(); ?>" />
+<input type="hidden" name="<?php print $csrf->getFormToken(); ?>" />
+
 <?php
-
-# print
-print '<form id="selectExportFields">';
 print '<h4>Fields</h4>';
-# table
 print "	<table class='table table-striped table-condensed'>";
-
 print "	<tr>";
 print "	<th>"._('Section')."</th>";
 print "	<th>"._('Subnet')."</th>";
@@ -82,12 +79,7 @@ print "	<td><input type='checkbox' name='hostscheck'> </td>";
 print "	<td><input type='checkbox' name='discover'> </td>";
 print $custom_fields_boxes;
 print "	</tr>";
-
 print '</table>';
-print '</form>';
-
-# print section form
-print '<form id="selectExportSections">';
 
 # show sections
 if($all_sections!==false) {
@@ -119,12 +111,10 @@ if($all_sections!==false) {
 	}
 
 	print '</table>';
-
 	print '<div class="checkbox"><label><input type="checkbox" name="exportSections" checked>'._("Include the sections in a separate sheet.").'</label></div>';
-
+    
 }
-print '<input type="hidden" name="csrf_cookie" value="' . $csrf . '">';
-print '</form>';
+
 ?>
 
 </div>
@@ -133,6 +123,6 @@ print '</form>';
 <div class="pFooter">
 	<div class="btn-group">
 		<button class="btn btn-sm btn-default hidePopups"><?php print _('Cancel'); ?></button>
-		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-type="subnets"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
+		<button class="btn btn-sm btn-success" id="dataExportSubmit" data-form="selectExportTargets" data-type="subnets" data-action="export" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/import-export/export-subnets'))); ?>"><i class="fa fa-upload"></i> <?php print _('Export'); ?></button>
 	</div>
 </div>

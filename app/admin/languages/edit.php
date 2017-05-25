@@ -4,9 +4,6 @@
  * Script to print add / edit / delete group
  *************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('languages');
-
 # get lang details
 if($_POST['action']=="edit" || $_POST['action']=="delete")
 $lang = (array) $Admin->fetch_object ("lang", "l_id", $_POST['langid']);
@@ -39,7 +36,7 @@ else 									{ $title = 'Add new language'; }
     		<input type="text" name="l_name" class="form-control input-sm" value="<?php print @$lang['l_name']; ?>" <?php if($_POST['action'] == "delete") print "readonly"; ?>>
 
     		<input type="hidden" name="l_id" value="<?php print $_POST['langid']; ?>">
-    		<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
+    		<?php $csrf->insertToken('/ajx/admin/languages/edit-result'); ?>
     		<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
     	</td>
     </tr>

@@ -4,7 +4,7 @@
  * Script to manage sections
  *************************************************/
  
- $User->csrf_validate("ripe-import", $_POST['csrf_cookie'], $Result);
+ $Tools->csrf_validate($csrf, $Result);
 
 //get size of subnets - $_POST/4
 $size = sizeof($_POST) / 4;

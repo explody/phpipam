@@ -4,14 +4,9 @@
  *	Mail settings
  **************************/
 
-
-
-
 # fetch mail settings
 $mail_settings = $Admin->fetch_object("settingsMail", "id", 1);
 
-# create csrf token
-$csrf = $User->csrf_create('mail');
 ?>
 
 <!-- title -->
@@ -19,6 +14,7 @@ $csrf = $User->csrf_create('mail');
 <hr>
 
 <form name="mailsettings" id="mailsettings">
+
 <table id="mailsettingstbl" class="table table-hover table-condensed table-top table-auto">
 
 	<!-- Server settings -->
@@ -34,7 +30,6 @@ $csrf = $User->csrf_create('mail');
 				<option value="localhost"><?php print _("Localhost"); ?></option>
 				<option value="smtp" <?php if($mail_settings->mtype=="smtp") print "selected='selected'"; ?>><?php print _("SMTP"); ?></option>
 			</select>
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
             <input type="hidden" name="action" id="formAction" value="none" />
 		</td>
 		<td class="info2"><?php print _('Select server type for sending mail messages'); ?></td>
@@ -145,8 +140,8 @@ $csrf = $User->csrf_create('mail');
 		<td class="title"></td>
 		<td class="submit" style="padding-top:30px;">
 		<div class="btn-group pull-right">
-			<a class="btn btn-sm btn-default sendTestMail"><i class="icon icon-gray icon-envelope"></i> <?php print _('Send test email'); ?></a>
-			<input type="submit" class="btn btn-sm btn-default btn-success pull-right" value="<?php print _('Save changes'); ?>">
+			<a class="btn btn-sm btn-default" id="sendTestMail" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/mail/test-mail'))); ?>"><i class="icon icon-gray icon-envelope"></i> <?php print _('Send test email'); ?></a>
+			<input type="submit" class="btn btn-sm btn-default btn-success pull-right" data-csrf="<?php print htmlspecialchars(json_encode($csrf->getTokenArray('/ajx/admin/mail/edit'))); ?>" value="<?php print _('Save changes'); ?>">
 		</div>
 		</td>
 		<td></td>

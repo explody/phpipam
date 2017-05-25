@@ -3,7 +3,7 @@
 /**
  *	Generate XLS file
  *********************************/
-$User->csrf_validate("import-export", $_GET['csrf_cookie'], $Result);
+$Tools->csrf_validate($csrf, $Result);
 
 // Create a workbook
 $filename = "phpipam_IP_adress_export_". date("Y-m-d") .".xls";
@@ -23,8 +23,6 @@ if ($devices!==false) {
     	$devices_indexed[$d->id] = $d;
     }
 }
-
-
 
 //get all custom fields!
 # fetch custom fields

@@ -4,9 +4,6 @@
  *	Edis vlan domains
  ************************************************/
 
-# create csrf token
-$csrf = $User->csrf_create('vlan_domain');
-
 # fetch vlan details
 $l2_domain = $Admin->fetch_object ("vlanDomains", "id", @$_POST['id']);
 $l2_domain = $l2_domain!==false ? (array) $l2_domain : array();
@@ -29,7 +26,8 @@ $(document).ready(function(){
 <!-- content -->
 <div class="pContent">
 	<form id="editVLANdomain">
-
+    <?php $csrf->insertToken('/ajx/admin/vlans/edit-domain-result'); ?>
+    
 	<table class="table table-noborder table-condensed">
 	<!-- number -->
 	<tr>
@@ -45,7 +43,6 @@ $(document).ready(function(){
 			<input type="text" class="description form-control input-sm" name="description" placeholder="<?php print _('Description'); ?>" value="<?php print @$l2_domain['description']; ?>" <?php print $readonly; ?>>
 			<input type="hidden" name="id" value="<?php print @$_POST['id']; ?>">
 			<input type="hidden" name="action" value="<?php print $_POST['action']; ?>">
-			<input type="hidden" name="csrf_cookie" value="<?php print $csrf; ?>">
 		</td>
 	</tr>
 	<tr>

@@ -1,5 +1,5 @@
 /*
- phpipam 1.9.10 2017-03-02-10:56:28 
+ phpipam 1.9.10 2017-03-24-11:15:32 
 */
 $(document).ready(function() {
     function showSpinner() {
@@ -135,6 +135,16 @@ $(document).ready(function() {
         if (msie > 0 || navigator.userAgent.match(/Trident.*rv\:11\./)) var base = $(".iebase").html(); else var base = "";
         window.location = base + loc;
     }
+    function submit_export_form(b) {
+        showSpinner();
+        var csrf = JSON.parse(b.attr("data-csrf")), type = b.attr("data-type"), action = b.attr("data-action"), form = "form#" + b.attr("data-form");
+        $.each(csrf, function(k, v) {
+            $(form + " input[name=" + k + "]").val(v);
+        }), $(form).attr("action", "/ajx/admin/import-export/" + action + "-" + type), $(form).submit(), 
+        setTimeout(function() {
+            hideSpinner(), window.location.reload(1);
+        }, 1e3);
+    }
     return $(document).keydown(function(e) {
         27 === e.keyCode && hidePopups();
     }), $(document).on("submit", ".searchFormClass", function() {
@@ -234,7 +244,7 @@ $(document).ready(function() {
             subnetId: $(this).attr("data-subnetId"),
             stopIP: $(this).attr("data-stopIP")
         };
-        return open_popup("600", "ajx/subnets/addresses/address-modify", postdata), !1;
+        return open_popup("600", "/ajx/subnets/addresses/address-modify", postdata), !1;
     }), $(document).on("click", "a.moveIPaddr", function() {
         showSpinner();
         var action = $(this).attr("data-action"), id = $(this).attr("data-id"), subnetId = $(this).attr("data-subnetId"), postdata = "action=" + action + "&id=" + id + "&subnetId=" + subnetId;
@@ -396,28 +406,28 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         });
     }), $(document).on("click", "#csvtemplate", function() {
-        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/subnets/import-subnet/import-template.php'></iframe></div>"), 
+        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/subnets/import-subnet/import-template'></iframe></div>"), 
         !1;
     }), $(document).on("click", "#vrftemplate", function() {
-        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=vrf'></iframe></div>"), 
+        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=vrf'></iframe></div>"), 
         !1;
     }), $(document).on("click", "#vlanstemplate", function() {
-        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=vlans'></iframe></div>"), 
+        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=vlans'></iframe></div>"), 
         !1;
     }), $(document).on("click", "#vlandomaintemplate", function() {
         return $("div.dl").remove(), $("div.exportDIV").append('<div style="display:none" class="dl"><iframe src="/ajx/admin/import-export/import-template/?type=' + tpl + "&csrf_cookie=" + csrf + '"></iframe></div>'), 
         !1;
     }), $(document).on("click", "#subnetstemplate", function() {
-        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=subnets'></iframe></div>"), 
+        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=subnets'></iframe></div>"), 
         !1;
     }), $(document).on("click", "#ipaddrtemplate", function() {
-        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=ipaddr'></iframe></div>"), 
+        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=ipaddr'></iframe></div>"), 
         !1;
     }), $(document).on("click", "#devicestemplate", function() {
-        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=devices'></iframe></div>"), 
+        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=devices'></iframe></div>"), 
         !1;
     }), $(document).on("click", "#devicetypestemplate", function() {
-        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template.php?type=devicetypes'></iframe></div>"), 
+        return $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/import-template/?type=devicetypes'></iframe></div>"), 
         !1;
     }), $("a.csvExport").click(function() {
         showSpinner();
@@ -553,7 +563,7 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
     }), $(document).on("click", ".show-masks", function() {
-        return open_popup("masks", "ajx/tools/subnet-masks/popup", {
+        return open_popup("masks", "/ajx/tools/subnet-masks/popup", {
             closeClass: $(this).attr("data-closeClass")
         }, !0), !1;
     }), $("#settings").submit(function() {
@@ -585,8 +595,10 @@ $(document).ready(function() {
     }), $("select#mtype").change(function() {
         var type = $(this).find(":selected").val();
         "localhost" === type ? $("#mailsettingstbl tbody#smtp").hide() : $("#mailsettingstbl tbody#smtp").show();
-    }), $(".sendTestMail").click(function() {
-        return showSpinner(), $.post("/ajx/admin/mail/test-mail", $("form#mailsettings").serialize(), function(data) {
+    }), $("a#sendTestMail").click(function() {
+        showSpinner();
+        var params = $.param(JSON.parse($(this).attr("data-csrf"))) + "&" + $("form#mailsettings").serialize();
+        return $.post("/ajx/admin/mail/test-mail", params, function(data) {
             $("div.settingsMailEdit").html(data).slideDown("fast"), hideSpinner();
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
@@ -658,14 +670,13 @@ $(document).ready(function() {
         });
     }), $(document).on("click", ".groupselect", function() {
         showSpinner();
-        var gname = $(this).attr("data-gname"), gdescription = $(this).attr("data-gdescription"), gmembers = $(this).attr("data-members"), gid = $(this).attr("data-gid"), csrf_cookie = $(this).attr("data-csrf_cookie");
-        return $.post("/ajx/admin/groups/edit-group-result", {
+        var gid = $(this).attr("data-gid"), csrf = JSON.parse($(this).attr("data-csrf")), group = {
             action: "add",
-            g_name: gname,
-            g_desc: gdescription,
-            gmembers: gmembers,
-            csrf_cookie: csrf_cookie
-        }, function(data) {
+            g_name: $(this).attr("data-gname"),
+            g_desc: $(this).attr("data-gdescription"),
+            gmembers: $(this).attr("data-members")
+        };
+        return $.post("/ajx/admin/groups/edit-group-result", $.extend({}, group, csrf), function(data) {
             $("div.adgroup-" + gid).html(data), hideSpinner();
         }), !1;
     }), $(".editGroup").click(function() {
@@ -816,13 +827,13 @@ $(document).ready(function() {
         return $(".log-tabs li").removeClass("active"), $(this).parent("li").addClass("active"), 
         $("div.log-print").hide(), $("div." + $(this).attr("data-target")).show(), !1;
     }), $(document).on("click", ".openChangelogDetail", function() {
-        open_popup("700", "/ajx/tools/changelog/show-popup.php", {
+        open_popup("700", "/ajx/tools/changelog/show-popup/", {
             cid: $(this).attr("data-cid")
         });
     }), $("button.editSection").click(function() {
         showSpinner();
         var sectionId = $(this).attr("data-sectionid"), action = $(this).attr("data-action");
-        $.post("ajx/admin/sections/edit", {
+        $.post("/ajx/admin/sections/edit", {
             sectionId: sectionId,
             action: action
         }, function(data) {
@@ -840,7 +851,7 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
     }), $("button.sectionOrder").click(function() {
-        return showSpinner(), $.post("ajx/admin/sections/edit-order", function(data) {
+        return showSpinner(), $.post("/ajx/admin/sections/edit-order", function(data) {
             $("#popupOverlay div.popup_w500").html(data), showPopup("popup_w500"), hideSpinner();
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
@@ -875,19 +886,19 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
     }), $(document).on("click", ".editDomain", function() {
-        $(this).hasClass("editDomain2") ? open_popup("700", "ajx/admin/powerDNS/domain-edit", {
+        $(this).hasClass("editDomain2") ? open_popup("700", "/ajx/admin/powerDNS/domain-edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action"),
             secondary: !0
-        }, !0) : open_popup("700", "ajx/admin/powerDNS/domain-edit", {
+        }, !0) : open_popup("700", "/ajx/admin/powerDNS/domain-edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", ".hideDefaults", function() {
         $(this).is(":checked") ? $("tbody.defaults").hide() : $("tbody.defaults").show();
     }), $(document).on("click", "#editDomainSubmit", function() {
-        return $(this).hasClass("editDomainSubmit2") ? (showSpinner(), $.post("ajx/admin/powerDNS/domain-edit-result", $("form#domainEdit").serialize(), function(data) {
-            $("#popupOverlay2 div.domain-edit-result").html(data).slideDown("fast"), data.search("alert-danger") == -1 && data.search("error") == -1 && data.search("alert-warning") == -1 ? ($.post("ajx/admin/powerDNS/record-edit", {
+        return $(this).hasClass("editDomainSubmit2") ? (showSpinner(), $.post("/ajx/admin/powerDNS/domain-edit-result", $("form#domainEdit").serialize(), function(data) {
+            $("#popupOverlay2 div.domain-edit-result").html(data).slideDown("fast"), data.search("alert-danger") == -1 && data.search("error") == -1 && data.search("alert-warning") == -1 ? ($.post("/ajx/admin/powerDNS/record-edit", {
                 id: $("#popupOverlay .pContent .ip_dns_addr").html(),
                 domain_id: $("#popupOverlay .pContent strong").html(),
                 action: "add"
@@ -900,26 +911,26 @@ $(document).ready(function() {
             }, 1500)) : hideSpinner();
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
-        }), !1) : void submit_popup_data(".domain-edit-result", "ajx/admin/powerDNS/domain-edit-result", $("form#domainEdit").serialize());
+        }), !1) : void submit_popup_data(".domain-edit-result", "/ajx/admin/powerDNS/domain-edit-result", $("form#domainEdit").serialize());
     }), $(".refreshPTRsubnet").click(function() {
-        return open_popup("700", "ajx/admin/powerDNS/refresh-ptr-records", {
+        return open_popup("700", "/ajx/admin/powerDNS/refresh-ptr-records", {
             subnetId: $(this).attr("data-subnetId")
         }), !1;
     }), $(document).on("click", ".refreshPTRsubnetSubmit", function() {
-        return submit_popup_data(".refreshPTRsubnetResult", "ajx/admin/powerDNS/refresh-ptr-records-submit", {
+        return submit_popup_data(".refreshPTRsubnetResult", "/ajx/admin/powerDNS/refresh-ptr-records-submit", {
             subnetId: $(this).attr("data-subnetId")
         }), !1;
     }), $(".editRecord").click(function() {
-        return open_popup("700", "ajx/admin/powerDNS/record-edit", {
+        return open_popup("700", "/ajx/admin/powerDNS/record-edit", {
             id: $(this).attr("data-id"),
             domain_id: $(this).attr("data-domain_id"),
             action: $(this).attr("data-action")
         }), !1;
     }), $(document).on("click", "#editRecordSubmit", function() {
-        submit_popup_data(".record-edit-result", "ajx/admin/powerDNS/record-edit-result", $("form#recordEdit").serialize());
+        submit_popup_data(".record-edit-result", "/ajx/admin/powerDNS/record-edit-result", $("form#recordEdit").serialize());
     }), $(document).on("click", "#editRecordSubmitDelete", function() {
         var formData = $("form#recordEdit").serialize();
-        formData = formData.replace("action=edit", "action=delete"), submit_popup_data(".record-edit-result", "ajx/admin/powerDNS/record-edit-result", formData);
+        formData = formData.replace("action=edit", "action=delete"), submit_popup_data(".record-edit-result", "/ajx/admin/powerDNS/record-edit-result", formData);
     }), $("#firewallZoneSettings").submit(function() {
         showSpinner();
         var settings = $(this).serialize();
@@ -929,12 +940,12 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
     }), $(document).on("click", ".editFirewallZone", function() {
-        open_popup("700", "ajx/admin/firewall-zones/zones-edit", {
+        open_popup("700", "/ajx/admin/firewall-zones/zones-edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", "#editZoneSubmit", function() {
-        submit_popup_data(".zones-edit-result", "ajx/admin/firewall-zones/zones-edit-result", $("form#zoneEdit").serialize());
+        submit_popup_data(".zones-edit-result", "/ajx/admin/firewall-zones/zones-edit-result", $("form#zoneEdit").serialize());
     }), $(document).on("click", ".subnet_to_zone", function() {
         showSpinner();
         var subnetId = $(this).attr("data-subnetId"), operation = $(this).attr("data-operation"), postdata = "operation=" + operation + "&subnetId=" + subnetId;
@@ -973,7 +984,7 @@ $(document).ready(function() {
         return pData.push({
             name: "noZone",
             value: 1
-        }), $.post("ajx/admin/firewall-zones/ajax", pData, function(data) {
+        }), $.post("/ajx/admin/firewall-zones/ajax", pData, function(data) {
             $("div.zoneNetwork").html(data).slideDown("fast");
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
@@ -981,8 +992,8 @@ $(document).ready(function() {
             hideSpinner();
         }, 500), !1;
     }), $(document).on("click", "#editNetworkSubmit", function() {
-        return showSpinner(), reload = "undefined" == typeof reload || reload, $.post("ajx/admin/firewall-zones/zones-edit-network-result", $('form#networkEdit :input[name != "sectionId"]').serialize(), function(data) {
-            $("div.zones-edit-network-result").html(data).slideDown("fast"), reload && data.search("alert-danger") == -1 && data.search("error") == -1 && data.search("alert-warning") == -1 ? ($.post("ajx/admin/firewall-zones/ajax", $('form#networkEdit :input[name != "sectionId"]').serialize(), function(data) {
+        return showSpinner(), reload = "undefined" == typeof reload || reload, $.post("/ajx/admin/firewall-zones/zones-edit-network-result", $('form#networkEdit :input[name != "sectionId"]').serialize(), function(data) {
+            $("div.zones-edit-network-result").html(data).slideDown("fast"), reload && data.search("alert-danger") == -1 && data.search("error") == -1 && data.search("alert-warning") == -1 ? ($.post("/ajx/admin/firewall-zones/ajax", $('form#networkEdit :input[name != "sectionId"]').serialize(), function(data) {
                 $("div.zoneNetwork").html(data).slideDown("fast");
             }).fail(function(jqxhr, textStatus, errorThrown) {
                 showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
@@ -1009,12 +1020,12 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), hideSpinner(), !1;
     }), $(document).on("click", ".editMapping", function() {
-        return open_popup("700", "ajx/admin/firewall-zones/mapping-edit", {
+        return open_popup("700", "/ajx/admin/firewall-zones/mapping-edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         }), !1;
     }), $(document).on("click", "#editMappingSubmit", function() {
-        submit_popup_data(".mapping-edit-result", "ajx/admin/firewall-zones/mapping-edit-result", $("form#mappingEdit").serialize());
+        submit_popup_data(".mapping-edit-result", "/ajx/admin/firewall-zones/mapping-edit-result", $("form#mappingEdit").serialize());
     }), $(document).on("change", ".mappingZoneInformation", function() {
         showSpinner();
         var pData = $(this).serializeArray();
@@ -1053,7 +1064,7 @@ $(document).ready(function() {
     }), $("button.editSubnet").click(function() {
         showSpinner();
         var sectionId = $(this).attr("data-sectionid"), subnetId = $(this).attr("data-subnetid"), action = $(this).attr("data-action"), postdata = "sectionId=" + sectionId + "&subnetId=" + subnetId + "&action=" + action;
-        $.post("ajx/admin/subnets/edit", postdata, function(data) {
+        $.post("/ajx/admin/subnets/edit", postdata, function(data) {
             $("#popupOverlay div.popup_w700").html(data), showPopup("popup_w700"), hideSpinner();
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
@@ -1061,7 +1072,7 @@ $(document).ready(function() {
     }), $(document).on("click", "#resize, #split, #truncate", function() {
         showSpinner();
         var action = $(this).attr("id"), subnetId = $(this).attr("data-subnetId");
-        return $.post("ajx/admin/subnets/" + action, {
+        return $.post("/ajx/admin/subnets/" + action, {
             action: action,
             subnetId: subnetId
         }, function(data) {
@@ -1072,7 +1083,7 @@ $(document).ready(function() {
     }), $(document).on("click", "button#subnetResizeSubmit", function() {
         showSpinner();
         var resize = $("form#subnetResize").serialize();
-        return $.post("ajx/admin/subnets/resize-save", resize, function(data) {
+        return $.post("/ajx/admin/subnets/resize-save", resize, function(data) {
             $("div.subnetResizeResult").html(data), reload_window(data);
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
@@ -1080,18 +1091,17 @@ $(document).ready(function() {
     }), $(document).on("click", "button#subnetSplitSubmit", function() {
         showSpinner();
         var split = $("form#subnetSplit").serialize();
-        return $.post("ajx/admin/subnets/split-save", split, function(data) {
+        return $.post("/ajx/admin/subnets/split-save", split, function(data) {
             $("div.subnetSplitResult").html(data), reload_window(data);
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
     }), $(document).on("click", "button#subnetTruncateSubmit", function() {
         showSpinner();
-        var subnetId = $(this).attr("data-subnetId"), csrf_cookie = $(this).attr("data-csrf_cookie");
-        return $.post("ajx/admin/subnets/truncate-save", {
-            subnetId: subnetId,
-            csrf_cookie: csrf_cookie
-        }, function(data) {
+        var params = $.extend({}, JSON.parse($(this).attr("data-csrf")), {
+            subnetId: $(this).attr("data-subnetId")
+        });
+        return $.post("/ajx/admin/subnets/truncate-save", params, function(data) {
             $("div.subnetTruncateResult").html(data), reload_window(data);
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
@@ -1103,7 +1113,7 @@ $(document).ready(function() {
         var subnetData = $("form#editSubnetDetails").serialize();
         return $(this).hasClass("editSubnetSubmitDelete") && (subnetData = subnetData.replace("action=edit", "action=delete")), 
         "editSubnetSubmitDelete" == $(this).attr("id") && (subnetData += "&deleteconfirm=yes"), 
-        $.post("ajx/admin/subnets/edit-result", subnetData, function(data) {
+        $.post("/ajx/admin/subnets/edit-result", subnetData, function(data) {
             if ($("div.manageSubnetEditResult").html(data).slideDown("fast"), data.search("alert-danger") == -1 && data.search("error") == -1) {
                 showSpinner();
                 var sectionId, subnetId, parameter;
@@ -1136,7 +1146,7 @@ $(document).ready(function() {
     }), $(document).on("click", "#get-ripe", function() {
         showSpinner();
         var subnet = $("form#editSubnetDetails input[name=subnet]").val();
-        return $.post("ajx/admin/subnets/ripe-query", {
+        return $.post("/ajx/admin/subnets/ripe-query", {
             subnet: subnet
         }, function(data) {
             showPopup("popup_w500", data, !0), hideSpinner();
@@ -1154,7 +1164,7 @@ $(document).ready(function() {
     }), $(".showSubnetPerm").click(function() {
         showSpinner();
         var subnetId = $(this).attr("data-subnetId"), sectionId = $(this).attr("data-sectionId");
-        return $.post("ajx/admin/subnets/permissions-show", {
+        return $.post("/ajx/admin/subnets/permissions-show", {
             subnetId: subnetId,
             sectionId: sectionId,
             action: "read"
@@ -1176,7 +1186,7 @@ $(document).ready(function() {
         return $(inputfield).val(subnet), $(".dropdown-subnets").parent().removeClass("open"), 
         !1;
     }), $(".editSubnetLink").click(function() {
-        return showSpinner(), $.post("ajx/admin/subnets/linked-subnet", {
+        return showSpinner(), $.post("/ajx/admin/subnets/linked-subnet", {
             subnetId: $(this).attr("data-subnetId")
         }, function(data) {
             $("#popupOverlay div.popup_w500").html(data), showPopup("popup_w500"), hideSpinner();
@@ -1282,47 +1292,47 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
     }), $(document).on("click", ".editSwitch", function() {
-        open_popup("600", "ajx/admin/devices/edit", {
+        open_popup("600", "/ajx/admin/devices/edit", {
             switchId: $(this).attr("data-switchid"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", "#editSwitchsubmit", function() {
-        submit_popup_data(".switchManagementEditResult", "ajx/admin/devices/edit-result", $("form#switchManagementEdit").serialize());
+        submit_popup_data(".switchManagementEditResult", "/ajx/admin/devices/edit-result", $("form#switchManagementEdit").serialize());
     }), $(document).on("click", ".editSwitchSNMP", function() {
-        open_popup("400", "ajx/admin/devices/edit-snmp", {
+        open_popup("400", "/ajx/admin/devices/edit-snmp", {
             switchId: $(this).attr("data-switchid"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", "#editSwitchSNMPsubmit", function() {
-        submit_popup_data(".switchSNMPManagementEditResult", "ajx/admin/devices/edit-snmp-result", $("form#switchSNMPManagementEdit").serialize());
+        submit_popup_data(".switchSNMPManagementEditResult", "/ajx/admin/devices/edit-snmp-result", $("form#switchSNMPManagementEdit").serialize());
     }), $(document).on("click", "#test-snmp", function() {
-        return open_popup("700", "ajx/admin/devices/edit-snmp-test", $("form#switchSNMPManagementEdit").serialize(), !0), 
+        return open_popup("700", "/ajx/admin/devices/edit-snmp-test", $("form#switchSNMPManagementEdit").serialize(), !0), 
         !1;
     }), $(document).on("click", "#snmp-routing", function() {
-        return open_popup("700", "ajx/subnets/scan/subnet-scan-snmp-route", "", !0), !1;
+        return open_popup("700", "/ajx/subnets/scan/subnet-scan-snmp-route", "", !0), !1;
     }), $(document).on("click", "#snmp-vlan", function() {
-        return open_popup("700", "ajx/admin/vlans/vlans-scan", {
+        return open_popup("700", "/ajx/admin/vlans/vlans-scan", {
             domainId: $(this).attr("data-domainid")
         }, !0), !1;
     }), $(document).on("click", ".show-vlan-scan-result", function() {
-        return submit_popup_data(".vlan-scan-result", "ajx/admin/vlans/vlans-scan-execute", $("form#select-devices-vlan-scan").serialize(), !0), 
+        return submit_popup_data(".vlan-scan-result", "/ajx/admin/vlans/vlans-scan-execute", $("form#select-devices-vlan-scan").serialize(), !0), 
         !1;
     }), $(document).on("click", "#saveVlanScanResults", function() {
-        return submit_popup_data("#vlanScanAddResult", "ajx/admin/vlans/vlans-scan-result", $("form#scan-snmp-vlan-form").serialize()), 
+        return submit_popup_data("#vlanScanAddResult", "/ajx/admin/vlans/vlans-scan-result", $("form#scan-snmp-vlan-form").serialize()), 
         !1;
     }), $(document).on("click", "#snmp-vrf", function() {
-        return open_popup("700", "ajx/admin/vrfs/vrf-scan", !0), !1;
+        return open_popup("700", "/ajx/admin/vrfs/vrf-scan", !0), !1;
     }), $(document).on("click", ".show-vrf-scan-result", function() {
-        return submit_popup_data(".vrf-scan-result", "ajx/admin/vrfs/vrf-scan-execute", $("form#select-devices-vrf-scan").serialize(), !0), 
+        return submit_popup_data(".vrf-scan-result", "/ajx/admin/vrfs/vrf-scan-execute", $("form#select-devices-vrf-scan").serialize(), !0), 
         !1;
     }), $(document).on("click", "#saveVrfScanResults", function() {
-        return submit_popup_data("#vrfScanAddResult", "ajx/admin/vrfs/vrf-scan-result", $("form#scan-snmp-vrf-form").serialize()), 
+        return submit_popup_data("#vrfScanAddResult", "/ajx/admin/vrfs/vrf-scan-result", $("form#scan-snmp-vrf-form").serialize()), 
         !1;
     }), $(document).on("click", ".select-snmp-subnet", function() {
         return $("form#editSubnetDetails input[name=subnet]").val($(this).attr("data-subnet") + "/" + $(this).attr("data-mask")), 
         hidePopup2(), !1;
     }), $(document).on("click", "#snmp-routing-section", function() {
-        return open_popup("masks", "ajx/subnets/scan/subnet-scan-snmp-route-all", {
+        return open_popup("masks", "/ajx/subnets/scan/subnet-scan-snmp-route-all", {
             sectionId: $(this).attr("data-sectionId"),
             subnetId: $(this).attr("data-subnetId")
         }), !1;
@@ -1332,86 +1342,85 @@ $(document).ready(function() {
         return $("#editSubnetDetailsSNMPallTable tr#tr-" + $(this).attr("data-target-subnet")).remove(), 
         !1;
     }), $(document).on("click", "#add-subnets-to-section-snmp", function() {
-        return submit_popup_data(".add-subnets-to-section-snmp-result", "ajx/subnets/scan/subnet-scan-snmp-route-all-result", $("form#editSubnetDetailsSNMPall").serialize()), 
+        return submit_popup_data(".add-subnets-to-section-snmp-result", "/ajx/subnets/scan/subnet-scan-snmp-route-all-result", $("form#editSubnetDetailsSNMPall").serialize()), 
         !1;
     }), $(document).on("click", ".editDevType", function() {
-        open_popup("400", "ajx/admin/device-types/edit", {
+        open_popup("400", "/ajx/admin/device-types/edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", "#editDevTypeSubmit", function() {
-        submit_popup_data(".devTypeEditResult", "ajx/admin/device-types/edit-result", $("form#devTypeEdit").serialize());
+        submit_popup_data(".devTypeEditResult", "/ajx/admin/device-types/edit-result", $("form#devTypeEdit").serialize());
     }), $(document).on("click", ".editRack", function() {
-        return open_popup("400", "ajx/admin/racks/edit", {
+        return open_popup("400", "/ajx/admin/racks/edit", {
             rackid: $(this).attr("data-rackid"),
             action: $(this).attr("data-action")
         }), !1;
     }), $(document).on("click", "#editRacksubmit", function() {
-        submit_popup_data(".rackManagementEditResult", "ajx/admin/racks/edit-result", $("form#rackManagementEdit").serialize());
+        submit_popup_data(".rackManagementEditResult", "/ajx/admin/racks/edit-result", $("form#rackManagementEdit").serialize());
     }), $(document).on("click", ".editRackDevice", function() {
-        return open_popup("400", "ajx/admin/racks/edit-rack-devices", {
+        return open_popup("400", "/ajx/admin/racks/edit-rack-devices", {
             rackid: $(this).attr("data-rackid"),
             deviceid: $(this).attr("data-deviceid"),
-            action: $(this).attr("data-action"),
-            csrf_cookie: $(this).attr("data-csrf")
+            action: $(this).attr("data-action")
         }), !1;
     }), $(document).on("click", "#editRackDevicesubmit", function() {
-        submit_popup_data(".rackDeviceManagementEditResult", "ajx/admin/racks/edit-rack-devices-result", $("form#rackDeviceManagementEdit").serialize());
+        submit_popup_data(".rackDeviceManagementEditResult", "/ajx/admin/racks/edit-rack-devices-result", $("form#rackDeviceManagementEdit").serialize());
     }), $(document).on("click", ".showRackPopup", function() {
-        return open_popup("400", "ajx/tools/racks/show-rack-popup", {
+        return open_popup("400", "/ajx/tools/racks/show-rack-popup", {
             rackid: $(this).attr("data-rackid"),
             deviceid: $(this).attr("data-deviceid")
         }, !0), !1;
     }), $(document).on("click", ".editLocation", function() {
-        return open_popup("700", "ajx/admin/locations/edit", {
+        return open_popup("700", "/ajx/admin/locations/edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         }), !1;
     }), $(document).on("click", "#editLocationSubmit", function() {
-        return submit_popup_data(".editLocationResult", "ajx/admin/locations/edit-result", $("form#editLocation").serialize()), 
+        return submit_popup_data(".editLocationResult", "/ajx/admin/locations/edit-result", $("form#editLocation").serialize()), 
         !1;
     }), $(document).on("click", ".editPSTN", function() {
-        return open_popup("700", "ajx/tools/pstn-prefixes/edit", {
+        return open_popup("700", "/ajx/tools/pstn-prefixes/edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         }), !1;
     }), $(document).on("click", "#editPSTNSubmit", function() {
-        return submit_popup_data(".editPSTNResult", "ajx/tools/pstn-prefixes/edit-result", $("form#editPSTN").serialize()), 
+        return submit_popup_data(".editPSTNResult", "/ajx/tools/pstn-prefixes/edit-result", $("form#editPSTN").serialize()), 
         !1;
     }), $(document).on("click", ".editPSTNnumber", function() {
-        return open_popup("700", "ajx/tools/pstn-prefixes/edit-number", {
+        return open_popup("700", "/ajx/tools/pstn-prefixes/edit-number", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         }), !1;
     }), $(document).on("click", "#editPSTNnumberSubmit", function() {
-        return submit_popup_data(".editPSTNnumberResult", "ajx/tools/pstn-prefixes/edit-number-result", $("form#editPSTNnumber").serialize()), 
+        return submit_popup_data(".editPSTNnumberResult", "/ajx/tools/pstn-prefixes/edit-number-result", $("form#editPSTNnumber").serialize()), 
         !1;
     }), $(document).on("click", ".editNat", function() {
-        return open_popup("700", "ajx/admin/nat/edit", {
+        return open_popup("700", "/ajx/admin/nat/edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         }), !1;
     }), $(document).on("click", ".mapNat", function() {
-        return open_popup("700", "ajx/admin/nat/edit-map", {
+        return open_popup("700", "/ajx/admin/nat/edit-map", {
             id: $(this).attr("data-id"),
             object_type: $(this).attr("data-object-type"),
             object_id: $(this).attr("data-object-id")
         }), !1;
     }), $(document).on("click", "#editNatSubmit", function() {
         var action = $("form#editNat input[name=action]").val();
-        return "add" === action ? ($.post("ajx/admin/nat/edit-result", $("form#editNat").serialize(), function(data) {
+        return "add" === action ? ($.post("/ajx/admin/nat/edit-result", $("form#editNat").serialize(), function(data) {
             $(".editNatResult").html(data), data.search("alert-danger") == -1 && data.search("error") == -1 ? setTimeout(function() {
-                open_popup("700", "ajx/admin/nat/edit", {
+                open_popup("700", "/ajx/admin/nat/edit", {
                     id: $("div.new_nat_id").html(),
                     action: "edit"
                 }), hidePopup2(), parameter = null;
             }, 1e3) : hideSpinner();
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
-        }), !1) : void submit_popup_data(".editNatResult", "ajx/admin/nat/edit-result", $("form#editNat").serialize());
+        }), !1) : void submit_popup_data(".editNatResult", "/ajx/admin/nat/edit-result", $("form#editNat").serialize());
     }), $(document).on("click", ".removeNatItem", function() {
         var id = $(this).attr("data-id");
-        return showSpinner(), $.post("ajx/admin/nat/item-remove", {
+        return showSpinner(), $.post("/ajx/admin/nat/item-remove", {
             id: $(this).attr("data-id"),
             type: $(this).attr("data-type"),
             item_id: $(this).attr("data-item-id"),
@@ -1419,7 +1428,7 @@ $(document).ready(function() {
         }, function(data) {
             $("#popupOverlay2 div.popup_w500").html(data), showPopup("popup_w700", data, !0), 
             data.search("alert-danger") == -1 && data.search("error") == -1 ? setTimeout(function() {
-                open_popup("700", "ajx/admin/nat/edit", {
+                open_popup("700", "/ajx/admin/nat/edit", {
                     id: id,
                     action: "edit"
                 }), hidePopup2(), parameter = null;
@@ -1428,69 +1437,69 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
     }), $(document).on("click", ".addNatItem", function() {
-        return open_popup("700", "ajx/admin/nat/item-add", {
+        return open_popup("700", "/ajx/admin/nat/item-add", {
             id: $(this).attr("data-id"),
             type: $(this).attr("data-type"),
             object_type: $(this).attr("data-object-type"),
             object_id: $(this).attr("data-object-id")
         }, !0), !1;
     }), $(document).on("submit", "form#search_nats", function() {
-        return showSpinner(), $.post("ajx/admin/nat/item-add-search", $(this).serialize(), function(data) {
+        return showSpinner(), $.post("/ajx/admin/nat/item-add-search", $(this).serialize(), function(data) {
             $("#nat_search_results").html(data), hideSpinner();
         }), !1;
     }), $(document).on("click", "a.addNatObjectFromSearch", function() {
         var id = $(this).attr("data-id"), reload = $(this).attr("data-reload");
-        return showSpinner(), $.post("ajx/admin/nat/item-add-submit", {
+        return showSpinner(), $.post("/ajx/admin/nat/item-add-submit", {
             id: $(this).attr("data-id"),
             type: $(this).attr("data-type"),
             object_type: $(this).attr("data-object-type"),
             object_id: $(this).attr("data-object-id")
         }, function(data) {
             $("#nat_search_results_commit").html(data), data.search("alert-danger") == -1 && data.search("error") == -1 ? "true" == reload ? reload_window(data) : setTimeout(function() {
-                open_popup("700", "ajx/admin/nat/edit", {
+                open_popup("700", "/ajx/admin/nat/edit", {
                     id: id,
                     action: "edit"
                 }), hidePopup2(), parameter = null;
             }, 1e3) : hideSpinner();
         }), !1;
     }), $(".editType").click(function() {
-        open_popup("400", "ajx/admin/tags/edit", {
+        open_popup("400", "/ajx/admin/tags/edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", "#editTypesubmit", function() {
-        submit_popup_data(".editTypeResult", "ajx/admin/tags/edit-result", $("form#editType").serialize());
+        submit_popup_data(".editTypeResult", "/ajx/admin/tags/edit-result", $("form#editType").serialize());
     }), $(document).on("click", ".editVLAN", function() {
-        vlanNum = $(this).attr("data-number") ? $(this).attr("data-number") : "", open_popup("400", "ajx/admin/vlans/edit", {
+        vlanNum = $(this).attr("data-number") ? $(this).attr("data-number") : "", open_popup("400", "/ajx/admin/vlans/edit", {
             vlanId: $(this).attr("data-vlanid"),
             action: $(this).attr("data-action"),
             vlanNum: vlanNum,
             domain: $(this).attr("data-domain")
         });
     }), $(document).on("click", "#editVLANsubmit", function() {
-        submit_popup_data(".vlanManagementEditResult", "ajx/admin/vlans/edit-result", $("form#vlanManagementEdit").serialize());
+        submit_popup_data(".vlanManagementEditResult", "/ajx/admin/vlans/edit-result", $("form#vlanManagementEdit").serialize());
     }), $(".moveVLAN").click(function() {
-        open_popup("400", "ajx/admin/vlans/move-vlan", {
+        open_popup("400", "/ajx/admin/vlans/move-vlan", {
             vlanId: $(this).attr("data-vlanid")
         });
     }), $(document).on("click", "#moveVLANsubmit", function() {
-        submit_popup_data(".moveVLANSubmitResult", "ajx/admin/vlans/move-vlan-result", $("form#moveVLAN").serialize());
+        submit_popup_data(".moveVLANSubmitResult", "/ajx/admin/vlans/move-vlan-result", $("form#moveVLAN").serialize());
     }), $(".editVLANdomain").click(function() {
-        open_popup("500", "ajx/admin/vlans/edit-domain", {
+        open_popup("500", "/ajx/admin/vlans/edit-domain", {
             id: $(this).attr("data-domainid"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", "#editVLANdomainsubmit", function() {
-        submit_popup_data(".domainEditResult", "ajx/admin/vlans/edit-domain-result", $("form#editVLANdomain").serialize());
+        submit_popup_data(".domainEditResult", "/ajx/admin/vlans/edit-domain-result", $("form#editVLANdomain").serialize());
     }), $(".vrfManagement").click(function() {
-        open_popup("500", "ajx/admin/vrfs/edit", {
+        open_popup("500", "/ajx/admin/vrfs/edit", {
             vrfId: $(this).attr("data-vrfid"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", "#editVRF", function() {
-        submit_popup_data(".vrfManagementEditResult", "ajx/admin/vrfs/edit-result", $("form#vrfManagementEdit").serialize());
+        submit_popup_data(".vrfManagementEditResult", "/ajx/admin/vrfs/edit-result", $("form#vrfManagementEdit").serialize());
     }), $(".nameserverManagement").click(function() {
-        open_popup("700", "ajx/admin/nameservers/edit", {
+        open_popup("700", "/ajx/admin/nameservers/edit", {
             nameserverId: $(this).attr("data-nameserverid"),
             action: $(this).attr("data-action")
         });
@@ -1504,23 +1513,23 @@ $(document).ready(function() {
         var id = $(this).attr("data-id"), el = document.getElementById(id);
         return el.parentNode.removeChild(el), hideSpinner(), !1;
     }), $(document).on("click", "#editNameservers", function() {
-        submit_popup_data(".nameserverManagementEditResult", "ajx/admin/nameservers/edit-result", $("form#nameserverManagementEdit").serialize());
+        submit_popup_data(".nameserverManagementEditResult", "/ajx/admin/nameservers/edit-result", $("form#nameserverManagementEdit").serialize());
     }), $("table#requestedIPaddresses button").click(function() {
-        open_popup("700", "ajx/admin/requests/edit", {
+        open_popup("700", "/ajx/admin/requests/edit", {
             requestId: $(this).attr("data-requestid")
         });
     }), $(document).on("click", "button.manageRequest", function() {
         var postValues = $("form.manageRequestEdit").serialize(), action = $(this).attr("data-action"), postData = postValues + "&action=" + action;
-        submit_popup_data(".manageRequestResult", "ajx/admin/requests/edit-result", postData);
+        submit_popup_data(".manageRequestResult", "/ajx/admin/requests/edit-result", postData);
     }), $(".shareTemp").click(function() {
-        return open_popup("700", "ajx/tools/temp-shares/edit", {
+        return open_popup("700", "/ajx/tools/temp-shares/edit", {
             type: $(this).attr("data-type"),
             id: $(this).attr("data-id")
         }), !1;
     }), $(document).on("click", "#shareTempSubmit", function() {
-        submit_popup_data(".shareTempSubmitResult", "ajx/tools/temp-shares/edit-result", $("form#shareTempEdit").serialize());
+        submit_popup_data(".shareTempSubmitResult", "/ajx/tools/temp-shares/edit-result", $("form#shareTempEdit").serialize());
     }), $(".removeSharedTemp").click(function() {
-        showPopup("popup_w400"), submit_popup_data("#popupOverlay .popup_w400", "ajx/tools/temp-shares/delete-result", {
+        showPopup("popup_w400"), submit_popup_data("#popupOverlay .popup_w400", "/ajx/tools/temp-shares/delete-result", {
             code: $(this).attr("data-code")
         }), hideSpinner();
     }), $("form#ripeImport").submit(function() {
@@ -1681,12 +1690,12 @@ $(document).ready(function() {
         var seconds = new Date().getTime(), md5 = $.md5(seconds);
         return $("input#md5string").val(md5), !1;
     }), $(".editAgent").click(function() {
-        open_popup("700", "ajx/admin/scan-agents/edit", {
+        open_popup("700", "/ajx/admin/scan-agents/edit", {
             id: $(this).attr("data-id"),
             action: $(this).attr("data-action")
         });
     }), $(document).on("click", "#agentEditSubmit", function() {
-        submit_popup_data(".agentEditResult", "ajx/admin/scan-agents/edit-result", $("form#agentEdit").serialize());
+        submit_popup_data(".agentEditResult", "/ajx/admin/scan-agents/edit-result", $("form#agentEdit").serialize());
     }), $("button#searchReplaceSave").click(function() {
         showSpinner();
         var searchData = $("form#searchReplace").serialize();
@@ -1695,17 +1704,8 @@ $(document).ready(function() {
         }).fail(function(jqxhr, textStatus, errorThrown) {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
-    }), $("button#XLSdump").click(function() {
-        showSpinner();
-        var csrf = $(this).attr("data-csrf"), type = $(this).attr("data-type");
-        $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-xls.php'></iframe></div>"), 
-        hideSpinner();
-    }), $("button#MySQLdump").click(function() {
-        showSpinner(), $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-mysql.php'></iframe></div>"), 
-        hideSpinner();
-    }), $("button#hostfileDump").click(function() {
-        showSpinner(), $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/generate-hosts.php'></iframe></div>"), 
-        hideSpinner();
+    }), $("button.dataDump").click(function() {
+        submit_export_form($(this));
     }), $("button.dataExport").click(function() {
         var implemented = [ "vrf", "vlan", "subnets", "ipaddr" ], popsize = {};
         popsize.subnets = "w700", popsize.ipaddr = "w700";
@@ -1722,39 +1722,7 @@ $(document).ready(function() {
             showError(jqxhr.statusText + "<br>Status: " + textStatus + "<br>Error: " + errorThrown);
         }), !1;
     }), $(document).on("click", "button#dataExportSubmit", function() {
-        var dataType = $(this).attr("data-type"), exportFields = $("form#selectExportFields").serialize();
-        switch (dataType) {
-          case "vrf":
-            $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-vrf/?" + exportFields + "'></iframe></div>"), 
-            setTimeout(function() {
-                hidePopups();
-            }, 1500);
-            break;
-
-          case "vlan":
-            var exportDomains = $("form#selectExportDomains").serialize();
-            $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-vlan/?" + exportDomains + "&" + exportFields + "'></iframe></div>"), 
-            setTimeout(function() {
-                hidePopups();
-            }, 1500);
-            break;
-
-          case "subnets":
-            var exportSections = $("form#selectExportSections").serialize();
-            $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-subnets/?" + exportSections + "&" + exportFields + "'></iframe></div>"), 
-            setTimeout(function() {
-                hidePopups();
-            }, 1500);
-            break;
-
-          case "ipaddr":
-            var exportSections = $("form#selectExportSections").serialize();
-            $("div.dl").remove(), $("div.exportDIV").append("<div style='display:none' class='dl'><iframe src='/ajx/admin/import-export/export-ipaddr/?" + exportSections + "&" + exportFields + "'></iframe></div>"), 
-            setTimeout(function() {
-                hidePopups();
-            }, 1500);
-        }
-        return !1;
+        return submit_export_form($(this)), !1;
     }), $(document).on("click", "input#exportSelectAll", function() {
         this.checked ? $("input#exportCheck").each(function() {
             this.checked = !0;
