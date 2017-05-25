@@ -32,6 +32,7 @@
         "pear/net_ipv4": "dev-trunk",
         "pear/Net_IPv6": "dev-master",
         "pear/Net_DNS2": "^1.4",
-        "paragonie/anti-csrf": "^1.0"
+        "paragonie/anti-csrf": "^1.0",
+        "sebastian/git": "^2.1"
     }
 }
