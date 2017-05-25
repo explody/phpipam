@@ -178,6 +178,7 @@ class Sections_controller extends Common_api_functions
             if (sizeof($result)==0) {
                 $this->Response->throw_exception(404, "No subnets found");
             } else {
+                $this->custom_fields = $this->Tools->fetch_custom_fields('subnets');
                 return array("code"=>200, "data"=>$this->prepare_result($result, "subnets", true, true));
             }
         }

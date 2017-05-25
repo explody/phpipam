@@ -30,7 +30,8 @@ $worksheet->write($lineCount, 6, _('owner'));
 $worksheet->write($lineCount, 7, _('device'));
 $worksheet->write($lineCount, 8, _('port'));
 $worksheet->write($lineCount, 9, _('note'));
-$fc = 10;
+$worksheet->write($lineCount, 10, _('location'));
+$fc = 11;
 foreach($cfs as $cf) {
 	$worksheet->write($lineCount, $fc, $cf->name);
 	$fc++;

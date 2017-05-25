@@ -216,10 +216,10 @@ class Addresses_controller extends Common_api_functions
         }
         // tags
         elseif ($this->_params->id=="tags") {
-            // validate
-            $this->validate_tag();
             // all addresses with tag
             if (@$this->_params->id3=="addresses") {
+                // validate
+                $this->validate_tag();
                 // fetch
                 $result = $this->Tools->fetch_multiple_objects("ipaddresses", "state", $this->_params->id2);
 
@@ -239,6 +239,8 @@ class Addresses_controller extends Common_api_functions
             else {
                 // fetch all by tag
                 if (isset($this->_params->id2)) {
+                    // validate
+                    $this->validate_tag();
                     // numeric
                     if (is_numeric($this->_params->id2)) {
                         $result = $this->Tools->fetch_object("ipTags", "id", $this->_params->id2);
@@ -435,6 +437,9 @@ class Addresses_controller extends Common_api_functions
         $this->remap_keys();
 
         // we dont allow address or subnet change
+        if (isset($this->_params->ip)) {
+            $this->Response->throw_exception(400, "IP address cannot be changed");
+        }
         if (isset($this->_params->ip_addr)) {
             $this->Response->throw_exception(400, "IP address cannot be changed");
         }
@@ -456,7 +461,7 @@ class Addresses_controller extends Common_api_functions
 
         # append old address details and fill details if not provided - calidate_update_parameters fetches $this->old_address
         foreach ($this->old_address as $ok=>$oa) {
-            if (!isset($values[$ok])) {
+            if (!array_key_exists($ok, $values)) {
                 if (!is_null($oa)) {
                     $values[$ok] = $oa;
                 }
@@ -661,6 +666,13 @@ class Addresses_controller extends Common_api_functions
     {
         // make sure address exists
         $this->validate_address_id();
+
+        // if no data is present print it
+        if (sizeof((array) $this->_params)==3) {
+            if (isset($this->_params->app_id) && isset($this->_params->controller) && isset($this->_params->id)) {
+                $this->Response->throw_exception(409, "No data provided");
+            }
+        }
 
         //validate and normalize MAC address
         if (strlen($this->_params->mac)>0) {

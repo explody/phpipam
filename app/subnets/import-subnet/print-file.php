@@ -23,6 +23,7 @@ if($subnet===false)                $Result->show("danger", _("Invalid subnet ID"
 $outFile = $Tools->parse_import_file ($filetype, $subnet, $cfs);
 
 
+
 /*
  *	print table
  *********************/
@@ -40,6 +41,7 @@ print '	<th>'._('Owner').'</th>';
 print '	<th>'._('Device').'</th>';
 print '	<th>'._('Port').'</th>';
 print '	<th>'._('Note').'</th>';
+print '	<th>'._('Location').'</th>';
 // Add custom fields
 foreach($cfs as $cf) {
 	print "	<th>$cf->name</th>";

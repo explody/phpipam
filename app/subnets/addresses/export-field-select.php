@@ -25,6 +25,10 @@ print '<form id="selectExportFields">';
 # table
 print "	<table class='table table-striped table-condensed'>";
 
+print "	<tr>";
+print "	<td colspan='2'><h4>"._('Standard fields')."</h4></td>";
+print "	</tr>";
+
 # IP addr - mandatory
 print "	<tr>";
 print "	<td>"._('IP address')."</td>";
@@ -83,6 +87,12 @@ print "	</tr>";
 print "	<tr>";
 print "	<td>"._('Note')."</td>";
 print "	<td><input type='checkbox' name='note' checked> </td>";
+print "	</tr>";
+
+# note
+print "	<tr>";
+print "	<td>"._('Location')."</td>";
+print "	<td><input type='checkbox' name='location' checked> </td>";
 print "	</tr>";
 
 # get all custom fields
