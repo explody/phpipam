@@ -182,6 +182,15 @@ class Sections_controller extends Common_api_functions
                 return array("code"=>200, "data"=>$this->prepare_result($result, "subnets", true, true));
             }
         }
+        elseif (@$this->_params->id2=="vlans" && is_numeric($this->_params->id)) {
+            // save result
+            $result = $this->Sections->fetch_section_vlans($this->_params->id);
+            return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
+        }
+        elseif (@$this->_params->id2=="l2domains" && is_numeric($this->_params->id)) {
+            $result = $this->Sections->fetch_section_domains($this->_params->id);
+            return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
+        }
         // verify ID
         elseif (isset($this->_params->id)) {
             # fetch by id
