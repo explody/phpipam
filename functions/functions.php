@@ -65,7 +65,11 @@ if(!isset($Database)) {
         # database object
         $Database     = new Database_PDO;
     } catch (Exception $e) {
-        header("Location: /broken/");
+        if (php_sapi_name() === 'cli') {
+            echo $e->getMessage() . "\n";
+        } else {
+            header("Location: /broken/"); 
+        }
     }
 }
 

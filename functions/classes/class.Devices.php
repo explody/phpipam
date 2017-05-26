@@ -95,7 +95,7 @@ class Devices extends Tools {
     }
     
     /**
-	 * Fetch objects with a specific db query
+	 * Fetch device objects with a specific db query
 	 *
 	 * @access private
 	 * @param string $query The SQL query in template form

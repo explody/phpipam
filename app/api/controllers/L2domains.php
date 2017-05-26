@@ -99,8 +99,8 @@ class L2domains_controller extends Common_api_functions
         // methods
         $result = array();
         $result['methods'] = array(
-                                array("href"=>"/api/l2domains/".$this->_params->app_id."/",        "methods"=>array(array("rel"=>"options", "method"=>"OPTIONS"))),
-                                array("href"=>"/api/l2domains/".$this->_params->app_id."/{id}/",    "methods"=>array(array("rel"=>"read",    "method"=>"GET"),
+                                array("href"=>"/api/".$this->_params->app_id."/l2domains/",        "methods"=>array(array("rel"=>"options", "method"=>"OPTIONS"))),
+                                array("href"=>"/api/".$this->_params->app_id."/l2domains/{id}/",    "methods"=>array(array("rel"=>"read",    "method"=>"GET"),
                                                                                                                     array("rel"=>"create", "method"=>"POST"),
                                                                                                                     array("rel"=>"update", "method"=>"PATCH"),
                                                                                                                     array("rel"=>"delete", "method"=>"DELETE"))),
