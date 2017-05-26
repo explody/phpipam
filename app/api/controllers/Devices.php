@@ -2,6 +2,7 @@
 
 /**
  *	phpIPAM API class to work with devices.
+ *  TODO: Integrate with the Devices class
  */
 class Devices_controller extends Common_api_functions
 {
@@ -297,7 +298,6 @@ class Devices_controller extends Common_api_functions
     private function validate_post_patch()
     {
         $this->validate_device_type();
-        #$this->validate_ip();
     }
 
     /**
@@ -317,19 +317,4 @@ class Devices_controller extends Common_api_functions
         }
     }
     
-    /**
-     * Validates IP address
-     *
-     * @access private
-     * @return void
-     */
-    private function validate_ip()
-    {
-        if (isset($this->_params->ip_addr)) {
-            // check
-            if (strlen($err = $this->Subnets->verify_cidr_address($this->_params->ip_addr."/32"))>1) {
-                $this->Response->throw_exception(400, $err);
-            }
-        }
-    }
 }

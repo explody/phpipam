@@ -337,10 +337,10 @@ class Sections extends Common_functions {
 		try { $vlans = $this->Database->getObjectsQuery($query, array($sectionId)); }
 		catch (Exception $e) {
 			$this->Result->show("danger", _("Error: ").$e->getMessage());
-			return false;
+			return [];
 		}
 		# result
-		return sizeof($vlans)>0 ? $vlans : false;
+		return $vlans;
 	}
 
 	/**

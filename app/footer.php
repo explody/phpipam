@@ -1,11 +1,18 @@
+<?php
+use SebastianBergmann\Git\Git; 
+# TOOD: Not sure about keeping this here, or at all, but it helps during dev
+if (file_exists(IPAM_ROOT . '/.git')) {
+    $repo = new Git(IPAM_ROOT);
+    $revs = $repo->getRevisions();
+    $rev = substr(end($revs)['sha1'], 0, 7);
+} else {
+    $rev = REVISION;
+}    
+?>
 <table class="donate">
 <tr>
 	<td>
-		<?php
-		// set href
-		$href = REVISION=="000" ? "http://phpipam.net" : "http://phpipam.net";
-		?>
-		<a href="<?php print $href; ?>">phpIPAM IP address management <?php print '[v'. VERSION. ']'; ?><?php if(REVISION > 0) { print " rev".REVISION; } ?></a>
+		<a href="<?php print 'https://github.com/explody/phpipam'; ?>">phpIPAM <?php print '['. VERSION . " rev $rev]"; ?></a>
 	</td>
 
 	<?php
