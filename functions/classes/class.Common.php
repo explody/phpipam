@@ -534,7 +534,7 @@ class Common_functions  {
     }
 
     /**
-     * CSRF cookie creation / validation.
+     * CSRF cookie creation / validation. DEPRECATED.
      *
      * @access public
      * @param string|null $index (default: null)

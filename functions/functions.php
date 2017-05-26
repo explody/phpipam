@@ -92,6 +92,12 @@ if (!$Database->bootstrap_required()) {
     
 }
 
+function init_csrf() {
+    $csrf = new \ParagonIE\AntiCSRF\AntiCSRF;
+    $csrf->reconfigure( ['single_use' => False, 'expire_old' => True] );
+    return $csrf;
+}
+
 /**
  * create links function
  *
