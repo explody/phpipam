@@ -74,7 +74,7 @@ if($_GET['page'] != "setup") {
     $_REQUEST = $Tools->strip_input_tags($_REQUEST);
     
     // csrf instance available to all includes
-    $csrf = new \ParagonIE\AntiCSRF\AntiCSRF;
+    $csrf = init_csrf();
 }
 
 

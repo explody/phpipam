@@ -87,7 +87,7 @@ $_GET     = $Tools->strip_input_tags($_GET);
 $_REQUEST = $Tools->strip_input_tags($_REQUEST);
 
 // csrf instance available to all includes
-$csrf = new \ParagonIE\AntiCSRF\AntiCSRF;
+$csrf = init_csrf();
 
 // die if our target script does not exist
 if (file_exists($path)) {

@@ -58,6 +58,7 @@ if (isset($subnets_all)) {
         # set new POST
         $_POST = $s;
         # create csrf token
+        # FIXME: what is this, fix it
         $_POST['csrf_cookie'] = $User->csrf_create('subnet');
         # permissions
         $subnet['permissions'] = $section->permissions;
