@@ -233,7 +233,7 @@ class Common_api_functions
         if ($result) {
             $result = $this->remap_keys($result);
         }
-
+        
         # return
         return $result;
     }

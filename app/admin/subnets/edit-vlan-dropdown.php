@@ -7,21 +7,6 @@
 # fetch all permitted domains
 $permitted_domains = $Sections->fetch_section_domains ($_POST['sectionId']);
 
-# fetch all belonging vlans
-$cnt = 0;
-foreach($permitted_domains as $k=>$d) {
-	//fetch domain
-	$domain = $Tools->fetch_object("vlanDomains","id",$d);
-	// fetch vlans and append
-	$vlans = $Tools->fetch_multiple_objects("vlans", "domainId", $domain->id, "number");
-	//save to array
-	$out[$d]['domain'] = $domain;
-	$out[$d]['vlans']  = $vlans;
-	//count add
-	$cnt++;
-}
-//filter out empty
-$permitted_domains = array_filter($out);
 ?>
 
 <select name="vlanId" id="ip-vlan-select" class="select2">
@@ -30,14 +15,16 @@ $permitted_domains = array_filter($out);
     </optgroup>
 	<?php
 	# print all available domains
-	foreach($permitted_domains as $d) {
+	foreach($permitted_domains as $did=>$d) {
 		//more than default
-			print "<optgroup label='".$d['domain']->name." L2 domain'>";
+			print "<optgroup label='".$d->name." L2 domain'>";
 			//add
-			print "<option value='Add' data-domain='".$d['domain']->id."'>"._('+ Add new VLAN')."</option>";
+			print "<option value='Add' data-domain='".$did."'>"._('+ Add new VLAN')."</option>";
 
-			if($d['vlans'][0]!==null) {
-				foreach($d['vlans'] as $v) {
+            $vlans = $Tools->fetch_multiple_objects("vlans", "domainId", $did, "number");
+            
+			if($vlans) {
+				foreach($vlans as $v) {
 					// set print
 					$printVLAN = $v->number;
 					if(!empty($v->name)) {
@@ -54,8 +41,7 @@ $permitted_domains = array_filter($out);
 					elseif(@$_POST['vlanId'] == $v->vlanId) 	{ print '<option value="'. $v->vlanId .'" selected>'. $printVLAN .'</option>'. "\n"; }
 					else 										{ print '<option value="'. $v->vlanId .'">'. $printVLAN .'</option>'. "\n"; }
 				}
-			}
-			else {
+			} else {
 				print "<option value='0' disabled>"._('No VLANs')."</option>";
 			}
 			print "</optgroup>";

@@ -366,6 +366,7 @@ class Subnets_controller extends Common_api_functions
         }
         // id
         elseif (is_numeric($this->_params->id)) {
+            
             $result = $this->read_subnet();
             // check result
             if ($result==false) {
@@ -861,14 +862,14 @@ class Subnets_controller extends Common_api_functions
         // fetch
         $result = $this->Subnets->fetch_subnet("id", $subnetId);
         // add nameservers, GW and calculation
-        if ($result!==false) {
+        if ($result) {
             $ns = $this->read_subnet_nameserver($result->nameserverId);
             if ($ns!==false) {
                 $result->nameservers = $ns;
             }
 
             $gateway = $this->read_subnet_gateway();
-            if ($gateway!== false) {
+            if ($gateway) {
                 $result->gatewayId = $gateway->id;
                 $gateway = $this->transform_address($gateway);
                 $result->gateway = $gateway;
