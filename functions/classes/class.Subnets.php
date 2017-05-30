@@ -1017,6 +1017,14 @@ class Subnets extends Common_functions {
 	 * @return array
 	 */
 	public function calculate_subnet_usage ($subnet, $detailed = false) {
+
+        // The way slaves are fetched and totals calculated is weird but unfixable without major work 
+        // So for now, if this is a folder, just return empty usage
+        // TODO: completely redo how slaves are fetched and calculated
+        if ($subnet->isFolder) {
+            return [];
+        }
+
 		// cast to object
 		if(is_array($subnet)) {
     		$subnet = (object) $subnet;
@@ -1036,9 +1044,7 @@ class Subnets extends Common_functions {
             $this->remove_subnet_slaves_master ($subnet->id);
 
             // set master details
-            $subnet_usage = $subnet->isFolder ? 
-                            ['used' => 0, 'freehosts' => 0, 'maxhosts' => 1] : 
-                            $this->calculate_single_subnet_details ($subnet, false, false);
+            $subnet_usage = $this->calculate_single_subnet_details ($subnet, false, false);
 
         	// loop and add results
             foreach ($this->slaves_full as $ss) {

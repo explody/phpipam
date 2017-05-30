@@ -198,7 +198,7 @@ class Sections_controller extends Common_api_functions
                         }
 
                         // get usage
-                        $result[$k]->usage = $this->read_subnet_usage($r->id);
+                        $result[$k]->usage = $result[$k]->isFolder ? [] : $this->read_subnet_usage($r->id);
 
                         // fetch addresses
                         if (@$this->_params->id3=="addresses") {
