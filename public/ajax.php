@@ -13,7 +13,7 @@ ob_start();
 */
 //header("Content-Type: application/json");
 
-define(AJAX, true);
+define('AJAX', true);
 
 require_once dirname(__FILE__) . "/../paths.php";
 

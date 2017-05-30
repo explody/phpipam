@@ -1028,13 +1028,16 @@ class Subnets extends Common_functions {
 
     	// is slaves
     	if ($this->has_slaves ($subnet->id)) {
+            
             // if we have slaves we need to check against every slave
             $this->reset_subnet_slaves_recursive ();
             $this->fetch_subnet_slaves_recursive ($subnet->id);
             $this->remove_subnet_slaves_master ($subnet->id);
 
             // set master details
-            $subnet_usage = $this->calculate_single_subnet_details ($subnet, false, false);
+            $subnet_usage = $subnet->isFolder ? 
+                            ['used' => 0, 'freehosts' => 0, 'maxhosts' => 1] : 
+                            $this->calculate_single_subnet_details ($subnet, false, false);
 
         	// loop and add results
             foreach ($this->slaves_full as $ss) {

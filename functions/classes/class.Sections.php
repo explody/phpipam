@@ -373,21 +373,15 @@ class Sections extends Common_functions {
 	 */
 	public function fetch_section_domains ($sectionId) {
 		# first fetch all domains
-		$Admin = new Admin ($this->Database, false);
-		$domains = $Admin->fetch_all_objects ("vlanDomains");
+		$domains = $this->fetch_all_objects ("vlanDomains");
 		# loop and check
 		$permitted = array();
 		foreach($domains as $d) {
-			//default
-			if($d->id==1) {
-					$permitted[] = $d->id;
-			}
-			else {
-				//array
-				if(in_array($sectionId, explode(";", $d->permissions))) {
-					$permitted[] = $d->id;
-				}
-			}
+			// Add default domain and any others that are assigned to this section
+			if($d->id==1 || in_array($sectionId, explode(";", $d->permissions))) {
+                $l2dom = $this->fetch_object('vlanDomains', 'id', $d->id);
+				$permitted[$d->id] = $l2dom;
+			} 
 		}
 		# return permitted
 		return $permitted;

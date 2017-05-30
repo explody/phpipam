@@ -140,95 +140,86 @@ class Sections_controller extends Common_api_functions
      */
     public function GET()
     {
-        // fetch subnets in section
-        if (@$this->_params->id2=="subnets" && is_numeric($this->_params->id)) {
-            // we dont need id2 anymore
-            unset($this->_params->id2);
-            // init required objects
-            $this->init_object("Subnets", $this->Database);
-            $this->init_object("Addresses", $this->Database);
-            //fetch
-            $result = $this->Subnets->fetch_section_subnets($this->_params->id);
-            // add gateway
-            if (sizeof($result)>0) {
-                foreach ($result as $k=>$r) {
-                    //gw
-                    $gateway = $this->read_subnet_gateway($r->id);
-                    if ($gateway!== false) {
-                        $result[$k]->gatewayId = $gateway->id;
-                    }
-
-                    //nameservers
-                    $ns = $this->read_subnet_nameserver($r->nameserverId);
-                    if ($ns!==false) {
-                        $result[$k]->nameservers = $ns;
-                    }
-
-                    // get usage
-                    $result[$k]->usage = $this->read_subnet_usage($r->id);
-
-                    // fetch addresses
-                    if (@$this->_params->id3=="addresses") {
-                        // fetch
-                        $result[$k]->addresses = $this->Addresses->fetch_subnet_addresses($r->id);
-                    }
-                }
-            }
-            // check result
-            if (sizeof($result)==0) {
-                $this->Response->throw_exception(404, "No subnets found");
-            } else {
-                $this->custom_fields = $this->Tools->fetch_custom_fields('subnets');
-                return array("code"=>200, "data"=>$this->prepare_result($result, "subnets", true, true));
-            }
-        }
-        elseif (@$this->_params->id2=="vlans" && is_numeric($this->_params->id)) {
-            // save result
-            $result = $this->Sections->fetch_section_vlans($this->_params->id);
-            return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
-        }
-        elseif (@$this->_params->id2=="l2domains" && is_numeric($this->_params->id)) {
-            $result = $this->Sections->fetch_section_domains($this->_params->id);
-            return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
-        }
-        // verify ID
-        elseif (isset($this->_params->id)) {
-            # fetch by id
+        $section = false;
+        // If we have an id, validate the ID by fetching the section
+        if (isset($this->_params->id)) {
             if (is_numeric($this->_params->id)) {
-                $result = $this->Sections->fetch_section("id", $this->_params->id);
-                // check result
-                if ($result===false) {
-                    $this->Response->throw_exception(404, "Section does not exist");
+                $method = 'id';
+            } else {
+                // If the ID is non numeric, it's either a section name or 'custom_fields'
+                // If the latter, return the custom fields now
+                if ($this->_params->id == 'custom_fields') {
+                    $this->custom_fields = $this->Tools->fetch_custom_fields('subnets');
+                    return array("code"=>200, "data"=>$this->prepare_result($result, "subnets", true, true));
                 } else {
-                    return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
+                    $method = 'name';
                 }
             }
-            # Custom fields not supported
-            elseif ($this->_params->id=="custom_fields") {
-                $this->Response->throw_exception(409, 'Custom fields not supported');
+            // Fetch section based on name or ID, determined above
+            $section = $this->Sections->fetch_section($method, $this->_params->id);
+            
+            // if the named section does not exist, 404
+            if (!$section) {
+                $this->Response->throw_exception(404, "No such section");
             }
-            # fetch by name
-            else {
-                $result = $this->Sections->fetch_section("name", $this->_params->id);
-                // check result
-                if ($result==false) {
-                    $this->Response->throw_exception(404, $this->Response->errors[404]);
-                } else {
-                    return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
-                }
-            }
+        } else {
+            // If we have no ID, return all sections
+            return array("code"=>200, 
+                         "data"=>$this->prepare_result($this->Sections->fetch_all_sections(), null, true, true));
         }
-        # all sections
-        else {
-            // all sections
-                $result = $this->Sections->fetch_all_sections();
-                // check result
-                if ($result===false) {
-                    return array("code"=>204, null);
-                } else {
-                    return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
+        
+        if (!isset($this->_params->id2)) {
+            // If we have no second ID, return the section we validated above
+            $result = $section;
+        } else {
+            // Otherwise, fetch different data based on id2
+            // fetch subnets in section
+            if (@$this->_params->id2=="subnets") {
+                // we dont need id2 anymore
+                unset($this->_params->id2);
+                // init required objects
+                $this->init_object("Subnets", $this->Database);
+                $this->init_object("Addresses", $this->Database);
+                //fetch
+                $result = $this->Subnets->fetch_section_subnets($section->id);
+                // add gateway
+                if (sizeof($result)>0) {
+                    foreach ($result as $k=>$r) {
+                        //gw
+                        $gateway = $this->read_subnet_gateway($r->id);
+                        if ($gateway!== false) {
+                            $result[$k]->gatewayId = $gateway->id;
+                        }
+
+                        //nameservers
+                        $ns = $this->read_subnet_nameserver($r->nameserverId);
+                        if ($ns!==false) {
+                            $result[$k]->nameservers = $ns;
+                        }
+
+                        // get usage
+                        $result[$k]->usage = $this->read_subnet_usage($r->id);
+
+                        // fetch addresses
+                        if (@$this->_params->id3=="addresses") {
+                            // fetch
+                            $result[$k]->addresses = $this->Addresses->fetch_subnet_addresses($r->id);
+                        }
+                    }
                 }
+
+            } elseif (@$this->_params->id2=="vlans") {
+                // save result
+                $result = $this->Sections->fetch_section_vlans($this->_params->id);
+            }
+            elseif (@$this->_params->id2=="l2domains") {
+                $result = $this->Sections->fetch_section_domains($this->_params->id);
+            }
+
         }
+        
+        return array("code"=>200, "data"=>$this->prepare_result($result, null, true, true));
+
     }
 
 
