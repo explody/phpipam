@@ -20,11 +20,11 @@ if($User->settings->vlanDuplicate==0 && ($_POST['action']=="add" || $_POST['acti
 	$check_vlan = $Admin->fetch_multiple_objects ("vlans", "domainId", $_POST['domainId'], "vlanId");
 
 	foreach($check_vlan as $v) {
-		if($v->number == $_POST['number']) {
-																		{ $Result->show("danger", _("VLAN already exists"), true); }
-		}
+        if (($_POST['action'] === 'add' && $v->number === $_POST['number']) ||
+            ($_POST['action'] === 'edit' && $v->number === $_POST['number'] && $v->vlanId != $_POST['vlanId']))  { 
+                $Result->show("danger", _("VLAN already exists"), true); 
+            }
 	}
-
 }
 
 // if unique required
