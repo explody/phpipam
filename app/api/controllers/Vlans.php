@@ -234,13 +234,13 @@ class Vlans_controller extends Common_api_functions
         # validate input
         $this->validate_vlan_edit();
 
-        # execute update
-        if (!$this->Admin->object_modify("vlans", "add", "vlanId", $values)) {
-            $this->Response->throw_exception(500, "Vlan creation failed");
+        if (!$this->Admin->object_modify('vlans', 'add', 'vlanId', $values)) {
+            $this->Response->throw_exception(500, $this->_params->id.' object creation failed');
         } else {
-            //set result
-            return array("code"=>201, "message"=>"Vlan created", "id"=>$this->Admin->lastId, "location"=>"/api/".$this->_params->app_id."/vlans/".$this->Admin->lastId."/");
+            $result = $this->Tools->fetch_object('vlans', 'vlanId', $this->Admin->lastId);
+            return array('code' => 201, 'data' => $this->prepare_result($result, 'vlans', true, false));
         }
+        
     }
 
 
@@ -274,6 +274,7 @@ class Vlans_controller extends Common_api_functions
             //set result
             return array("code"=>200, "message"=>"Vlan updated");
         }
+        
     }
 
 

@@ -204,13 +204,13 @@ class L2domains_controller extends Common_api_functions
         # validate input
         $this->validate_domain_edit();
 
-        # execute update
-        if (!$this->Admin->object_modify("vlanDomains", "add", "id", $values)) {
-            $this->Response->throw_exception(500, "Domain creation failed");
+        if (!$this->Admin->object_modify('vlanDomains', 'add', 'id', $values)) {
+            $this->Response->throw_exception(500, $this->_params->id.' object creation failed');
         } else {
-            //set result
-            return array("code"=>201, "message"=>"L2 domain created", "id"=>$this->Admin->lastId, "location"=>"/api/".$this->_params->app_id."/l2domains/".$this->Admin->lastId."/");
+            $result = $this->Tools->fetch_object('vlanDomains', 'id', $this->Admin->lastId);
+            return array('code' => 201, 'data' => $this->prepare_result($result, 'vlanDomains', true, false));
         }
+
     }
 
 
