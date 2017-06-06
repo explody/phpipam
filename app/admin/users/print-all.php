@@ -191,7 +191,7 @@ foreach ($users as $user) {
 	print "		<button class='btn btn-xs btn-default editUser' data-userid='$user[id]' data-action='edit'  ><i class='fa fa-pencil'></i></button>";
 	print "		<a class='btn btn-xs btn-default";
 	if($_SESSION['realipamusername']) { print " disabled";}
-	print "' href='".create_link("administration","users","switch","$user[username]")."'><i class='fa fa-exchange'></i></a></button>";
+	print "' href='".create_link("administration","users","device","$user[username]")."'><i class='fa fa-exchange'></i></a></button>";
 	print "		<button class='btn btn-xs btn-default editUser' data-userid='$user[id]' data-action='delete'><i class='fa fa-times'></i></button>";
 	print "	</div>";
 	print "	</td>";

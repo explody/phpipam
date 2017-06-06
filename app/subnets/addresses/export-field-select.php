@@ -73,8 +73,8 @@ print "	</tr>";
 
 # switch
 print "	<tr>";
-print "	<td>"._('Switch')."</td>";
-print "	<td><input type='checkbox' name='switch' checked> </td>";
+print "	<td>"._('Device')."</td>";
+print "	<td><input type='checkbox' name='device' checked> </td>";
 print "	</tr>";
 
 # port

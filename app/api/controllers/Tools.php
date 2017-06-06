@@ -358,7 +358,7 @@ class Tools_controller extends Common_api_functions
                 if ($this->_params->id == "ipTags") {
                     $field = "state";
                 } elseif ($this->_params->id == "devices") {
-                    $field = "switch";
+                    $field = "device";
                 } else {
                     $this->Response->throw_exception(400, 'Invalid parameter');
                 }
@@ -527,7 +527,7 @@ class Tools_controller extends Common_api_functions
         } else {
             // set update field
             if ($this->_params->id == "devices") {
-                $update_field = "switch";
+                $update_field = "device";
             } elseif ($this->_params->id == "ipTags") {
                 $update_field = "state";
             }

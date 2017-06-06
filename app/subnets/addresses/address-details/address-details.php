@@ -130,12 +130,12 @@ if(sizeof($address)>1) {
     	}
 
     	# switch
-    	if(in_array('switch', $selected_ip_fields)) {
+    	if(in_array('device', $selected_ip_fields)) {
     	print "<tr>";
     	print "	<th>"._('Device')."</th>";
-    	if(strlen($address['switch'])>0) {
+    	if(strlen($address['device'])>0) {
     		# get device
-    		$device = (array) $Tools->fetch_object("devices", "id", $address['switch']);
+    		$device = (array) $Tools->fetch_object("devices", "id", $address['device']);
     		$device = $Addresses->reformat_empty_array_fields($device, "");
     		print "	<td><a href='".create_link("tools","devices",$device['id'])."'>".@$device['hostname']."</a> ".@$device['description']."</td>";
     	} else {

@@ -685,51 +685,58 @@ class Tools extends Common_functions {
 	 * @return array
 	 */
 	private function fetch_columns ($table) {
-		# escape method/table
-		$table = $this->Database->escape($table);
-    	# fetch columns
-		$query    = "show full columns from `$table`;";
-		# fetch
-	    try { $fields = $this->Database->getObjectsQuery($query); }
-		catch (Exception $e) { $this->Result->show("danger", $e->getMessage(), false);	return false; }
 
-		return (array) $fields;
+		$table = $this->Database->escape($table);
+		$query = "show full columns from `$table`;";
+	    try { 
+            $fields = $this->Database->getObjectsQuery($query); 
+        } catch (Exception $e) { 
+            $this->Result->show("danger", $e->getMessage(), false);	return false; 
+        }
+
+		return $fields;
 	}
 
 	/**
-	 * Fetches standard database fields from SCHEMA.sql file
+	 * Returns standard columns for a given table
 	 *
 	 * @access public
 	 * @param mixed $table
 	 * @return array
 	 */
 	public function fetch_standard_fields ($table) {
-		# get SCHEMA.SQL file
-		$schema = fopen(dirname(__FILE__) . "/../../db/SCHEMA.sql", "r");
-		$schema = fread($schema, 100000);
-		$schema = str_replace("\r\n", "\n", $schema);
-
-		# get definition
-		$definition = strstr($schema, "CREATE TABLE `$table` (");
-		$definition = trim(strstr($definition, ";" . "\n", true));
-
-		# get each line to array
-		$definition = explode("\n", $definition);
-
-		# go through,if it begins with ` use it !
-		$out = array();
-		foreach($definition as $d) {
-			$d = trim($d);
-			if(strpos(trim($d), "`")==0) {
-				$d = strstr(trim($d, "`"), "`", true);
-				$out[] = substr($d, strpos($d, "`"));
-			}
-		}
-		# return array of fields
-		return is_array($out) ? array_filter($out) : array();
+        $all_fields = $this->fetch_columns($table);
+        $cfs = $this->fetch_custom_fields($table);
+        
+        $cfnames = [];
+        foreach ($cfs as $cf) {
+            $cfnames[] = $cf->name;
+        }
+        
+        return array_filter(array_map(
+                function($f) use($cfnames) {
+                    if (!in_array($f->Field, $cfnames)) {
+                        return $f;
+                    }
+                }, $all_fields
+            ));
 	}
 
-
+    /**
+	 * Returns standard columns for a given table
+	 *
+	 * @access public
+	 * @param mixed $table
+	 * @return array
+	 */
+	public function fetch_standard_field_names ($table) {
+        $full_fields = $this->fetch_standard_fields($table);
+        $sfn = [];
+        foreach($full_fields as $sf) {
+            $sfn[] = $sf->Field;
+        }
+        return $sfn;
+	}
 
 	/**
 	 * This functions fetches all columns for specified Field

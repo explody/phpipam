@@ -106,7 +106,7 @@ class BaseSchema extends Ipam\Migration\RepeatableMigration
                 ['mac', 'string', ['limit'=>20,'null'=>true]],
                 ['owner', 'string', ['limit'=>32,'null'=>true]],
                 ['state', 'integer', ['limit'=>3,'default'=>2,'null'=>true]],
-                ['switch', 'integer', ['null'=>true]],
+                ['device', 'integer', ['null'=>true]],
                 ['port', 'string', ['limit'=>32,'null'=>true]],
                 ['note', 'text', ['null'=>true]],
                 ['lastSeen', 'datetime', ['default'=>'1970-01-01 00:00:01','null'=>true]],

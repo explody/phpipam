@@ -108,7 +108,7 @@ if( (isset($_GET['owner'])) && ($_GET['owner'] == "on") ) {
 	$worksheet->write($lineCount, $rowCount, _('owner') ,$format_title);
 	$rowCount++;
 }
-if( (isset($_GET['switch'])) && ($_GET['switch'] == "on") ) {
+if( (isset($_GET['device'])) && ($_GET['device'] == "on") ) {
 	$worksheet->write($lineCount, $rowCount, _('device') ,$format_title);
 	$rowCount++;
 }
@@ -169,7 +169,7 @@ foreach ($addresses as $ip) {
 	$rowCount = 0;
 
 	//change switch ID to name
-	$ip['switch']   = is_null($ip['switch'])||strlen($ip['switch'])==0||$ip['switch']==0||!isset($devices_indexed[$ip['switch']]) ? "" : $devices_indexed[$ip['switch']]->hostname;
+	$ip['device']   = is_null($ip['device'])||strlen($ip['device'])==0||$ip['device']==0||!isset($devices_indexed[$ip['device']]) ? "" : $devices_indexed[$ip['device']]->hostname;
 	$ip['location'] = is_null($ip['location'])||strlen($ip['location'])==0||$ip['location']==0||!isset($locations_indexed[$ip['location']]) ? "" : $locations_indexed[$ip['location']]->name;
 
 	if( (isset($_GET['ip_addr'])) && ($_GET['ip_addr'] == "on") ) {
@@ -202,8 +202,8 @@ foreach ($addresses as $ip) {
 		$worksheet->write($lineCount, $rowCount, $ip['owner']);
 		$rowCount++;
 	}
-	if( (isset($_GET['switch'])) && ($_GET['switch'] == "on") ) {
-		$worksheet->write($lineCount, $rowCount, $ip['switch']);
+	if( (isset($_GET['device'])) && ($_GET['device'] == "on") ) {
+		$worksheet->write($lineCount, $rowCount, $ip['device']);
 		$rowCount++;
 	}
 	if( (isset($_GET['port'])) && ($_GET['port'] == "on") ) {

@@ -202,7 +202,7 @@ if($m==0) { $Result->show("info", _("No results"), false); }
 	# mac
 	if(in_array('mac', $selected_ip_fields)) 										{ print '<th></th>'. "\n"; $address_span++; }
 	# switch
-	if(in_array('switch', $selected_ip_fields))										{ print '<th class="hidden-sm hidden-xs">'._('Device').'</th>'. "\n"; $address_span++; }
+	if(in_array('device', $selected_ip_fields))										{ print '<th class="hidden-sm hidden-xs">'._('Device').'</th>'. "\n"; $address_span++; }
 	# port
 	if(in_array('port', $selected_ip_fields)) 										{ print '<th>'._('Port').'</th>'. "\n"; $address_span++; }
 	# owner and note
@@ -274,17 +274,17 @@ if(sizeof($result_addresses) > 0) {
 				print '	</td>'. "\n";
 			}
 			//device
-			if(in_array('switch', $selected_ip_fields)) 										{
-				if(strlen($line['switch'])>0 && $line['switch']!="0") {
+			if(in_array('device', $selected_ip_fields)) 										{
+				if(strlen($line['device'])>0 && $line['device']!="0") {
 					# get switch
-					$switch = (array) $Tools->fetch_object("devices", "id", $line['switch']);
-					$line['switch'] = $switch['hostname'];
+					$switch = (array) $Tools->fetch_object("devices", "id", $line['device']);
+					$line['device'] = $switch['hostname'];
 				}
 				else {
-					$line['switch'] = "/";
+					$line['device'] = "/";
 				}
 
-				print ' <td class="hidden-sm hidden-xs">'. $line['switch']  .'</td>' . "\n";
+				print ' <td class="hidden-sm hidden-xs">'. $line['device']  .'</td>' . "\n";
 			}
 			//port
 			if(in_array('port', $selected_ip_fields)) 										{ print ' <td>'. $line['port']  .'</td>' . "\n"; }

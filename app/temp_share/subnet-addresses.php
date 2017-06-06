@@ -93,7 +93,7 @@ else 				{ print _("IP addresses belonging to ALL nested subnets"); }
 	# note
 	if(in_array('note', $selected_ip_fields)) 	{ print "<th></th>"; }
 	# switch
-	if(in_array('switch', $selected_ip_fields)) { print "<th class='hidden-xs hidden-sm hidden-md'>"._('Device')."</th>"; }
+	if(in_array('device', $selected_ip_fields)) { print "<th class='hidden-xs hidden-sm hidden-md'>"._('Device')."</th>"; }
 	# port
 	if(in_array('port', $selected_ip_fields)) 	{ print "<th class='hidden-xs hidden-sm hidden-md'>"._('Port')."</th>"; }
 	# owner
@@ -206,7 +206,7 @@ else {
         	}
 
         	# print device
-        	if(in_array('switch', $selected_ip_fields)) {
+        	if(in_array('device', $selected_ip_fields)) {
 	        	# get device details
 	        	$device = (array) $Tools->fetch_object("devices", "id", $addresses[$n]->switch);
 																	  print "<td class='hidden-xs hidden-sm hidden-md'>".@$device['hostname']."</td>";

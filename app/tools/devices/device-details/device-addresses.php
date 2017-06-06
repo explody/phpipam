@@ -14,7 +14,7 @@ is_numeric($_GET['id']) ? : $Result->show("danger", _("Invalid ID"), true);
 $device = (array) $Tools->fetch_object ("devices", "id", $_GET['id']);
 
 # fetch all addresses on switch
-$addresses     = $Tools->fetch_multiple_objects("ipaddresses", "switch", $device['id']);
+$addresses     = $Tools->fetch_multiple_objects("ipaddresses", "device", $device['id']);
 
 # title - hosts
 print "<h4>"._("Belonging addresses")."</h4><hr>";

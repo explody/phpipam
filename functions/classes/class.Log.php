@@ -222,7 +222,7 @@ class Logging extends Common_functions {
 						"mac"                   => "MAC address",
 						"owner"                 => "Address owner",
 						"state"                 => "Address state index",
-						"switch"                => "Device",
+						"device"                => "Device",
 						"port"                  => "Port",
 						"note"                  => "Note",
 						"lastSeen"              => "Device last online",
@@ -900,7 +900,7 @@ class Logging extends Common_functions {
 			//master subnet change
 			elseif($k == "masterSubnetId") 	{ $this->object_new[$k] = $this->changelog_format_master_subnet_diff ($k, $v); }
 			//device change
-			elseif($k == 'switch') 			{ $this->object_new[$k] = $this->changelog_format_device_diff ($k, $v); }
+			elseif($k == 'device') 			{ $this->object_new[$k] = $this->changelog_format_device_diff ($k, $v); }
 			//device change
 			elseif($k == 'device') 			{ $this->object_new[$k] = $this->changelog_format_device_diff ($k, $v); }
 			//vlan
@@ -940,7 +940,7 @@ class Logging extends Common_functions {
 			//master subnet change
 			elseif($k == "masterSubnetId") 	{ $this->object_old[$k] = $this->changelog_format_master_subnet_diff ($k, $v); }
 			//device change
-			elseif($k == 'switch') 			{ $this->object_old[$k] = $this->changelog_format_device_diff ($k, $v); }
+			elseif($k == 'device') 			{ $this->object_old[$k] = $this->changelog_format_device_diff ($k, $v); }
 			//device change
 			elseif($k == 'device') 			{ $this->object_old[$k] = $this->changelog_format_device_diff ($k, $v); }
 			//vlan
@@ -1001,7 +1001,7 @@ class Logging extends Common_functions {
 				//master subnet change
 				elseif($k == "masterSubnetId") 	{ $v = $this->changelog_format_master_subnet_diff ($k, $v); }
 				//device change
-				elseif($k == 'switch') 			{ $v = $this->changelog_format_device_diff ($k, $v); }
+				elseif($k == 'device') 			{ $v = $this->changelog_format_device_diff ($k, $v); }
 				//device change
 				elseif($k == 'device') 			{ $v = $this->changelog_format_device_diff ($k, $v); }
 				//vlan

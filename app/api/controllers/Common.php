@@ -159,8 +159,7 @@ class Common_api_functions
         # array of controller keys
         $this->controller_keys = array("app_id", "controller");
 
-        # array of all valid keys - fetch from SCHEMA
-        $this->valid_keys = $this->Tools->fetch_standard_fields($controller);
+        $this->valid_keys = $this->Tools->fetch_standard_field_names($controller);
 
         # add custom fields
         $cfs = $this->Tools->fetch_custom_fields($controller);
@@ -819,7 +818,7 @@ class Common_api_functions
     protected function remap_keys($result = false)
     {
         // define keys array
-        $this->keys = array("switch"=>"deviceId", "state"=>"tag", "ip_addr"=>"ip", "dns_name"=>"hostname");
+        $this->keys = array("device"=>"deviceId", "state"=>"tag", "ip_addr"=>"ip", "dns_name"=>"hostname");
 
         // exceptions
         if ($controller=="vlans") {

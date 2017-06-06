@@ -126,7 +126,7 @@ foreach ($sections as $section) {
 				else										{ $ip['state'] = ""; }
 
 				//change switch ID to name
-				$ip['switch'] = is_null($ip['switch'])||strlen($ip['switch'])==0||$ip['switch']==0 ? "" : $devices_indexed[$ip['switch']]->hostname;
+				$ip['device'] = is_null($ip['device'])||strlen($ip['device'])==0||$ip['device']==0 ? "" : $devices_indexed[$ip['device']]->hostname;
 
 				$worksheet->write($lineCount, 0, $Subnets->transform_to_dotted($ip['ip_addr']), $format_left);
 				$worksheet->write($lineCount, 1, $ip['state']);
@@ -134,7 +134,7 @@ foreach ($sections as $section) {
 				$worksheet->write($lineCount, 3, $ip['dns_name']);
 				$worksheet->write($lineCount, 4, $ip['mac']);
 				$worksheet->write($lineCount, 5, $ip['owner']);
-				$worksheet->write($lineCount, 6, $ip['switch']);
+				$worksheet->write($lineCount, 6, $ip['device']);
 				$worksheet->write($lineCount, 7, $ip['port']);
 				$worksheet->write($lineCount, 8, $ip['note']);
 				//custom

@@ -252,7 +252,7 @@ $('.slider').slider().on('slide', function(ev){
 	<tr>
 		<td class="middle"><?php print _('Device'); ?></td>
 		<td id="deviceDropdown">
-            <select name="switch" id="sn-device-select" class="select2" data-live-search="true" >
+            <select name="device" id="sn-device-select" class="select2" data-live-search="true" >
             <option disabled selected hidden value="0"><?php print _('Select device'); ?></option>
             <option value="0"><?php print _('None'); ?></option>
     
@@ -274,7 +274,7 @@ $('.slider').slider().on('slide', function(ev){
                        'resolveGroupKey' => true,
                        'gsort' => true,
                        'extFields' => Devices::$extRefs,
-                       'selected' => array('id' => $address['switch']),
+                       'selected' => array('id' => $address['device']),
                    )
                );
 

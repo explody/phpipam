@@ -35,7 +35,7 @@ foreach ($data as &$cdata) {
 						"description"=>$cdata['description'],
 						"mac"=>$cdata['mac'],
 						"owner"=>$cdata['owner'],
-						"switch"=>$cdata['switch'],
+						"device"=>$cdata['device'],
 						"state"=>$cdata['state'],
 						"note"=>$cdata['note'],
 						"is_gateway"=>$cdata['is_gateway']

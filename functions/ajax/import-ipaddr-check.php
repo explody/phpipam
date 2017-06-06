@@ -152,10 +152,10 @@ foreach ($data as &$cdata) {
 		if (!isset($device_data[$cdata['sectionId']][$cdata['device']])) {
 			$msg.= "Invalid device hostname."; $action = "error";
 		} else {
-			$cdata['switch'] = $device_data[$cdata['sectionId']][$cdata['device']]['id'];
+			$cdata['device'] = $device_data[$cdata['sectionId']][$cdata['device']]['id'];
 		}
 	} else {
-		$cdata['switch'] = 0;
+		$cdata['device'] = 0;
 	}
 
 	# Check if a tag is provided and valid and link it if it is
@@ -202,7 +202,7 @@ foreach ($data as &$cdata) {
 			if ($cdata['description'] != $cedata['description']) { $msg.= "Address description will be updated."; $action = "edit"; }
 			if ($cdata['mac'] != $cedata['mac']) { $msg.= "Address MAC address will be updated."; $action = "edit"; }
 			if ($cdata['owner'] != $cedata['owner']) { $msg.= "Address owner will be updated."; $action = "edit"; }
-			if ($cdata['switch'] != $cedata['switch']) { $msg.= "Device will be updated."; $action = "edit"; }
+			if ($cdata['device'] != $cedata['device']) { $msg.= "Device will be updated."; $action = "edit"; }
 			if ($cdata['note'] != $cedata['note']) { $msg.= "Address note will be updated."; $action = "edit"; }
 			if ($cdata['state'] != $cedata['state']) { $msg.= "Address tag (state) will be updated."; $action = "edit"; }
 

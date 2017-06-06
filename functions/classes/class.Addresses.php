@@ -364,7 +364,7 @@ class Addresses extends Common_functions {
 						"mac"=>@$address['mac'],
 						"owner"=>@$address['owner'],
 						"state"=>@$address['state'],
-						"switch"=>@$address['switch'],
+						"device"=>@$address['device'],
 						"port"=>@$address['port'],
 						"note"=>@$address['note'],
 						"is_gateway"=>@$address['is_gateway'],
@@ -435,7 +435,7 @@ class Addresses extends Common_functions {
 						"mac"=>@$address['mac'],
 						"owner"=>@$address['owner'],
 						"state"=>@$address['state'],
-						"switch"=>@$address['switch'],
+						"device"=>@$address['device'],
 						"port"=>@$address['port'],
 						"note"=>@$address['note'],
 						"is_gateway"=>@$address['is_gateway'],
@@ -1135,13 +1135,13 @@ class Addresses extends Common_functions {
 								"dns_name"=>$address[3],
 								"mac"=>$address[4],
 								"owner"=>$address[5],
-								"switch"=>$address[6],
+								"device"=>$address[6],
 								"port"=>$address[7],
 								"note"=>$address[8]
 								);
 
 		# switch to 0, state to active
-		$address_insert['switch'] = strlen($address_insert['switch'])==0 ? 0 : $address_insert['switch'];
+		$address_insert['device'] = strlen($address_insert['device'])==0 ? 0 : $address_insert['device'];
 		$address_insert['state']  = strlen($address_insert['state'])==0 ?  1 : $address_insert['state'];
 
 		# custom fields, append to array

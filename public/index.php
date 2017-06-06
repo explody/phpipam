@@ -106,7 +106,7 @@ else {
 
 	# make upgrade and php build checks
 	include(FUNCTIONS . '/checks/check_php_build.php');	# check for support for PHP modules and database connection
-	if($_GET['switch'] && $_SESSION['realipamusername'] && $_GET['switch'] == "back"){
+	if($_GET['device'] && $_SESSION['realipamusername'] && $_GET['device'] == "back"){
 		$_SESSION['ipamusername'] = $_SESSION['realipamusername'];
 		unset($_SESSION['realipamusername']);
 		print	'<script>window.location.href = "'.create_link(null).'";</script>';

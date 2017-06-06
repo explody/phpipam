@@ -172,8 +172,8 @@ msgstr "Naam is verplicht"
 #: site/ipaddr/mailNotifyIP.php:62 site/ipaddr/exportSelectFields.php:74
 #: site/admin/CSVimportShowFile.php:70 site/admin/searchReplaceResult.php:20
 #: site/admin/searchReplaceResult.php:21 site/admin/replaceFields.php:31
-msgid "Switch"
-msgstr "Switch"
+msgid "Device"
+msgstr "Device"
 
 #: functions/functions-admin.php:1139 functions/functions-admin.php:1159
 msgid "Router"
@@ -565,8 +565,8 @@ msgstr "DNS-naam"
 
 #: site/tools/searchResultsExport.php:142 site/admin/exportGenerateXLS.php:97
 #: site/admin/exportSubnet.php:119
-msgid "switch"
-msgstr "switch"
+msgid "device"
+msgstr "device"
 
 #: site/tools/searchResultsExport.php:146 site/admin/manageRequestEdit.php:115
 #: site/admin/exportGenerateXLS.php:98 site/admin/exportSubnet.php:123
@@ -2363,7 +2363,7 @@ msgstr "Importeer naar database"
 
 #: site/admin/CSVimportShowFile.php:102
 msgid "Should I import values to database"
-msgstr "Moeten deze waarden geïmporteerd worden"
+msgstr "Moeten deze waarden geï¿½mporteerd worden"
 
 #: site/admin/CSVimportShowFile.php:105 site/admin/manageSectionEdit.php:62
 #: site/admin/manageSubnetsplit.php:89
@@ -3023,7 +3023,7 @@ msgstr "Laatste versie"
 
 #: site/admin/versionCheck.php:19
 msgid "already installed"
-msgstr "is al geïnstalleerd"
+msgstr "is al geï¿½nstalleerd"
 
 #: site/admin/versionCheck.php:22
 msgid "Development version"
@@ -3031,7 +3031,7 @@ msgstr "Ontwikkelversie"
 
 #: site/admin/versionCheck.php:22
 msgid "installed! Latest production version is"
-msgstr "geïnstalleerd! Laatste produktieversie is"
+msgstr "geï¿½nstalleerd! Laatste produktieversie is"
 
 #: site/admin/versionCheck.php:25
 msgid "New version of phpipam available"
@@ -3039,7 +3039,7 @@ msgstr "Er is een nieuwe versie van phpIPAM beschikbaar"
 
 #: site/admin/versionCheck.php:26
 msgid "Installed version"
-msgstr "Geïnstalleerde versie"
+msgstr "Geï¿½nstalleerde versie"
 
 #: site/admin/versionCheck.php:27
 msgid "Available version"

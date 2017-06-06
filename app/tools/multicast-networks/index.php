@@ -52,7 +52,7 @@ if ($subnets!==false) {
     	# note
     	if(in_array('note', $selected_ip_fields)) 	{ print "<th></th>"; }
     	# switch
-    	if(in_array('switch', $selected_ip_fields)) { print "<th class='hidden-xs hidden-sm hidden-md'>"._('Device')."</th>"; }
+    	if(in_array('device', $selected_ip_fields)) { print "<th class='hidden-xs hidden-sm hidden-md'>"._('Device')."</th>"; }
     	# port
     	if(in_array('port', $selected_ip_fields)) 	{ print "<th class='hidden-xs hidden-sm hidden-md'>"._('Port')."</th>"; }
     	# owner
@@ -197,7 +197,7 @@ if ($subnets!==false) {
 		        	}
 
 		        	# print device
-		        	if(in_array('switch', $selected_ip_fields)) {
+		        	if(in_array('device', $selected_ip_fields)) {
 			        	# get device details
 			        	$device = (array) $Tools->fetch_object("devices", "id", $address->switch);
 																	 { print "<td class='hidden-xs hidden-sm hidden-md'><a href='".create_link("tools","devices",@$device['id'])."'>". @$device['hostname'] ."</a></td>"; }

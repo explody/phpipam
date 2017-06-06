@@ -120,12 +120,12 @@ if(sizeof($address)>1) {
 	}
 
 	# switch
-	if(in_array('switch', $selected_ip_fields)) {
+	if(in_array('device', $selected_ip_fields)) {
 	print "<tr>";
 	print "	<th>"._('Device')."</th>";
-	if(strlen($address['switch'])>0) {
+	if(strlen($address['device'])>0) {
 		# get device
-		$device = $Tools->fetch_object("devices", "id", $address['switch']);
+		$device = $Tools->fetch_object("devices", "id", $address['device']);
 		if($device!==false) {
 			$device = (array) $device;
 			$device = $Addresses->reformat_empty_array_fields($device, "");

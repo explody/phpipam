@@ -160,8 +160,8 @@ msgstr "Jméno je povinné"
 #: site/ipaddr/mailNotifyIP.php:62 site/ipaddr/exportSelectFields.php:74
 #: site/admin/CSVimportShowFile.php:70 site/admin/searchReplaceResult.php:20
 #: site/admin/searchReplaceResult.php:21 site/admin/replaceFields.php:31
-msgid "Switch"
-msgstr "Switch"
+msgid "Device"
+msgstr "Device"
 
 #: functions/functions-admin.php:1139 functions/functions-admin.php:1159
 msgid "Router"
@@ -551,8 +551,8 @@ msgstr "hostname"
 
 #: site/tools/searchResultsExport.php:142 site/admin/exportGenerateXLS.php:97
 #: site/admin/exportSubnet.php:119
-msgid "switch"
-msgstr "switch"
+msgid "device"
+msgstr "device"
 
 #: site/tools/searchResultsExport.php:146 site/admin/manageRequestEdit.php:115
 #: site/admin/exportGenerateXLS.php:98 site/admin/exportSubnet.php:123

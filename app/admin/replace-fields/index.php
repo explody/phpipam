@@ -22,7 +22,7 @@
 			<option value="dns_name"><?php print _('Hostname'); ?></option>
 			<option value="owner"><?php print _('Owner'); ?></option>
 			<option value="mac"><?php print _('MAC address'); ?></option>
-			<option value="switch"><?php print _('Device'); ?></option>
+			<option value="device"><?php print _('Device'); ?></option>
 			<option value="port"><?php print _('Port'); ?></option>
 			<?php
 			# fetch custom fields

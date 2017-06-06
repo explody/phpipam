@@ -111,7 +111,7 @@ if(sizeof($result_addresses)>0) {
 	$worksheet->write($lineCount, $x, _('description') ,$format_title);		$x++;
 	$worksheet->write($lineCount, $x, _('hostname') ,$format_title);		$x++;
 	# switch
-	if(in_array('switch', $selected_ip_fields)) {
+	if(in_array('device', $selected_ip_fields)) {
 	$worksheet->write($lineCount, $x, _('device') ,$format_title);			$x++;
 	} else { $colSpan--; }
 	# port
@@ -194,15 +194,15 @@ if(sizeof($result_addresses)>0) {
 			$worksheet->write($lineCount, $x, $ip['description']);					$x++;
 			$worksheet->write($lineCount, $x, $ip['dns_name']);						$x++;
 			# switch
-			if(in_array('switch', $selected_ip_fields)) {
-				if(strlen($ip['switch'])>0 && $ip['switch']!=0) {
-					$device = (array) $Tools->fetch_object("devices", "id", $ip['switch']);
-					$ip['switch'] = $device!=0 ? $device['hostname'] : "";
+			if(in_array('device', $selected_ip_fields)) {
+				if(strlen($ip['device'])>0 && $ip['device']!=0) {
+					$device = (array) $Tools->fetch_object("devices", "id", $ip['device']);
+					$ip['device'] = $device!=0 ? $device['hostname'] : "";
 				}
 				else {
-					$ip['switch'] = "";
+					$ip['device'] = "";
 				}
-				$worksheet->write($lineCount, $x, $ip['switch']);					$x++;
+				$worksheet->write($lineCount, $x, $ip['device']);					$x++;
 			}
 			# port
 			if(in_array('port', $selected_ip_fields)) {

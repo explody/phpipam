@@ -148,12 +148,12 @@ $selected_ip_fields = explode(";", $User->settings->IPfilter);
 	</tr>
 	<?php } ?>
 
-	<?php if(in_array('switch', $selected_ip_fields)) { ?>
+	<?php if(in_array('device', $selected_ip_fields)) { ?>
 	<!-- switch / port -->
 	<tr>
 		<th><?php print _('Device'); ?> / <?php print _('port'); ?></th>
 		<td>
-			<select name="switch" class="form-control input-sm input-w-100">
+			<select name="device" class="form-control input-sm input-w-100">
 				<option disabled><?php print _('Select device'); ?>:</option>
 				<option value="" selected><?php print _('None'); ?></option>
 				<?php
@@ -164,7 +164,7 @@ $selected_ip_fields = explode(";", $User->settings->IPfilter);
     					//cast
     					$device = (array) $device;
 
-    					if($device['id'] == @$request['switch']) { print '<option value="'. $device['id'] .'" selected>'. $device['hostname'] .'</option>'. "\n"; }
+    					if($device['id'] == @$request['device']) { print '<option value="'. $device['id'] .'" selected>'. $device['hostname'] .'</option>'. "\n"; }
     					else 									 { print '<option value="'. $device['id'] .'">'. 		 $device['hostname'] .'</option>'. "\n"; }
     				}
 				}

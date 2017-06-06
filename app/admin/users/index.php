@@ -8,7 +8,7 @@
 
 
 // switch user
-if(@$_GET['subnetId']=="switch"){
+if(@$_GET['subnetId']=="device"){
 	$_SESSION['realipamusername'] = $_SESSION['ipamusername'];
 	$_SESSION['ipamusername'] = $_GET['sPage'];
 	print '<script>window.location.href = "'.create_link(null).'";</script>';

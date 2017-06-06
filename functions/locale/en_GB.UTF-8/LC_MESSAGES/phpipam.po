@@ -160,7 +160,7 @@ msgstr ""
 #: site/ipaddr/mailNotifyIP.php:62 site/ipaddr/exportSelectFields.php:74
 #: site/admin/CSVimportShowFile.php:70 site/admin/searchReplaceResult.php:20
 #: site/admin/searchReplaceResult.php:21 site/admin/replaceFields.php:31
-msgid "Switch"
+msgid "Device"
 msgstr ""
 
 #: functions/functions-admin.php:1139 functions/functions-admin.php:1159
@@ -551,7 +551,7 @@ msgstr ""
 
 #: site/tools/searchResultsExport.php:142 site/admin/exportGenerateXLS.php:97
 #: site/admin/exportSubnet.php:119
-msgid "switch"
+msgid "device"
 msgstr ""
 
 #: site/tools/searchResultsExport.php:146 site/admin/manageRequestEdit.php:115

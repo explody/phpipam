@@ -18,7 +18,7 @@ if(isset($_GET['id'])) {
 
     # count subnets and addresses
     $cnt_subnets   = $Tools->count_database_objects ("subnets", "device", $device->id);
-    $cnt_addresses = $Tools->count_database_objects ("ipaddresses", "switch", $device->id);
+    $cnt_addresses = $Tools->count_database_objects ("ipaddresses", "device", $device->id);
     $cnt_nat       = $Tools->count_database_objects ("nat", "device", $device->id);
     $cnt_pstn      = $Tools->count_database_objects ("pstnPrefixes", "deviceId", $device->id);
 

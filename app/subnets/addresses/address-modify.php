@@ -277,19 +277,19 @@ function validate_mac (ip, mac, sectionId, vlanId, id) {
         print '</tr>'. "\n";
     }
     ?>
-    <!-- switch / port -->
+    <!-- device / port -->
     <?php
-    if(!isset($address['switch']))  {$address['switch'] = "";}
+    if(!isset($address['device']))  {$address['device'] = "";}
     if(!isset($address['port'])) 	{$address['port'] = "";}
 
     # both are active
-    if(in_array('switch', $selected_ip_fields)) {
+    if(in_array('device', $selected_ip_fields)) {
     ?>
     
         <tr>
             <td><?php print _('Device'); ?></td>
             <td>
-                <select name="switch" id="ip-device-select" class="select2" data-live-search="true" >
+                <select name="device" id="ip-device-select" class="select2" data-live-search="true" >
                 <option disabled selected hidden value="0"><?php print _('Select device'); ?></option>
                 <option value="0"><?php print _('None'); ?></option>
         
@@ -312,7 +312,7 @@ print $User->settings->devicegroupfield;
                                'resolveGroupKey' => true,
                                'gsort' => true,
                                'extFields' => Devices::$extRefs,
-                               'selected' => array('id' => $address['switch']),
+                               'selected' => array('id' => $address['device']),
                                'data' => ['mac_addr']
                            )
                        );

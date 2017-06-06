@@ -170,7 +170,7 @@ else {
     	$device = (array) $device;
 
     	//count items
-    	$cnt1 = $Tools->count_database_objects("ipaddresses", "switch", $device['id']);
+    	$cnt1 = $Tools->count_database_objects("ipaddresses", "device", $device['id']);
     	$cnt2 = $Tools->count_database_objects("subnets", "device",  $device['id']);
     	$cnt = $cnt1 + $cnt2;
 

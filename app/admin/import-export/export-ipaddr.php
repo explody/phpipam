@@ -213,7 +213,7 @@ if($all_sections!==false) {
 
 					if( (isset($_GET['device'])) && ($_GET['device'] == "on") ) {
 						//change device to name
-						$ip['device'] = is_null($ip['switch'])||strlen($ip['switch'])==0||$ip['switch']==0 ? "" : $devices_indexed[$ip['switch']]->hostname;
+						$ip['device'] = is_null($ip['device'])||strlen($ip['device'])==0||$ip['device']==0 ? "" : $devices_indexed[$ip['device']]->hostname;
 						$worksheet->write($lineCount, $rowCount, $ip['device'], $format_text);
 						$rowCount++;
 					}

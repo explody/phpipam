@@ -52,7 +52,7 @@ else {
 					"mac"=>@$_POST['mac'],
 					"owner"=>@$_POST['owner'],
 					"state"=>@$_POST['state'],
-					"switch"=>@$_POST['switch'],
+					"device"=>@$_POST['device'],
 					"port"=>@$_POST['port'],
 					"note"=>@$_POST['note']
 					);

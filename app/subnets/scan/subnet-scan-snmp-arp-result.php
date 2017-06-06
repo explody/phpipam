@@ -33,7 +33,7 @@ foreach($_POST as $key=>$line) {
 	// mac
 	elseif(substr($key, 0,3)=="mac") 		    { $res[substr($key, 3)]['mac']  	    = $line; }
 	// device
-	elseif(substr($key, 0,6)=="device") 	    { $res[substr($key, 6)]['switch']       = $line; }
+	elseif(substr($key, 0,6)=="device") 	    { $res[substr($key, 6)]['device']       = $line; }
 	// description
 	elseif(substr($key, 0,11)=="description") 	{ $res[substr($key, 11)]['description'] = $line; }
 	// description
@@ -72,7 +72,7 @@ if(sizeof($res)>0) {
 						"dns_name"=>$r['dns_name'],
 						"subnetId"=>$_POST['subnetId'],
 						"description"=>$r['description'],
-						"switch"=>$r['switch'],
+						"device"=>$r['device'],
 						"mac"=>$r['mac'],
 						"state"=>2,
 						"lastSeen"=>date("Y-m-d H:i:s"),

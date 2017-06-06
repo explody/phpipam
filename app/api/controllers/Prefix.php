@@ -189,7 +189,7 @@ class Prefix_controller extends Common_api_functions
     private $ignored_addresses_fields = array(
                                         "state",
                                         "deviceId",
-                                        "switch",
+                                        "device",
                                         "port",
                                         "note",
                                         "lastSeen",

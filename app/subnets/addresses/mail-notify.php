@@ -60,9 +60,9 @@ if ( !empty( $subnet['nameserverId'] ) ) {
 }
 
 # Switch
-if(!empty($address['switch'])) {
+if(!empty($address['device'])) {
 	# get device by id
-	$device = (array) $Tools->fetch_object("devices", "id", $address['switch']);
+	$device = (array) $Tools->fetch_object("devices", "id", $address['device']);
 	!sizeof($device)>1 ? : 				$content[] = "&bull; "._('Device').": \t\t\t $device[hostname]";
 }
 # port

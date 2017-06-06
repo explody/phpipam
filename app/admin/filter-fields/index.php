@@ -1,23 +1,21 @@
 <?php
-
+# TODO:  This shouldn't be a function only for ipaddresses
 /**
  * Script to get all active IP requests
  ****************************************/
-
-# get all fields in IP table
-foreach($Tools->fetch_standard_fields("ipaddresses") as $s) {
-	$standard_fields[$s] = $s;
-}
+$standard_fields = $Tools->fetch_standard_field_names("ipaddresses");
 
 # get all selected fields and put them to array
 $selected_fields = explode(";", $User->settings->IPfilter);
 
-/* unset mandatory fields -> id,subnetid,ip_addr */
-unset($standard_fields['id'], $standard_fields['state'], $standard_fields['subnetId'],
-      $standard_fields['ip_addr'], $standard_fields['description'], $standard_fields['dns_name'],
-      $standard_fields['lastSeen'], $standard_fields['excludePing'], $standard_fields['editDate'],
-      $standard_fields['is_gateway'], $standard_fields['PTR'], $standard_fields['PTRignore'],
-      $standard_fields['firewallAddressObject']);
+# These are not user selectable
+$ignore_fields = ['id','state','subnetId',
+                  'ip_addr','description',
+                  'dns_name','lastSeen',
+                  'excludePing','editDate',
+                  'is_gateway','PTR','PTRignore',
+                  'firewallAddressObject']
+
 ?>
 
 
@@ -38,16 +36,18 @@ unset($standard_fields['id'], $standard_fields['state'], $standard_fields['subne
 
 <!-- fields -->
 <?php
-foreach($standard_fields as $field) {
+foreach($standard_fields as $field_name) {
+    
+    if (in_array($field_name, $ignore_fields)) {
+        continue;
+    }
+    
 	# set active
-	$checked = in_array($field, $selected_fields) ? "checked" : "";
-
-	# replace switch
-	$field_print = $field=="switch" ? "device" : $field;
+	$checked = in_array($field_name, $selected_fields) ? "checked" : "";
 
 	print '<tr>'. "\n";
-	print '	<td style="width:10px;padding-left:10px;"><input type="checkbox" class="input-switch" name="'. $field .'" value="'. $field .'" '. $checked .'></td>';
-	print '	<td>'. ucfirst($field_print) .'</td>';
+	print '	<td style="width:10px;padding-left:10px;"><input type="checkbox" class="input-switch" name="'. $field_name .'" value="'. $field_name .'" '. $checked .'></td>';
+	print '	<td>'. ucfirst($field_name) .'</td>';
 	print '</tr>';
 }
 ?>

@@ -188,7 +188,7 @@ class Devices_controller extends Common_api_functions
                 }
                 
                 if ($this->_params->id2 == 'addresses') {
-                    $result = $this->Tools->fetch_multiple_objects("ipaddresses", 'switch', $this->_params->id, 'id', true);
+                    $result = $this->Tools->fetch_multiple_objects("ipaddresses", 'device', $this->_params->id, 'id', true);
                 } else {
                     $result = $this->Tools->fetch_object('devices', 'id', $this->_params->id);
                     if (!$result) {
@@ -285,7 +285,7 @@ class Devices_controller extends Common_api_functions
         } else {
 
             // delete all references
-            $this->Admin->remove_object_references('ipaddresses', 'switch', $this->_params->id);
+            $this->Admin->remove_object_references('ipaddresses', 'device', $this->_params->id);
 
             // set result
             return array('code' => 200, 'data' => 'deleted device ' . $this->_params->id);
