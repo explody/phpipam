@@ -132,7 +132,7 @@ class InitialData extends AbstractMigration
         'deviceTypes' => [
             'columns' => ['tid', 'tname', 'tdescription'],
             'data' => [
-                [1, 'Device', 'Device'],
+                [1, 'Switch', 'Switch'],
                 [2, 'Router', 'Router'],
                 [3, 'Firewall', 'Firewall'],
                 [4, 'Hub', 'Hub'],
